@@ -7,7 +7,6 @@ public class PlayerState : MonoBehaviour {
 
     [Range(0.0f, 1.0f)]
     public float Hunger = 0;
-
     public float HungerIncreasePerSecond;
     
 	void Start () {
