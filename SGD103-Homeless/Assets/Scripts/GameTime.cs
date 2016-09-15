@@ -11,6 +11,8 @@ public class GameTime : MonoBehaviour
     [Range(0.0f, 24.0f)]
     public float TimeOfDayHours = 0.0f;
     public float TimeScale = 1.0f;
+    public bool IsNight = false;
+    public float SunriseAtHour = 6.0f;
     
     void Start () {
 	
@@ -31,5 +33,10 @@ public class GameTime : MonoBehaviour
             TimeOfDayHours = 0.0f;
             Day += 1;
         }
+
+        // Determine if it's night time.
+        IsNight = (
+            TimeOfDayHours < SunriseAtHour || 
+            TimeOfDayHours > SunriseAtHour + 12.0f);
     }
 }
