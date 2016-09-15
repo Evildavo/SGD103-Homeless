@@ -3,16 +3,20 @@ using System.Collections;
 
 public class GameTime : MonoBehaviour
 {
+    [Header("Game time")]
     public float NormalTimeScale = 1.0f;
     public float AcceleratedTimeScale = 1.0f;
     public bool IsTimeAccelerated = false;
+    [ReadOnly]
+    public float TimeScale = 1.0f;
 
+    [Header("Time-of-day")]
     public int Day = 1;
     [Range(0.0f, 24.0f)]
     public float TimeOfDayHours = 0.0f;
-    public float TimeScale = 1.0f;
-    public bool IsNight = false;
     public float SunriseAtHour = 6.0f;
+    [ReadOnly]
+    public bool IsNight = false;
     
     void Start () {
 	
