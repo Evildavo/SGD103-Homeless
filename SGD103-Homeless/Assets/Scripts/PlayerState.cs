@@ -3,6 +3,8 @@ using System.Collections;
 
 public class PlayerState : MonoBehaviour {
 
+    public GameTime GameTime;
+
     [Range(0.0f, 1.0f)]
     public float Hunger = 0;
 
@@ -13,7 +15,7 @@ public class PlayerState : MonoBehaviour {
 	}
 	
 	void Update () {
-        Hunger += HungerIncreasePerSecond * Time.deltaTime;
+        Hunger += HungerIncreasePerSecond * Time.deltaTime * GameTime.TimeScale;
         if (Hunger > 1.0f)
         {
             Hunger = 1.0f;
