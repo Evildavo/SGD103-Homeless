@@ -7,14 +7,14 @@ public class PlayerState : MonoBehaviour {
 
     [Range(0.0f, 1.0f)]
     public float Hunger = 0;
-    public float HungerIncreasePerSecond;
+    public float HungerIncreasePerGameHour;
     
 	void Start () {
 	
 	}
 	
 	void Update () {
-        Hunger += HungerIncreasePerSecond * Time.deltaTime * GameTime.TimeScale;
+        Hunger += HungerIncreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
         if (Hunger > 1.0f)
         {
             Hunger = 1.0f;
