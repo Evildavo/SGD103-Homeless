@@ -1,10 +1,15 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class PlayerState : MonoBehaviour {
 
     public GameTime GameTime;
-    
+    public Text MoneyText;
+    public Text HungerThirstText;
+    public Text HealthText;
+    public Text MoraleText;
+
     public float Money = 0;
 
     [Range(0.0f, 1.0f)]
@@ -22,6 +27,14 @@ public class PlayerState : MonoBehaviour {
 	}
 	
 	void Update () {
+
+        // Update stat texts.
+        MoneyText.text = "$" + Money.ToString("F2");
+        HungerThirstText.text = "Hunger: " + (HungerThirst * 100).ToString("f0") + "%";
+        HealthText.text = "Health: " + (Health * 100).ToString("f0") + "%";
+        MoraleText.text = "Morale: " + (Morale * 100).ToString("f0") + "%";
+
+        // Decrease stats over time.
         HungerThirst -= HungerIncreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
         if (HungerThirst > 1.0f)
         {
