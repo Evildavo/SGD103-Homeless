@@ -8,10 +8,6 @@ public class CharacterTriggerTest : Trigger {
 
     public override void OnTrigger()
     {
-        if (PlayerState.Money == 0.0f)
-        {
-            PlayerState.Money += 50.0f;
-        } 
         if (InteractSound)
         {
             InteractSound.Play();

@@ -3,12 +3,17 @@ using System.Collections;
 
 public class ObjectTriggerTest : Trigger {
 
+    public AudioSource InteractSound;
     public PlayerState PlayerState;
 
     public override void OnTrigger()
     {
         PlayerState.Money = 0.0f;
         PlayerState.HungerThirst = 1.0f;
+        if (InteractSound)
+        {
+            InteractSound.Play();
+        }
     }
 
     public override void Start()
