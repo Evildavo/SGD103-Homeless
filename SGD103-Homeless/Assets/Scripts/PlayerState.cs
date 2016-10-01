@@ -31,7 +31,7 @@ public class PlayerState : MonoBehaviour {
         }
         if (HungerThirstText)
         {
-            HungerThirstText.text = "Hunger: " + (HungerThirst * 100).ToString("f0") + "%";
+            HungerThirstText.text = "Hunger/Thirst: " + (HungerThirst * 100).ToString("f0") + "%";
         }
         if (HealthText)
         {
