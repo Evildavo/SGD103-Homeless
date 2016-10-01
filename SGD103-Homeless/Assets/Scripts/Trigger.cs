@@ -6,12 +6,21 @@ public class Trigger : MonoBehaviour
 {
     private bool isNearby = false;
 
-    public bool IsActive = true;
+    public Text TriggerNameText;
     public Text InteractHintText;
+
+    public bool IsActive = true;
+    public string TriggerName;
+    public string InteractHintMessage;
 
     void Start()
     {
         GetComponent<Renderer>().enabled = false;
+        if (TriggerNameText && InteractHintText)
+        {
+            TriggerNameText.text = TriggerName;
+            InteractHintText.text = InteractHintMessage;
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -26,14 +35,16 @@ public class Trigger : MonoBehaviour
 
     void Update()
     {
-        if (InteractHintText)
+        if (TriggerNameText && InteractHintText)
         {
             if (IsActive && isNearby)
             {
+                TriggerNameText.GetComponent<Text>().enabled = true;
                 InteractHintText.GetComponent<Text>().enabled = true;
             }
             else
             {
+                TriggerNameText.GetComponent<Text>().enabled = false;
                 InteractHintText.GetComponent<Text>().enabled = false;
             }
         }
