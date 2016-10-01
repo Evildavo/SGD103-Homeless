@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class InventoryItemTest1 : InventoryItem
+public class WatchItemTest : InventoryItem
 {
     public MessageBox MessageBox;
     public GameTime GameTime;

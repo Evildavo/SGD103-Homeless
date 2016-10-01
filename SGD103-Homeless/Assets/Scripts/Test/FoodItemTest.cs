@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class InventoryItemTest2 : InventoryItem
+public class FoodItemTest : InventoryItem
 {
     public PlayerState PlayerState;
 
