@@ -25,6 +25,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (ItemNameText)
         {
             ItemNameText.text = GetItem().ItemName;
+            ItemActionText.text = GetItem().PrimaryActionDescription;
         }
     }
 
