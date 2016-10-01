@@ -12,49 +12,67 @@ public class Trigger : MonoBehaviour
     public bool IsActive = true;
     public string TriggerName;
     public string InteractHintMessage;
-
-    void Start()
+    
+    public void ShowInteractionText()
     {
-        GetComponent<Renderer>().enabled = false;
         if (TriggerNameText && InteractHintText)
         {
+            TriggerNameText.GetComponent<Text>().enabled = true;
+            InteractHintText.GetComponent<Text>().enabled = true;
             TriggerNameText.text = TriggerName;
             InteractHintText.text = InteractHintMessage;
         }
     }
 
-    void OnTriggerEnter(Collider other)
+    public void HideInteractionText()
+    {
+        if (TriggerNameText && InteractHintText)
+        {
+            TriggerNameText.GetComponent<Text>().enabled = false;
+            InteractHintText.GetComponent<Text>().enabled = false;
+        }
+    }
+
+    // Override to do some action on being triggered.
+    public virtual void OnTrigger() {}
+
+    // Call from derived.
+    public virtual void Start()
+    {
+        GetComponent<Renderer>().enabled = false;
+        HideInteractionText();
+    }
+
+    // Call from derived.
+    public virtual void Update()
+    {
+        if (IsActive && isNearby)
+        {
+            ShowInteractionText();
+        }
+    }
+
+    // Call from derived.
+    public virtual void OnTriggerEnter(Collider other)
     {
         isNearby = true;
     }
 
-    void OnTriggerExit(Collider other)
+    // Call from derived.
+    public virtual void OnTriggerExit(Collider other)
     {
         isNearby = false;
+        HideInteractionText();
     }
 
-    void Update()
-    {
-        if (TriggerNameText && InteractHintText)
-        {
-            if (IsActive && isNearby)
-            {
-                TriggerNameText.GetComponent<Text>().enabled = true;
-                InteractHintText.GetComponent<Text>().enabled = true;
-            }
-            else
-            {
-                TriggerNameText.GetComponent<Text>().enabled = false;
-                InteractHintText.GetComponent<Text>().enabled = false;
-            }
-        }
-    }
-
-    void OnGUI()
+    // Call from derived.
+    public virtual void OnGUI()
     {
         if (IsActive && isNearby && Event.current.keyCode == KeyCode.E)
         { 
             IsActive = false;
+            HideInteractionText();
+            OnTrigger();
         }
     }
 
