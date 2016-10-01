@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
 
 public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     private bool isOver = false;
-    
+
+    public Text ItemNameText;
+    public Text ItemActionText;
+
     public InventoryItem GetItem()
     {
         return GetComponentInChildren<InventoryItem>();
@@ -18,7 +22,10 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void OnPointerEnter(PointerEventData eventData)
     {
         isOver = true;
-        Debug.Log(GetItem().ItemName);
+        if (ItemNameText)
+        {
+            ItemNameText.text = GetItem().ItemName;
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData)
