@@ -18,6 +18,33 @@ public class GameTime : MonoBehaviour
     [ReadOnly]
     public bool IsNight = false;
     
+    public string GetTimeAsString()
+    {
+        int hour = (int)TimeOfDayHours;
+        string amPmLabel;
+        if (hour < 1)
+        {
+            hour = 12;
+            amPmLabel = "am";
+        }
+        else if (hour < 12)
+        {
+            amPmLabel = "am";
+        }
+        else if (hour < 13)
+        {
+            hour = 12;
+            amPmLabel = "pm";
+        }
+        else
+        {
+            hour -= 12;
+            amPmLabel = "pm";
+        }
+        int minutes = (int)((TimeOfDayHours - Mathf.Floor(TimeOfDayHours)) * 60.0f);
+        return hour.ToString() + ":" + minutes.ToString().PadLeft(2, '0') + " " + amPmLabel.ToUpper();
+    }
+
     void Start () {
 	
 	}
