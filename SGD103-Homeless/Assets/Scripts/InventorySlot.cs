@@ -29,6 +29,8 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             // Update text.
             ItemNameText.text = GetItem().ItemName;
             ItemActionText.text = GetItem().PrimaryActionDescription;
+            ItemNameText.enabled = true;
+            ItemActionText.enabled = true;
 
             // Move description text to the slot.
             if (ItemDescription)
@@ -43,6 +45,8 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void OnPointerExit(PointerEventData eventData)
     {
         isOver = false;
+        ItemNameText.enabled = false;
+        ItemActionText.enabled = false;
     }
 
 }
