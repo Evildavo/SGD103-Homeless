@@ -6,11 +6,7 @@ public class InventoryItem : MonoBehaviour {
     public string ItemName;
     public string PrimaryActionDescription;
 
-	void Start () {
-	
-	}
-	
-	void Update () {
-	
-	}
+    // Override to do some action when the primary item action is performed.
+    public virtual void OnPrimaryAction() {}
+
 }

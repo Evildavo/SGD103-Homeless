@@ -16,19 +16,15 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         return GetComponentInChildren<InventoryItem>();
     }
 
-	void Start()
-    {
-        
-	}
-
     public void OnPointerEnter(PointerEventData eventData)
     {
         isOver = true;
-        if (ItemNameText)
+        InventoryItem item = GetItem();
+        if (item && ItemNameText)
         {
             // Update text.
-            ItemNameText.text = GetItem().ItemName;
-            ItemActionText.text = GetItem().PrimaryActionDescription;
+            ItemNameText.text = item.ItemName;
+            ItemActionText.text = item.PrimaryActionDescription;
             ItemNameText.enabled = true;
             ItemActionText.enabled = true;
 
@@ -45,8 +41,19 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void OnPointerExit(PointerEventData eventData)
     {
         isOver = false;
+
+        // Hide description text.
         ItemNameText.enabled = false;
         ItemActionText.enabled = false;
+    }
+
+    public void OnClick()
+    {
+        InventoryItem item = GetItem();
+        if (isOver && item)
+        {
+            item.OnPrimaryAction();
+        }
     }
 
 }
