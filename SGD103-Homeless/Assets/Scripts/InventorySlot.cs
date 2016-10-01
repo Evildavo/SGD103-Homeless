@@ -7,6 +7,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 {
     private bool isOver = false;
 
+    public Transform ItemDescription;
     public Text ItemNameText;
     public Text ItemActionText;
 
@@ -15,7 +16,8 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         return GetComponentInChildren<InventoryItem>();
     }
 
-	void Start () {
+	void Start()
+    {
         
 	}
 
@@ -24,8 +26,17 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         isOver = true;
         if (ItemNameText)
         {
+            // Update text.
             ItemNameText.text = GetItem().ItemName;
             ItemActionText.text = GetItem().PrimaryActionDescription;
+
+            // Move description text to the slot.
+            if (ItemDescription)
+            {
+                Vector3 position = ItemDescription.position;
+                position.x = transform.position.x;
+                ItemDescription.position = position;
+            }
         }
     }
 
