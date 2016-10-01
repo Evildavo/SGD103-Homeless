@@ -3,8 +3,6 @@ using System.Collections;
 
 public class WatchItemTest : InventoryItem
 {
-    private float timeAtActivateSeconds;
-
     public MessageBox MessageBox;
     public GameTime GameTime;
 
@@ -12,22 +10,15 @@ public class WatchItemTest : InventoryItem
 
     public override void OnPrimaryAction()
     {
-        MessageBox.Show();
-        timeAtActivateSeconds = Time.time;
+        MessageBox.ShowForTime(CloseAfterSeconds, gameObject);
     }
 	
 	void Update () {
         
         // Update watch.
-        if (MessageBox.IsDisplayed())
+        if (MessageBox.IsDisplayed() && MessageBox.Source == gameObject)
         {
             MessageBox.SetMessage("The time is " + GameTime.GetTimeAsString());
-
-            // Close after some time.
-            if (Time.time - timeAtActivateSeconds > CloseAfterSeconds)
-            {
-                MessageBox.Hide();
-            }
         }
     }
 
