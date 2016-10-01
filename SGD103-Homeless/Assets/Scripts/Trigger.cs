@@ -9,6 +9,11 @@ public class Trigger : MonoBehaviour
     public bool IsActive = true;
     public Text InteractHintText;
 
+    void Start()
+    {
+        GetComponent<Renderer>().enabled = false;
+    }
+
     void OnTriggerEnter(Collider other)
     {
         isNearby = true;
