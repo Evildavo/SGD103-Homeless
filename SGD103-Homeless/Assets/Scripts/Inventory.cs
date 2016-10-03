@@ -12,6 +12,11 @@ public class Inventory : MonoBehaviour {
 
     public float HideAfterSeconds = 1.0f;
     public int DeadZonePixels = 25;
+
+    public void AddItem(InventoryItem item)
+    {
+        Debug.Log("Adding item");
+    }
     
 	void Start () {
 	    
