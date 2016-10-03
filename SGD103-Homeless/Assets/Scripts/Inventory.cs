@@ -13,6 +13,19 @@ public class Inventory : MonoBehaviour
    
     public float HideAfterSeconds = 1.0f;
     public int DeadZonePixels = 25;
+
+    // Returns true if the inventory is full.
+    public bool IsInventoryFull()
+    {
+        foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
+        {
+            if (!slot.GetItem())
+            {
+                return false;
+            }
+        }
+        return true;
+    }
     
     // Instantiate the item before calling.
     public void AddItem(InventoryItem item)
@@ -27,6 +40,7 @@ public class Inventory : MonoBehaviour
                 return;
             }
         }
+        Debug.Log("Warning: Inventory is full.");
     }
 
     // Displays the inventory.
