@@ -6,14 +6,18 @@ public class ObjectTriggerTest : Trigger {
     public AudioSource InteractSound;
     public PlayerState PlayerState;
     public Inventory Inventory;
-    public InventoryItem FoodItem;
+    public FoodItemTest FoodItemPrefab;
+    public MessageBox MessageBox;
 
     public override void OnTrigger()
     {
         PlayerState.Money = 0.0f;
-        if (Inventory && FoodItem)
+        if (Inventory && FoodItemPrefab)
         {
-            Inventory.AddItem(FoodItem);
+            FoodItemTest foodItem = Instantiate(FoodItemPrefab);
+            foodItem.PlayerState = PlayerState;
+            foodItem.MessageBox = MessageBox;
+            Inventory.AddItem(foodItem);
         }
         else
         {

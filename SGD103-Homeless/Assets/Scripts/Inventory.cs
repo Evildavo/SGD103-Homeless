@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Inventory : MonoBehaviour {
+public class Inventory : MonoBehaviour
+{
     private bool isAwake = true;
     private float timeAtWake;
     private Vector3 lastMousePosition;
@@ -9,19 +10,37 @@ public class Inventory : MonoBehaviour {
 
     public Transform ItemDescription;
     public Transform SlotContainer;
-
+   
     public float HideAfterSeconds = 1.0f;
     public int DeadZonePixels = 25;
-
+    
+    // Instantiate the item before calling.
     public void AddItem(InventoryItem item)
     {
-        Debug.Log("Adding item");
+        // Add to next available free slot.
+        foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>())
+        {
+            if (!slot.GetItem())
+            {
+                WakeInventory();
+                item.transform.SetParent(slot.transform, false);
+                break;
+            }
+        }
+    }
+
+    // Displays the inventory.
+    public void WakeInventory()
+    {
+        isAwake = true;
+        timeAtWake = Time.time;
+        foreach (Transform slot in SlotContainer.transform)
+        {
+            slot.gameObject.SetActive(true);
+        }
+        lastMousePosition = Input.mousePosition;
     }
     
-	void Start () {
-	    
-	}
-
     void Update()
     {
         // Wake up the inventory if the mouse moved or is over an item.
@@ -29,22 +48,16 @@ public class Inventory : MonoBehaviour {
             Mathf.Abs(lastMousePosition.x - Input.mousePosition.x) > DeadZonePixels ||
             Mathf.Abs(lastMousePosition.y - Input.mousePosition.y) > DeadZonePixels)
         {
-            isAwake = true;
-            timeAtWake = Time.time;
-            foreach (Transform child in SlotContainer.transform)
-            {
-                child.gameObject.SetActive(true);
-            }
-            lastMousePosition = Input.mousePosition;
+            WakeInventory();
         }
 
         // After time hide the inventory.
         if (isAwake && Time.time - timeAtWake > HideAfterSeconds)
         {
             isAwake = false;
-            foreach (Transform child in SlotContainer.transform)
+            foreach (Transform slot in SlotContainer.transform)
             {
-                child.gameObject.SetActive(false);
+                slot.gameObject.SetActive(false);
             }
         }
     }
