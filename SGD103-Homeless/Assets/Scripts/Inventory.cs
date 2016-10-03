@@ -7,15 +7,11 @@ public class Inventory : MonoBehaviour {
     private Vector3 lastMousePosition;
     private int lastMouseY;
 
-    public Transform InventorySlotContainer;
+    public Transform ItemDescription;
+    public Transform SlotContainer;
 
-    public float HideAfterSeconds = 3.0f;
-    public int DeadZonePixels = 20;
-
-    public InventorySlot[] GetSlots()
-    {
-        return InventorySlotContainer.GetComponentsInChildren<InventorySlot>();
-    }
+    public float HideAfterSeconds = 1.0f;
+    public int DeadZonePixels = 25;
     
 	void Start () {
 	    
@@ -23,13 +19,14 @@ public class Inventory : MonoBehaviour {
 
     void Update()
     {
-        // If mouse moved wake up inventory.
-        if (Mathf.Abs(lastMousePosition.x - Input.mousePosition.x) > DeadZonePixels ||
+        // Wake up the inventory if the mouse moved or is over an item.
+        if (ItemDescription.gameObject.activeInHierarchy ||
+            Mathf.Abs(lastMousePosition.x - Input.mousePosition.x) > DeadZonePixels ||
             Mathf.Abs(lastMousePosition.y - Input.mousePosition.y) > DeadZonePixels)
         {
             isAwake = true;
             timeAtWake = Time.time;
-            foreach (Transform child in transform)
+            foreach (Transform child in SlotContainer.transform)
             {
                 child.gameObject.SetActive(true);
             }
@@ -40,7 +37,7 @@ public class Inventory : MonoBehaviour {
         if (isAwake && Time.time - timeAtWake > HideAfterSeconds)
         {
             isAwake = false;
-            foreach (Transform child in transform)
+            foreach (Transform child in SlotContainer.transform)
             {
                 child.gameObject.SetActive(false);
             }

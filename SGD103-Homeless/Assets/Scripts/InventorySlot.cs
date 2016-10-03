@@ -7,33 +7,35 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 {
     private bool isOver = false;
 
-    public Transform ItemDescription;
-    public Text ItemNameText;
-    public Text ItemActionText;
+    public InventoryItemDescription ItemDescription;
 
     public InventoryItem GetItem()
     {
         return GetComponentInChildren<InventoryItem>();
+    }
+    
+    void Start()
+    {
+        ItemDescription.gameObject.SetActive(false);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         isOver = true;
         InventoryItem item = GetItem();
-        if (item && ItemNameText)
+        if (item && ItemDescription)
         {
             // Update text.
-            ItemNameText.text = item.ItemName;
-            ItemActionText.text = item.PrimaryActionDescription;
-            ItemNameText.enabled = true;
-            ItemActionText.enabled = true;
+            ItemDescription.gameObject.SetActive(true);
+            ItemDescription.ItemName.text = item.ItemName;
+            ItemDescription.ItemAction.text = item.PrimaryActionDescription;
 
             // Move description text to the slot.
             if (ItemDescription)
             {
-                Vector3 position = ItemDescription.position;
+                Vector3 position = ItemDescription.transform.position;
                 position.x = transform.position.x;
-                ItemDescription.position = position;
+                ItemDescription.transform.position = position;
             }
         }
     }
@@ -43,8 +45,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         isOver = false;
 
         // Hide description text.
-        ItemNameText.enabled = false;
-        ItemActionText.enabled = false;
+        ItemDescription.gameObject.SetActive(false);
     }
 
     public void OnClick()
