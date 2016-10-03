@@ -31,16 +31,38 @@ public class Inventory : MonoBehaviour
     public void AddItem(InventoryItem item)
     {
         // Add to next available free slot.
+        int i = 0;
         foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
         {
             if (!slot.GetItem())
             {
                 WakeInventory();
+                item.InventoryIndex = i;
                 item.transform.SetParent(slot.transform, false);
                 return;
             }
+            i++;
         }
         Debug.Log("Warning: Inventory is full.");
+    }
+
+    // Removes the item and moves other items to fill the gaps.
+    public void RemoveItem(InventoryItem item)
+    {
+        // Move items down to fill the slot.
+        InventorySlot[] inventorySlots = SlotContainer.GetComponentsInChildren<InventorySlot>(true);
+        for (var i = item.InventoryIndex; i < inventorySlots.Length - 1; i++)
+        {
+            InventoryItem itemAbove = inventorySlots[i + 1].GetItem();
+            if (itemAbove)
+            {
+                itemAbove.InventoryIndex = i;
+                itemAbove.transform.SetParent(inventorySlots[i].transform, false);
+            }
+        }
+        
+        // Destroy the object.
+        Destroy(item.gameObject);
     }
 
     // Displays the inventory.

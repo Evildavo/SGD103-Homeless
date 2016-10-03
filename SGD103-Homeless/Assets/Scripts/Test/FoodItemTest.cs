@@ -6,6 +6,7 @@ public class FoodItemTest : InventoryItem
 {
     public PlayerState PlayerState;
     public MessageBox MessageBox;
+    public Inventory Inventory;
 
     public float CloseAfterSeconds = 1.75f;
 
@@ -14,7 +15,8 @@ public class FoodItemTest : InventoryItem
         MessageBox.ShowForTime(CloseAfterSeconds, gameObject);
         MessageBox.SetMessage("You feel full");
         PlayerState.HungerThirst += 1.0f;
-        Destroy(gameObject);
+
+        Inventory.RemoveItem(this);
     }
 
 }
