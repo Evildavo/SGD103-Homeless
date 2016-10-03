@@ -4,10 +4,13 @@ using System.Collections;
 public class Inventory : MonoBehaviour {
     private bool isAwake = true;
     private float timeAtWake;
+    private Vector3 lastMousePosition;
+    private int lastMouseY;
 
     public Transform InventorySlotContainer;
 
-    public float HideAfterSeconds = 4.0f;
+    public float HideAfterSeconds = 3.0f;
+    public int DeadZonePixels = 20;
 
     public InventorySlot[] GetSlots()
     {
@@ -21,7 +24,8 @@ public class Inventory : MonoBehaviour {
     void Update()
     {
         // If mouse moved wake up inventory.
-        if (Input.GetAxis("Mouse X") != 0 && Input.GetAxis("Mouse Y") != 0)
+        if (Mathf.Abs(lastMousePosition.x - Input.mousePosition.x) > DeadZonePixels ||
+            Mathf.Abs(lastMousePosition.y - Input.mousePosition.y) > DeadZonePixels)
         {
             isAwake = true;
             timeAtWake = Time.time;
@@ -29,6 +33,7 @@ public class Inventory : MonoBehaviour {
             {
                 child.gameObject.SetActive(true);
             }
+            lastMousePosition = Input.mousePosition;
         }
 
         // After time hide the inventory.
