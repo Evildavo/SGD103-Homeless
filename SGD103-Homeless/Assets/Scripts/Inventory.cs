@@ -18,13 +18,13 @@ public class Inventory : MonoBehaviour
     public void AddItem(InventoryItem item)
     {
         // Add to next available free slot.
-        foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>())
+        foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
         {
             if (!slot.GetItem())
             {
                 WakeInventory();
                 item.transform.SetParent(slot.transform, false);
-                break;
+                return;
             }
         }
     }

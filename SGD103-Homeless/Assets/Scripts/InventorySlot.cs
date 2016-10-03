@@ -11,7 +11,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public InventoryItem GetItem()
     {
-        return GetComponentInChildren<InventoryItem>();
+        return GetComponentInChildren<InventoryItem>(true);
     }
     
     void Start()
