@@ -49,6 +49,12 @@ public class Trigger : MonoBehaviour
         if (IsActive && isNearby)
         {
             ShowInteractionText();
+            if (Input.GetKeyDown("e") || Input.GetKeyDown("enter"))
+            {
+                IsActive = false;
+                HideInteractionText();
+                OnTrigger();
+            }
         }
     }
 
@@ -63,17 +69,6 @@ public class Trigger : MonoBehaviour
     {
         isNearby = false;
         HideInteractionText();
-    }
-
-    // Call from derived.
-    public virtual void OnGUI()
-    {
-        if (IsActive && isNearby && Event.current.keyCode == KeyCode.E)
-        { 
-            IsActive = false;
-            HideInteractionText();
-            OnTrigger();
-        }
     }
 
 }

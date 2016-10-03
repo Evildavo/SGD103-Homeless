@@ -37,9 +37,4 @@ public class CharacterTriggerTest : Trigger {
     {
         base.OnTriggerExit(other);
     }
-
-    public override void OnGUI()
-    {
-        base.OnGUI();
-    }
 }
