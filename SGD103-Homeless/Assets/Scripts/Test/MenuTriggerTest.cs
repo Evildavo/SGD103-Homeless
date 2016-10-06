@@ -3,9 +3,18 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class MenuTriggerTest : Trigger {
+
+    public Menu Menu;
     
     public override void OnTrigger()
     {
+        Menu.Option[] options = {
+            new Menu.Option("Buy food", 10),
+            new Menu.Option("Buy alcohol", 20),
+            new Menu.Option("Say A"),
+            new Menu.Option("Say B")
+        };
+        Menu.SetOptions(options);
         IsActive = true;
     }
 
