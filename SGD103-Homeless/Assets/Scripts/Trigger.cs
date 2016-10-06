@@ -34,7 +34,10 @@ public class Trigger : MonoBehaviour
     }
 
     // Override to do some action on being triggered.
-    public virtual void OnTrigger() {}
+    public virtual void OnTrigger()
+    {
+        IsActive = true;
+    }
 
     // Call from derived.
     public virtual void Start()
