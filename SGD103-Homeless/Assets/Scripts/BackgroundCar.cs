@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CarBackground : MonoBehaviour {
+public class BackgroundCar : MonoBehaviour {
 
     public float Speed = 6.0f;
     public Zone WrapFrom;
