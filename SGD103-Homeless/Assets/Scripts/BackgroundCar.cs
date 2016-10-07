@@ -51,12 +51,15 @@ public class BackgroundCar : MonoBehaviour {
         return false;
     }
 
-    void Start() {
+    void Start()
+    {
+        // The main object is a shell for editor purposes with the actual mesh as a child object.
+        GetComponent<Renderer>().enabled = false;
 
         // Hide if we're not in active hours.
         if (!withinActiveHours(GameTime.TimeOfDayHours))
         {
-            GetComponent<Renderer>().enabled = false;
+            GetComponentInChildren<Renderer>().enabled = false;
             isActive = false;
         }
 	}
@@ -82,13 +85,13 @@ public class BackgroundCar : MonoBehaviour {
             // Become active if we've entered active hours.
             if (!isActive && withinActiveHours(GameTime.TimeOfDayHours))
             {
-                GetComponent<Renderer>().enabled = true;
+                GetComponentInChildren<Renderer>().enabled = true;
                 isActive = true;
             }
             // Become inactive if we've exited active hours.
             else if (isActive && !withinActiveHours(GameTime.TimeOfDayHours))
             {
-                GetComponent<Renderer>().enabled = false;
+                GetComponentInChildren<Renderer>().enabled = false;
                 isActive = false;
             }
         }

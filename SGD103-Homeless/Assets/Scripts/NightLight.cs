@@ -7,6 +7,7 @@ public class NightLight : MonoBehaviour {
     public GameTime GameTime;
 
     public float MaxSwitchDelaySeconds;
+    public bool IsVehicleLight = false;
 
     void Start ()
     {
