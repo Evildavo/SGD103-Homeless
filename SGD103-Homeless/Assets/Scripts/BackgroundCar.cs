@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BackgroundCar : MonoBehaviour {
 
-    public float Speed = 6.0f;
+    public float SpeedKmPerHour = 60.0f;
     public Zone WrapFrom;
     public Zone WrapTo;
 
@@ -14,7 +14,11 @@ public class BackgroundCar : MonoBehaviour {
 	void Update () {
 
         // Move forward.
-        transform.Translate(new Vector3(Speed, 0.0f, 0.0f) * Time.deltaTime);
+        const float METERS_PER_KM = 1000.0f;
+        const float MINUTES_PER_HOUR = 60.0f;
+        const float SECONDS_PER_MINUTE = 60.0f;
+        float speedMetersPerSecond = SpeedKmPerHour * METERS_PER_KM / MINUTES_PER_HOUR / SECONDS_PER_MINUTE;
+        transform.Translate(new Vector3(speedMetersPerSecond, 0.0f, 0.0f) * Time.deltaTime);
 	}
     
     public void OnTriggerEnter(Collider other)
