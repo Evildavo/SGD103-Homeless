@@ -2,17 +2,31 @@
 using System.Collections;
 
 public class BackgroundCar : MonoBehaviour {
+    private bool isActive = true;
+
+    public GameTime GameTime;
 
     public float SpeedKmPerHour = 60.0f;
     public Zone WrapFrom;
     public Zone WrapTo;
 
-    void Start () {
-	
+    [Range(0.0f, 24.0f)]
+    public float ActiveFromHour = 7.0f;
+    [Range(0.0f, 24.0f)]
+    public float ActiveToHour = 18.0f;
+
+    void Start() {
+
+        // Hide if we're not in active hours.
+        if (GameTime.TimeOfDayHours < ActiveFromHour || GameTime.TimeOfDayHours > ActiveToHour)
+        {
+            GetComponent<Renderer>().enabled = false;
+            isActive = false;
+        }
 	}
 	
-	void Update () {
-
+	void Update ()
+    {
         // Move forward.
         const float METERS_PER_KM = 1000.0f;
         const float MINUTES_PER_HOUR = 60.0f;
@@ -28,6 +42,19 @@ public class BackgroundCar : MonoBehaviour {
         {
             Vector3 wrapFromDelta = transform.position - WrapFrom.transform.position;
             transform.position = WrapTo.transform.position + wrapFromDelta;
+            
+            // Become active if we've entered active hours.
+            if (!isActive && GameTime.TimeOfDayHours >= ActiveFromHour && GameTime.TimeOfDayHours <= ActiveToHour)
+            {
+                GetComponent<Renderer>().enabled = true;
+                isActive = true;
+            }
+            // Become inactive if we've exited active hours.
+            else if (isActive && (GameTime.TimeOfDayHours < ActiveFromHour || GameTime.TimeOfDayHours > ActiveToHour))
+            {
+                GetComponent<Renderer>().enabled = false;
+                isActive = false;
+            }
         }
     }
 }
