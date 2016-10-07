@@ -25,7 +25,7 @@ public class BackgroundCar : MonoBehaviour {
             Vector3 wrapFromDelta = transform.position - WrapFrom.transform.position;
             Quaternion wrapToRotation = Quaternion.Euler(0.0f, -WrapTo.transform.eulerAngles.y, 0.0f);
             transform.position = WrapTo.transform.position + wrapToRotation * wrapFromDelta;
-            transform.rotation = WrapTo.transform.rotation;
+            //transform.rotation = WrapTo.transform.rotation;
         }
     }
 }
