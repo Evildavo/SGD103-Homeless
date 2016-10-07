@@ -2,23 +2,59 @@
 using System.Collections;
 
 public class BackgroundCar : MonoBehaviour {
-    private bool isActive = true;
+    
+    public enum ActivePeriods
+    {
+        PEAK_HOURS,      // < From 8am to 10am and 4pm to 7pm, inclusive.
+        REGULAR_HOURS,   // < From 8am to 7pm, inclusive.
+        MOST_HOURS,      // < From 5am to 12am midnight, inclusive.
+        ALL_HOURS        // < All hours.
+    }
 
     public GameTime GameTime;
 
     public float SpeedKmPerHour = 60.0f;
     public Zone WrapFrom;
     public Zone WrapTo;
+    public ActivePeriods ActivePeriod = ActivePeriods.REGULAR_HOURS;
 
-    [Range(0.0f, 24.0f)]
-    public float ActiveFromHour = 7.0f;
-    [Range(0.0f, 24.0f)]
-    public float ActiveToHour = 18.0f;
+    [ReadOnly]
+    public bool isActive = true;
+
+    // Returns true if the given time in hours is within the active hours for this vehicle.
+    bool withinActiveHours(float time)
+    {
+        int t = (int)time;
+        switch (ActivePeriod)
+        {
+            case ActivePeriods.PEAK_HOURS:
+                if ((t >= 8 && t <= 10) || (t >= 16 && t <= 19))
+                {
+                    return true;
+                }
+                break;
+            case ActivePeriods.REGULAR_HOURS:
+                if (t >= 8 && t <= 19)
+                {
+                    return true;
+                }
+                break;
+            case ActivePeriods.MOST_HOURS:
+                if (t >= 5 || t == 0)
+                {
+                    return true;
+                }
+                break;
+            case ActivePeriods.ALL_HOURS:
+                return true;
+        }
+        return false;
+    }
 
     void Start() {
 
         // Hide if we're not in active hours.
-        if (GameTime.TimeOfDayHours < ActiveFromHour || GameTime.TimeOfDayHours > ActiveToHour)
+        if (!withinActiveHours(GameTime.TimeOfDayHours))
         {
             GetComponent<Renderer>().enabled = false;
             isActive = false;
@@ -44,13 +80,13 @@ public class BackgroundCar : MonoBehaviour {
             transform.position = WrapTo.transform.position + wrapFromDelta;
             
             // Become active if we've entered active hours.
-            if (!isActive && GameTime.TimeOfDayHours >= ActiveFromHour && GameTime.TimeOfDayHours <= ActiveToHour)
+            if (!isActive && withinActiveHours(GameTime.TimeOfDayHours))
             {
                 GetComponent<Renderer>().enabled = true;
                 isActive = true;
             }
             // Become inactive if we've exited active hours.
-            else if (isActive && (GameTime.TimeOfDayHours < ActiveFromHour || GameTime.TimeOfDayHours > ActiveToHour))
+            else if (isActive && !withinActiveHours(GameTime.TimeOfDayHours))
             {
                 GetComponent<Renderer>().enabled = false;
                 isActive = false;
