@@ -22,14 +22,10 @@ public class CarBackground : MonoBehaviour {
         // Wrap over when running out of road.
         if (other.gameObject == WrapFrom.gameObject)
         {
-            Transform delta = transform;
-            delta.Translate(-WrapTo.transform.position);
-            delta.Rotate(new Vector3(0.0f, transform.eulerAngles.y, 0.0f));
-            Vector3 position = delta.position;
-            position.x = 0.0f;
-            delta.position = position;
-            delta.Translate(WrapTo.transform.position);
-            transform.position = delta;
+            Vector3 wrapFromDelta = transform.position - WrapFrom.transform.position;
+            Quaternion wrapToRotation = Quaternion.Euler(0.0f, -WrapTo.transform.eulerAngles.y, 0.0f);
+            transform.position = WrapTo.transform.position + wrapToRotation * wrapFromDelta;
+            transform.rotation = WrapTo.transform.rotation;
         }
     }
 }
