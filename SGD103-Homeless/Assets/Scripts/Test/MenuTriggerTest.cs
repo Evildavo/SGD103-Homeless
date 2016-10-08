@@ -2,17 +2,16 @@
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class MenuTriggerTest : Trigger {
+public class MenuTriggerTest : MonoBehaviour {
 
+    public Trigger Trigger;
     public Menu Menu;
     public PlayerState PlayerState;
     public Inventory Inventory;
     public MessageBox MessageBox;
     public ConfirmationBox ConfirmationBox;
     public FoodItemTest FoodItem;
-    public WatchItemTest WatchItem;
-    
-    
+    public WatchItemTest WatchItem;    
     public List<Menu.Option> Options;
     
     public void OnBuyFoodSelected(string name, int value)
@@ -77,39 +76,15 @@ public class MenuTriggerTest : Trigger {
         }
     }
     
-    public override void OnTrigger()
+    public void OnTrigger()
     {
         Menu.Show(Options);
-        IsActive = true;
+        Trigger.IsActive = true;
     }
-
-    public override void OnPlayerEnter()
-    {
-    }
-
-    public override void OnPlayerExit()
+    
+    public void OnPlayerExit()
     {
         Menu.Hide();
     }
-
-
-    public override void Start()
-    {
-        base.Start();
-    }
-
-    public override void Update()
-    {
-        base.Update();
-    }
-
-    public override void OnTriggerEnter(Collider other)
-    {
-        base.OnTriggerEnter(other);
-    }
-
-    public override void OnTriggerExit(Collider other)
-    {
-        base.OnTriggerExit(other);
-    }
+        
 }

@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using System.Collections;
 
 public class Trigger : MonoBehaviour
 {
     private bool isNearby = false;
-
+    
     public PlayerCharacter PlayerCharacter;
     public Text TriggerNameText;
     public Text InteractHintText;
@@ -13,7 +14,10 @@ public class Trigger : MonoBehaviour
     public bool IsActive = true;
     public string TriggerName;
     public string InteractHintMessage;
-    
+    public UnityEvent OnTrigger;
+    public UnityEvent OnPlayerEnter;
+    public UnityEvent OnPlayerExit;
+
     public void ShowInteractionText()
     {
         if (TriggerNameText && InteractHintText)
@@ -33,28 +37,14 @@ public class Trigger : MonoBehaviour
             InteractHintText.GetComponent<Text>().enabled = false;
         }
     }
-
-    // Override to do some action on being triggered.
-    public virtual void OnTrigger()
-    {
-        IsActive = true;
-    }
     
-    // Override to do some action when the player enters the trigger.
-    public virtual void OnPlayerEnter() {}
-
-    // Override to do some action when the player enters the trigger.
-    public virtual void OnPlayerExit() {}
-
-    // Call from derived.
-    public virtual void Start()
+    void Start()
     {
         GetComponent<Renderer>().enabled = false;
         HideInteractionText();
     }
-
-    // Call from derived.
-    public virtual void Update()
+    
+    void Update()
     {
         if (IsActive && isNearby)
         {
@@ -63,29 +53,27 @@ public class Trigger : MonoBehaviour
             {
                 IsActive = false;
                 HideInteractionText();
-                OnTrigger();
+                OnTrigger.Invoke();
             }
         }
     }
-
-    // Call from derived.
-    public virtual void OnTriggerEnter(Collider other)
+    
+    void OnTriggerEnter(Collider other)
     {
         if (other.gameObject == PlayerCharacter.gameObject)
         {
             isNearby = true;
-            OnPlayerEnter();
+            OnPlayerEnter.Invoke();
         }
     }
-
-    // Call from derived.
-    public virtual void OnTriggerExit(Collider other)
+    
+    void OnTriggerExit(Collider other)
     {
         if (other.gameObject == PlayerCharacter.gameObject)
         {
             isNearby = false;
             HideInteractionText();
-            OnPlayerExit();
+            OnPlayerExit.Invoke();
         }
     }
 

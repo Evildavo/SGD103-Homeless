@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CharacterTriggerTest : Trigger {
+public class CharacterTriggerTest : MonoBehaviour {
 
+    public Trigger Trigger;
     public AudioSource InteractSound;
     public PlayerState PlayerState;
 
-    public override void OnTrigger()
+    public void OnTrigger()
     {
         if (InteractSound)
         {
@@ -14,35 +15,11 @@ public class CharacterTriggerTest : Trigger {
         }
     }
 
-    public override void OnPlayerEnter()
+    void Update()
     {
-    }
-    
-    public override void OnPlayerExit()
-    {
-    }
-
-    public override void Start()
-    {
-        base.Start();
-    }
-
-    public override void Update()
-    {
-        base.Update();
-        if (!IsActive && !InteractSound.isPlaying)
+        if (!Trigger.IsActive && !InteractSound.isPlaying)
         {
-            IsActive = true;
+            Trigger.IsActive = true;
         }
-    }
-
-    public override void OnTriggerEnter(Collider other)
-    {
-        base.OnTriggerEnter(other);
-    }
-
-    public override void OnTriggerExit(Collider other)
-    {
-        base.OnTriggerExit(other);
     }
 }

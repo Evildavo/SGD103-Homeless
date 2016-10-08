@@ -1,28 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Dumpster : Trigger {
+public class Dumpster : MonoBehaviour {
     private float timeAtLastCheck;
 
+    public Trigger Trigger;
     public PlayerState PlayerState;
 
     public bool Searching = false;
 
-    public override void OnTrigger()
+    public void OnTrigger()
     {
         Searching = true;
         timeAtLastCheck = Time.time;
     }
-
-    public override void Start()
+    
+    void Update()
     {
-        base.Start();
-    }
-
-    public override void Update()
-    {
-        base.Update();
-
         if (Time.time - timeAtLastCheck > 1)
         {
             float value = Random.Range(0, 100);
@@ -33,24 +27,10 @@ public class Dumpster : Trigger {
             }
         }
     }
-
-    public override void OnPlayerEnter()
-    {
-    }
-
-    public override void OnPlayerExit()
+    
+    public void OnPlayerExit()
     {
         Searching = false;
-        IsActive = true;
-    }
-
-    public override void OnTriggerEnter(Collider other)
-    {
-        base.OnTriggerEnter(other);
-    }
-
-    public override void OnTriggerExit(Collider other)
-    {
-        base.OnTriggerExit(other);
+        Trigger.IsActive = true;
     }
 }
