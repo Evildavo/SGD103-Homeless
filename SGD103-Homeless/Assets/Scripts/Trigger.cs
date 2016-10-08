@@ -6,6 +6,7 @@ public class Trigger : MonoBehaviour
 {
     private bool isNearby = false;
 
+    public PlayerCharacter PlayerCharacter;
     public Text TriggerNameText;
     public Text InteractHintText;
 
@@ -64,14 +65,20 @@ public class Trigger : MonoBehaviour
     // Call from derived.
     public virtual void OnTriggerEnter(Collider other)
     {
-        isNearby = true;
+        if (other.gameObject == PlayerCharacter.gameObject)
+        {
+            isNearby = true;
+        }
     }
 
     // Call from derived.
     public virtual void OnTriggerExit(Collider other)
     {
-        isNearby = false;
-        HideInteractionText();
+        if (other.gameObject == PlayerCharacter.gameObject)
+        {
+            isNearby = false;
+            HideInteractionText();
+        }
     }
 
 }
