@@ -8,9 +8,11 @@ public class MenuTriggerTest : Trigger {
     public PlayerState PlayerState;
     public Inventory Inventory;
     public MessageBox MessageBox;
-    public FoodItemTest FoodItemPrefab;
-
-    void OnOptionSelected(Menu.Option option)
+    public ConfirmationBox ConfirmationBox;
+    public FoodItemTest FoodItem;
+    public WatchItemTest WatchItem;
+    
+    void onOptionSelected(Menu.Option option)
     {
         switch (option.ID)
         {
@@ -22,14 +24,12 @@ public class MenuTriggerTest : Trigger {
                 }
 
                 // Add food to the inventory.
-                FoodItemTest foodItem = Instantiate(FoodItemPrefab);
+                FoodItemTest foodItem = Instantiate(FoodItem);
                 foodItem.PlayerState = PlayerState;
                 foodItem.MessageBox = MessageBox;
                 foodItem.Inventory = Inventory;
                 foodItem.GetComponent<Image>().color = Random.ColorHSV(0.0f, 0.5f, 0.7f, 1.0f, 0.7f, 1.0f, 1.0f, 1.0f);
-                Inventory.AddItem(foodItem);
-                
-                Debug.Log("You bought food");
+                Inventory.AddItem(foodItem);                
                 break;
             case "Alcohol":
                 PlayerState.Money -= option.Price;
@@ -37,32 +37,38 @@ public class MenuTriggerTest : Trigger {
                 {
                     PlayerState.Money = 0;
                 }
-                Debug.Log("You bought booze");
                 break;
             case "A":
                 MessageBox.ShowForTime(3, gameObject);
                 MessageBox.SetMessage("Hello");
-
-                Debug.Log("You said A");
                 break;
             case "B":
                 MessageBox.ShowForTime(3, gameObject);
                 MessageBox.SetMessage("Cool");
+                break;
+            case "Sell":
 
-                Debug.Log("You said B");
+                // Anonymous function for when the user presses confirm in the confirmation box.
+                ConfirmationBox.OnConfirmation onSellWatchConfirmed = () =>
+                {
+                    PlayerState.Money += option.Price;
+                    Inventory.RemoveItem(WatchItem);
+                };
+                ConfirmationBox.Open(onSellWatchConfirmed, "Sell watch?", "Yes", "No");
                 break;
         }
     }
-
+    
     public override void OnTrigger()
     {
         Menu.Option[] options = {
-            new Menu.Option("Food", "Buy food", 10),
-            new Menu.Option("Alcohol", "Buy alcohol", 200),
+            new Menu.Option("Food", "Buy food", -10),
+            new Menu.Option("Alcohol", "Buy alcohol", -200),
             new Menu.Option("A", "Say A"),
-            new Menu.Option("B", "Say B")
+            new Menu.Option("B", "Say B"),
+            new Menu.Option("Sell", "Sell watch", 3000)
         };
-        Menu.SetOptions(options, OnOptionSelected);
+        Menu.SetOptions(options, onOptionSelected);
         IsActive = true;
     }
 
