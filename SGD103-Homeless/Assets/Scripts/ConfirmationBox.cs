@@ -44,4 +44,16 @@ public class ConfirmationBox : MonoBehaviour {
     {
         Close();
     }
+
+    void Update()
+    {
+        if (Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
+        {
+            OnConfirm();
+        }
+        else if (Input.GetKeyDown("escape"))
+        {
+            OnDeny();
+        }
+    }
 }
