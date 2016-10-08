@@ -59,7 +59,7 @@ public class Trigger : MonoBehaviour
         if (IsActive && isNearby)
         {
             ShowInteractionText();
-            if (Input.GetKeyDown("e") || Input.GetKeyDown("enter"))
+            if (Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
             {
                 IsActive = false;
                 HideInteractionText();
