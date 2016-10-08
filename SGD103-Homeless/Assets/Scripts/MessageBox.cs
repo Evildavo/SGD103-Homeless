@@ -7,18 +7,19 @@ public class MessageBox : MonoBehaviour
     private float fromTime;
     private float closeAfterSeconds;
 
+    [ReadOnly]
     public GameObject Source;
 
     public void Show(GameObject source)
     {
-        Source = source;
         gameObject.SetActive(true);
+        Source = source;
     }
 
     public void ShowForTime(float seconds, GameObject source)
     {
-        Source = source;
         gameObject.SetActive(true);
+        Source = source;
         fromTime = Time.time;
         closeAfterSeconds = seconds;
     }
