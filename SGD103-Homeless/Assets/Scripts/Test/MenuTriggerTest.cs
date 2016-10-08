@@ -89,6 +89,7 @@ public class MenuTriggerTest : Trigger {
 
     public override void OnPlayerExit()
     {
+        Menu.Hide();
     }
 
 

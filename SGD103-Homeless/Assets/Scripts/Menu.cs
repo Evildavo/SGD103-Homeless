@@ -29,6 +29,7 @@ public class Menu : MonoBehaviour
     // Sets the options menu to display the given list of options.
     public void Show(List<Option> options)
     {
+        gameObject.SetActive(true);
         MenuOption[] menuOptions = GetComponentsInChildren<MenuOption>(true);
 
         // Disable all menu options at first.
