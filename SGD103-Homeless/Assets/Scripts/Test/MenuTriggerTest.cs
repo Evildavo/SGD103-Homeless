@@ -47,14 +47,16 @@ public class MenuTriggerTest : Trigger {
                 MessageBox.SetMessage("Cool");
                 break;
             case "Sell":
-
-                // Anonymous function for when the user presses confirm in the confirmation box.
-                ConfirmationBox.OnConfirmation onSellWatchConfirmed = () =>
+                if (WatchItem)
                 {
-                    PlayerState.Money += option.Price;
-                    Inventory.RemoveItem(WatchItem);
-                };
-                ConfirmationBox.Open(onSellWatchConfirmed, "Sell watch?", "Yes", "No");
+                    // Anonymous function for when the user presses confirm in the confirmation box.
+                    ConfirmationBox.OnConfirmation onSellWatchConfirmed = () =>
+                    {
+                        PlayerState.Money += option.Price;
+                        Inventory.RemoveItem(WatchItem);
+                    };
+                    ConfirmationBox.Open(onSellWatchConfirmed, "Sell watch?", "Yes", "No");
+                }
                 break;
         }
     }
