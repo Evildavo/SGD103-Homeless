@@ -61,6 +61,16 @@ public class MenuTriggerTest : Trigger {
             {
                 PlayerState.Money += price;
                 Inventory.RemoveItem(WatchItem);
+
+                // Remove this option and update the menu.
+                for (var i = 0; i < Options.Count; i++)
+                {
+                    if (Options[i].Name == name)
+                    {
+                        Options.RemoveAt(i);
+                    }
+                }
+                Menu.Show(Options);
             };
             ConfirmationBox.Open(onSellWatchConfirmed, "Sell watch?", "Yes", "No");
         }
