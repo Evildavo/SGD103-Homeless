@@ -17,7 +17,7 @@ public class MenuTriggerTest : Trigger {
         switch (option.ID)
         {
             case "Food":
-                PlayerState.Money -= option.Price;
+                PlayerState.Money += option.Price;
                 if (PlayerState.Money < 0)
                 {
                     PlayerState.Money = 0;
@@ -32,7 +32,7 @@ public class MenuTriggerTest : Trigger {
                 Inventory.AddItem(foodItem);                
                 break;
             case "Alcohol":
-                PlayerState.Money -= option.Price;
+                PlayerState.Money += option.Price;
                 if (PlayerState.Money < 0)
                 {
                     PlayerState.Money = 0;
