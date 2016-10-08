@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using System.Collections.Generic;
 
 public class MenuTriggerTest : Trigger {
 
@@ -12,7 +12,8 @@ public class MenuTriggerTest : Trigger {
     public FoodItemTest FoodItem;
     public WatchItemTest WatchItem;
     
-    public Menu.Option[] Options;
+    
+    public List<Menu.Option> Options;
     
     public void OnBuyFoodSelected(string name, int price)
     {
@@ -61,6 +62,16 @@ public class MenuTriggerTest : Trigger {
             {
                 PlayerState.Money += price;
                 Inventory.RemoveItem(WatchItem);
+
+                // Remove this option and update the menu.
+                for (var i = 0; i < Options.Count; i++)
+                {
+                    if (Options[i].Name == name)
+                    {
+                        Options.RemoveAt(i);
+                    }
+                }
+                Menu.Show(Options);
             };
             ConfirmationBox.Open(onSellWatchConfirmed, "Sell watch?", "Yes", "No");
         }

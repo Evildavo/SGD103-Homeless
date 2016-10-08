@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
-using System.Collections;
+using System.Collections.Generic;
 
 public class Menu : MonoBehaviour
 {
@@ -27,7 +27,7 @@ public class Menu : MonoBehaviour
     public Transform MenuOptions;
 
     // Sets the options menu to display the given list of options.
-    public void Show(Option[] options)
+    public void Show(List<Option> options)
     {
         MenuOption[] menuOptions = GetComponentsInChildren<MenuOption>(true);
 
