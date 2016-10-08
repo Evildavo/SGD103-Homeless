@@ -1,32 +1,33 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using System.Collections;
 
-public class Menu : MonoBehaviour {
-
+public class Menu : MonoBehaviour
+{
     // Option name and optionally a price.
-    // The ID is used to reference the option in scripts.
+    [System.Serializable]
     public struct Option
     {
-        public string ID;
+        // The parameters are name and price.
+        [System.Serializable]
+        public class OnSelectedEvent : UnityEvent<string, int> { }
+              
         public string Name;
         public int Price;
+        public OnSelectedEvent Callback;
 
-        public Option(string id, string name, int price = 0)
+        public Option(OnSelectedEvent callback, string name, int price = 0)
         {
-            ID = id;
+            Callback = callback;
             Name = name;
             Price = price;
         }
     };
 
-    // Callback for handling options being selected.
-    public delegate void OnOptionSelectedCallback(Option option);
-
     public Transform MenuOptions;
 
     // Sets the options menu to display the given list of options.
-    // The given callback is called when the given option was pressed.
-    public void SetOptions(Option[] options, OnOptionSelectedCallback onOptionSelectedCallback)
+    public void Show(Option[] options)
     {
         MenuOption[] menuOptions = GetComponentsInChildren<MenuOption>(true);
 
@@ -41,7 +42,6 @@ public class Menu : MonoBehaviour {
         foreach (Option option in options)
         {
             menuOptions[i].optionInfo = option;
-            menuOptions[i].Callback = onOptionSelectedCallback;
             menuOptions[i].OptionText.text = option.Name;
             if (option.Price != 0)
             {
@@ -54,6 +54,11 @@ public class Menu : MonoBehaviour {
             menuOptions[i].gameObject.SetActive(true);
             i++;
         }
+    }
+
+    public void Hide()
+    {
+        gameObject.SetActive(false);
     }
     
 	void Start ()

@@ -12,65 +12,63 @@ public class MenuTriggerTest : Trigger {
     public FoodItemTest FoodItem;
     public WatchItemTest WatchItem;
     
-    void onOptionSelected(Menu.Option option)
+    public Menu.Option[] Options;
+    
+    public void OnBuyFoodSelected(string name, int price)
     {
-        switch (option.ID)
+        PlayerState.Money += price;
+        if (PlayerState.Money < 0)
         {
-            case "Food":
-                PlayerState.Money += option.Price;
-                if (PlayerState.Money < 0)
-                {
-                    PlayerState.Money = 0;
-                }
+            PlayerState.Money = 0;
+        }
 
-                // Add food to the inventory.
-                FoodItemTest foodItem = Instantiate(FoodItem);
-                foodItem.PlayerState = PlayerState;
-                foodItem.MessageBox = MessageBox;
-                foodItem.Inventory = Inventory;
-                foodItem.GetComponent<Image>().color = Random.ColorHSV(0.0f, 0.5f, 0.7f, 1.0f, 0.7f, 1.0f, 1.0f, 1.0f);
-                Inventory.AddItem(foodItem);                
-                break;
-            case "Alcohol":
-                PlayerState.Money += option.Price;
-                if (PlayerState.Money < 0)
-                {
-                    PlayerState.Money = 0;
-                }
-                break;
-            case "A":
-                MessageBox.ShowForTime(3, gameObject);
-                MessageBox.SetMessage("Hello");
-                break;
-            case "B":
-                MessageBox.ShowForTime(3, gameObject);
-                MessageBox.SetMessage("Cool");
-                break;
-            case "Sell":
-                if (WatchItem)
-                {
-                    // Anonymous function for when the user presses confirm in the confirmation box.
-                    ConfirmationBox.OnConfirmation onSellWatchConfirmed = () =>
-                    {
-                        PlayerState.Money += option.Price;
-                        Inventory.RemoveItem(WatchItem);
-                    };
-                    ConfirmationBox.Open(onSellWatchConfirmed, "Sell watch?", "Yes", "No");
-                }
-                break;
+        // Add food to the inventory.
+        FoodItemTest foodItem = Instantiate(FoodItem);
+        foodItem.PlayerState = PlayerState;
+        foodItem.MessageBox = MessageBox;
+        foodItem.Inventory = Inventory;
+        foodItem.GetComponent<Image>().color = Random.ColorHSV(0.0f, 0.5f, 0.7f, 1.0f, 0.7f, 1.0f, 1.0f, 1.0f);
+        Inventory.AddItem(foodItem);
+    }
+
+    public void OnBuyAlcoholSelected(string name, int price)
+    {
+        PlayerState.Money += price;
+        if (PlayerState.Money < 0)
+        {
+            PlayerState.Money = 0;
+        }
+    }
+
+    public void OnOptionASelected(string name, int price)
+    {
+        MessageBox.ShowForTime(3, gameObject);
+        MessageBox.SetMessage("Hello");
+    }
+
+    public void OnOptionBSelected(string name, int price)
+    {
+        MessageBox.ShowForTime(3, gameObject);
+        MessageBox.SetMessage("Cool");
+    }
+
+    public void OnSellWatchSelected(string name, int price)
+    {
+        if (WatchItem)
+        {
+            // Anonymous function for when the user presses confirm in the confirmation box.
+            ConfirmationBox.OnConfirmation onSellWatchConfirmed = () =>
+            {
+                PlayerState.Money += price;
+                Inventory.RemoveItem(WatchItem);
+            };
+            ConfirmationBox.Open(onSellWatchConfirmed, "Sell watch?", "Yes", "No");
         }
     }
     
     public override void OnTrigger()
     {
-        Menu.Option[] options = {
-            new Menu.Option("Food", "Buy food", -10),
-            new Menu.Option("Alcohol", "Buy alcohol", -200),
-            new Menu.Option("A", "Say A"),
-            new Menu.Option("B", "Say B"),
-            new Menu.Option("Sell", "Sell watch", 3000)
-        };
-        Menu.SetOptions(options, onOptionSelected);
+        Menu.Show(Options);
         IsActive = true;
     }
 

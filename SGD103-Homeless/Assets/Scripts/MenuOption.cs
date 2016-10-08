@@ -2,17 +2,19 @@
 using UnityEngine.UI;
 using System.Collections;
 
+
+using UnityEngine.Events;
+
 public class MenuOption : MonoBehaviour {
 
     public Text OptionText;
     public Text PriceText;
     
     public Menu.Option optionInfo;
-    public Menu.OnOptionSelectedCallback Callback;
 
     public void OnClick()
     {
-        Callback(optionInfo);
+        optionInfo.Callback.Invoke(optionInfo.Name, optionInfo.Price);
     }
     
 	void Start () {
