@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System.Collections;
 
 public class ConfirmationBox : MonoBehaviour {
     private OnConfirmation onConfirmationCallback;
+    private bool isMouseOver = false;
 
     public Text ConfirmationText;
     public Text AffirmativeButtonText;
@@ -40,6 +42,16 @@ public class ConfirmationBox : MonoBehaviour {
         Close();
     }
 
+    public void OnEnter()
+    {
+        isMouseOver = true;
+    }
+
+    public void OnExit()
+    {
+        isMouseOver = false;
+    }
+
     void Start()
     {
         Close();
@@ -47,6 +59,10 @@ public class ConfirmationBox : MonoBehaviour {
 
     void Update()
     {
+        if (Input.GetButtonDown("Primary") && !isMouseOver)
+        {
+            OnDeny();
+        }
         if (Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
         {
             OnConfirm();
