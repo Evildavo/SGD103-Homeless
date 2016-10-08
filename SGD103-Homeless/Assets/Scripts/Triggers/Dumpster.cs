@@ -34,6 +34,16 @@ public class Dumpster : Trigger {
         }
     }
 
+    public override void OnPlayerEnter()
+    {
+    }
+
+    public override void OnPlayerExit()
+    {
+        Searching = false;
+        IsActive = true;
+    }
+
     public override void OnTriggerEnter(Collider other)
     {
         base.OnTriggerEnter(other);
@@ -42,7 +52,5 @@ public class Dumpster : Trigger {
     public override void OnTriggerExit(Collider other)
     {
         base.OnTriggerExit(other);
-        Searching = false;
-        IsActive = true;
     }
 }

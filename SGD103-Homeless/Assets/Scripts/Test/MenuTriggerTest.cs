@@ -72,6 +72,15 @@ public class MenuTriggerTest : Trigger {
         IsActive = true;
     }
 
+    public override void OnPlayerEnter()
+    {
+    }
+
+    public override void OnPlayerExit()
+    {
+    }
+
+
     public override void Start()
     {
         base.Start();

@@ -39,6 +39,12 @@ public class Trigger : MonoBehaviour
     {
         IsActive = true;
     }
+    
+    // Override to do some action when the player enters the trigger.
+    public virtual void OnPlayerEnter() {}
+
+    // Override to do some action when the player enters the trigger.
+    public virtual void OnPlayerExit() {}
 
     // Call from derived.
     public virtual void Start()
@@ -68,6 +74,7 @@ public class Trigger : MonoBehaviour
         if (other.gameObject == PlayerCharacter.gameObject)
         {
             isNearby = true;
+            OnPlayerEnter();
         }
     }
 
@@ -78,6 +85,7 @@ public class Trigger : MonoBehaviour
         {
             isNearby = false;
             HideInteractionText();
+            OnPlayerExit();
         }
     }
 

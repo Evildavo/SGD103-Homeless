@@ -52,6 +52,14 @@ public class ObjectTriggerTest : Trigger {
         }
     }
 
+    public override void OnPlayerEnter()
+    {
+    }
+
+    public override void OnPlayerExit()
+    {
+    }
+    
     public override void Start()
     {
         base.Start();
