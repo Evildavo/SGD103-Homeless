@@ -4,23 +4,23 @@ using System.Collections.Generic;
 
 public class Menu : MonoBehaviour
 {
-    // Option name and optionally a price.
+    // Option name and optionally a value.
     [System.Serializable]
     public struct Option
     {
-        // The parameters are name and price.
+        // The parameters are name and value.
         [System.Serializable]
         public class OnSelectedEvent : UnityEvent<string, int> { }
               
         public string Name;
-        public int Price;
+        public int Value;
         public OnSelectedEvent Callback;
 
-        public Option(OnSelectedEvent callback, string name, int price = 0)
+        public Option(OnSelectedEvent callback, string name, int value = 0)
         {
             Callback = callback;
             Name = name;
-            Price = price;
+            Value = value;
         }
     };
 
@@ -44,13 +44,13 @@ public class Menu : MonoBehaviour
         {
             menuOptions[i].optionInfo = option;
             menuOptions[i].OptionText.text = option.Name;
-            if (option.Price != 0)
+            if (option.Value != 0)
             {
-                menuOptions[i].PriceText.text = "$" + option.Price.ToString("F2");
+                menuOptions[i].ValueText.text = "$" + option.Value.ToString("F2");
             }
             else
             {
-                menuOptions[i].PriceText.text = "";
+                menuOptions[i].ValueText.text = "";
             }
             menuOptions[i].gameObject.SetActive(true);
             i++;

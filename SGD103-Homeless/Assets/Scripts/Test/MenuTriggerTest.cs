@@ -15,52 +15,52 @@ public class MenuTriggerTest : Trigger {
     
     public List<Menu.Option> Options;
     
-    public void OnBuyFoodSelected(string name, int price)
+    public void OnBuyFoodSelected(string name, int value)
     {
-        PlayerState.Money += price;
-        if (PlayerState.Money < 0)
+        if (PlayerState.Money >= value && !Inventory.IsInventoryFull())
         {
-            PlayerState.Money = 0;
-        }
+            PlayerState.Money -= value;
 
-        // Add food to the inventory.
-        FoodItemTest foodItem = Instantiate(FoodItem);
-        foodItem.PlayerState = PlayerState;
-        foodItem.MessageBox = MessageBox;
-        foodItem.Inventory = Inventory;
-        foodItem.GetComponent<Image>().color = Random.ColorHSV(0.0f, 0.5f, 0.7f, 1.0f, 0.7f, 1.0f, 1.0f, 1.0f);
-        Inventory.AddItem(foodItem);
-    }
-
-    public void OnBuyAlcoholSelected(string name, int price)
-    {
-        PlayerState.Money += price;
-        if (PlayerState.Money < 0)
-        {
-            PlayerState.Money = 0;
+            // Add food to the inventory.
+            FoodItemTest foodItem = Instantiate(FoodItem);
+            foodItem.PlayerState = PlayerState;
+            foodItem.MessageBox = MessageBox;
+            foodItem.Inventory = Inventory;
+            foodItem.GetComponent<Image>().color = Random.ColorHSV(0.0f, 0.5f, 0.7f, 1.0f, 0.7f, 1.0f, 1.0f, 1.0f);
+            Inventory.AddItem(foodItem);
         }
     }
 
-    public void OnOptionASelected(string name, int price)
+    public void OnBuyAlcoholSelected(string name, int value)
+    {
+        if (PlayerState.Money >= value)
+        {
+            PlayerState.Money -= value;
+        }
+    }
+
+    public void OnOptionASelected(string name, int value)
     {
         MessageBox.ShowForTime(3, gameObject);
         MessageBox.SetMessage("Hello");
+        Menu.Hide();
     }
 
-    public void OnOptionBSelected(string name, int price)
+    public void OnOptionBSelected(string name, int value)
     {
         MessageBox.ShowForTime(3, gameObject);
         MessageBox.SetMessage("Cool");
+        Menu.Hide();
     }
 
-    public void OnSellWatchSelected(string name, int price)
+    public void OnSellWatchSelected(string name, int value)
     {
         if (WatchItem)
         {
             // Anonymous function for when the user presses confirm in the confirmation box.
             ConfirmationBox.OnConfirmation onSellWatchConfirmed = () =>
             {
-                PlayerState.Money += price;
+                PlayerState.Money += value;
                 Inventory.RemoveItem(WatchItem);
 
                 // Remove this option and update the menu.
