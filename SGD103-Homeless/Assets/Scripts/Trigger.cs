@@ -51,7 +51,7 @@ public class Trigger : MonoBehaviour
             ShowInteractionText();
             if (Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
             {
-                IsActive = false;
+                //IsActive = false;
                 HideInteractionText();
                 OnTrigger.Invoke();
             }
