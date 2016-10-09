@@ -11,6 +11,7 @@ public class Inventory : MonoBehaviour
     public Transform ItemDescription;
     public Transform SlotContainer;
    
+    [Tooltip("A value of 0 will disable hiding")]
     public float HideAfterSeconds = 1.0f;
     public int DeadZonePixels = 25;
 
@@ -88,7 +89,7 @@ public class Inventory : MonoBehaviour
         }
 
         // After time hide the inventory.
-        if (isAwake && Time.time - timeAtWake > HideAfterSeconds)
+        if (isAwake && HideAfterSeconds != 0 && Time.time - timeAtWake > HideAfterSeconds)
         {
             isAwake = false;
             foreach (Transform slot in SlotContainer.transform)
