@@ -15,8 +15,27 @@ public class Trigger : MonoBehaviour
     public string TriggerName;
     public string InteractHintMessage;
     public UnityEvent OnTrigger;
+    public UnityEvent OnTriggerUpdate;
     public UnityEvent OnPlayerEnter;
     public UnityEvent OnPlayerExit;
+
+    // Re-enables the trigger.
+    public void Reset()
+    {
+        IsActive = true;
+    }
+
+    // CONTINUE
+    public void Start(float minIntervalSeconds = 0.0f)
+    {
+
+    }
+
+    // CONTINUE
+    public void Stop()
+    {
+
+    }
 
     public void ShowInteractionText()
     {

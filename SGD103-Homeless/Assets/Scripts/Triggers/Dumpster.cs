@@ -2,35 +2,36 @@
 using System.Collections;
 
 public class Dumpster : MonoBehaviour {
-    private float timeAtLastCheck;
 
     public Trigger Trigger;
     public PlayerState PlayerState;
-
-    public bool Searching = false;
-
+    public ConfirmationBox ConfirmationBox;
+    
     public void OnTrigger()
     {
-        Searching = true;
-        timeAtLastCheck = Time.time;
+        const float INTERVAL_SECONDS = 1.0f;
+        Trigger.Start(INTERVAL_SECONDS);
     }
-    
-    void Update()
+
+    public void OnTriggerUpdate()
     {
-        if (Time.time - timeAtLastCheck > 1)
+        float value = Random.Range(0, 10);
+        if (value == 0)
         {
-            float value = Random.Range(0, 100);
-            if (value < 10)
+            ConfirmationBox.OnConfirmation onEatFoodConfirmed = () =>
             {
                 PlayerState.HungerThirst += 0.2f;
-                PlayerState.HungerThirst -= 0.2f;
-            }
+                PlayerState.Health -= 0.2f;
+            };
+            ConfirmationBox.Open(onEatFoodConfirmed, "You found food. Eat it?", "Yes", "No");
+            Trigger.Stop();
+            Trigger.Reset();
         }
     }
     
     public void OnPlayerExit()
     {
-        Searching = false;
-        Trigger.IsActive = true;
+        Trigger.Stop();
+        Trigger.Reset();
     }
 }
