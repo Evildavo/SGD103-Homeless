@@ -6,7 +6,6 @@ public class Inventory : MonoBehaviour
     private bool isAwake = true;
     private float timeAtWake;
     private Vector3 lastMousePosition;
-    private int lastMouseY;
 
     public Transform ItemDescription;
     public Transform SlotContainer;
