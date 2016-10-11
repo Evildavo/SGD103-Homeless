@@ -3,19 +3,18 @@ using System.Collections;
 
 public class Dumpster : MonoBehaviour {
     private float timeAtLastCheck;
-
-    public Trigger Trigger;
+    
     public PlayerState PlayerState;
     public ConfirmationBox ConfirmationBox;
 
     public float ChanceOfFindingFoodPerSecond = 0.1f;
     
-    public void OnTrigger()
+    public void OnTrigger(Trigger trigger)
     {
         timeAtLastCheck = Time.time;
     }
 
-    public void OnTriggerUpdate()
+    public void OnTriggerUpdate(Trigger trigger)
     {
         // Every second, randomly decide if we've found food.
         if (Time.time - timeAtLastCheck > 1.0f)
@@ -29,15 +28,15 @@ public class Dumpster : MonoBehaviour {
                     PlayerState.Health -= 0.2f;
                 };
                 ConfirmationBox.Open(onEatFoodConfirmed, "You found food. Eat it?", "Yes", "No");
-                Trigger.Reset();
+                trigger.Reset();
             }
             timeAtLastCheck = Time.time;
         }
     }
     
-    public void OnPlayerExit()
+    public void OnPlayerExit(Trigger trigger)
     {
         ConfirmationBox.Close();
-        Trigger.Reset();
+        trigger.Reset();
     }
 }

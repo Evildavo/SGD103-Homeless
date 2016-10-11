@@ -3,8 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class ObjectTriggerTest : MonoBehaviour {
-
-    public Trigger Trigger;
+    
     public AudioSource InteractSound;
     public PlayerState PlayerState;
     public Inventory Inventory;
@@ -12,7 +11,7 @@ public class ObjectTriggerTest : MonoBehaviour {
     public MessageBox MessageBox;
     public bool FoodIsFree = false;
 
-    public void OnTrigger()
+    public void OnTrigger(Trigger trigger)
     {
         // Buy the item if we have room in the inventory.
         if (!Inventory.IsInventoryFull())
@@ -49,11 +48,11 @@ public class ObjectTriggerTest : MonoBehaviour {
         // Reset trigger so the player can buy more.
         if (FoodIsFree)
         {
-            Trigger.Reset();
+            trigger.Reset();
         }
         else
         {
-            Trigger.Reset(false);
+            trigger.Reset(false);
         }
     }
 

@@ -5,6 +5,11 @@ using System.Collections;
 
 public class Trigger : MonoBehaviour
 {
+
+    // The first paramater is the trigger that called the event.
+    [System.Serializable]
+    public class TriggerEvent : UnityEvent<Trigger> { }
+
     public PlayerCharacter PlayerCharacter;
     public GameTime GameTime;
     public Text TriggerNameText;
@@ -19,16 +24,16 @@ public class Trigger : MonoBehaviour
     public string InteractHintMessage;
 
     [Tooltip("Called when the player activates the trigger.")]
-    public UnityEvent OnTrigger;
+    public TriggerEvent OnTrigger;
 
     [Tooltip("Called while the trigger is activated.")]
-    public UnityEvent OnTriggerUpdate;
+    public TriggerEvent OnTriggerUpdate;
 
     [Tooltip("Called when the player enters the trigger zone.")]
-    public UnityEvent OnPlayerEnter;
+    public TriggerEvent OnPlayerEnter;
 
     [Tooltip("Called when the player exists the trigger zone.")]
-    public UnityEvent OnPlayerExit;
+    public TriggerEvent OnPlayerExit;
 
     // Resets the trigger after being triggered. Returns game-time speed to normal.
     // If enabled is false the player won't be able to reactivate the trigger.
@@ -77,12 +82,12 @@ public class Trigger : MonoBehaviour
                 IsActivated = true;
                 GameTime.IsTimeAccelerated = true;
                 HideInteractionText();
-                OnTrigger.Invoke();
+                OnTrigger.Invoke(GetComponent<Trigger>());
             }
         }
         else if (IsActivated)
         {
-            OnTriggerUpdate.Invoke();
+            OnTriggerUpdate.Invoke(GetComponent<Trigger>());
         }
     }
     
@@ -91,7 +96,7 @@ public class Trigger : MonoBehaviour
         if (other.gameObject == PlayerCharacter.gameObject)
         {
             IsPlayerInsideTriggerZone = true;
-            OnPlayerEnter.Invoke();
+            OnPlayerEnter.Invoke(GetComponent<Trigger>());
         }
     }
     
@@ -101,7 +106,7 @@ public class Trigger : MonoBehaviour
         {
             IsPlayerInsideTriggerZone = false;
             HideInteractionText();
-            OnPlayerExit.Invoke();
+            OnPlayerExit.Invoke(GetComponent<Trigger>());
         }
     }
 
