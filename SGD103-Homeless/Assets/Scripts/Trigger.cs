@@ -20,6 +20,7 @@ public class Trigger : MonoBehaviour
     public bool IsPlayerInsideTriggerZone = false;
     [ReadOnly]
     public bool IsActivated = false;
+    public bool AccelerateTimeWhileActivated = true;
     public string TriggerName;
     public string InteractHintMessage;
 
@@ -80,7 +81,10 @@ public class Trigger : MonoBehaviour
             {
                 IsEnabled = false;
                 IsActivated = true;
-                GameTime.IsTimeAccelerated = true;
+                if (AccelerateTimeWhileActivated)
+                {
+                    GameTime.IsTimeAccelerated = true;
+                }
                 HideInteractionText();
                 OnTrigger.Invoke(GetComponent<Trigger>());
             }

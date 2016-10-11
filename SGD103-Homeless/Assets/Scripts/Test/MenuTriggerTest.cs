@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class MenuTriggerTest : MonoBehaviour {
+    private Trigger trigger;
     
     public Menu Menu;
     public PlayerState PlayerState;
@@ -42,6 +43,7 @@ public class MenuTriggerTest : MonoBehaviour {
         MessageBox.ShowForTime(3, gameObject);
         MessageBox.SetMessage("Hello");
         Menu.Hide();
+        trigger.Reset();
     }
 
     public void OnOptionBSelected(string name, int value)
@@ -49,6 +51,7 @@ public class MenuTriggerTest : MonoBehaviour {
         MessageBox.ShowForTime(3, gameObject);
         MessageBox.SetMessage("Cool");
         Menu.Hide();
+        trigger.Reset();
     }
 
     public void OnSellWatchSelected(string name, int value)
@@ -72,19 +75,20 @@ public class MenuTriggerTest : MonoBehaviour {
                 Menu.Show(Options);
             };
             ConfirmationBox.Open(onSellWatchConfirmed, "Sell watch?", "Yes", "No");
+            // Todo: Reset trigger on confirmation denied
         }
     }
     
     public void OnTrigger(Trigger trigger)
     {
-        Debug.Log("Triggered");
+        this.trigger = trigger;
         Menu.Show(Options);
-        trigger.Reset();
     }
     
     public void OnPlayerExit(Trigger trigger)
     {
         Menu.Hide();
+        trigger.Reset();
     }
         
 }
