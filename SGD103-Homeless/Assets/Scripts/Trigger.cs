@@ -5,38 +5,40 @@ using System.Collections;
 
 public class Trigger : MonoBehaviour
 {
-    private bool isNearby = false;
-    
     public PlayerCharacter PlayerCharacter;
+    public GameTime GameTime;
     public Text TriggerNameText;
     public Text InteractHintText;
 
-    public bool IsActive = true;
+    public bool IsEnabled = true;
+    [ReadOnly]
+    public bool IsPlayerInsideTriggerZone = false;
+    [ReadOnly]
+    public bool IsActivated = false;
     public string TriggerName;
     public string InteractHintMessage;
+
+    [Tooltip("Called when the player activates the trigger.")]
     public UnityEvent OnTrigger;
+
+    [Tooltip("Called while the trigger is activated.")]
     public UnityEvent OnTriggerUpdate;
+
+    [Tooltip("Called when the player enters the trigger zone.")]
     public UnityEvent OnPlayerEnter;
+
+    [Tooltip("Called when the player exists the trigger zone.")]
     public UnityEvent OnPlayerExit;
 
-    // Re-enables the trigger.
-    public void Reset()
+    // Resets the trigger after being triggered. Returns game-time speed to normal.
+    // If enabled is false the player won't be able to reactivate the trigger.
+    public void Reset(bool enabled = true)
     {
-        IsActive = true;
+        IsEnabled = enabled;
+        IsActivated = false;
+        GameTime.IsTimeAccelerated = false;
     }
-
-    // CONTINUE
-    public void Start(float minIntervalSeconds = 0.0f)
-    {
-
-    }
-
-    // CONTINUE
-    public void Stop()
-    {
-
-    }
-
+    
     public void ShowInteractionText()
     {
         if (TriggerNameText && InteractHintText)
@@ -65,15 +67,22 @@ public class Trigger : MonoBehaviour
     
     void Update()
     {
-        if (IsActive && isNearby)
+        // Show prompt allowing the player to activate the trigger.
+        if (!IsActivated && IsEnabled && IsPlayerInsideTriggerZone)
         {
             ShowInteractionText();
             if (Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
             {
-                //IsActive = false;
+                IsEnabled = false;
+                IsActivated = true;
+                GameTime.IsTimeAccelerated = true;
                 HideInteractionText();
                 OnTrigger.Invoke();
             }
+        }
+        else if (IsActivated)
+        {
+            OnTriggerUpdate.Invoke();
         }
     }
     
@@ -81,7 +90,7 @@ public class Trigger : MonoBehaviour
     {
         if (other.gameObject == PlayerCharacter.gameObject)
         {
-            isNearby = true;
+            IsPlayerInsideTriggerZone = true;
             OnPlayerEnter.Invoke();
         }
     }
@@ -90,7 +99,7 @@ public class Trigger : MonoBehaviour
     {
         if (other.gameObject == PlayerCharacter.gameObject)
         {
-            isNearby = false;
+            IsPlayerInsideTriggerZone = false;
             HideInteractionText();
             OnPlayerExit.Invoke();
         }

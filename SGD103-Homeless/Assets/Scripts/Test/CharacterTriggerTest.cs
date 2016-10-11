@@ -17,9 +17,9 @@ public class CharacterTriggerTest : MonoBehaviour {
 
     void Update()
     {
-        if (!Trigger.IsActive && !InteractSound.isPlaying)
+        if (!Trigger.IsEnabled && !InteractSound.isPlaying)
         {
-            Trigger.IsActive = true;
+            Trigger.Reset();
         }
     }
 }

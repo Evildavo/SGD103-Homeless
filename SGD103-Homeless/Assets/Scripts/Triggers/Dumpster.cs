@@ -9,8 +9,6 @@ public class Dumpster : MonoBehaviour {
     
     public void OnTrigger()
     {
-        const float INTERVAL_SECONDS = 1.0f;
-        Trigger.Start(INTERVAL_SECONDS);
     }
 
     public void OnTriggerUpdate()
@@ -24,14 +22,12 @@ public class Dumpster : MonoBehaviour {
                 PlayerState.Health -= 0.2f;
             };
             ConfirmationBox.Open(onEatFoodConfirmed, "You found food. Eat it?", "Yes", "No");
-            Trigger.Stop();
             Trigger.Reset();
         }
     }
     
     public void OnPlayerExit()
     {
-        Trigger.Stop();
         Trigger.Reset();
     }
 }

@@ -79,7 +79,7 @@ public class MenuTriggerTest : MonoBehaviour {
     public void OnTrigger()
     {
         Menu.Show(Options);
-        Trigger.IsActive = true;
+        Trigger.IsEnabled = true;
     }
     
     public void OnPlayerExit()

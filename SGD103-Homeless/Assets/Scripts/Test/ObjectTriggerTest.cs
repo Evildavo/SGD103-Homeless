@@ -49,7 +49,11 @@ public class ObjectTriggerTest : MonoBehaviour {
         // Reset trigger so the player can buy more.
         if (FoodIsFree)
         {
-            Trigger.IsActive = true;
+            Trigger.Reset();
+        }
+        else
+        {
+            Trigger.Reset(false);
         }
     }
 
