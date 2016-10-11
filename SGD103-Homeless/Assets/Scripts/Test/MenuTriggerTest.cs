@@ -3,8 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class MenuTriggerTest : MonoBehaviour {
-
-    public Trigger Trigger;
+    
     public Menu Menu;
     public PlayerState PlayerState;
     public Inventory Inventory;
@@ -76,13 +75,14 @@ public class MenuTriggerTest : MonoBehaviour {
         }
     }
     
-    public void OnTrigger()
+    public void OnTrigger(Trigger trigger)
     {
+        Debug.Log("Triggered");
         Menu.Show(Options);
-        Trigger.IsEnabled = true;
+        trigger.Reset();
     }
     
-    public void OnPlayerExit()
+    public void OnPlayerExit(Trigger trigger)
     {
         Menu.Hide();
     }
