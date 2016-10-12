@@ -10,6 +10,9 @@ public class PlayerState : MonoBehaviour {
     public Text HealthText;
     public Text MoraleText;
 
+    public Color NormalTextColour;
+    public Color HighlightTextColour;
+
     public float Money = 0;
 
     [Range(0.0f, 1.0f)]
@@ -18,11 +21,40 @@ public class PlayerState : MonoBehaviour {
     public float Health = 1.0f;
     [Range(0.0f, 1.0f)]
     public float Morale = 1.0f;
+    public bool HighlightHungerThirst;
+    public bool HighlightHealth;
+    public bool HighlightMorale;
     public float HungerIncreasePerGameHour;
     public float HealthDecreasePerGameHour;
     public float MoraleDecreasePerGameHour;
-	
-	void Update () {
+
+    void Update () {
+
+        // Highlight stats.
+        if (HighlightHungerThirst)
+        {
+            HungerThirstText.color = HighlightTextColour;
+        }
+        else
+        {
+            HungerThirstText.color = NormalTextColour;
+        }
+        if (HighlightHealth)
+        {
+            HealthText.color = HighlightTextColour;
+        }
+        else
+        {
+            HealthText.color = NormalTextColour;
+        }
+        if (HighlightMorale)
+        {
+            MoraleText.color = HighlightTextColour;
+        }
+        else
+        {
+            MoraleText.color = NormalTextColour;
+        }
 
         // Update stat texts.
         if (MoneyText)
