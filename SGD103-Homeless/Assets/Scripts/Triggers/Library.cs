@@ -3,13 +3,19 @@ using System.Collections.Generic;
 
 public class Library : MonoBehaviour {
     private bool isReading;
+    private bool isJobSearching;
+    private float timeAtLastCheck;
 
     public Trigger Trigger;
     public Menu Menu;
     public MessageBox MessageBox;
+    public ConfirmationBox ConfirmationBox;
     public PlayerState PlayerState;
 
-    public float MoraleGainedPerSecond = 0.05f;
+    public float MoraleGainedPerSecondReading = 0.05f;
+    public float JobSearchTimeSeconds = 4.0f;
+
+    public List<string> Books;
 
     void Start()
     {
@@ -46,15 +52,22 @@ public class Library : MonoBehaviour {
         options.Add(new Menu.Option(OnStopReading, "Stop reading"));
         return options;
     }
-
+    
     public void OnJobSearch()
     {
         MessageBox.Show("Searching for jobs...", gameObject);
+        Menu.Hide();
+        Trigger.GameTime.IsTimeAccelerated = true;
+        isJobSearching = true;
+        timeAtLastCheck = Time.time;
     }
 
     public void OnReadBook()
     {
-        MessageBox.Show("You are reading...", gameObject);
+        // Choose a random book to read.
+        int random = Random.Range(0, Books.Count);
+
+        MessageBox.Show("You are reading \"" + Books[random] + "\"", gameObject);
         Menu.Show(getReadingMenu());
         PlayerState.HighlightMorale = true;
         Trigger.GameTime.IsTimeAccelerated = true;
@@ -90,7 +103,15 @@ public class Library : MonoBehaviour {
         // Increase morale while reading.
         if (isReading)
         {
-            PlayerState.Morale += MoraleGainedPerSecond * Time.deltaTime;
+            PlayerState.Morale += MoraleGainedPerSecondReading * Time.deltaTime;
+        }
+        
+        // Search for jobs after a minimum amount of time.
+        if (isJobSearching && Time.time - timeAtLastCheck > JobSearchTimeSeconds)
+        {
+            MessageBox.ShowForTime("You didn't find any jobs today.", 2.0f, gameObject);
+            Trigger.GameTime.IsTimeAccelerated = false;
+            Menu.Show(getMainMenu());
         }
 
         // Leave menu on E key.
