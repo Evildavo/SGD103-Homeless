@@ -13,6 +13,7 @@ public class MessageBox : MonoBehaviour
     public void Show(GameObject source)
     {
         gameObject.SetActive(true);
+        closeAfterSeconds = 0;
         Source = source;
     }
 
@@ -44,7 +45,7 @@ public class MessageBox : MonoBehaviour
     }
 	
 	void Update () {
-        if (Time.time - fromTime > closeAfterSeconds)
+        if (closeAfterSeconds != 0 && Time.time - fromTime > closeAfterSeconds)
         {
             Hide();
         }
