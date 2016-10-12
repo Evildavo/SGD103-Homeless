@@ -59,16 +59,14 @@ public class MenuTriggerTest : MonoBehaviour
 
     public void OnOptionASelected()
     {
-        MessageBox.ShowForTime(3, gameObject);
-        MessageBox.SetMessage("Hello");
+        MessageBox.ShowForTime("Hello", 3, gameObject);
         Menu.Hide();
         Trigger.Reset();
     }
 
     public void OnOptionBSelected()
     {
-        MessageBox.ShowForTime(3, gameObject);
-        MessageBox.SetMessage("Cool");
+        MessageBox.ShowForTime("Cool", 3, gameObject);
         Menu.Hide();
         Trigger.Reset();
     }

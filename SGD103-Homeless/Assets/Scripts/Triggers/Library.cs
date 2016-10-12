@@ -49,13 +49,12 @@ public class Library : MonoBehaviour {
 
     public void OnJobSearch()
     {
-        Debug.Log("Searching for job");
+        MessageBox.Show("Searching for jobs...", gameObject);
     }
 
     public void OnReadBook()
     {
-        MessageBox.SetMessage("You are reading...");
-        MessageBox.Show(gameObject);
+        MessageBox.Show("You are reading...", gameObject);
         Menu.Show(getReadingMenu());
         PlayerState.HighlightMorale = true;
         Trigger.GameTime.IsTimeAccelerated = true;

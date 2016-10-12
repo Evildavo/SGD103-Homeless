@@ -10,7 +10,7 @@ public class WatchItemTest : InventoryItem
 
     public override void OnPrimaryAction()
     {
-        MessageBox.ShowForTime(CloseAfterSeconds, gameObject);
+        MessageBox.ShowForTime("", CloseAfterSeconds, gameObject);
     }
 	
 	void Update () {

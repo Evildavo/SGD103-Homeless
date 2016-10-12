@@ -10,16 +10,18 @@ public class MessageBox : MonoBehaviour
     [ReadOnly]
     public GameObject Source;
 
-    public void Show(GameObject source)
+    public void Show(string message, GameObject source)
     {
         gameObject.SetActive(true);
+        GetComponentInChildren<Text>().text = message;
         closeAfterSeconds = 0;
         Source = source;
     }
 
-    public void ShowForTime(float seconds, GameObject source)
+    public void ShowForTime(string message, float seconds, GameObject source)
     {
         gameObject.SetActive(true);
+        GetComponentInChildren<Text>().text = message;
         Source = source;
         fromTime = Time.time;
         closeAfterSeconds = seconds;
