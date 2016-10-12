@@ -52,7 +52,10 @@ public class Library : MonoBehaviour {
     void leaveTrigger()
     {
         Menu.Hide();
-        trigger.Reset();
+        if (trigger)
+        {
+            trigger.Reset();
+        }
         MessageBox.Hide();
         isReading = false;
         PlayerState.HighlightMorale = false;
