@@ -4,23 +4,23 @@ using UnityEngine.EventSystems;
 using System.Collections;
 
 public class ConfirmationBox : MonoBehaviour {
-    private OnConfirmation onConfirmationCallback;
+    private OnChoiceMade onChoiceMadeCallback;
     private bool isMouseOver = false;
 
     public Text ConfirmationText;
     public Text AffirmativeButtonText;
     public Text DenialButtonText;
 
-    public delegate void OnConfirmation();
+    public delegate void OnChoiceMade(bool yes);
     
     public void Open(
-        OnConfirmation onConfirmationCallback,
+        OnChoiceMade onChoiceMadeCallback,
         string confirmationMessage = "Are you sure?",
         string affirmativeButtonName = "Yes",
         string denialButtonName = "No")
     {
         gameObject.SetActive(true);
-        this.onConfirmationCallback = onConfirmationCallback;
+        this.onChoiceMadeCallback = onChoiceMadeCallback;
         ConfirmationText.text = confirmationMessage;
         AffirmativeButtonText.text = affirmativeButtonName;
         DenialButtonText.text = denialButtonName;
@@ -34,12 +34,13 @@ public class ConfirmationBox : MonoBehaviour {
     public void OnConfirm()
     {
         Close();
-        onConfirmationCallback();
+        onChoiceMadeCallback(true);
     }
 
     public void OnDeny()
     {
         Close();
+        onChoiceMadeCallback(false);
     }
 
     public void OnEnter()

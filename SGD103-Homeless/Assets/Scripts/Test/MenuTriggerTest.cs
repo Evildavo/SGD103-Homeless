@@ -58,24 +58,26 @@ public class MenuTriggerTest : MonoBehaviour {
     {
         if (WatchItem)
         {
-            // Anonymous function for when the user presses confirm in the confirmation box.
-            ConfirmationBox.OnConfirmation onSellWatchConfirmed = () =>
+            ConfirmationBox.OnChoiceMade onChoiceMade = (bool yes) =>
             {
-                PlayerState.Money += value;
-                Inventory.RemoveItem(WatchItem);
-
-                // Remove this option and update the menu.
-                for (var i = 0; i < Options.Count; i++)
+                if (yes)
                 {
-                    if (Options[i].Name == name)
+                    PlayerState.Money += value;
+                    Inventory.RemoveItem(WatchItem);
+
+                    // Remove this option and update the menu.
+                    for (var i = 0; i < Options.Count; i++)
                     {
-                        Options.RemoveAt(i);
+                        if (Options[i].Name == name)
+                        {
+                            Options.RemoveAt(i);
+                        }
                     }
                 }
-                Menu.Show(Options);
+                Menu.Hide();
+                trigger.Reset();
             };
-            ConfirmationBox.Open(onSellWatchConfirmed, "Sell watch?", "Yes", "No");
-            // Todo: Reset trigger on confirmation denied
+            ConfirmationBox.Open(onChoiceMade, "Sell watch?", "Yes", "No");
         }
     }
     

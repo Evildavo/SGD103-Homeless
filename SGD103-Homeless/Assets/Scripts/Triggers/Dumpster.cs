@@ -22,12 +22,15 @@ public class Dumpster : MonoBehaviour {
             float value = Random.Range(0.0f, 1.0f);
             if (value <= ChanceOfFindingFoodPerSecond)
             {
-                ConfirmationBox.OnConfirmation onEatFoodConfirmed = () =>
+                ConfirmationBox.OnChoiceMade onChoiceMade = (bool yes) =>
                 {
-                    PlayerState.HungerThirst += 0.2f;
-                    PlayerState.Health -= 0.2f;
+                    if (yes)
+                    {
+                        PlayerState.HungerThirst += 0.2f;
+                        PlayerState.Health -= 0.2f;
+                    }
                 };
-                ConfirmationBox.Open(onEatFoodConfirmed, "You found food. Eat it?", "Yes", "No");
+                ConfirmationBox.Open(onChoiceMade, "You found food. Eat it?", "Yes", "No");
                 trigger.Reset();
             }
             timeAtLastCheck = Time.time;
