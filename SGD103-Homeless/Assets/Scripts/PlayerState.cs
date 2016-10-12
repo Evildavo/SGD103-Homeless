@@ -27,6 +27,7 @@ public class PlayerState : MonoBehaviour {
     public float HungerIncreasePerGameHour;
     public float HealthDecreasePerGameHour;
     public float MoraleDecreasePerGameHour;
+    public float HungerMoralePenaltyPerGameHour;
 
     void Update () {
 
@@ -74,12 +75,23 @@ public class PlayerState : MonoBehaviour {
             MoraleText.text = "Morale: " + (Morale * 100).ToString("f0") + "%";
         }
 
+        // Penalise morale when hunger reaches zero.
+        float moralePenalty = 0.0f;
+        if (HungerThirst == 0.0f)
+        {
+            moralePenalty += HungerMoralePenaltyPerGameHour;
+        }
+
         // Decrease stats over time.
         HungerThirst -= HungerIncreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
         Health -= HealthDecreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
-        Morale -= MoraleDecreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
+        Morale -= (MoraleDecreasePerGameHour + moralePenalty) / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
 
         // Limit stats to range 0-1.
+        if (Money < 0)
+        {
+            Money = 0;
+        }
         HungerThirst = Mathf.Clamp(HungerThirst, 0.0f, 1.0f);
         Health = Mathf.Clamp(Health, 0.0f, 1.0f);
         Morale = Mathf.Clamp(Morale, 0.0f, 1.0f);
