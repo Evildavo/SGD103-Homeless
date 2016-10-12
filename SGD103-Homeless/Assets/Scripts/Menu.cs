@@ -5,20 +5,20 @@ using System.Collections.Generic;
 public class Menu : MonoBehaviour
 {
     // Option name and optionally a value.
-    [System.Serializable]
     public struct Option
     {
-        // The parameters are name and value.
-        [System.Serializable]
-        public class OnSelectedEvent : UnityEvent<string, int> { }
-              
+        // Format for the function to call if the option is selected.
+        public delegate void OnSelectedCallback();
+        
         public string Name;
-        public int Value;
-        public OnSelectedEvent Callback;
+        public float Value;
+        public OnSelectedCallback Callback;
 
-        public Option(OnSelectedEvent callback, string name, int value = 0)
+        // The given callback function is called if the player selects the option.
+        // Value is the price. If it's zero it isn't displayed.
+        public Option(OnSelectedCallback onSelectedCallback, string name, float value = 0)
         {
-            Callback = callback;
+            Callback = onSelectedCallback;
             Name = name;
             Value = value;
         }
@@ -44,7 +44,7 @@ public class Menu : MonoBehaviour
         {
             menuOptions[i].optionInfo = option;
             menuOptions[i].OptionText.text = option.Name;
-            if (option.Value != 0)
+            if (option.Value != 0.0f)
             {
                 menuOptions[i].ValueText.text = "$" + option.Value.ToString("F2");
             }

@@ -2,7 +2,9 @@
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class MenuTriggerTest : MonoBehaviour {
+public class MenuTriggerTest : MonoBehaviour
+{
+    private List<Menu.Option> options = new List<Menu.Option>();
 
     public Trigger Trigger;    
     public Menu Menu;
@@ -11,20 +13,31 @@ public class MenuTriggerTest : MonoBehaviour {
     public MessageBox MessageBox;
     public ConfirmationBox ConfirmationBox;
     public FoodItemTest FoodItem;
-    public WatchItemTest WatchItem;    
-    public List<Menu.Option> Options;
+    public WatchItemTest WatchItem;
+
+    public float FoodPrice = 10.0f;
+    public float AlcoholPrice = 30.0f;
+    public float WatchPrice = 300.0f;
 
     void Start()
     {
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
+
+        // Set up menu.
+        options.Add(new Menu.Option(OnBuyFoodSelected, "Buy food", FoodPrice));
+        options.Add(new Menu.Option(OnBuyAlcoholSelected, "Buy alcohol", AlcoholPrice));
+        options.Add(new Menu.Option(OnOptionASelected, "Say A"));
+        options.Add(new Menu.Option(OnOptionBSelected, "Say B"));
+        options.Add(new Menu.Option(OnSellWatchSelected, "Sell watch", WatchPrice));
+        options.Add(new Menu.Option(OnExit, "Exit"));
     }
     
-    public void OnBuyFoodSelected(string name, int value)
+    public void OnBuyFoodSelected()
     {
-        if (PlayerState.Money >= value && !Inventory.IsInventoryFull())
+        if (PlayerState.Money >= FoodPrice && !Inventory.IsInventoryFull())
         {
-            PlayerState.Money -= value;
+            PlayerState.Money -= FoodPrice;
 
             // Add food to the inventory.
             FoodItemTest foodItem = Instantiate(FoodItem);
@@ -36,15 +49,15 @@ public class MenuTriggerTest : MonoBehaviour {
         }
     }
 
-    public void OnBuyAlcoholSelected(string name, int value)
+    public void OnBuyAlcoholSelected()
     {
-        if (PlayerState.Money >= value)
+        if (PlayerState.Money >= AlcoholPrice)
         {
-            PlayerState.Money -= value;
+            PlayerState.Money -= AlcoholPrice;
         }
     }
 
-    public void OnOptionASelected(string name, int value)
+    public void OnOptionASelected()
     {
         MessageBox.ShowForTime(3, gameObject);
         MessageBox.SetMessage("Hello");
@@ -52,7 +65,7 @@ public class MenuTriggerTest : MonoBehaviour {
         Trigger.Reset();
     }
 
-    public void OnOptionBSelected(string name, int value)
+    public void OnOptionBSelected()
     {
         MessageBox.ShowForTime(3, gameObject);
         MessageBox.SetMessage("Cool");
@@ -60,23 +73,24 @@ public class MenuTriggerTest : MonoBehaviour {
         Trigger.Reset();
     }
 
-    public void OnSellWatchSelected(string name, int value)
+    public void OnSellWatchSelected()
     {
         if (WatchItem)
         {
+            // In-line anonymous function.
             ConfirmationBox.OnChoiceMade onChoiceMade = (bool yes) =>
             {
                 if (yes)
                 {
-                    PlayerState.Money += value;
+                    PlayerState.Money += WatchPrice;
                     Inventory.RemoveItem(WatchItem);
 
                     // Remove this option and update the menu.
-                    for (var i = 0; i < Options.Count; i++)
+                    for (var i = 0; i < options.Count; i++)
                     {
-                        if (Options[i].Name == name)
+                        if (options[i].Name == name)
                         {
-                            Options.RemoveAt(i);
+                            options.RemoveAt(i);
                         }
                     }
                 }
@@ -86,10 +100,16 @@ public class MenuTriggerTest : MonoBehaviour {
             ConfirmationBox.Open(onChoiceMade, "Sell watch?", "Yes", "No");
         }
     }
-    
+
+    public void OnExit()
+    {
+        Menu.Hide();
+        Trigger.Reset();
+    }
+
     public void OnTrigger()
     {
-        Menu.Show(Options);
+        Menu.Show(options);
     }
     
     public void OnPlayerExit()

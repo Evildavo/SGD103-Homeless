@@ -14,7 +14,7 @@ public class MenuOption : MonoBehaviour {
 
     public void OnClick()
     {
-        optionInfo.Callback.Invoke(optionInfo.Name, optionInfo.Value);
+        optionInfo.Callback();
     }
     
 	void Start () {

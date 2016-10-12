@@ -8,8 +8,6 @@ public class Library : MonoBehaviour {
     public Menu Menu;
     public MessageBox MessageBox;
     public PlayerState PlayerState;
-    public List<Menu.Option> MainMenu;
-    public List<Menu.Option> ReadingMenu;
 
     public float MoraleGainedPerSecond = 0.05f;
 
@@ -20,14 +18,72 @@ public class Library : MonoBehaviour {
         Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
     }
 
+    // Reset to starting values.
+    void reset()
+    {
+        Menu.Hide();
+        MessageBox.Hide();
+        if (Trigger)
+        {
+            Trigger.Reset();
+        }
+    }
+
+    // Creates and returns a new main menu.
+    List<Menu.Option> getMainMenu()
+    {
+        List<Menu.Option> options = new List<Menu.Option>();
+        options.Add(new Menu.Option(OnJobSearch, "Job search"));
+        options.Add(new Menu.Option(OnReadBook, "Read book"));
+        options.Add(new Menu.Option(OnExit, "Exit"));
+        return options;
+    }
+
+    // Creates and returns a new reading menu.
+    List<Menu.Option> getReadingMenu()
+    {
+        List<Menu.Option> options = new List<Menu.Option>();
+        options.Add(new Menu.Option(OnStopReading, "Stop reading"));
+        return options;
+    }
+
+    public void OnJobSearch()
+    {
+        Debug.Log("Searching for job");
+    }
+
+    public void OnReadBook()
+    {
+        MessageBox.SetMessage("You are reading...");
+        MessageBox.Show(gameObject);
+        Menu.Show(getReadingMenu());
+        PlayerState.HighlightMorale = true;
+        Trigger.GameTime.IsTimeAccelerated = true;
+        isReading = true;
+    }
+
+    public void OnExit()
+    {
+        reset();
+    }
+
+    public void OnStopReading()
+    {
+        Menu.Show(getMainMenu());
+        MessageBox.Hide();
+        PlayerState.HighlightMorale = false;
+        Trigger.GameTime.IsTimeAccelerated = false;
+        isReading = false;
+    }
+
     public void OnTrigger()
     {
-        Menu.Show(MainMenu);
+        Menu.Show(getMainMenu());
     }
-    
+
     public void OnPlayerExit()
     {
-        leaveTrigger();
+        reset();
     }
 
     public void OnTriggerUpdate()
@@ -41,50 +97,8 @@ public class Library : MonoBehaviour {
         // Leave menu on E key.
         if (Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
         {
-            leaveTrigger();
+            reset();
         }
     }
 
-    public void OnJobSearch(string name, int value)
-    {
-        Debug.Log("Searching for job");
-    }
-
-    public void OnReadBooks(string name, int value)
-    {
-        MessageBox.SetMessage("You are reading...");
-        MessageBox.Show(gameObject);
-        Menu.Show(ReadingMenu);
-        PlayerState.HighlightMorale = true;
-        Trigger.GameTime.IsTimeAccelerated = true;
-        isReading = true;
-    }
-
-    public void OnExit(string name, int value)
-    {
-        Menu.Hide();
-        Trigger.Reset();
-    }
-
-    public void OnStopReading(string name, int value)
-    {
-        Menu.Show(MainMenu);
-        MessageBox.Hide();
-        PlayerState.HighlightMorale = false;
-        Trigger.GameTime.IsTimeAccelerated = false;
-        isReading = false;
-    }
-
-    void leaveTrigger()
-    {
-        Menu.Hide();
-        if (Trigger)
-        {
-            Trigger.Reset();
-        }
-        MessageBox.Hide();
-        isReading = false;
-        PlayerState.HighlightMorale = false;
-    }
-    
 }
