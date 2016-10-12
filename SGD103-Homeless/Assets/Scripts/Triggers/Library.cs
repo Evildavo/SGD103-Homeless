@@ -54,7 +54,8 @@ public class Library : MonoBehaviour {
         Menu.Hide();
         trigger.Reset();
         MessageBox.Hide();
-        OnStopReading("", 0);
+        isReading = false;
+        PlayerState.HighlightMorale = false;
     }
 
 
