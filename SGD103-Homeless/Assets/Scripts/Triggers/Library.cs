@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 
 public class Library : MonoBehaviour {
-    private Trigger trigger;
     private bool isReading;
 
+    public Trigger Trigger;
     public Menu Menu;
     public MessageBox MessageBox;
     public PlayerState PlayerState;
@@ -13,10 +13,36 @@ public class Library : MonoBehaviour {
 
     public float MoraleGainedPerSecond = 0.05f;
 
-    public void OnTrigger(Trigger trigger)
+    void Start()
     {
-        this.trigger = trigger;
+        Trigger.RegisterOnTriggerListener(OnTrigger);
+        Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
+        Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
+    }
+
+    public void OnTrigger()
+    {
         Menu.Show(MainMenu);
+    }
+    
+    public void OnPlayerExit()
+    {
+        leaveTrigger();
+    }
+
+    public void OnTriggerUpdate()
+    {
+        // Increase morale while reading.
+        if (isReading)
+        {
+            PlayerState.Morale += MoraleGainedPerSecond * Time.deltaTime;
+        }
+
+        // Leave menu on E key.
+        if (Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
+        {
+            leaveTrigger();
+        }
     }
 
     public void OnJobSearch(string name, int value)
@@ -30,14 +56,14 @@ public class Library : MonoBehaviour {
         MessageBox.Show(gameObject);
         Menu.Show(ReadingMenu);
         PlayerState.HighlightMorale = true;
-        trigger.GameTime.IsTimeAccelerated = true;
+        Trigger.GameTime.IsTimeAccelerated = true;
         isReading = true;
     }
 
     public void OnExit(string name, int value)
     {
         Menu.Hide();
-        trigger.Reset();
+        Trigger.Reset();
     }
 
     public void OnStopReading(string name, int value)
@@ -45,41 +71,20 @@ public class Library : MonoBehaviour {
         Menu.Show(MainMenu);
         MessageBox.Hide();
         PlayerState.HighlightMorale = false;
-        trigger.GameTime.IsTimeAccelerated = false;
+        Trigger.GameTime.IsTimeAccelerated = false;
         isReading = false;
     }
 
     void leaveTrigger()
     {
         Menu.Hide();
-        if (trigger)
+        if (Trigger)
         {
-            trigger.Reset();
+            Trigger.Reset();
         }
         MessageBox.Hide();
         isReading = false;
         PlayerState.HighlightMorale = false;
-    }
-
-
-    public void OnPlayerExit(Trigger trigger)
-    {
-        leaveTrigger();
-    }
-
-    public void OnTriggerUpdate(Trigger trigger)
-    {
-        // Increase morale while reading.
-        if (isReading)
-        {
-            PlayerState.Morale += MoraleGainedPerSecond * Time.deltaTime;
-        }
-
-        // Leave menu on E key.
-        if (Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
-        {
-            leaveTrigger();
-        }
     }
     
 }

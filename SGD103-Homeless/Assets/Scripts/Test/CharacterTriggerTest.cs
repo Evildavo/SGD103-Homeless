@@ -2,11 +2,18 @@
 using System.Collections;
 
 public class CharacterTriggerTest : MonoBehaviour {
-    
+
+    public Trigger Trigger;
     public AudioSource InteractSound;
     public PlayerState PlayerState;
 
-    public void OnTrigger(Trigger trigger)
+    void Start()
+    {
+        Trigger.RegisterOnTriggerListener(OnTrigger);
+        Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
+    }
+
+    public void OnTrigger()
     {
         if (InteractSound)
         {
@@ -14,11 +21,11 @@ public class CharacterTriggerTest : MonoBehaviour {
         }
     }
 
-    public void OnTriggerUpdate(Trigger trigger)
+    public void OnTriggerUpdate()
     {
         if (!InteractSound.isPlaying)
         {
-            trigger.Reset();
+            Trigger.Reset();
         }
     }
 }

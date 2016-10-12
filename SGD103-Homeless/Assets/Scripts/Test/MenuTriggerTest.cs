@@ -3,8 +3,8 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class MenuTriggerTest : MonoBehaviour {
-    private Trigger trigger;
-    
+
+    public Trigger Trigger;    
     public Menu Menu;
     public PlayerState PlayerState;
     public Inventory Inventory;
@@ -13,6 +13,12 @@ public class MenuTriggerTest : MonoBehaviour {
     public FoodItemTest FoodItem;
     public WatchItemTest WatchItem;    
     public List<Menu.Option> Options;
+
+    void Start()
+    {
+        Trigger.RegisterOnTriggerListener(OnTrigger);
+        Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
+    }
     
     public void OnBuyFoodSelected(string name, int value)
     {
@@ -43,7 +49,7 @@ public class MenuTriggerTest : MonoBehaviour {
         MessageBox.ShowForTime(3, gameObject);
         MessageBox.SetMessage("Hello");
         Menu.Hide();
-        trigger.Reset();
+        Trigger.Reset();
     }
 
     public void OnOptionBSelected(string name, int value)
@@ -51,7 +57,7 @@ public class MenuTriggerTest : MonoBehaviour {
         MessageBox.ShowForTime(3, gameObject);
         MessageBox.SetMessage("Cool");
         Menu.Hide();
-        trigger.Reset();
+        Trigger.Reset();
     }
 
     public void OnSellWatchSelected(string name, int value)
@@ -75,22 +81,21 @@ public class MenuTriggerTest : MonoBehaviour {
                     }
                 }
                 Menu.Hide();
-                trigger.Reset();
+                Trigger.Reset();
             };
             ConfirmationBox.Open(onChoiceMade, "Sell watch?", "Yes", "No");
         }
     }
     
-    public void OnTrigger(Trigger trigger)
+    public void OnTrigger()
     {
-        this.trigger = trigger;
         Menu.Show(Options);
     }
     
-    public void OnPlayerExit(Trigger trigger)
+    public void OnPlayerExit()
     {
         Menu.Hide();
-        trigger.Reset();
+        Trigger.Reset();
     }
         
 }

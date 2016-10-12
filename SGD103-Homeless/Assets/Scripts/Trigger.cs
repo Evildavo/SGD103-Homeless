@@ -5,10 +5,13 @@ using System.Collections;
 
 public class Trigger : MonoBehaviour
 {
+    private TriggerListener onTrigger;
+    private TriggerListener onTriggerUpdate;
+    private TriggerListener onPlayerEnter;
+    private TriggerListener onPlayerExit;
 
-    // The first paramater is the trigger that called the event.
-    [System.Serializable]
-    public class TriggerEvent : UnityEvent<Trigger> { }
+    // The format for trigger listener functions.
+    public delegate void TriggerListener();
 
     public PlayerCharacter PlayerCharacter;
     public GameTime GameTime;
@@ -23,18 +26,30 @@ public class Trigger : MonoBehaviour
     public bool AccelerateTimeWhileActivated = true;
     public string TriggerName;
     public string InteractHintMessage;
+    
+    // Register the function to call when the player activates the trigger.
+    public void RegisterOnTriggerListener(TriggerListener function)
+    {
+        onTrigger = function;
+    }
 
-    [Tooltip("Called when the player activates the trigger.")]
-    public TriggerEvent OnTrigger;
+    // Register the function to call while the trigger is activated.
+    public void RegisterOnTriggerUpdateListener(TriggerListener function)
+    {
+        onTriggerUpdate = function;
+    }
 
-    [Tooltip("Called while the trigger is activated.")]
-    public TriggerEvent OnTriggerUpdate;
+    // Register the function to call when the player enters the trigger zone.
+    public void RegisterOnPlayerEnterListener(TriggerListener function)
+    {
+        onPlayerEnter = function;
+    }
 
-    [Tooltip("Called when the player enters the trigger zone.")]
-    public TriggerEvent OnPlayerEnter;
-
-    [Tooltip("Called when the player exists the trigger zone.")]
-    public TriggerEvent OnPlayerExit;
+    // Register the function to call when the player exists the trigger zone.
+    public void RegisterOnPlayerExitListener(TriggerListener function)
+    {
+        onPlayerExit = function;
+    }
 
     // Resets the trigger after being triggered. Returns game-time speed to normal.
     // If enabled is false the player won't be able to reactivate the trigger.
@@ -86,12 +101,18 @@ public class Trigger : MonoBehaviour
                     GameTime.IsTimeAccelerated = true;
                 }
                 HideInteractionText();
-                OnTrigger.Invoke(GetComponent<Trigger>());
+                if (onTrigger != null)
+                {
+                    onTrigger();
+                }
             }
         }
         else if (IsActivated)
         {
-            OnTriggerUpdate.Invoke(GetComponent<Trigger>());
+            if (onTriggerUpdate != null)
+            {
+                onTriggerUpdate();
+            }
         }
     }
     
@@ -100,7 +121,10 @@ public class Trigger : MonoBehaviour
         if (other.gameObject == PlayerCharacter.gameObject)
         {
             IsPlayerInsideTriggerZone = true;
-            OnPlayerEnter.Invoke(GetComponent<Trigger>());
+            if (onPlayerEnter != null)
+            {
+                onPlayerEnter();
+            }
         }
     }
     
@@ -110,7 +134,10 @@ public class Trigger : MonoBehaviour
         {
             IsPlayerInsideTriggerZone = false;
             HideInteractionText();
-            OnPlayerExit.Invoke(GetComponent<Trigger>());
+            if (onPlayerExit != null)
+            {
+                onPlayerExit();
+            }
         }
     }
 
