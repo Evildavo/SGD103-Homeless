@@ -76,19 +76,12 @@ public class PlayerState : MonoBehaviour {
 
         // Decrease stats over time.
         HungerThirst -= HungerIncreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
-        if (HungerThirst > 1.0f)
-        {
-            HungerThirst = 1.0f;
-        }
         Health -= HealthDecreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
-        if (Health > 1.0f)
-        {
-            Health = 1.0f;
-        }
         Morale -= MoraleDecreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
-        if (Morale > 1.0f)
-        {
-            Morale = 1.0f;
-        }
+
+        // Limit stats to range 0-1.
+        HungerThirst = Mathf.Clamp(HungerThirst, 0.0f, 1.0f);
+        Health = Mathf.Clamp(Health, 0.0f, 1.0f);
+        Morale = Mathf.Clamp(Morale, 0.0f, 1.0f);
     }
 }
