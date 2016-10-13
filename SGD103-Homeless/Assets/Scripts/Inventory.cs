@@ -87,7 +87,7 @@ public class Inventory : MonoBehaviour
     void Update()
     {
         // Close if the mouse was clicked while not over an item.
-        if (CloseOnClickOutside && Input.GetButtonDown("Primary") &&
+        if (CloseOnClickOutside && Input.GetButtonUp("Primary") &&
             !ItemDescription.gameObject.activeInHierarchy)
         {
             gameObject.SetActive(false);

@@ -6,7 +6,7 @@ public class HudButtons : MonoBehaviour {
     public Inventory Inventory;
     
 	void Start () {
-	
+	    
 	}
 	
 	void Update () {
@@ -26,8 +26,16 @@ public class HudButtons : MonoBehaviour {
     public void OnInventoryClick()
     {
         // Toggle inventory.
-        bool showInventory = !Inventory.gameObject.activeSelf;
-        Inventory.gameObject.SetActive(showInventory);
+        // Note: If CloseOnClickOutside is enabled the inventory will close itself.
+        bool inventoryHidden = !Inventory.gameObject.activeSelf;
+        if (inventoryHidden)
+        {
+            Inventory.gameObject.SetActive(true);
+        }
+        else if (!Inventory.CloseOnClickOutside)
+        {
+            Inventory.gameObject.SetActive(false);
+        }
     }
 
 }
