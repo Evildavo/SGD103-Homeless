@@ -5,12 +5,14 @@ public class Library : MonoBehaviour {
     private bool isReading;
     private bool isJobSearching;
     private float timeAtLastCheck;
+    private bool hasWarnedAboutClosing = false;
 
     public Trigger Trigger;
     public Menu Menu;
     public MessageBox MessageBox;
     public ConfirmationBox ConfirmationBox;
     public PlayerState PlayerState;
+    public GameTime GameTime;
 
     public float MoraleGainedPerSecondReading = 0.05f;
     public float JobSearchTimeSeconds = 4.0f;
@@ -28,6 +30,7 @@ public class Library : MonoBehaviour {
     void reset()
     {
         isReading = false;
+        hasWarnedAboutClosing = false;
         PlayerState.HighlightMorale = false;
         Menu.Hide();
         MessageBox.Hide();
@@ -59,7 +62,7 @@ public class Library : MonoBehaviour {
     {
         MessageBox.Show("Searching for jobs...", gameObject);
         Menu.Hide();
-        Trigger.GameTime.IsTimeAccelerated = true;
+        GameTime.IsTimeAccelerated = true;
         isJobSearching = true;
         timeAtLastCheck = Time.time;
     }
@@ -72,7 +75,7 @@ public class Library : MonoBehaviour {
         MessageBox.Show("You are reading \"" + Books[random] + "\"", gameObject);
         Menu.Show(getReadingMenu());
         PlayerState.HighlightMorale = true;
-        Trigger.GameTime.IsTimeAccelerated = true;
+        GameTime.IsTimeAccelerated = true;
         isReading = true;
     }
 
@@ -86,7 +89,7 @@ public class Library : MonoBehaviour {
         Menu.Show(getMainMenu());
         MessageBox.Hide();
         PlayerState.HighlightMorale = false;
-        Trigger.GameTime.IsTimeAccelerated = false;
+        GameTime.IsTimeAccelerated = false;
         isReading = false;
     }
 
@@ -102,6 +105,25 @@ public class Library : MonoBehaviour {
 
     public void OnTriggerUpdate()
     {
+        // If the library closes exit.
+        if (!Trigger.IsInActiveHour)
+        {
+            reset();
+            MessageBox.ShowForTime("Library has closed.", 2.0f, gameObject);
+        }
+
+        // Show warning when the library is about to close.
+        else
+        {
+            const float CLOSE_WARNING_GAME_HOURS = 1.0f;
+            if (!hasWarnedAboutClosing &&
+                Mathf.Abs(GameTime.TimeOfDayHours - Trigger.ActiveToHour) <= CLOSE_WARNING_GAME_HOURS)
+            {
+                MessageBox.ShowForTime("Library will be closing in 1 hour", 2.0f, gameObject);
+                hasWarnedAboutClosing = true;
+            }
+        }
+        
         // Increase morale while reading.
         if (isReading)
         {
@@ -112,7 +134,7 @@ public class Library : MonoBehaviour {
         if (isJobSearching && Time.time - timeAtLastCheck > JobSearchTimeSeconds)
         {
             MessageBox.ShowForTime("You didn't find any jobs today.", 2.0f, gameObject);
-            Trigger.GameTime.IsTimeAccelerated = false;
+            GameTime.IsTimeAccelerated = false;
             Menu.Show(getMainMenu());
         }
 
