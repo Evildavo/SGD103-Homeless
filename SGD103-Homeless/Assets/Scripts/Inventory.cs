@@ -3,25 +3,51 @@ using System.Collections;
 
 public class Inventory : MonoBehaviour
 {
-    private bool isAwake = false;
-    private float timeAtWake;
-    private Vector3 lastMousePosition;
-    
+    private bool isHidden = false;
+
     public InventoryItemDescription ItemDescription;
     public Transform SlotContainer;
    
     [Tooltip("A value of 0 will disable hiding")]
-    public float HideAfterSeconds = 1.0f;
     public int DeadZonePixels = 25;
     public bool CloseOnItemUse = true;
     public bool CloseOnClickOutside = true;
+    public bool HiddenAtStart = true;
+
+    // Shows the inventory.
+    public void Show()
+    {
+        isHidden = false;
+        ItemDescription.gameObject.SetActive(true);
+        foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
+        {
+            slot.Show();
+        }
+    }
+
+    // Hides the inventory.
+    public void Hide()
+    {
+        isHidden = true;
+        ItemDescription.gameObject.SetActive(false);
+        foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
+        {
+            slot.Hide();
+        }
+    }
+
+    // Returns true if the inventory is hidden.
+    public bool IsHidden()
+    {
+        return isHidden;
+    }
 
     // Returns true if the inventory is full.
     public bool IsInventoryFull()
     {
         foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
         {
-            if (!slot.GetItem())
+            if (!slot.Item)
             {
                 return false;
             }
@@ -36,11 +62,10 @@ public class Inventory : MonoBehaviour
         int i = 0;
         foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
         {
-            if (!slot.GetItem())
+            if (!slot.Item)
             {
-                WakeInventory();
                 item.InventoryIndex = i;
-                item.transform.SetParent(slot.transform, false);
+                item.transform.position = slot.transform.position;
                 return;
             }
             i++;
@@ -55,33 +80,30 @@ public class Inventory : MonoBehaviour
         InventorySlot[] inventorySlots = SlotContainer.GetComponentsInChildren<InventorySlot>(true);
         for (var i = item.InventoryIndex; i < inventorySlots.Length - 1; i++)
         {
-            InventoryItem itemAbove = inventorySlots[i + 1].GetItem();
+            InventoryItem itemAbove = inventorySlots[i + 1].Item;
             if (itemAbove)
             {
                 itemAbove.InventoryIndex = i;
-                itemAbove.transform.SetParent(inventorySlots[i].transform, false);
+                itemAbove.transform.position = inventorySlots[i].transform.position;
             }
         }
         
         // Destroy the object.
         Destroy(item.gameObject);
     }
-
-    // Displays the inventory.
-    public void WakeInventory()
-    {
-        isAwake = true;
-        timeAtWake = Time.time;
-        foreach (Transform slot in SlotContainer.transform)
-        {
-            slot.gameObject.SetActive(true);
-        }
-        lastMousePosition = Input.mousePosition;
-    }
-
+    
     void Start()
     {
-        gameObject.SetActive(false);
+        ItemDescription.ItemName.text = "";
+        ItemDescription.ItemAction.text = "";
+        if (HiddenAtStart)
+        {
+            Hide();
+        }
+        else
+        {
+            Show();
+        }
     }
     
     void Update()
@@ -90,25 +112,7 @@ public class Inventory : MonoBehaviour
         if (CloseOnClickOutside && Input.GetButtonUp("Primary") &&
             !ItemDescription.gameObject.activeInHierarchy)
         {
-            gameObject.SetActive(false);
-        }
-
-        // Wake up the inventory if the mouse moved or is over an item.
-        if (ItemDescription.gameObject.activeInHierarchy ||
-            Mathf.Abs(lastMousePosition.x - Input.mousePosition.x) > DeadZonePixels ||
-            Mathf.Abs(lastMousePosition.y - Input.mousePosition.y) > DeadZonePixels)
-        {
-            WakeInventory();
-        }
-
-        // After time hide the inventory.
-        if (isAwake && HideAfterSeconds != 0 && Time.time - timeAtWake > HideAfterSeconds)
-        {
-            isAwake = false;
-            foreach (Transform slot in SlotContainer.transform)
-            {
-                slot.gameObject.SetActive(false);
-            }
+            Hide();
         }
     }
 
