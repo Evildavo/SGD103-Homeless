@@ -11,7 +11,11 @@ public class PlayerState : MonoBehaviour {
     public Text MoraleText;
 
     public Color NormalTextColour = Color.black;
-    public Color HighlightTextColour = Color.black;
+    public Color WarningTextColour = Color.red;
+    public Color HighlightTextColour = Color.yellow;
+    public float HungerWarningThreshold = 0.2f;
+    public float HealthWarningThreshold = 0.2f;
+    public float MoraleWarningThreshold = 0.2f;
 
     public float Money = 0;
 
@@ -39,6 +43,10 @@ public class PlayerState : MonoBehaviour {
         {
             HungerThirstText.color = HighlightTextColour;
         }
+        else if (HungerThirst <= HungerWarningThreshold)
+        {
+            HungerThirstText.color = WarningTextColour;
+        }
         else
         {
             HungerThirstText.color = NormalTextColour;
@@ -47,6 +55,10 @@ public class PlayerState : MonoBehaviour {
         {
             HealthText.color = HighlightTextColour;
         }
+        else if (Health <= HealthWarningThreshold)
+        {
+            HealthText.color = WarningTextColour;
+        }
         else
         {
             HealthText.color = NormalTextColour;
@@ -54,6 +66,10 @@ public class PlayerState : MonoBehaviour {
         if (HighlightMorale)
         {
             MoraleText.color = HighlightTextColour;
+        }
+        else if (Morale <= MoraleWarningThreshold)
+        {
+            MoraleText.color = WarningTextColour;
         }
         else
         {
