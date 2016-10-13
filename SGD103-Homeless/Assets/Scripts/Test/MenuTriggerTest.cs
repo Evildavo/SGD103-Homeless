@@ -25,12 +25,28 @@ public class MenuTriggerTest : MonoBehaviour
         Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
 
         // Set up menu.
-        options.Add(new Menu.Option(OnBuyFoodSelected, "Buy food", FoodPrice));
+        options.Add(new Menu.Option(OnFoodMenuSelected, "Buy food"));
         options.Add(new Menu.Option(OnBuyAlcoholSelected, "Buy alcohol", AlcoholPrice));
         options.Add(new Menu.Option(OnOptionASelected, "Say A"));
         options.Add(new Menu.Option(OnOptionBSelected, "Say B"));
         options.Add(new Menu.Option(OnSellWatchSelected, "Sell watch", WatchPrice));
         options.Add(new Menu.Option(OnExit, "Exit"));
+    }
+
+    public void OnFoodMenuSelected()
+    {
+        Menu.Show(GetFoodSubMenu());
+    }
+
+    public List<Menu.Option> GetFoodSubMenu()
+    {
+        List<Menu.Option> options = new List<Menu.Option>();
+        options.Add(new Menu.Option(OnBuyFoodSelected, "Buy banana", 0.5f));
+        options.Add(new Menu.Option(OnBuyFoodSelected, "Buy oats", 1.0f));
+        options.Add(new Menu.Option(OnBuyFoodSelected, "Buy bread", 2.5f));
+        options.Add(new Menu.Option(OnBuyFoodSelected, "Buy can beans", 4.0f));
+        options.Add(new Menu.Option(OnBuyFoodSelected, "Buy biscuits", 5.0f));
+        return options;
     }
     
     public void OnBuyFoodSelected()
