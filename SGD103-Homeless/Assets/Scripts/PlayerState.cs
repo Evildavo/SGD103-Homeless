@@ -10,8 +10,8 @@ public class PlayerState : MonoBehaviour {
     public Text HealthText;
     public Text MoraleText;
 
-    public Color NormalTextColour;
-    public Color HighlightTextColour;
+    public Color NormalTextColour = Color.black;
+    public Color HighlightTextColour = Color.black;
 
     public float Money = 0;
 
