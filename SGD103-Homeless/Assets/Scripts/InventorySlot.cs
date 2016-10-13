@@ -57,6 +57,8 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             item.OnPrimaryAction();
             if (Inventory.CloseOnItemUse)
             {
+                ItemDescription.ItemName.text = "";
+                ItemDescription.ItemAction.text = "";
                 Inventory.gameObject.SetActive(false);
             }
         }

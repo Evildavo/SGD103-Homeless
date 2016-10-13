@@ -7,7 +7,7 @@ public class Inventory : MonoBehaviour
     private float timeAtWake;
     private Vector3 lastMousePosition;
     
-    public Transform ItemDescription;
+    public InventoryItemDescription ItemDescription;
     public Transform SlotContainer;
    
     [Tooltip("A value of 0 will disable hiding")]
