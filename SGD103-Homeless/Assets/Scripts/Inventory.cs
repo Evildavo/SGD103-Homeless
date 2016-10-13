@@ -14,6 +14,7 @@ public class Inventory : MonoBehaviour
     public float HideAfterSeconds = 1.0f;
     public int DeadZonePixels = 25;
     public bool CloseOnItemUse = true;
+    public bool CloseOnClickOutside = true;
 
     // Returns true if the inventory is full.
     public bool IsInventoryFull()
@@ -85,6 +86,13 @@ public class Inventory : MonoBehaviour
     
     void Update()
     {
+        // Close if the mouse was clicked while not over an item.
+        if (CloseOnClickOutside && Input.GetButtonDown("Primary") &&
+            !ItemDescription.gameObject.activeInHierarchy)
+        {
+            gameObject.SetActive(false);
+        }
+
         // Wake up the inventory if the mouse moved or is over an item.
         if (ItemDescription.gameObject.activeInHierarchy ||
             Mathf.Abs(lastMousePosition.x - Input.mousePosition.x) > DeadZonePixels ||
