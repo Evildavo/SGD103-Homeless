@@ -35,18 +35,13 @@ public class MenuTriggerTest : MonoBehaviour
 
     public void OnFoodMenuSelected()
     {
-        Menu.Show(GetFoodSubMenu());
-    }
-
-    public List<Menu.Option> GetFoodSubMenu()
-    {
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(OnBuyFoodSelected, "Buy banana", 0.5f));
         options.Add(new Menu.Option(OnBuyFoodSelected, "Buy oats", 1.0f));
         options.Add(new Menu.Option(OnBuyFoodSelected, "Buy bread", 2.5f));
         options.Add(new Menu.Option(OnBuyFoodSelected, "Buy can beans", 4.0f));
         options.Add(new Menu.Option(OnBuyFoodSelected, "Buy biscuits", 5.0f));
-        return options;
+        Menu.Show(options);
     }
     
     public void OnBuyFoodSelected()
