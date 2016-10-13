@@ -26,9 +26,11 @@ public class Trigger : MonoBehaviour
     public bool AccelerateTimeWhileActivated = true;
     public string TriggerName;
     public string InteractHintMessage;
+    [Header("Leave blank to not show an interact message")]
+    public string OutOfHoursMessage;
     [ReadOnly]
     public bool IsInActiveHour = false;
-    [Tooltip("Note: If from and to are flipped the period wraps (e.g. 11pm to 2am)")]
+    [Header("Note: Also supports wrapping over (e.g. 11pm to 2am)")]
     [Range(0.0f, 24.0f)]
     public float ActiveFromHour = 0.0f;
     [Range(0.0f, 24.0f)]
@@ -71,10 +73,25 @@ public class Trigger : MonoBehaviour
     {
         if (TriggerNameText && InteractHintText)
         {
-            TriggerNameText.GetComponent<Text>().enabled = true;
-            InteractHintText.GetComponent<Text>().enabled = true;
-            TriggerNameText.text = TriggerName;
-            InteractHintText.text = InteractHintMessage;
+            if (IsInActiveHour || (!IsInActiveHour && OutOfHoursMessage != ""))
+            {
+                TriggerNameText.GetComponent<Text>().enabled = true;
+                InteractHintText.GetComponent<Text>().enabled = true;
+                TriggerNameText.text = TriggerName;
+                if (IsInActiveHour)
+                {
+                    InteractHintText.text = InteractHintMessage;
+                }
+                else
+                {
+                    InteractHintText.text = OutOfHoursMessage;
+                }
+            }
+            else
+            {
+                TriggerNameText.GetComponent<Text>().enabled = false;
+                InteractHintText.GetComponent<Text>().enabled = false;
+            }
         }
     }
 
@@ -110,7 +127,7 @@ public class Trigger : MonoBehaviour
         if (!IsActivated && IsEnabled && IsPlayerInsideTriggerZone)
         {
             ShowInteractionText();
-            if (Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
+            if (IsInActiveHour && Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
             {
                 IsEnabled = false;
                 IsActivated = true;
