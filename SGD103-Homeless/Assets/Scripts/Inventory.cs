@@ -3,16 +3,17 @@ using System.Collections;
 
 public class Inventory : MonoBehaviour
 {
-    private bool isAwake = true;
+    private bool isAwake = false;
     private float timeAtWake;
     private Vector3 lastMousePosition;
-
+    
     public Transform ItemDescription;
     public Transform SlotContainer;
    
     [Tooltip("A value of 0 will disable hiding")]
     public float HideAfterSeconds = 1.0f;
     public int DeadZonePixels = 25;
+    public bool CloseOnItemUse = true;
 
     // Returns true if the inventory is full.
     public bool IsInventoryFull()
@@ -75,6 +76,11 @@ public class Inventory : MonoBehaviour
             slot.gameObject.SetActive(true);
         }
         lastMousePosition = Input.mousePosition;
+    }
+
+    void Start()
+    {
+        gameObject.SetActive(false);
     }
     
     void Update()

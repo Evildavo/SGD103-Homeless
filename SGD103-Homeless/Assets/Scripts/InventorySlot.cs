@@ -8,6 +8,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     private bool isOver = false;
 
     public InventoryItemDescription ItemDescription;
+    public Inventory Inventory;
 
     public InventoryItem GetItem()
     {
@@ -54,6 +55,10 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (isOver && item)
         {
             item.OnPrimaryAction();
+            if (Inventory.CloseOnItemUse)
+            {
+                Inventory.gameObject.SetActive(false);
+            }
         }
     }
 
