@@ -13,7 +13,7 @@ public class MenuTriggerTest : MonoBehaviour
     public MessageBox MessageBox;
     public ConfirmationBox ConfirmationBox;
     public FoodItemTest FoodItem;
-    public WatchItemTest WatchItem;
+    public WatchItem WatchItem;
 
     public float FoodPrice = 10.0f;
     public float AlcoholPrice = 30.0f;

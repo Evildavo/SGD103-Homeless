@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class WatchItemTest : InventoryItem
+public class WatchItem : InventoryItem
 {
     public MessageBox MessageBox;
     public GameTime GameTime;
@@ -12,9 +12,9 @@ public class WatchItemTest : InventoryItem
     {
         MessageBox.ShowForTime("", CloseAfterSeconds, gameObject);
     }
-	
-	void Update () {
-        
+
+    void Update()
+    {
         // Update watch.
         if (MessageBox.IsDisplayed() && MessageBox.Source == gameObject)
         {
