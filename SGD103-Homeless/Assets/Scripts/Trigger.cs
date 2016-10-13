@@ -28,6 +28,7 @@ public class Trigger : MonoBehaviour
     public string InteractHintMessage;
     [ReadOnly]
     public bool IsInActiveHour = false;
+    [Tooltip("Note: If from and to are flipped the period wraps (e.g. 11pm to 2am)")]
     [Range(0.0f, 24.0f)]
     public float ActiveFromHour = 0.0f;
     [Range(0.0f, 24.0f)]
@@ -94,9 +95,16 @@ public class Trigger : MonoBehaviour
     
     void Update()
     {
-        // Determine if we're in the active hour.
+        // Determine if we're in the active hour. If from and to are flipped the period wraps (e.g. 11pm to 2am).
         float time = GameTime.TimeOfDayHours;
-        IsInActiveHour = (time >= ActiveFromHour && time <= ActiveToHour);
+        if (ActiveFromHour < ActiveToHour)
+        {
+            IsInActiveHour = (time >= ActiveFromHour && time <= ActiveToHour);
+        }
+        else
+        {
+            IsInActiveHour = (time >= ActiveFromHour || time <= ActiveToHour);
+        }
 
         // Show prompt allowing the player to activate the trigger.
         if (!IsActivated && IsEnabled && IsPlayerInsideTriggerZone)
