@@ -44,6 +44,20 @@ public class Inventory : MonoBehaviour
         return isHidden;
     }
 
+    // Warning: Untested !!!
+    // Returns true if the inventory has the given item.
+    public bool HasItem(InventoryItem item)
+    {
+        foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
+        {
+            if (slot.Item.gameObject == item.gameObject)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Returns true if the inventory is full.
     public bool IsInventoryFull()
     {
@@ -87,6 +101,11 @@ public class Inventory : MonoBehaviour
             {
                 itemAbove.InventoryIndex = i;
                 itemAbove.transform.position = inventorySlots[i].transform.position;
+                inventorySlots[i].Item = itemAbove;
+            }
+            else
+            {
+                inventorySlots[i].Item = null;
             }
         }
         

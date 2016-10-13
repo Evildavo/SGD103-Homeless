@@ -34,6 +34,13 @@ public class WatchHudButton : MonoBehaviour {
 
     public void Update()
     {
+        // Hide the watch if it's destroyed.
+        if (!Watch)
+        {
+            gameObject.SetActive(false);
+        }
+
+        // Update the button label to show the time.
         if (isMouseOver)
         {
             HudButtonLabel.GetComponentInChildren<Text>().text = GameTime.GetTimeAsString();
