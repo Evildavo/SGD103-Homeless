@@ -26,6 +26,12 @@ public class Trigger : MonoBehaviour
     public bool AccelerateTimeWhileActivated = true;
     public string TriggerName;
     public string InteractHintMessage;
+    [ReadOnly]
+    public bool IsInActiveHour = false;
+    [Range(0.0f, 24.0f)]
+    public float ActiveFromHour = 0.0f;
+    [Range(0.0f, 24.0f)]
+    public float ActiveToHour = 24.0f;
     
     // Register the function to call when the player activates the trigger.
     public void RegisterOnTriggerListener(TriggerListener function)
@@ -88,6 +94,10 @@ public class Trigger : MonoBehaviour
     
     void Update()
     {
+        // Determine if we're in the active hour.
+        float time = GameTime.TimeOfDayHours;
+        IsInActiveHour = (time >= ActiveFromHour && time <= ActiveToHour);
+
         // Show prompt allowing the player to activate the trigger.
         if (!IsActivated && IsEnabled && IsPlayerInsideTriggerZone)
         {
