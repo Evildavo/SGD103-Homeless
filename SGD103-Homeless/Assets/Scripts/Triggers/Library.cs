@@ -27,6 +27,8 @@ public class Library : MonoBehaviour {
     // Reset to starting values.
     void reset()
     {
+        isReading = false;
+        PlayerState.HighlightMorale = false;
         Menu.Hide();
         MessageBox.Hide();
         if (Trigger)
