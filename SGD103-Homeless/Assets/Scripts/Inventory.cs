@@ -7,7 +7,8 @@ public class Inventory : MonoBehaviour
 
     public InventoryItemDescription ItemDescription;
     public Transform SlotContainer;
-   
+    public Transform ItemContainer;
+
     [Tooltip("A value of 0 will disable hiding")]
     public int DeadZonePixels = 25;
     public bool CloseOnItemUse = true;
@@ -71,7 +72,7 @@ public class Inventory : MonoBehaviour
         return true;
     }
     
-    // Instantiate the item before calling.
+    // Instantiate the item before calling if it's a prefab.
     public void AddItem(InventoryItem item)
     {
         // Add to next available free slot.
@@ -82,11 +83,17 @@ public class Inventory : MonoBehaviour
             {
                 item.InventoryIndex = i;
                 item.transform.position = slot.transform.position;
+                item.transform.SetParent(ItemContainer, true);
+                item.transform.localScale = slot.transform.localScale;
+                slot.Item = item;
+                if (isHidden)
+                {
+                    slot.Hide();
+                }
                 return;
             }
             i++;
         }
-        Debug.Log("Warning: Inventory is full.");
     }
 
     // Removes the item and moves other items to fill the gaps.

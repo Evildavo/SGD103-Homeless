@@ -37,6 +37,7 @@ public class ObjectTriggerTest : MonoBehaviour {
                 foodItem.Inventory = Inventory;
                 foodItem.GetComponent<Image>().color = Random.ColorHSV(0.0f, 0.5f, 0.7f, 1.0f, 0.7f, 1.0f, 1.0f, 1.0f);
                 Inventory.AddItem(foodItem);
+                Inventory.Show();
             }
             // Eat immediately if we're not adding to the inventory.
             else
