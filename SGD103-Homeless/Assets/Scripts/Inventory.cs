@@ -19,6 +19,8 @@ public class Inventory : MonoBehaviour
     {
         isHidden = false;
         ItemDescription.gameObject.SetActive(true);
+        ItemDescription.ItemName.text = "";
+        ItemDescription.ItemAction.text = "";
         foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
         {
             slot.Show();
@@ -94,8 +96,6 @@ public class Inventory : MonoBehaviour
     
     void Start()
     {
-        ItemDescription.ItemName.text = "";
-        ItemDescription.ItemAction.text = "";
         if (HiddenAtStart)
         {
             Hide();
