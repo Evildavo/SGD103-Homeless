@@ -70,6 +70,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             Item.OnPrimaryAction();
             if (Inventory.CloseOnItemUse)
             {
+                ItemDescription.gameObject.SetActive(false);
                 ItemDescription.ItemName.text = "";
                 ItemDescription.ItemAction.text = "";
                 ItemDescription.GetComponent<Image>().enabled = false;

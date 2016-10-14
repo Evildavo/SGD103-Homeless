@@ -4,6 +4,7 @@ using System.Collections;
 
 public class Inventory : MonoBehaviour
 {
+    private float timeAtPreviewStart;
     private bool isHidden = false;
 
     public InventoryItemDescription ItemDescription;
@@ -15,18 +16,34 @@ public class Inventory : MonoBehaviour
     public bool CloseOnItemUse = true;
     public bool CloseOnClickOutside = true;
     public bool HiddenAtStart = true;
+    [ReadOnly]
+    public bool IsPreviewing = false;
+    public float PreviewTime = 2.0f;
 
     // Shows the inventory.
     public void Show()
     {
+        IsPreviewing = false;
         isHidden = false;
-        ItemDescription.gameObject.SetActive(true);
         ItemDescription.ItemName.text = "";
         ItemDescription.ItemAction.text = "";
         ItemDescription.GetComponent<Image>().enabled = false;
+        ItemDescription.gameObject.SetActive(true);
         foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
         {
             slot.Show();
+        }
+    }
+
+    // Temporarily shows the inventory before closing automatically.
+    // Doesn't work if the inventory was already open (not on a preview).
+    public void ShowPreview()
+    {
+        timeAtPreviewStart = Time.time;
+        if (isHidden)
+        {
+            Show();
+            IsPreviewing = true;
         }
     }
 
@@ -136,6 +153,23 @@ public class Inventory : MonoBehaviour
     
     void Update()
     {
+        // Handle previewing.
+        if (IsPreviewing)
+        {
+            // Keep preview open if the cursor is over an item.
+            if (ItemDescription.gameObject.activeInHierarchy && ItemDescription.ItemName.text != "")
+            {
+                timeAtPreviewStart = Time.time;
+            }
+
+            // Close the inventory after preview time has passed.
+            if (Time.time - timeAtPreviewStart > PreviewTime)
+            {
+                IsPreviewing = false;
+                Hide();
+            }
+        }
+
         // Close if the mouse was clicked while not over an item.
         if (CloseOnClickOutside && Input.GetButtonUp("Primary") &&
             !ItemDescription.gameObject.activeInHierarchy)
