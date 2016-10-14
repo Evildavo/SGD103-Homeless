@@ -45,11 +45,12 @@ public class WriteYourSign : MonoBehaviour {
                     localPoint.x / GetComponent<RectTransform>().rect.width * CanvasWidthPixels,
                     localPoint.y / GetComponent<RectTransform>().rect.height * CanvasHeightPixels);
             }
-
+            
             // Capture the pixel area that we'll draw into.
             Rect drawAreaRect;
             Color[] drawAreaPixels;
             {
+                // Capture rectangle including the last point so we can fill in the gap between them.
                 if (hasLastPoint)
                 {
                     Vector2 firstCorner = cursorPosition;
@@ -82,18 +83,30 @@ public class WriteYourSign : MonoBehaviour {
                 {
                     drawAreaRect = new Rect(cursorPosition, new Vector2(1, 1));
                 }
+
+                // Get pixels for the area.
                 drawAreaPixels = canvas.GetPixels(
-                    Mathf.FloorToInt(drawAreaRect.x), Mathf.FloorToInt(drawAreaRect.y),
-                    Mathf.FloorToInt(drawAreaRect.width), Mathf.FloorToInt(drawAreaRect.height));
+                    Mathf.FloorToInt(Mathf.Clamp(drawAreaRect.x, 0, CanvasWidthPixels - 1)),
+                    Mathf.FloorToInt(Mathf.Clamp(drawAreaRect.y, 0, CanvasHeightPixels - 1)),
+                    Mathf.FloorToInt(drawAreaRect.width),
+                    Mathf.FloorToInt(drawAreaRect.height));
             }
 
             // Anonymous function for drawing the brush at the given point.
             Action<Vector2> drawBrush = (Vector2 point) =>
             {
                 Vector2 pointInArea = point - drawAreaRect.position;
-                drawAreaPixels[(int)pointInArea.y * (int)drawAreaRect.width + (int)pointInArea.x] = PenColour;
+                if (drawAreaRect.width != 0 &&
+                    drawAreaRect.height != 0 &&
+                    pointInArea.x >= 0 &&
+                    pointInArea.y >= 0 &&
+                    pointInArea.x < drawAreaRect.width &&
+                    pointInArea.y < drawAreaRect.height)
+                {
+                    drawAreaPixels[(int)pointInArea.y * (int)drawAreaRect.width + (int)pointInArea.x] = PenColour;
+                }
             };
-            
+
             // Paint the canvas at the cursor.
             drawBrush(cursorPosition);
 
@@ -110,8 +123,10 @@ public class WriteYourSign : MonoBehaviour {
 
             // Apply changes to the draw area and the texture.
             canvas.SetPixels(
-                Mathf.FloorToInt(drawAreaRect.x), Mathf.FloorToInt(drawAreaRect.y),
-                Mathf.FloorToInt(drawAreaRect.width), Mathf.FloorToInt(drawAreaRect.height), 
+                Mathf.FloorToInt(Mathf.Clamp(drawAreaRect.x, 0, CanvasWidthPixels - 1)),
+                Mathf.FloorToInt(Mathf.Clamp(drawAreaRect.y, 0, CanvasHeightPixels - 1)),
+                Mathf.FloorToInt(drawAreaRect.width),
+                Mathf.FloorToInt(drawAreaRect.height),
                 drawAreaPixels);
             canvas.Apply();
             lastPoint = cursorPosition;
