@@ -3,11 +3,20 @@ using System.Collections;
 
 public class PlayerSleepManager : MonoBehaviour {
 
+    public enum SleepQualityEnum
+    {
+        GOOD,
+        OK,
+        POOR
+    }
+
     public Transform ZoneContainer;
     [ReadOnly]
     public bool InPublic = false;
-    
-	void Start () {
+    [ReadOnly]
+    public SleepQualityEnum SleepQualityHere;
+
+    void Start () {
 	
 	}
 	
@@ -24,5 +33,25 @@ public class PlayerSleepManager : MonoBehaviour {
                 break;
             }
         }
-	}
+
+        // Determine the quality of sleep here based on zones the player is in.
+        SleepQualityHere = SleepQualityEnum.POOR;
+        SleepZone[] sleepZones = ZoneContainer.GetComponentsInChildren<SleepZone>();
+        foreach (SleepZone zone in sleepZones)
+        {
+            if (zone.PlayerIsInside)
+            {
+                if (zone.HighQualitySleep)
+                {
+                    SleepQualityHere = SleepQualityEnum.GOOD;
+                    break;
+                }
+                else
+                {
+                    SleepQualityHere = SleepQualityEnum.OK;
+                }
+            }
+        }
+    }
+
 }
