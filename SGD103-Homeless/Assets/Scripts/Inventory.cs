@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class Inventory : MonoBehaviour
@@ -22,6 +23,7 @@ public class Inventory : MonoBehaviour
         ItemDescription.gameObject.SetActive(true);
         ItemDescription.ItemName.text = "";
         ItemDescription.ItemAction.text = "";
+        ItemDescription.GetComponent<Image>().enabled = false;
         foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
         {
             slot.Show();

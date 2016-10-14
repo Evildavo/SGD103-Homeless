@@ -43,6 +43,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             ItemDescription.gameObject.SetActive(true);
             ItemDescription.ItemName.text = Item.ItemName;
             ItemDescription.ItemAction.text = Item.PrimaryActionDescription;
+            ItemDescription.GetComponent<Image>().enabled = true;
 
             // Move description text to the slot.
             if (ItemDescription)
@@ -71,6 +72,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             {
                 ItemDescription.ItemName.text = "";
                 ItemDescription.ItemAction.text = "";
+                ItemDescription.GetComponent<Image>().enabled = false;
                 Inventory.Hide();
             }
         }
