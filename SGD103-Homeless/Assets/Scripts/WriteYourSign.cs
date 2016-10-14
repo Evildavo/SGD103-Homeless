@@ -10,6 +10,7 @@ public class WriteYourSign : MonoBehaviour {
     public int CanvasWidthPixels = 256;
     public int CanvasHeightPixels = 128;
     public Color PenColour = Color.black;
+    public float PixelSpacing = 1.0f;
 
 	void Start ()
     {
@@ -27,6 +28,14 @@ public class WriteYourSign : MonoBehaviour {
         canvas.SetPixels(pixelArray);
         canvas.Apply();
     }
+
+    void drawBrush(int x, int y, Color colour)
+    {
+        if (x < CanvasWidthPixels && y < CanvasHeightPixels && x >= 0 && y >= 0)
+        {
+            canvas.SetPixel(x, y, colour);
+        }
+    }
 	
 	void Update ()
     {
@@ -41,22 +50,19 @@ public class WriteYourSign : MonoBehaviour {
             int y = (int)(localPoint.y / GetComponent<RectTransform>().rect.height * CanvasHeightPixels);
 
             // Colour the canvas at that point.
-            canvas.SetPixel(x, y, PenColour);
+            drawBrush(x, y, PenColour);
 
             // Also draw points at spaces between the last point and this point.
             if (hasLastPoint)
             {
                 Vector2 delta = new Vector2(x - lastPoint.x, y - lastPoint.y);
-                int nPointsToAdd = Mathf.CeilToInt(delta.magnitude);
+                int nPointsToAdd = Mathf.CeilToInt(delta.magnitude / PixelSpacing);
                 for (var i = 0; i < nPointsToAdd; i++)
                 {
-                    Vector2 space = new Vector2(
-                        Mathf.FloorToInt(lastPoint.x + i * delta.normalized.x),
-                        Mathf.FloorToInt(lastPoint.y + i * delta.normalized.y));
-                    if (space.x < CanvasWidthPixels && space.y < CanvasHeightPixels && space.x > 0 && space.y > 0)
-                    {
-                        canvas.SetPixel((int)space.x, (int)space.y, PenColour);
-                    }
+                    drawBrush(
+                        Mathf.FloorToInt(lastPoint.x + i * delta.normalized.x * PixelSpacing),
+                        Mathf.FloorToInt(lastPoint.y + i * delta.normalized.y * PixelSpacing), 
+                        PenColour);
                 }
             }
 
