@@ -4,19 +4,36 @@ using System.Collections;
 
 public class Zone : MonoBehaviour
 {
-    // Call from derived.
+    public PlayerCharacter PlayerCharacter;
+
+    [ReadOnly]
+    public bool PlayerIsInside = false;
+
+    // Override and call base.
     public virtual void Start()
     {
         GetComponent<Renderer>().enabled = false;
     }
 
-    // Call from derived.
+    // Override and call base.
     public virtual void Update() {}
 
-    // Override to do some action on entering.
-    public virtual void OnTriggerEnter(Collider other) {}
+    // Override and call base.
+    public virtual void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject == PlayerCharacter.gameObject)
+        {
+            PlayerIsInside = true;
+        }
+    }
 
-    // Override to do some action on exiting.
-    public virtual void OnTriggerExit(Collider other) {}
+    // Override and call base.
+    public virtual void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject == PlayerCharacter.gameObject)
+        {
+            PlayerIsInside = false;
+        }
+    }
 
 }
