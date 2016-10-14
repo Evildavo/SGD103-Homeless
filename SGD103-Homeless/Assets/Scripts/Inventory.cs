@@ -19,6 +19,7 @@ public class Inventory : MonoBehaviour
     [ReadOnly]
     public bool IsPreviewing = false;
     public float PreviewTime = 2.0f;
+    public bool OpenPreviewOnItemAdded = true;
 
     // Shows the inventory.
     public void Show()
@@ -94,6 +95,12 @@ public class Inventory : MonoBehaviour
     // Instantiate the item before calling if it's a prefab.
     public void AddItem(InventoryItem item)
     {
+        // Open inventory preview.
+        if (OpenPreviewOnItemAdded)
+        {
+            ShowPreview();
+        }
+
         // Add to next available free slot.
         int i = 0;
         foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
