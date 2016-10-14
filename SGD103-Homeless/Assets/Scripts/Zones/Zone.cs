@@ -4,8 +4,6 @@ using System.Collections;
 
 public class Zone : MonoBehaviour
 {
-    public string ZoneName;
-    
     // Call from derived.
     public virtual void Start()
     {
