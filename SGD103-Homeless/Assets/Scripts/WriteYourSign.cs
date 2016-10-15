@@ -29,8 +29,21 @@ public class WriteYourSign : MonoBehaviour {
         canvas.SetPixels(pixelArray);
         canvas.Apply();
     }
-	
-	void Update ()
+    
+    // Draw the brush at the given point.
+    void drawBrush (Vector2 point, Rect drawAreaRect, Color[] drawAreaPixels)
+    {
+        Vector2 pointInArea = point - drawAreaRect.position;
+        if ((int)pointInArea.x >= 0 &&
+            (int)pointInArea.y >= 0 &&
+            (int)pointInArea.x < (int)drawAreaRect.width &&
+            (int)pointInArea.y < (int)drawAreaRect.height)
+        {
+            drawAreaPixels[(int)pointInArea.y * (int)drawAreaRect.width + (int)pointInArea.x] = PenColour;
+        }
+    }
+
+    void Update ()
     {
         // Draw on the canvas if the mouse is down.
         if (Input.GetButton("Primary"))
@@ -84,31 +97,28 @@ public class WriteYourSign : MonoBehaviour {
                     drawAreaRect = new Rect(cursorPosition, new Vector2(1, 1));
                 }
 
+                // Restrict draw area rectangle to canvas borders.
+                drawAreaRect.x = Mathf.Clamp(drawAreaRect.x, 0, CanvasWidthPixels - 1);
+                drawAreaRect.y = Mathf.Clamp(drawAreaRect.y, 0, CanvasHeightPixels - 1);
+                if (drawAreaRect.x + drawAreaRect.width > CanvasWidthPixels)
+                {
+                    drawAreaRect.width = CanvasWidthPixels - drawAreaRect.x;
+                }
+                if (drawAreaRect.y + drawAreaRect.height > CanvasHeightPixels)
+                {
+                    drawAreaRect.height = CanvasHeightPixels - drawAreaRect.y;
+                }
+
                 // Get pixels for the area.
                 drawAreaPixels = canvas.GetPixels(
-                    Mathf.FloorToInt(Mathf.Clamp(drawAreaRect.x, 0, CanvasWidthPixels - 1)),
-                    Mathf.FloorToInt(Mathf.Clamp(drawAreaRect.y, 0, CanvasHeightPixels - 1)),
+                    Mathf.FloorToInt(drawAreaRect.x),
+                    Mathf.FloorToInt(drawAreaRect.y),
                     Mathf.FloorToInt(drawAreaRect.width),
                     Mathf.FloorToInt(drawAreaRect.height));
             }
 
-            // Anonymous function for drawing the brush at the given point.
-            Action<Vector2> drawBrush = (Vector2 point) =>
-            {
-                Vector2 pointInArea = point - drawAreaRect.position;
-                if (drawAreaRect.width != 0 &&
-                    drawAreaRect.height != 0 &&
-                    pointInArea.x >= 0 &&
-                    pointInArea.y >= 0 &&
-                    pointInArea.x < drawAreaRect.width &&
-                    pointInArea.y < drawAreaRect.height)
-                {
-                    drawAreaPixels[(int)pointInArea.y * (int)drawAreaRect.width + (int)pointInArea.x] = PenColour;
-                }
-            };
-
             // Paint the canvas at the cursor.
-            drawBrush(cursorPosition);
+            drawBrush(cursorPosition, drawAreaRect, drawAreaPixels);
 
             // Also draw strokes to fill the space between the last point and this point.
             Vector2 delta = cursorPosition - lastPoint;
@@ -117,14 +127,14 @@ public class WriteYourSign : MonoBehaviour {
                 int nPointsToAdd = Mathf.CeilToInt(delta.magnitude / PixelSpacing);
                 for (var i = 0; i < nPointsToAdd; i++)
                 {
-                    drawBrush(lastPoint + i * delta.normalized * PixelSpacing);
+                    drawBrush(lastPoint + i * delta.normalized * PixelSpacing, drawAreaRect, drawAreaPixels);
                 }
             }
 
             // Apply changes to the draw area and the texture.
             canvas.SetPixels(
-                Mathf.FloorToInt(Mathf.Clamp(drawAreaRect.x, 0, CanvasWidthPixels - 1)),
-                Mathf.FloorToInt(Mathf.Clamp(drawAreaRect.y, 0, CanvasHeightPixels - 1)),
+                Mathf.FloorToInt(drawAreaRect.x),
+                Mathf.FloorToInt(drawAreaRect.y),
                 Mathf.FloorToInt(drawAreaRect.width),
                 Mathf.FloorToInt(drawAreaRect.height),
                 drawAreaPixels);
