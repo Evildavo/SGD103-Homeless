@@ -3,8 +3,8 @@ using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
 
-public class WriteYourSign : MonoBehaviour {
-    private Texture2D canvas;
+public class WriteYourSign : MonoBehaviour
+{
     private Vector2 lastPoint = new Vector2();
     private bool hasLastPoint = false;
     private Color[] PenTipPixels;
@@ -15,6 +15,9 @@ public class WriteYourSign : MonoBehaviour {
     public Color PenColour = Color.black;
     public float PixelSpacing = 1.0f;
     public Texture2D PenTipTexture;
+    [ReadOnly]
+    public Texture2D CanvasTexture;
+    public CardboardSign CardboardSign;
 
     public void Show()
     {
@@ -30,22 +33,28 @@ public class WriteYourSign : MonoBehaviour {
     {
         // Fill with transparent black.
         Color fillColour = new Color(0.0f, 0.0f, 0.0f, 0.0f);
-        var pixelArray = canvas.GetPixels();
+        var pixelArray = CanvasTexture.GetPixels();
         for (var i = 0; i < pixelArray.Length; ++i)
         {
             pixelArray[i] = fillColour;
         }
-        canvas.SetPixels(pixelArray);
-        canvas.Apply();
+        CanvasTexture.SetPixels(pixelArray);
+        CanvasTexture.Apply();
+
+        // Apply to cardboard sign object.
+        if (CardboardSign)
+        {
+            CardboardSign.CanvasMaterial.mainTexture = CanvasTexture;
+        }
     }
 
 	void Start ()
     {
         // Create and assign the texture.
-        canvas = new Texture2D(CanvasWidthPixels, CanvasHeightPixels, TextureFormat.ARGB32, false);
+        CanvasTexture = new Texture2D(CanvasWidthPixels, CanvasHeightPixels, TextureFormat.ARGB32, false);
         RawImage rawImage = GetComponentInChildren<RawImage>();
         rawImage.enabled = true;
-        rawImage.texture = canvas;
+        rawImage.texture = CanvasTexture;
 
         ClearCanvas();
     }
@@ -159,7 +168,7 @@ public class WriteYourSign : MonoBehaviour {
                 }
 
                 // Get pixels for the area.
-                drawAreaPixels = canvas.GetPixels(
+                drawAreaPixels = CanvasTexture.GetPixels(
                     Mathf.FloorToInt(drawAreaRect.x),
                     Mathf.FloorToInt(drawAreaRect.y),
                     Mathf.FloorToInt(drawAreaRect.width),
@@ -184,15 +193,21 @@ public class WriteYourSign : MonoBehaviour {
             }
 
             // Apply changes to the draw area and the texture.
-            canvas.SetPixels(
+            CanvasTexture.SetPixels(
                 Mathf.FloorToInt(drawAreaRect.x),
                 Mathf.FloorToInt(drawAreaRect.y),
                 Mathf.FloorToInt(drawAreaRect.width),
                 Mathf.FloorToInt(drawAreaRect.height),
                 drawAreaPixels);
-            canvas.Apply();
+            CanvasTexture.Apply();
             lastPoint = cursorPosition;
             hasLastPoint = true;
+
+            // Apply to cardboard sign object.
+            if (CardboardSign)
+            {
+                CardboardSign.CanvasMaterial.mainTexture = CanvasTexture;
+            }
         }
         else
         {
