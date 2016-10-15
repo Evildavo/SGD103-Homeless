@@ -12,6 +12,7 @@ public class WriteYourSign : MonoBehaviour {
     public int CanvasHeightPixels = 128;
     public Color PenColour = Color.black;
     public float PixelSpacing = 1.0f;
+    public Texture2D PenTipTexture;
 
 	void Start ()
     {
@@ -33,13 +34,21 @@ public class WriteYourSign : MonoBehaviour {
     // Draw the brush at the given point.
     void drawBrush (Vector2 point, Rect drawAreaRect, Color[] drawAreaPixels)
     {
-        Vector2 pointInArea = point - drawAreaRect.position;
-        if ((int)pointInArea.x >= 0 &&
-            (int)pointInArea.y >= 0 &&
-            (int)pointInArea.x < (int)drawAreaRect.width &&
-            (int)pointInArea.y < (int)drawAreaRect.height)
+        Vector2 centre = new Vector2(PenTipTexture.width / 2, PenTipTexture.height / 2);
+        for (var i = 0; i < PenTipTexture.height; i++)
         {
-            drawAreaPixels[(int)pointInArea.y * (int)drawAreaRect.width + (int)pointInArea.x] = PenColour;
+            for (var j = 0; j < PenTipTexture.width; j++)
+            {
+                Vector2 pointInPenTipTexture = new Vector2(j, i);
+                Vector2 pointInArea = point - centre + pointInPenTipTexture - drawAreaRect.position;
+                if ((int)pointInArea.x >= 0 &&
+                    (int)pointInArea.y >= 0 &&
+                    (int)pointInArea.x < (int)drawAreaRect.width &&
+                    (int)pointInArea.y < (int)drawAreaRect.height)
+                {
+                    drawAreaPixels[(int)pointInArea.y * (int)drawAreaRect.width + (int)pointInArea.x] = PenColour;
+                }
+            }
         }
     }
 
@@ -62,10 +71,13 @@ public class WriteYourSign : MonoBehaviour {
             // Capture the pixel area that we'll draw into.
             Rect drawAreaRect;
             Color[] drawAreaPixels;
+            Vector2 penTipSize = new Vector2(PenTipTexture.width, PenTipTexture.height);
+            Vector2 penTipCentre = penTipSize / 2;
             {
                 // Capture rectangle including the last point so we can fill in the gap between them.
                 if (hasLastPoint)
                 {
+                    // Capture the area between two corners.
                     Vector2 firstCorner = cursorPosition;
                     Vector2 secondCorner = lastPoint;
                     bool flipX = (secondCorner.x < firstCorner.x);
@@ -83,6 +95,8 @@ public class WriteYourSign : MonoBehaviour {
                         secondCorner.y = y;
                     }
                     drawAreaRect = new Rect(firstCorner, secondCorner - firstCorner + new Vector2(1, 1));
+
+                    // Rectangle should have a minimum size of 1 pixel.
                     if (drawAreaRect.width < 1.0f)
                     {
                         drawAreaRect.width = 1.0f;
@@ -91,10 +105,16 @@ public class WriteYourSign : MonoBehaviour {
                     {
                         drawAreaRect.height = 1.0f;
                     }
+
+                    // Extend rectangle to fit the pen tip area.
+                    drawAreaRect.xMin -= penTipCentre.x;
+                    drawAreaRect.xMax += penTipCentre.x;
+                    drawAreaRect.yMin -= penTipCentre.y;
+                    drawAreaRect.yMax += penTipCentre.y;
                 }
                 else
                 {
-                    drawAreaRect = new Rect(cursorPosition, new Vector2(1, 1));
+                    drawAreaRect = new Rect(cursorPosition - penTipCentre, penTipSize);
                 }
 
                 // Restrict draw area rectangle to canvas borders.
