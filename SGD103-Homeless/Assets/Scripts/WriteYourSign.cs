@@ -29,6 +29,11 @@ public class WriteYourSign : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    public bool IsShown()
+    {
+        return gameObject.activeInHierarchy;
+    }
+
     public void ClearCanvas()
     {
         // Fill with transparent black.
@@ -45,6 +50,7 @@ public class WriteYourSign : MonoBehaviour
         if (CardboardSign)
         {
             CardboardSign.CanvasMaterial.mainTexture = CanvasTexture;
+            CardboardSign.CanvasMaterial.color = Color.white;
         }
     }
 
@@ -207,6 +213,7 @@ public class WriteYourSign : MonoBehaviour
             if (CardboardSign)
             {
                 CardboardSign.CanvasMaterial.mainTexture = CanvasTexture;
+                CardboardSign.CanvasMaterial.color = Color.white;
             }
         }
         else
