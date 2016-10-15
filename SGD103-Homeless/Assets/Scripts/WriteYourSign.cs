@@ -11,16 +11,23 @@ public class WriteYourSign : MonoBehaviour {
 
     public int CanvasWidthPixels = 256;
     public int CanvasHeightPixels = 128;
+    public RectTransform CanvasArea;
     public Color PenColour = Color.black;
     public float PixelSpacing = 1.0f;
     public Texture2D PenTipTexture;
 
-	void Start ()
+    public void Show()
     {
-        // Create and assign the texture.
-        canvas = new Texture2D(CanvasWidthPixels, CanvasHeightPixels, TextureFormat.ARGB32, false);
-        GetComponent<RawImage>().texture = canvas;
+        gameObject.SetActive(true);
+    }
 
+    public void Hide()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public void ClearCanvas()
+    {
         // Fill with transparent black.
         Color fillColour = new Color(0.0f, 0.0f, 0.0f, 0.0f);
         var pixelArray = canvas.GetPixels();
@@ -30,6 +37,17 @@ public class WriteYourSign : MonoBehaviour {
         }
         canvas.SetPixels(pixelArray);
         canvas.Apply();
+    }
+
+	void Start ()
+    {
+        // Create and assign the texture.
+        canvas = new Texture2D(CanvasWidthPixels, CanvasHeightPixels, TextureFormat.ARGB32, false);
+        RawImage rawImage = GetComponentInChildren<RawImage>();
+        rawImage.enabled = true;
+        rawImage.texture = canvas;
+
+        ClearCanvas();
     }
     
     // Draw the brush at the given point.
@@ -73,10 +91,10 @@ public class WriteYourSign : MonoBehaviour {
             {
                 Vector2 localPoint;
                 RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                    GetComponent<RectTransform>(), Input.mousePosition, null, out localPoint);
+                    CanvasArea, Input.mousePosition, null, out localPoint);
                 cursorPosition = new Vector2(
-                    localPoint.x / GetComponent<RectTransform>().rect.width * CanvasWidthPixels,
-                    localPoint.y / GetComponent<RectTransform>().rect.height * CanvasHeightPixels);
+                    localPoint.x / CanvasArea.rect.width * CanvasWidthPixels,
+                    localPoint.y / CanvasArea.rect.height * CanvasHeightPixels);
             }
             
             // Capture the pixel area that we'll draw into.
