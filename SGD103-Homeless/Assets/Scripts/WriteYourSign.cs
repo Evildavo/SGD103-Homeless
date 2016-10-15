@@ -7,6 +7,7 @@ public class WriteYourSign : MonoBehaviour {
     private Texture2D canvas;
     private Vector2 lastPoint = new Vector2();
     private bool hasLastPoint = false;
+    private Color[] PenTipPixels;
 
     public int CanvasWidthPixels = 256;
     public int CanvasHeightPixels = 128;
@@ -46,7 +47,17 @@ public class WriteYourSign : MonoBehaviour {
                     (int)pointInArea.x < (int)drawAreaRect.width &&
                     (int)pointInArea.y < (int)drawAreaRect.height)
                 {
-                    drawAreaPixels[(int)pointInArea.y * (int)drawAreaRect.width + (int)pointInArea.x] = PenColour;
+                    int pointIndex = (int)pointInArea.y * (int)drawAreaRect.width + (int)pointInArea.x;
+                    int penTipIndex = j * PenTipTexture.width + i;
+
+                    // Apply the new colour using alpha-transparency blending. 
+                    Color sourceColour = new Color(PenColour.r, PenColour.g, PenColour.b, PenTipPixels[penTipIndex].a);
+                    Color destinationColour = drawAreaPixels[pointIndex];
+                    drawAreaPixels[pointIndex] = new Color(
+                        sourceColour.r * sourceColour.a + destinationColour.r * (1.0f - sourceColour.a),
+                        sourceColour.g * sourceColour.a + destinationColour.g * (1.0f - sourceColour.a),
+                        sourceColour.b * sourceColour.a + destinationColour.b * (1.0f - sourceColour.a),
+                        sourceColour.a + destinationColour.a * (1.0f - sourceColour.a));
                 }
             }
         }
@@ -136,6 +147,9 @@ public class WriteYourSign : MonoBehaviour {
                     Mathf.FloorToInt(drawAreaRect.width),
                     Mathf.FloorToInt(drawAreaRect.height));
             }
+
+            // Get the pixels of the brush.
+            PenTipPixels = PenTipTexture.GetPixels();
 
             // Paint the canvas at the cursor.
             drawBrush(cursorPosition, drawAreaRect, drawAreaPixels);
