@@ -8,6 +8,7 @@ public class Supermarket : MonoBehaviour {
     private List<Menu.Option> mainMenuOptions = new List<Menu.Option>();
 
     public Trigger Trigger;
+    public GameTime GameTime;
     public Menu Menu;
 
 

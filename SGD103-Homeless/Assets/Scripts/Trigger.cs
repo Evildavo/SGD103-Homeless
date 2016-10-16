@@ -23,7 +23,6 @@ public class Trigger : MonoBehaviour
     public bool IsPlayerInsideTriggerZone = false;
     [ReadOnly]
     public bool IsActivated = false;
-    public bool AccelerateTimeWhileActivated = true;
     public string TriggerName;
     public string InteractHintMessage;
     [Header("Leave blank to not show an interact message")]
@@ -60,13 +59,12 @@ public class Trigger : MonoBehaviour
         onPlayerExit = function;
     }
 
-    // Resets the trigger after being triggered. Returns game-time speed to normal.
+    // Resets the trigger after being triggered. 
     // If enabled is false the player won't be able to reactivate the trigger.
     public void Reset(bool enabled = true)
     {
         IsEnabled = enabled;
         IsActivated = false;
-        GameTime.TimeScale = GameTime.NormalTimeScale;
     }
     
     public void ShowInteractionText()
@@ -131,10 +129,6 @@ public class Trigger : MonoBehaviour
             {
                 IsEnabled = false;
                 IsActivated = true;
-                if (AccelerateTimeWhileActivated)
-                {
-                    GameTime.TimeScale = GameTime.AcceleratedTimeScale;
-                }
                 HideInteractionText();
                 if (onTrigger != null)
                 {

@@ -22,7 +22,6 @@ public class Begging : MonoBehaviour
     public void OnTrigger()
     {
         WriteYourSign.Show();
-        Trigger.GameTime.TimeScale = Trigger.GameTime.NormalTimeScale;
     }
 
     public void OnPlayerExit()

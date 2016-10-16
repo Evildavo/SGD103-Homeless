@@ -34,6 +34,7 @@ public class Library : MonoBehaviour {
         PlayerState.HighlightMorale = false;
         Menu.Hide();
         MessageBox.Hide();
+        GameTime.TimeScale = GameTime.NormalTimeScale;
         if (Trigger)
         {
             Trigger.Reset();

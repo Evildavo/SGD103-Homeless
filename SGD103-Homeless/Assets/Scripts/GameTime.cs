@@ -4,9 +4,9 @@ using System.Collections;
 public class GameTime : MonoBehaviour
 {
     [Header("Game time")]
-    public float NormalTimeScale = 1.0f;
-    public float AcceleratedTimeScale = 1.0f;
-    public float TimeScale = 1.0f;
+    public float NormalTimeScale = 100.0f;
+    public float AcceleratedTimeScale = 400.0f;
+    public float TimeScale = 100.0f;
 
     [Header("Time-of-day")]
     public int Day = 1;
@@ -15,7 +15,8 @@ public class GameTime : MonoBehaviour
     public float SunriseAtHour = 6.0f;
     [ReadOnly]
     public bool IsNight = false;
-    
+    public bool StartWithNormalTimeScale = true;
+
     // Returns the time as a string in the format "11:34 pm".
     public string GetTimeAsString()
     {
@@ -44,8 +45,12 @@ public class GameTime : MonoBehaviour
         return hour.ToString() + ":" + minutes.ToString().PadLeft(2, '0') + " " + amPmLabel.ToUpper();
     }
 
-    void Start () {
-	
+    void Start ()
+    {
+        if (StartWithNormalTimeScale)
+        {
+            TimeScale = NormalTimeScale;
+        }
 	}
 	
 	void Update ()
