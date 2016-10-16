@@ -4,10 +4,20 @@ using System.Collections;
 public class PlayerSleepManager : MonoBehaviour
 {
     private SleepQualityEnum sleepQualityAtSleep;
-    public float hoursSlept;
+    private float hoursSlept;
     private float timeSinceLastHour;
     private float hoursSinceLastSlept;
     private bool hasSlept = false;
+
+    public enum WakeReason
+    {
+        NONE,
+        USER_INTERRUPTED,
+        WOKEN_BY_POLICE,
+        WOKEN_BY_UNCOMFORTABLE_SLEEP,
+        WOKEN_BY_SUN,
+        WOKEN_FROM_TOO_MUCH_SLEEP
+    }
 
     public enum SleepQualityEnum
     {
@@ -48,6 +58,8 @@ public class PlayerSleepManager : MonoBehaviour
     [Range(0.0f, 24.0f)]
     public float CanBeWokenInPublicToHour = 22.0f;
     public float MinHoursWaitBetweenSleeps = 0.5f;
+    [ReadOnly]
+    public WakeReason LastWakeReason = WakeReason.NONE;
 
     // Player goes to sleep at the current location.
     // The player won't sleep if the player hasn't waited long enough since last sleeping.
@@ -147,6 +159,7 @@ public class PlayerSleepManager : MonoBehaviour
             // Wake up on key or mouse press.
             if (Input.anyKeyDown)
             {
+                LastWakeReason = WakeReason.USER_INTERRUPTED;
                 ShowWakeMessage();
                 Wake();
                 return;
@@ -167,6 +180,7 @@ public class PlayerSleepManager : MonoBehaviour
                     var value = Random.Range(0.0f, 1.0f);
                     if (value <= ChanceOfBeingWokenInPublicPerHour)
                     {
+                        LastWakeReason = WakeReason.WOKEN_BY_POLICE;
                         MessageBox.ShowForTime("You're woken by a police-man saying \"You can't sleep here\"", 2.0f, gameObject);
                         Wake();
                         return;
@@ -174,10 +188,12 @@ public class PlayerSleepManager : MonoBehaviour
                 }
 
                 // Chance of waking early if sleeping uncomfortably.
+                if (sleepQualityAtSleep == SleepQualityEnum.POOR)
                 {
                     var value = Random.Range(0.0f, 1.0f);
                     if (value <= ChanceOfWakingPoorSleepPerHour)
                     {
+                        LastWakeReason = WakeReason.WOKEN_BY_UNCOMFORTABLE_SLEEP;
                         ShowWakeMessage();
                         Wake();
                         return;
@@ -189,6 +205,7 @@ public class PlayerSleepManager : MonoBehaviour
             // Wake up in morning.
             if (Mathf.Abs(GameTime.TimeOfDayHours - WakeUpHour) <= gameTimeDelta)
             {
+                LastWakeReason = WakeReason.WOKEN_BY_SUN;
                 GameTime.TimeOfDayHours = WakeUpHour;
                 ShowWakeMessage();
                 Wake();
@@ -198,6 +215,7 @@ public class PlayerSleepManager : MonoBehaviour
             // Wake up when max sleep hours is reached.
             if (hoursSlept > MaxSleepHours)
             {
+                LastWakeReason = WakeReason.WOKEN_FROM_TOO_MUCH_SLEEP;
                 ShowWakeMessage();
                 Wake();
                 return;
