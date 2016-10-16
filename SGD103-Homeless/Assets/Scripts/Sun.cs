@@ -1,20 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[ExecuteInEditMode]
 public class Sun : MonoBehaviour
 {
+    private float lastTime;
 
     public GameTime GameTime;
-    
+
+    public float EnvironmentUpdateIntervalGameHours = 0.2f;
     public float DeclinationAngleOffset = 30.0f;
     public Gradient ColourGradient;
     public Gradient IntensityGradient;
-
-    void Start()
-    {
-
-    }
-
+    
     void Update()
     {
         // Adjust sun light based on time.
@@ -29,7 +27,12 @@ public class Sun : MonoBehaviour
             Quaternion.AngleAxis(sunXRotationDegrees, Vector3.left) *
             Quaternion.AngleAxis(sunYRotationDegrees, Vector3.up);
         transform.Rotate(new Vector3(0.0f, DeclinationAngleOffset, 0.0f));
-        
-        DynamicGI.UpdateEnvironment();
+
+        // Update the environment slower to improve performance.
+        if (Mathf.Abs(GameTime.TimeOfDayHours - lastTime) > EnvironmentUpdateIntervalGameHours)
+        {
+            DynamicGI.UpdateEnvironment();
+            lastTime = GameTime.TimeOfDayHours;
+        }
     }
 }
