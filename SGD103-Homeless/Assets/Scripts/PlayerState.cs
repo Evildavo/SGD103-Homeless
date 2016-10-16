@@ -22,7 +22,7 @@ public class PlayerState : MonoBehaviour {
     public float Money = 0;
 
     [Range(0.0f, 1.0f)]
-    public float HungerThirst = 1.0f;
+    public float HungerThirstSatiety = 1.0f;
     [Range(0.0f, 1.0f)]
     public float Health = 1.0f;
     [Range(0.0f, 1.0f)]
@@ -30,16 +30,17 @@ public class PlayerState : MonoBehaviour {
     [Range(0.0f, 1.0f)]
     [ReadOnly]
     public float MoraleTarget = 1.0f;
-    public bool HighlightHungerThirst;
-    public bool HighlightHealth;
-    public bool HighlightMorale;
-    public float HungerIncreasePerGameHour;
-    public float HealthDecreasePerGameHour;
+    public bool HighlightHungerThirst = false;
+    public bool HighlightHealth = false;
+    public bool HighlightMorale = false;
+    public float HungerIncreasePerGameHour = 0.1f;
+    public float HealthDecreasePerGameHour = 0.1f;
     public float MoraleMaxChangePerGameHour = 0.0f;
     public float PercentHungerAffectsMorale = 0.5f;
     public float PercentHealthAffectsMorale = 0.5f;
-    public float WhileAsleepHungerIncreasePerGameHour;
-    public float WhileAsleepHealthGainedPerGameHour;
+    public float HungerIncreaseDuringSleep = 0.01f;
+    public float HealthIncreaseDuringSleep = 0.05f;
+    public float SleepQualityHealthIncreaseFactor = 1.0f;
 
     void Update () {
 
@@ -51,7 +52,7 @@ public class PlayerState : MonoBehaviour {
         {
             HungerThirstText.color = HighlightTextColour;
         }
-        else if (HungerThirst <= HungerWarningThreshold)
+        else if (HungerThirstSatiety <= HungerWarningThreshold)
         {
             HungerThirstText.color = WarningTextColour;
             if (BoldTextDuringWarning)
@@ -103,7 +104,7 @@ public class PlayerState : MonoBehaviour {
         }
         if (HungerThirstText)
         {
-            HungerThirstText.text = "Hunger/Thirst: " + (HungerThirst * 100).ToString("f0") + "%";
+            HungerThirstText.text = "Hunger/Thirst: " + (HungerThirstSatiety * 100).ToString("f0") + "%";
         }
         if (HealthText)
         {
@@ -115,30 +116,36 @@ public class PlayerState : MonoBehaviour {
         }
 
         // Stats change over time.
+        var gameTimeDelta = 1.0f / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
         if (!SleepManager.IsAsleep)
         {
-            HungerThirst -= HungerIncreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
-            Health -= HealthDecreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
+            HungerThirstSatiety -= HungerIncreasePerGameHour * gameTimeDelta;
+            Health -= HealthDecreasePerGameHour * gameTimeDelta;
         }
         else
         {
-            HungerThirst -= WhileAsleepHungerIncreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
-            Health += WhileAsleepHealthGainedPerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
+            HungerThirstSatiety -= HungerIncreaseDuringSleep * gameTimeDelta;
+
+            // Gain health based on sleep quality.
+            Health += HealthIncreaseDuringSleep * 
+                      SleepManager.SleepQuality * 
+                      SleepQualityHealthIncreaseFactor *
+                      gameTimeDelta;
         }
 
         // Determine morale target based on a weighted average between hunger and health.
         MoraleTarget = 
-            (HungerThirst * PercentHungerAffectsMorale + Health * (1.0f - PercentHungerAffectsMorale) +
-             Health * PercentHealthAffectsMorale + HungerThirst * (1.0f - PercentHealthAffectsMorale)) / 2.0f;
+            (HungerThirstSatiety * PercentHungerAffectsMorale + Health * (1.0f - PercentHungerAffectsMorale) +
+             Health * PercentHealthAffectsMorale + HungerThirstSatiety * (1.0f - PercentHealthAffectsMorale)) / 2.0f;
 
         // Move morale towards morale target.
-        if (Morale < MoraleTarget - MoraleMaxChangePerGameHour)
+        if (Morale <= MoraleTarget - MoraleMaxChangePerGameHour * gameTimeDelta)
         {
-            Morale += MoraleMaxChangePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
+            Morale += MoraleMaxChangePerGameHour * gameTimeDelta;
         }
-        else if (Morale > MoraleTarget + MoraleMaxChangePerGameHour)
+        else if (Morale >= MoraleTarget + MoraleMaxChangePerGameHour * gameTimeDelta)
         {
-            Morale -= MoraleMaxChangePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
+            Morale -= MoraleMaxChangePerGameHour * gameTimeDelta;
         }
         else
         {
@@ -150,7 +157,7 @@ public class PlayerState : MonoBehaviour {
         {
             Money = 0;
         }
-        HungerThirst = Mathf.Clamp(HungerThirst, 0.0f, 1.0f);
+        HungerThirstSatiety = Mathf.Clamp(HungerThirstSatiety, 0.0f, 1.0f);
         Health = Mathf.Clamp(Health, 0.0f, 1.0f);
         Morale = Mathf.Clamp(Morale, 0.0f, 1.0f);
     }

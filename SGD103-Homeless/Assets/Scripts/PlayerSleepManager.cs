@@ -9,7 +9,7 @@ public class PlayerSleepManager : MonoBehaviour
         OK,
         POOR
     }
-
+    
     public MessageBox MessageBox;
     public GameTime GameTime;
     public Transform ZoneContainer;
@@ -26,11 +26,20 @@ public class PlayerSleepManager : MonoBehaviour
     public float SleepTimeScale = 12000.0f;
     [Range(0.0f, 24.0f)]
     public float WakeUpAtHour = 6.5f;
+    [Range(0.0f, 1.0f)]
+    [ReadOnly]
+    public float SleepQuality = 1.0f;
 
     // Player goes to sleep at the current location.
     public void Sleep()
     {
-        IsAsleep = true; 
+        IsAsleep = true;
+
+        // Determine the sleep quality.
+        /*if (SleepQualityHere == SleepQualityEnum.POOR)
+        {
+            SleepQuality = SleepQualityHere;
+        }*/
 
         // Fade to black.
         ScreenFader.fadeTime = FadeToBlackTime;

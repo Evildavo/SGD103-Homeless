@@ -13,7 +13,7 @@ public class FoodItemTest : InventoryItem
     public override void OnPrimaryAction()
     {
         MessageBox.ShowForTime("You feel full", CloseAfterSeconds, gameObject);
-        PlayerState.HungerThirst += 1.0f;
+        PlayerState.HungerThirstSatiety += 1.0f;
 
         Inventory.RemoveItem(this);
     }

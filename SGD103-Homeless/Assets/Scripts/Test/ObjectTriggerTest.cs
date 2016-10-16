@@ -41,7 +41,7 @@ public class ObjectTriggerTest : MonoBehaviour {
             // Eat immediately if we're not adding to the inventory.
             else
             {
-                PlayerState.HungerThirst = 1.0f;
+                PlayerState.HungerThirstSatiety = 1.0f;
             }
 
             // Play sound.

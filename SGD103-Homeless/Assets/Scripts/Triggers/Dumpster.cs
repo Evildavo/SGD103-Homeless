@@ -36,7 +36,7 @@ public class Dumpster : MonoBehaviour {
                 {
                     if (yes)
                     {
-                        PlayerState.HungerThirst += 0.2f;
+                        PlayerState.HungerThirstSatiety += 0.2f;
                         PlayerState.Health -= 0.2f;
                     }
                 };
