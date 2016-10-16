@@ -6,8 +6,6 @@ public class GameTime : MonoBehaviour
     [Header("Game time")]
     public float NormalTimeScale = 1.0f;
     public float AcceleratedTimeScale = 1.0f;
-    public bool IsTimeAccelerated = false;
-    [ReadOnly]
     public float TimeScale = 1.0f;
 
     [Header("Time-of-day")]
@@ -18,6 +16,7 @@ public class GameTime : MonoBehaviour
     [ReadOnly]
     public bool IsNight = false;
     
+    // Returns the time as a string in the format "11:34 pm".
     public string GetTimeAsString()
     {
         int hour = (int)TimeOfDayHours;
@@ -49,15 +48,9 @@ public class GameTime : MonoBehaviour
 	
 	}
 	
-	void Update () {
-        if (IsTimeAccelerated)
-        {
-            TimeScale = AcceleratedTimeScale;
-        }
-        else
-        {
-            TimeScale = NormalTimeScale;
-        }
+	void Update ()
+    {
+        // Increment game-time.
         TimeOfDayHours += Time.deltaTime / 60.0f / 60.0f * TimeScale;
         if (TimeOfDayHours >= 24.0f)
         {

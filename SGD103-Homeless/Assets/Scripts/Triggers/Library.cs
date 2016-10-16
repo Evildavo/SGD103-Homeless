@@ -62,7 +62,7 @@ public class Library : MonoBehaviour {
     {
         MessageBox.Show("Searching for jobs...", gameObject);
         Menu.Hide();
-        GameTime.IsTimeAccelerated = true;
+        GameTime.TimeScale = GameTime.AcceleratedTimeScale;
         isJobSearching = true;
         timeAtLastCheck = Time.time;
     }
@@ -75,7 +75,7 @@ public class Library : MonoBehaviour {
         MessageBox.Show("You are reading \"" + Books[random] + "\"", gameObject);
         Menu.Show(getReadingMenu());
         PlayerState.HighlightMorale = true;
-        GameTime.IsTimeAccelerated = true;
+        GameTime.TimeScale = GameTime.AcceleratedTimeScale;
         isReading = true;
     }
 
@@ -89,7 +89,7 @@ public class Library : MonoBehaviour {
         Menu.Show(getMainMenu());
         MessageBox.Hide();
         PlayerState.HighlightMorale = false;
-        GameTime.IsTimeAccelerated = false;
+        GameTime.TimeScale = GameTime.NormalTimeScale;
         isReading = false;
     }
 
@@ -134,7 +134,7 @@ public class Library : MonoBehaviour {
         if (isJobSearching && Time.time - timeAtLastCheck > JobSearchTimeSeconds)
         {
             MessageBox.ShowForTime("You didn't find any jobs today.", 2.0f, gameObject);
-            GameTime.IsTimeAccelerated = false;
+            GameTime.TimeScale = GameTime.NormalTimeScale;
             Menu.Show(getMainMenu());
         }
 

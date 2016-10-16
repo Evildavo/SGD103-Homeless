@@ -66,7 +66,7 @@ public class Trigger : MonoBehaviour
     {
         IsEnabled = enabled;
         IsActivated = false;
-        GameTime.IsTimeAccelerated = false;
+        GameTime.TimeScale = GameTime.NormalTimeScale;
     }
     
     public void ShowInteractionText()
@@ -133,7 +133,7 @@ public class Trigger : MonoBehaviour
                 IsActivated = true;
                 if (AccelerateTimeWhileActivated)
                 {
-                    GameTime.IsTimeAccelerated = true;
+                    GameTime.TimeScale = GameTime.AcceleratedTimeScale;
                 }
                 HideInteractionText();
                 if (onTrigger != null)

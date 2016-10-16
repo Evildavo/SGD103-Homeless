@@ -35,6 +35,9 @@ public class PlayerSleepManager : MonoBehaviour {
 
         // Show the sleep message box.
         MessageBox.Show("Zzzz...", gameObject);
+
+        // Accelerate time.
+        GameTime.TimeScale = SleepTimeScale;
     }
 
     void Start () {
