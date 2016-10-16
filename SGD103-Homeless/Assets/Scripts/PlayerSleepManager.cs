@@ -33,31 +33,32 @@ public class PlayerSleepManager : MonoBehaviour
     public UI UI;
 
     public bool HideUIDuringSleep = true;
-    [ReadOnly]
-    public bool InPublic = false;
-    [ReadOnly]
-    public SleepQualityEnum SleepQualityHere;
     public float FadeToBlackTime = 1.5f;
     public float FadeInFromBlackTime = 1.5f;
-    [ReadOnly]
-    public bool IsAsleep = false;
     public float SleepTimeScale = 12000.0f;
     [Range(0.0f, 24.0f)]
-    public float WakeUpHour = 6.5f;
+    public float WakeUpMorningHour = 6.5f;
     public float MaxSleepHours = 12.0f;
+    public float GoodSleepQualityLevel = 1.0f;
+    public float OkSleepQualityLevel = 0.5f;
+    public float PoorSleepQualityLevel = 0.15f;
     [Range(0.0f, 1.0f)]
-    [ReadOnly]
-    public float SleepQuality = 1.0f;
-    public float BaseGoodSleepQuality = 1.0f;
-    public float BaseOkSleepQuality = 0.5f;
-    public float BasePoorSleepQuality = 0.15f;
     public float ChanceOfWakingPoorSleepPerHour = 0.15f;
+    [Range(0.0f, 1.0f)]
     public float ChanceOfBeingWokenInPublicPerHour = 0.3f;
     [Range(0.0f, 24.0f)]
     public float CanBeWokenInPublicFromHour = 6.5f;
     [Range(0.0f, 24.0f)]
     public float CanBeWokenInPublicToHour = 22.0f;
     public float MinHoursWaitBetweenSleeps = 0.5f;
+    [ReadOnly]
+    public bool InPublic = false;
+    [ReadOnly]
+    public SleepQualityEnum SleepQualityHere;
+    [ReadOnly]
+    public bool IsAsleep = false;
+    [ReadOnly]
+    public float SleepQuality = 1.0f;
     [ReadOnly]
     public WakeReason LastWakeReason = WakeReason.NONE;
 
@@ -80,13 +81,13 @@ public class PlayerSleepManager : MonoBehaviour
                 switch (SleepQualityHere)
                 {
                     case SleepQualityEnum.POOR:
-                        SleepQuality = BasePoorSleepQuality;
+                        SleepQuality = PoorSleepQualityLevel;
                         break;
                     case SleepQualityEnum.OK:
-                        SleepQuality = BaseOkSleepQuality;
+                        SleepQuality = OkSleepQualityLevel;
                         break;
                     case SleepQualityEnum.GOOD:
-                        SleepQuality = BaseGoodSleepQuality;
+                        SleepQuality = GoodSleepQualityLevel;
                         break;
                 }
 
@@ -203,10 +204,10 @@ public class PlayerSleepManager : MonoBehaviour
             }
 
             // Wake up in morning.
-            if (Mathf.Abs(GameTime.TimeOfDayHours - WakeUpHour) <= gameTimeDelta)
+            if (Mathf.Abs(GameTime.TimeOfDayHours - WakeUpMorningHour) <= gameTimeDelta)
             {
                 LastWakeReason = WakeReason.WOKEN_BY_SUN;
-                GameTime.TimeOfDayHours = WakeUpHour;
+                GameTime.TimeOfDayHours = WakeUpMorningHour;
                 ShowWakeMessage();
                 Wake();
                 return;
