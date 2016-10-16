@@ -7,8 +7,12 @@ public class InventoryHudButton : MonoBehaviour {
     public Inventory Inventory;
     public Transform HudButtonLabel;
 
+    [ReadOnly]
+    public bool IsCursorOver = false;
+
     public void OnPointerEnter()
     {
+        IsCursorOver = true;
         HudButtonLabel.gameObject.SetActive(true);
         HudButtonLabel.GetComponentInChildren<Text>().text = "Open/Close Inventory";
         Vector3 position = HudButtonLabel.transform.position;
@@ -18,6 +22,7 @@ public class InventoryHudButton : MonoBehaviour {
 
     public void OnPointerExit()
     {
+        IsCursorOver = false;
         HudButtonLabel.gameObject.SetActive(false);
     }
 

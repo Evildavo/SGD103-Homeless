@@ -10,6 +10,7 @@ public class Inventory : MonoBehaviour
     public InventoryItemDescription ItemDescription;
     public Transform SlotContainer;
     public Transform ItemContainer;
+    public InventoryHudButton InventoryHudButton;
 
     [Tooltip("A value of 0 will disable hiding")]
     public int DeadZonePixels = 25;
@@ -178,8 +179,9 @@ public class Inventory : MonoBehaviour
         }
 
         // Close if the mouse was clicked while not over an item.
-        if (CloseOnClickOutside && Input.GetButtonUp("Primary") &&
-            !ItemDescription.gameObject.activeInHierarchy)
+        if (CloseOnClickOutside && Input.GetButtonDown("Primary") &&
+            (!ItemDescription.gameObject.activeInHierarchy || ItemDescription.ItemName.text == "") &&
+            !InventoryHudButton.IsCursorOver)
         {
             Hide();
         }
