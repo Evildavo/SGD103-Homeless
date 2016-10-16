@@ -21,7 +21,7 @@ public class Zone : MonoBehaviour
     // Override and call base.
     public virtual void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject == PlayerCharacter.gameObject)
+        if (PlayerCharacter && other.gameObject == PlayerCharacter.gameObject)
         {
             PlayerIsInside = true;
         }
@@ -30,7 +30,7 @@ public class Zone : MonoBehaviour
     // Override and call base.
     public virtual void OnTriggerExit(Collider other)
     {
-        if (other.gameObject == PlayerCharacter.gameObject)
+        if (PlayerCharacter && other.gameObject == PlayerCharacter.gameObject)
         {
             PlayerIsInside = false;
         }

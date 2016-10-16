@@ -121,7 +121,10 @@ public class PlayerSleepManager : MonoBehaviour
                 else
                 {
                     usingItem = GetBestSleepItem();
-                    SleepQuality += usingItem.ImprovesSleepQualityPercent;
+                    if (usingItem)
+                    {
+                        SleepQuality += usingItem.ImprovesSleepQualityPercent;
+                    }
                 }
 
                 // Fade to black.

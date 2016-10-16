@@ -96,6 +96,8 @@ public class Library : MonoBehaviour {
 
     public void OnTrigger()
     {
+        isJobSearching = false;
+        isReading = false;
         Menu.Show(getMainMenu());
     }
 
