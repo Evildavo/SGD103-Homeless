@@ -3,6 +3,7 @@ using System.Collections;
 
 public class SleepZone : Zone {
     
+    [Header("Note: Anywhere without a sleep zone gives Poor sleep")]
     public bool HighQualitySleep = false;
 
     public override void Start()

@@ -111,14 +111,17 @@ public class Trigger : MonoBehaviour
     void Update()
     {
         // Determine if we're in the active hour. If from and to are flipped the period wraps (e.g. 11pm to 2am).
-        float time = GameTime.TimeOfDayHours;
-        if (ActiveFromHour < ActiveToHour)
+        if (GameTime)
         {
-            IsInActiveHour = (time >= ActiveFromHour && time <= ActiveToHour);
-        }
-        else
-        {
-            IsInActiveHour = (time >= ActiveFromHour || time <= ActiveToHour);
+            float time = GameTime.TimeOfDayHours;
+            if (ActiveFromHour < ActiveToHour)
+            {
+                IsInActiveHour = (time >= ActiveFromHour && time <= ActiveToHour);
+            }
+            else
+            {
+                IsInActiveHour = (time >= ActiveFromHour || time <= ActiveToHour);
+            }
         }
 
         // Show prompt allowing the player to activate the trigger.
