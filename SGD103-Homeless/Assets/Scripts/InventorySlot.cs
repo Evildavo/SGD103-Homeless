@@ -39,6 +39,8 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         isOver = true;
         if (Item && ItemDescription)
         {
+            Item.OnCursorEnter();
+
             // Update text.
             ItemDescription.gameObject.SetActive(true);
             ItemDescription.ItemName.text = Item.ItemName;
@@ -52,9 +54,6 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 position.x = transform.position.x;
                 ItemDescription.transform.position = position;
             }
-
-            // Update inventory item.
-            Item.OnCursorEnter();
         }
     }
 

@@ -41,8 +41,8 @@ public class SleepHudButton : MonoBehaviour
         // Update the button label based on expected quality of sleep here.
         if (isMouseOver)
         {
-            HudButtonLabel.GetComponentInChildren<Text>().text = "Sleep here";
             HudButtonLabel.GetComponentInChildren<Text>().color = Color.white;
+            HudButtonLabel.GetComponentInChildren<Text>().text = "Sleep here";
 
             if (GiveSleepHint)
             {
@@ -61,6 +61,12 @@ public class SleepHudButton : MonoBehaviour
                         HudButtonLabel.GetComponentInChildren<Text>().color = GoodSleepLabelColour;
                         break;
                 }
+            }
+            
+            SleepItem sleepItem = SleepManager.GetBestSleepItem();
+            if (sleepItem)
+            {
+                HudButtonLabel.GetComponentInChildren<Text>().text += "\nusing " + sleepItem.ItemName + "";
             }
         }
     }

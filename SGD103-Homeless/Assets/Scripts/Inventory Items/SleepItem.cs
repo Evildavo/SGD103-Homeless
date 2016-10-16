@@ -10,7 +10,7 @@ public class SleepItem : InventoryItem
     public SleepHudButton SleepHudButton;
 
     public float ImprovesSleepQualityPercent = 0.0f;
-
+    
     // Call in the base class if deriving.
     public override void OnPrimaryAction()
     {
@@ -21,6 +21,7 @@ public class SleepItem : InventoryItem
     public override void OnCursorEnter()
     {
         isOver = true;
+        Update();
     }
 
     // Call in the base class if deriving.
@@ -33,23 +34,26 @@ public class SleepItem : InventoryItem
     // Call in the base class if deriving.
     public virtual void Update()
     {
-        if (isOver && SleepHudButton && SleepHudButton.GiveSleepHint)
+        if (isOver)
         {
-            PrimaryActionDescription = "Sleep here";
-            switch (SleepManager.SleepQualityHere)
+            PrimaryActionDescription = "Click to Sleep";
+            if (SleepHudButton && SleepHudButton.GiveSleepHint)
             {
-                case PlayerSleepManager.SleepQualityEnum.POOR:
-                    PrimaryActionDescription += " (bad)";
-                    ItemDescription.ItemAction.color = SleepHudButton.PoorSleepLabelColour;
-                    break;
-                case PlayerSleepManager.SleepQualityEnum.OK:
-                    PrimaryActionDescription += " (ok)";
-                    ItemDescription.ItemAction.color = SleepHudButton.OkSleepLabelColour;
-                    break;
-                case PlayerSleepManager.SleepQualityEnum.GOOD:
-                    PrimaryActionDescription += " (good)";
-                    ItemDescription.ItemAction.color = SleepHudButton.GoodSleepLabelColour;
-                    break;
+                switch (SleepManager.SleepQualityHere)
+                {
+                    case PlayerSleepManager.SleepQualityEnum.POOR:
+                        PrimaryActionDescription += " (bad)";
+                        ItemDescription.ItemAction.color = SleepHudButton.PoorSleepLabelColour;
+                        break;
+                    case PlayerSleepManager.SleepQualityEnum.OK:
+                        PrimaryActionDescription += " (ok)";
+                        ItemDescription.ItemAction.color = SleepHudButton.OkSleepLabelColour;
+                        break;
+                    case PlayerSleepManager.SleepQualityEnum.GOOD:
+                        PrimaryActionDescription += " (good)";
+                        ItemDescription.ItemAction.color = SleepHudButton.GoodSleepLabelColour;
+                        break;
+                }
             }
         }
     }

@@ -64,6 +64,23 @@ public class PlayerSleepManager : MonoBehaviour
     [ReadOnly]
     public WakeReason LastWakeReason = WakeReason.NONE;
 
+    // Returns the best available sleep item in the player inventory.
+    // Returns null if the player doesn't have any items.
+    public SleepItem GetBestSleepItem()
+    {
+        float bestValueSoFar = 0.0f;
+        SleepItem bestItemSoFar = null;
+        foreach (SleepItem item in Inventory.ItemContainer.GetComponentsInChildren<SleepItem>())
+        {
+            if (item.ImprovesSleepQualityPercent >= bestValueSoFar)
+            {
+                bestItemSoFar = item;
+                bestValueSoFar = item.ImprovesSleepQualityPercent;
+            }
+        }
+        return bestItemSoFar;
+    }
+
     // Player goes to sleep at the current location.
     // The player won't sleep if the player hasn't waited long enough since last sleeping.
     public void Sleep(SleepItem sleepItem = null)
@@ -103,16 +120,8 @@ public class PlayerSleepManager : MonoBehaviour
                 // If no sleep item is available, use the best item the player has.
                 else
                 {
-                    float bestSoFar = 0.0f;
-                    foreach (SleepItem item in Inventory.ItemContainer.GetComponentsInChildren<SleepItem>())
-                    {
-                        if (item.ImprovesSleepQualityPercent > bestSoFar)
-                        {
-                            usingItem = item;
-                            bestSoFar = item.ImprovesSleepQualityPercent;
-                        }
-                    }
-                    SleepQuality += bestSoFar;
+                    usingItem = GetBestSleepItem();
+                    SleepQuality += usingItem.ImprovesSleepQualityPercent;
                 }
 
                 // Fade to black.
