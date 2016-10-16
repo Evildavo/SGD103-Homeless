@@ -37,6 +37,7 @@ public class PlayerSleepManager : MonoBehaviour
     public float BaseGoodSleepQuality = 1.0f;
     public float BaseOkSleepQuality = 0.5f;
     public float BasePoorSleepQuality = 0.15f;
+    public float ChanceOfWakingPoorSleepPerHour = 0.15f;
     public float ChanceOfBeingWokenInPublicPerHour = 0.3f;
     [Range(0.0f, 24.0f)]
     public float CanBeWokenInPublicFromHour = 6.5f;
@@ -131,6 +132,16 @@ public class PlayerSleepManager : MonoBehaviour
                     if (value <= ChanceOfBeingWokenInPublicPerHour)
                     {
                         MessageBox.ShowForTime("You're woken by a police-man saying \"You can't sleep here\"", 2.0f, gameObject);
+                        Wake();
+                    }                    
+                }
+
+                // Chance of waking early if sleeping uncomfortably.
+                {
+                    var value = Random.Range(0.0f, 1.0f);
+                    if (value <= ChanceOfWakingPoorSleepPerHour)
+                    {
+                        ShowWakeMessage();
                         Wake();
                     }                    
                 }
