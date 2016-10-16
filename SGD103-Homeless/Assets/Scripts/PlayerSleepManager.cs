@@ -18,7 +18,9 @@ public class PlayerSleepManager : MonoBehaviour
     public GameTime GameTime;
     public Transform ZoneContainer;
     public ScreenFader ScreenFader;
+    public UI UI;
 
+    public bool HideUIDuringSleep = true;
     [ReadOnly]
     public bool InPublic = false;
     [ReadOnly]
@@ -43,7 +45,6 @@ public class PlayerSleepManager : MonoBehaviour
     public float CanBeWokenInPublicFromHour = 6.5f;
     [Range(0.0f, 24.0f)]
     public float CanBeWokenInPublicToHour = 22.0f;
-    public bool HideUIDuringSleep = true;
 
     // Player goes to sleep at the current location.
     public void Sleep()
@@ -73,8 +74,14 @@ public class PlayerSleepManager : MonoBehaviour
             ScreenFader.fadeTime = FadeToBlackTime;
             ScreenFader.fadeIn = false;
 
+            // Hide UI.
+            if (HideUIDuringSleep)
+            {
+                UI.Hide();
+            }
+
             // Show a sleep message and accelerate time once the fade out is complete.
-            Invoke("OnFadeInComplete", FadeToBlackTime);
+            Invoke("OnFadeInComplete", FadeToBlackTime);           
         }
     }
 
@@ -82,6 +89,9 @@ public class PlayerSleepManager : MonoBehaviour
     {
         IsAsleep = false;
         GameTime.TimeScale = GameTime.NormalTimeScale;
+
+        // Show UI.
+        UI.Show();
 
         // Fade in from black.
         ScreenFader.fadeTime = FadeInFromBlackTime;
