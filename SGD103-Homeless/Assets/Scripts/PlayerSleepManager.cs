@@ -16,6 +16,12 @@ public class PlayerSleepManager : MonoBehaviour {
     [ReadOnly]
     public SleepQualityEnum SleepQualityHere;
 
+    // Player goes to sleep at the current location.
+    public void Sleep()
+    {
+        Debug.Log("Sleeping here");
+    }
+
     void Start () {
 	
 	}

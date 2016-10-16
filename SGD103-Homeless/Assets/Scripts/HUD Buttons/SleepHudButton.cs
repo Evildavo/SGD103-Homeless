@@ -6,6 +6,7 @@ public class SleepHudButton : MonoBehaviour {
 
     public Inventory Inventory;
     public Transform HudButtonLabel;
+    public PlayerSleepManager SleepManager;
 
     public void OnPointerEnter()
     {
@@ -23,7 +24,7 @@ public class SleepHudButton : MonoBehaviour {
 
     public void OnClick()
     {
-        Debug.Log("Sleeping");
+        SleepManager.Sleep();
     }
 
 }
