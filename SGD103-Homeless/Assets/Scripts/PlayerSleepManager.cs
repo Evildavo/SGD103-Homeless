@@ -3,6 +3,8 @@ using System.Collections;
 
 public class PlayerSleepManager : MonoBehaviour
 {
+    private SleepQualityEnum sleepQualityAtSleep;
+
     public enum SleepQualityEnum
     {
         GOOD,
@@ -29,17 +31,29 @@ public class PlayerSleepManager : MonoBehaviour
     [Range(0.0f, 1.0f)]
     [ReadOnly]
     public float SleepQuality = 1.0f;
+    public float BaseGoodSleepQuality = 1.0f;
+    public float BaseOkSleepQuality = 0.5f;
+    public float BasePoorSleepQuality = 0.15f;
 
     // Player goes to sleep at the current location.
     public void Sleep()
     {
         IsAsleep = true;
 
-        // Determine the sleep quality.
-        /*if (SleepQualityHere == SleepQualityEnum.POOR)
+        // Determine the quality of our sleep.
+        sleepQualityAtSleep = SleepQualityHere;
+        switch (SleepQualityHere)
         {
-            SleepQuality = SleepQualityHere;
-        }*/
+            case SleepQualityEnum.POOR:
+                SleepQuality = BasePoorSleepQuality;
+                break;
+            case SleepQualityEnum.OK:
+                SleepQuality = BaseOkSleepQuality;
+                break;
+            case SleepQualityEnum.GOOD:
+                SleepQuality = BaseGoodSleepQuality;
+                break;
+        }
 
         // Fade to black.
         ScreenFader.fadeTime = FadeToBlackTime;
@@ -55,7 +69,18 @@ public class PlayerSleepManager : MonoBehaviour
         GameTime.TimeScale = GameTime.NormalTimeScale;
 
         // Show wake message.
-        MessageBox.ShowForTime("You awake feeling refreshed", 2.0f, gameObject);
+        switch (sleepQualityAtSleep)
+        {
+            case SleepQualityEnum.POOR:
+                MessageBox.ShowForTime("You awake feeling sore after an unpleasant sleep", 2.0f, gameObject);
+                break;
+            case SleepQualityEnum.OK:
+                MessageBox.ShowForTime("You awake feeling sore but refreshed", 2.0f, gameObject);
+                break;
+            case SleepQualityEnum.GOOD:
+                MessageBox.ShowForTime("You awake feeling refreshed", 2.0f, gameObject);
+                break;
+        }
 
         // Fade in from black.
         ScreenFader.fadeTime = FadeInFromBlackTime;
