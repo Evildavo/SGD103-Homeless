@@ -5,6 +5,7 @@ using System.Collections;
 public class PlayerState : MonoBehaviour {
 
     public GameTime GameTime;
+    public PlayerSleepManager SleepManager;
     public Text MoneyText;
     public Text HungerThirstText;
     public Text HealthText;
@@ -36,6 +37,8 @@ public class PlayerState : MonoBehaviour {
     public float PercentHealthAffectsMorale = 0.5f;
     public float OkHungerLevel = 0.85f;
     public float OkHealthLevel = 0.85f;
+    public float WhileAsleepHungerIncreasePerGameHour;
+    public float WhileAsleepHealthGainedPerGameHour;
 
     void Update () {
 
@@ -110,14 +113,23 @@ public class PlayerState : MonoBehaviour {
             MoraleText.text = "Morale: " + (Morale * 100).ToString("f0") + "%";
         }
         
-        // Penalise morale based on hunger and health.
-        var moralePenalty = (OkHungerLevel - HungerThirst) * PercentHungerAffectsMorale +
+        // Penalise/reward morale based on hunger and health.
+        var moraleAffector = (OkHungerLevel - HungerThirst) * PercentHungerAffectsMorale +
                             (OkHealthLevel - Health) * PercentHealthAffectsMorale;
 
-        // Decrease stats over time.
-        HungerThirst -= HungerIncreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
-        Health -= HealthDecreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
-        Morale -= (MoraleDecreasePerGameHour + moralePenalty) / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
+        // Stats change over time.
+        if (!SleepManager.IsAsleep)
+        {
+            HungerThirst -= HungerIncreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
+            Health -= HealthDecreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
+            Morale -= (MoraleDecreasePerGameHour + moraleAffector) / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
+        }
+        else
+        {
+            HungerThirst -= WhileAsleepHungerIncreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
+            Health += WhileAsleepHealthGainedPerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
+            Morale -= (MoraleDecreasePerGameHour + moraleAffector) / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
+        }
 
         // Limit stats to range 0-1.
         if (Money < 0)
