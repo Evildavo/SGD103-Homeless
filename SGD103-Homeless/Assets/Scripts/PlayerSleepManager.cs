@@ -4,7 +4,8 @@ using System.Collections;
 public class PlayerSleepManager : MonoBehaviour
 {
     private SleepQualityEnum sleepQualityAtSleep;
-    private float hoursSlept;
+    public float hoursSlept;
+    private float timeSinceLastHour;
 
     public enum SleepQualityEnum
     {
@@ -36,34 +37,43 @@ public class PlayerSleepManager : MonoBehaviour
     public float BaseGoodSleepQuality = 1.0f;
     public float BaseOkSleepQuality = 0.5f;
     public float BasePoorSleepQuality = 0.15f;
+    public float ChanceOfBeingWokenInPublicPerHour = 0.3f;
+    [Range(0.0f, 24.0f)]
+    public float CanBeWokenInPublicFromHour = 6.5f;
+    [Range(0.0f, 24.0f)]
+    public float CanBeWokenInPublicToHour = 22.0f;
 
     // Player goes to sleep at the current location.
     public void Sleep()
     {
-        IsAsleep = true;
-        hoursSlept = 0.0f;
-
-        // Determine the quality of our sleep.
-        sleepQualityAtSleep = SleepQualityHere;
-        switch (SleepQualityHere)
+        if (!IsAsleep)
         {
-            case SleepQualityEnum.POOR:
-                SleepQuality = BasePoorSleepQuality;
-                break;
-            case SleepQualityEnum.OK:
-                SleepQuality = BaseOkSleepQuality;
-                break;
-            case SleepQualityEnum.GOOD:
-                SleepQuality = BaseGoodSleepQuality;
-                break;
+            IsAsleep = true;
+            hoursSlept = 0.0f;
+            timeSinceLastHour = 0.0f;
+
+            // Determine the quality of our sleep.
+            sleepQualityAtSleep = SleepQualityHere;
+            switch (SleepQualityHere)
+            {
+                case SleepQualityEnum.POOR:
+                    SleepQuality = BasePoorSleepQuality;
+                    break;
+                case SleepQualityEnum.OK:
+                    SleepQuality = BaseOkSleepQuality;
+                    break;
+                case SleepQualityEnum.GOOD:
+                    SleepQuality = BaseGoodSleepQuality;
+                    break;
+            }
+
+            // Fade to black.
+            ScreenFader.fadeTime = FadeToBlackTime;
+            ScreenFader.fadeIn = false;
+
+            // Show a sleep message and accelerate time once the fade out is complete.
+            Invoke("OnFadeInComplete", FadeToBlackTime);
         }
-
-        // Fade to black.
-        ScreenFader.fadeTime = FadeToBlackTime;
-        ScreenFader.fadeIn = false;
-
-        // Show a sleep message and accelerate time once the fade out is complete.
-        Invoke("OnFadeInComplete", FadeToBlackTime);
     }
 
     public void Wake()
@@ -71,7 +81,19 @@ public class PlayerSleepManager : MonoBehaviour
         IsAsleep = false;
         GameTime.TimeScale = GameTime.NormalTimeScale;
 
-        // Show wake message.
+        // Fade in from black.
+        ScreenFader.fadeTime = FadeInFromBlackTime;
+        ScreenFader.fadeIn = true;
+    }
+
+    void OnFadeInComplete()
+    {
+        MessageBox.Show("Zzzz...", gameObject);
+        GameTime.TimeScale = SleepTimeScale;
+    }
+
+    void ShowWakeMessage()
+    {
         switch (sleepQualityAtSleep)
         {
             case SleepQualityEnum.POOR:
@@ -84,16 +106,6 @@ public class PlayerSleepManager : MonoBehaviour
                 MessageBox.ShowForTime("You awake feeling refreshed", 2.0f, gameObject);
                 break;
         }
-
-        // Fade in from black.
-        ScreenFader.fadeTime = FadeInFromBlackTime;
-        ScreenFader.fadeIn = true;
-    }
-
-    void OnFadeInComplete()
-    {
-        MessageBox.Show("Zzzz...", gameObject);
-        GameTime.TimeScale = SleepTimeScale;
     }
 	
 	void Update ()
@@ -106,16 +118,37 @@ public class PlayerSleepManager : MonoBehaviour
             // Count number of hours slept.
             hoursSlept += gameTimeDelta;
 
+            // Perform hourly checks.
+            timeSinceLastHour += gameTimeDelta;
+            if (timeSinceLastHour >= 1.0f)
+            {
+                // Chance of being woken by police if in public.
+                if (InPublic && 
+                    GameTime.TimeOfDayHours > CanBeWokenInPublicFromHour && 
+                    GameTime.TimeOfDayHours < CanBeWokenInPublicToHour)
+                {
+                    var value = Random.Range(0.0f, 1.0f);
+                    if (value <= ChanceOfBeingWokenInPublicPerHour)
+                    {
+                        MessageBox.ShowForTime("You're woken by a police-man saying \"You can't sleep here\"", 2.0f, gameObject);
+                        Wake();
+                    }                    
+                }
+                timeSinceLastHour = 0.0f;
+            }
+
             // Wake up in morning.
             if (Mathf.Abs(GameTime.TimeOfDayHours - WakeUpHour) <= gameTimeDelta)
             {
                 GameTime.TimeOfDayHours = WakeUpHour;
+                ShowWakeMessage();
                 Wake();
             }
 
             // Wake up when max sleep hours is reached.
             if (hoursSlept > MaxSleepHours)
             {
+                ShowWakeMessage();
                 Wake();
             }
         }
