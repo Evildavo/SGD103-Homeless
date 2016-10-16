@@ -43,8 +43,10 @@ public class PlayerSleepManager : MonoBehaviour
     public void WakeUp()
     {
         IsAsleep = false;
-        MessageBox.Hide();
         GameTime.TimeScale = GameTime.NormalTimeScale;
+
+        // Show wake message.
+        MessageBox.ShowForTime("You awake feeling refreshed", 2.0f, gameObject);
 
         // Fade in from black.
         ScreenFader.fadeTime = FadeInFromBlackTime;
