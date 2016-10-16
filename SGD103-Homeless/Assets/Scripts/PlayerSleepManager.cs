@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerSleepManager : MonoBehaviour {
-    
+public class PlayerSleepManager : MonoBehaviour
+{
     public enum SleepQualityEnum
     {
         GOOD,
@@ -20,59 +20,85 @@ public class PlayerSleepManager : MonoBehaviour {
     [ReadOnly]
     public SleepQualityEnum SleepQualityHere;
     public float FadeToBlackTime = 1.5f;
+    public float FadeInFromBlackTime = 1.5f;
     [ReadOnly]
     public bool IsAsleep = false;
-    public float SleepTimeScale = 600.0f;
+    public float SleepTimeScale = 12000.0f;
+    [Range(0.0f, 24.0f)]
+    public float WakeUpAtHour = 6.5f;
 
     // Player goes to sleep at the current location.
     public void Sleep()
     {
         IsAsleep = true; 
 
-        // Fade in screen.
+        // Fade to black.
         ScreenFader.fadeTime = FadeToBlackTime;
         ScreenFader.fadeIn = false;
 
-        // Show the sleep message box.
-        MessageBox.Show("Zzzz...", gameObject);
-
-        // Accelerate time.
-        GameTime.TimeScale = SleepTimeScale;
+        // Show a sleep message and accelerate time once the fade out is complete.
+        Invoke("OnFadeInComplete", FadeToBlackTime);
     }
 
-    void Start () {
-	
-	}
+    public void WakeUp()
+    {
+        IsAsleep = false;
+        MessageBox.Hide();
+        GameTime.TimeScale = GameTime.NormalTimeScale;
+
+        // Fade in from black.
+        ScreenFader.fadeTime = FadeInFromBlackTime;
+        ScreenFader.fadeIn = true;
+    }
+
+    void OnFadeInComplete()
+    {
+        MessageBox.Show("Zzzz...", gameObject);
+        GameTime.TimeScale = SleepTimeScale;
+    }
 	
 	void Update ()
     {
-        // Determine if we're in a public zone.
-        InPublic = false;
-        PublicZone[] publicZones = ZoneContainer.GetComponentsInChildren<PublicZone>();
-        foreach (PublicZone zone in publicZones)
+        // Handle waking up from sleep. 
+        if (IsAsleep)
         {
-            if (zone.PlayerIsInside)
+            // Wake up at a given hour.
+            if (Mathf.Abs(GameTime.TimeOfDayHours - WakeUpAtHour) <= Time.deltaTime / 60.0f / 60.0f * GameTime.TimeScale)
             {
-                InPublic = true;
-                break;
+                GameTime.TimeOfDayHours = WakeUpAtHour;
+                WakeUp();
             }
         }
-
-        // Determine the quality of sleep here based on zones the player is in.
-        SleepQualityHere = SleepQualityEnum.POOR;
-        SleepZone[] sleepZones = ZoneContainer.GetComponentsInChildren<SleepZone>();
-        foreach (SleepZone zone in sleepZones)
+        else
         {
-            if (zone.PlayerIsInside)
+            // Determine if we're in a public zone.
+            InPublic = false;
+            PublicZone[] publicZones = ZoneContainer.GetComponentsInChildren<PublicZone>();
+            foreach (PublicZone zone in publicZones)
             {
-                if (zone.HighQualitySleep)
+                if (zone.PlayerIsInside)
                 {
-                    SleepQualityHere = SleepQualityEnum.GOOD;
+                    InPublic = true;
                     break;
                 }
-                else
+            }
+
+            // Determine the quality of sleep here based on zones the player is in.
+            SleepQualityHere = SleepQualityEnum.POOR;
+            SleepZone[] sleepZones = ZoneContainer.GetComponentsInChildren<SleepZone>();
+            foreach (SleepZone zone in sleepZones)
+            {
+                if (zone.PlayerIsInside)
                 {
-                    SleepQualityHere = SleepQualityEnum.OK;
+                    if (zone.HighQualitySleep)
+                    {
+                        SleepQualityHere = SleepQualityEnum.GOOD;
+                        break;
+                    }
+                    else
+                    {
+                        SleepQualityHere = SleepQualityEnum.OK;
+                    }
                 }
             }
         }
