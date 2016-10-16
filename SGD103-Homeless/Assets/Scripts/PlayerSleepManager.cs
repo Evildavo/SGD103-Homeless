@@ -43,6 +43,7 @@ public class PlayerSleepManager : MonoBehaviour
     public float CanBeWokenInPublicFromHour = 6.5f;
     [Range(0.0f, 24.0f)]
     public float CanBeWokenInPublicToHour = 22.0f;
+    public bool HideUIDuringSleep = true;
 
     // Player goes to sleep at the current location.
     public void Sleep()
@@ -119,6 +120,14 @@ public class PlayerSleepManager : MonoBehaviour
         {
             float gameTimeDelta = Time.deltaTime / 60.0f / 60.0f * GameTime.TimeScale;
 
+            // Wake up on key or mouse press.
+            if (Input.anyKeyDown)
+            {
+                ShowWakeMessage();
+                Wake();
+                return;
+            }
+
             // Count number of hours slept.
             hoursSlept += gameTimeDelta;
 
@@ -136,6 +145,7 @@ public class PlayerSleepManager : MonoBehaviour
                     {
                         MessageBox.ShowForTime("You're woken by a police-man saying \"You can't sleep here\"", 2.0f, gameObject);
                         Wake();
+                        return;
                     }                    
                 }
 
@@ -146,7 +156,8 @@ public class PlayerSleepManager : MonoBehaviour
                     {
                         ShowWakeMessage();
                         Wake();
-                    }                    
+                        return;
+                    }
                 }
                 timeSinceLastHour = 0.0f;
             }
@@ -157,6 +168,7 @@ public class PlayerSleepManager : MonoBehaviour
                 GameTime.TimeOfDayHours = WakeUpHour;
                 ShowWakeMessage();
                 Wake();
+                return;
             }
 
             // Wake up when max sleep hours is reached.
@@ -164,6 +176,7 @@ public class PlayerSleepManager : MonoBehaviour
             {
                 ShowWakeMessage();
                 Wake();
+                return;
             }
         }
         else
