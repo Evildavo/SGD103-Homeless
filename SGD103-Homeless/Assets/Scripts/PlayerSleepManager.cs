@@ -11,15 +11,19 @@ public class PlayerSleepManager : MonoBehaviour {
     }
 
     public Transform ZoneContainer;
+    public ScreenFader ScreenFader;
+
     [ReadOnly]
     public bool InPublic = false;
     [ReadOnly]
     public SleepQualityEnum SleepQualityHere;
+    public float FadeToBlackTime = 1.5f;
 
     // Player goes to sleep at the current location.
     public void Sleep()
     {
-        Debug.Log("Sleeping here");
+        ScreenFader.fadeTime = FadeToBlackTime;
+        ScreenFader.fadeIn = false;
     }
 
     void Start () {
