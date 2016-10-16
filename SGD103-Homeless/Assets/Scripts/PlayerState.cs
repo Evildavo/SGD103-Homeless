@@ -27,16 +27,17 @@ public class PlayerState : MonoBehaviour {
     public float Health = 1.0f;
     [Range(0.0f, 1.0f)]
     public float Morale = 1.0f;
+    [Range(0.0f, 1.0f)]
+    [ReadOnly]
+    public float MoraleTarget = 1.0f;
     public bool HighlightHungerThirst;
     public bool HighlightHealth;
     public bool HighlightMorale;
     public float HungerIncreasePerGameHour;
     public float HealthDecreasePerGameHour;
-    public float MoraleDecreasePerGameHour = 0.0f;
+    public float MoraleMaxChangePerGameHour = 0.0f;
     public float PercentHungerAffectsMorale = 0.5f;
     public float PercentHealthAffectsMorale = 0.5f;
-    public float OkHungerLevel = 0.85f;
-    public float OkHealthLevel = 0.85f;
     public float WhileAsleepHungerIncreasePerGameHour;
     public float WhileAsleepHealthGainedPerGameHour;
 
@@ -112,23 +113,36 @@ public class PlayerState : MonoBehaviour {
         {
             MoraleText.text = "Morale: " + (Morale * 100).ToString("f0") + "%";
         }
-        
-        // Penalise/reward morale based on hunger and health.
-        var moraleAffector = (OkHungerLevel - HungerThirst) * PercentHungerAffectsMorale +
-                            (OkHealthLevel - Health) * PercentHealthAffectsMorale;
 
         // Stats change over time.
         if (!SleepManager.IsAsleep)
         {
             HungerThirst -= HungerIncreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
             Health -= HealthDecreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
-            Morale -= (MoraleDecreasePerGameHour + moraleAffector) / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
         }
         else
         {
             HungerThirst -= WhileAsleepHungerIncreasePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
             Health += WhileAsleepHealthGainedPerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
-            Morale -= (MoraleDecreasePerGameHour + moraleAffector) / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
+        }
+
+        // Determine morale target based on a weighted average between hunger and health.
+        MoraleTarget = 
+            (HungerThirst * PercentHungerAffectsMorale + Health * (1.0f - PercentHungerAffectsMorale) +
+             Health * PercentHealthAffectsMorale + HungerThirst * (1.0f - PercentHealthAffectsMorale)) / 2.0f;
+
+        // Move morale towards morale target.
+        if (Morale < MoraleTarget - MoraleMaxChangePerGameHour)
+        {
+            Morale += MoraleMaxChangePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
+        }
+        else if (Morale > MoraleTarget + MoraleMaxChangePerGameHour)
+        {
+            Morale -= MoraleMaxChangePerGameHour / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
+        }
+        else
+        {
+            Morale = MoraleTarget;
         }
 
         // Limit stats to range 0-1.
