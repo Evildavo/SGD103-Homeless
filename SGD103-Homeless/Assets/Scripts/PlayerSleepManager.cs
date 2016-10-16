@@ -6,6 +6,8 @@ public class PlayerSleepManager : MonoBehaviour
     private SleepQualityEnum sleepQualityAtSleep;
     public float hoursSlept;
     private float timeSinceLastHour;
+    private float hoursSinceLastSlept;
+    private bool hasSlept = false;
 
     public enum SleepQualityEnum
     {
@@ -45,43 +47,54 @@ public class PlayerSleepManager : MonoBehaviour
     public float CanBeWokenInPublicFromHour = 6.5f;
     [Range(0.0f, 24.0f)]
     public float CanBeWokenInPublicToHour = 22.0f;
+    public float MinHoursWaitBetweenSleeps = 0.5f;
 
     // Player goes to sleep at the current location.
+    // The player won't sleep if the player hasn't waited long enough since last sleeping.
     public void Sleep()
     {
         if (!IsAsleep)
         {
-            IsAsleep = true;
-            hoursSlept = 0.0f;
-            timeSinceLastHour = 0.0f;
-
-            // Determine the quality of our sleep.
-            sleepQualityAtSleep = SleepQualityHere;
-            switch (SleepQualityHere)
+            if (!hasSlept || hoursSinceLastSlept >= MinHoursWaitBetweenSleeps)
             {
-                case SleepQualityEnum.POOR:
-                    SleepQuality = BasePoorSleepQuality;
-                    break;
-                case SleepQualityEnum.OK:
-                    SleepQuality = BaseOkSleepQuality;
-                    break;
-                case SleepQualityEnum.GOOD:
-                    SleepQuality = BaseGoodSleepQuality;
-                    break;
+                IsAsleep = true;
+                hasSlept = true;
+                hoursSlept = 0.0f;
+                timeSinceLastHour = 0.0f;
+                hoursSinceLastSlept = 0.0f;
+
+                // Determine the quality of our sleep.
+                sleepQualityAtSleep = SleepQualityHere;
+                switch (SleepQualityHere)
+                {
+                    case SleepQualityEnum.POOR:
+                        SleepQuality = BasePoorSleepQuality;
+                        break;
+                    case SleepQualityEnum.OK:
+                        SleepQuality = BaseOkSleepQuality;
+                        break;
+                    case SleepQualityEnum.GOOD:
+                        SleepQuality = BaseGoodSleepQuality;
+                        break;
+                }
+
+                // Fade to black.
+                ScreenFader.fadeTime = FadeToBlackTime;
+                ScreenFader.fadeIn = false;
+
+                // Hide UI.
+                if (HideUIDuringSleep)
+                {
+                    UI.Hide();
+                }
+
+                // Show a sleep message and accelerate time once the fade out is complete.
+                Invoke("OnFadeInComplete", FadeToBlackTime);
             }
-
-            // Fade to black.
-            ScreenFader.fadeTime = FadeToBlackTime;
-            ScreenFader.fadeIn = false;
-
-            // Hide UI.
-            if (HideUIDuringSleep)
+            else
             {
-                UI.Hide();
-            }
-
-            // Show a sleep message and accelerate time once the fade out is complete.
-            Invoke("OnFadeInComplete", FadeToBlackTime);           
+                MessageBox.ShowForTime("You feel too awake to sleep right now", 2.0f, gameObject);
+            }  
         }
     }
 
@@ -125,10 +138,11 @@ public class PlayerSleepManager : MonoBehaviour
 	
 	void Update ()
     {
+        float gameTimeDelta = Time.deltaTime / 60.0f / 60.0f * GameTime.TimeScale;
+
         // Handle waking up from sleep. 
         if (IsAsleep)
         {
-            float gameTimeDelta = Time.deltaTime / 60.0f / 60.0f * GameTime.TimeScale;
 
             // Wake up on key or mouse press.
             if (Input.anyKeyDown)
@@ -189,6 +203,8 @@ public class PlayerSleepManager : MonoBehaviour
                 return;
             }
         }
+
+        // Determine the sleeping conditions here.
         else
         {
             // Determine if we're in a public zone.
@@ -221,6 +237,9 @@ public class PlayerSleepManager : MonoBehaviour
                     }
                 }
             }
+
+            // Keep track of number of hours since we last slept.
+            hoursSinceLastSlept += gameTimeDelta;
         }
     }
 
