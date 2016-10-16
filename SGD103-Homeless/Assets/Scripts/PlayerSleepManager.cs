@@ -89,8 +89,11 @@ public class PlayerSleepManager : MonoBehaviour
 
     void OnFadeInComplete()
     {
-        MessageBox.Show("Zzzz...", gameObject);
-        GameTime.TimeScale = SleepTimeScale;
+        if (IsAsleep)
+        {
+            MessageBox.Show("Zzzz...", gameObject);
+            GameTime.TimeScale = SleepTimeScale;
+        }
     }
 
     void ShowWakeMessage()
