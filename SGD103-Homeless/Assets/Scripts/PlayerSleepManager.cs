@@ -8,6 +8,7 @@ public class PlayerSleepManager : MonoBehaviour
     private float timeSinceLastHour;
     private float hoursSinceLastSlept;
     private bool hasSlept = false;
+    private SleepItem usingItem;
 
     public enum WakeReason
     {
@@ -31,6 +32,7 @@ public class PlayerSleepManager : MonoBehaviour
     public Transform ZoneContainer;
     public ScreenFader ScreenFader;
     public UI UI;
+    public Inventory Inventory;
 
     public bool HideUIDuringSleep = true;
     public float FadeToBlackTime = 1.5f;
@@ -64,7 +66,7 @@ public class PlayerSleepManager : MonoBehaviour
 
     // Player goes to sleep at the current location.
     // The player won't sleep if the player hasn't waited long enough since last sleeping.
-    public void Sleep()
+    public void Sleep(SleepItem sleepItem = null)
     {
         if (!IsAsleep)
         {
@@ -76,7 +78,7 @@ public class PlayerSleepManager : MonoBehaviour
                 timeSinceLastHour = 0.0f;
                 hoursSinceLastSlept = 0.0f;
 
-                // Determine the quality of our sleep.
+                // Determine the base quality of our sleep.
                 sleepQualityAtSleep = SleepQualityHere;
                 switch (SleepQualityHere)
                 {
@@ -89,6 +91,28 @@ public class PlayerSleepManager : MonoBehaviour
                     case SleepQualityEnum.GOOD:
                         SleepQuality = GoodSleepQualityLevel;
                         break;
+                }
+
+                // Get a bonus from the selected sleeping item.
+                if (sleepItem)
+                {
+                    usingItem = sleepItem;
+                    SleepQuality += sleepItem.ImprovesSleepQualityPercent;
+                }
+
+                // If no sleep item is available, use the best item the player has.
+                else
+                {
+                    float bestSoFar = 0.0f;
+                    foreach (SleepItem item in Inventory.ItemContainer.GetComponentsInChildren<SleepItem>())
+                    {
+                        if (item.ImprovesSleepQualityPercent > bestSoFar)
+                        {
+                            usingItem = item;
+                            bestSoFar = item.ImprovesSleepQualityPercent;
+                        }
+                    }
+                    SleepQuality += bestSoFar;
                 }
 
                 // Fade to black.

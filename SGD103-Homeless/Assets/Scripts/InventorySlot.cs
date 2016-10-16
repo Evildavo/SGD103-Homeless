@@ -66,7 +66,10 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         ItemDescription.gameObject.SetActive(false);
 
         // Update inventory item.
-        Item.OnCursorExit();
+        if (Item)
+        {
+            Item.OnCursorExit();
+        }
     }
 
     public void OnClick()
