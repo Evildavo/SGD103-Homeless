@@ -23,4 +23,10 @@ public class InventoryItem : MonoBehaviour {
         GetComponent<Image>().enabled = true;
     }
 
+    // Override to do something when the user moves the mouse over the item in the inventory.
+    public virtual void OnCursorEnter() {}
+
+    // Override to do something when the user moves the mouse away from the item in the inventory.
+    public virtual void OnCursorExit() {}
+
 }

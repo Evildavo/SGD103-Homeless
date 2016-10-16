@@ -52,6 +52,9 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 position.x = transform.position.x;
                 ItemDescription.transform.position = position;
             }
+
+            // Update inventory item.
+            Item.OnCursorEnter();
         }
     }
 
@@ -61,6 +64,9 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
         // Hide description text.
         ItemDescription.gameObject.SetActive(false);
+
+        // Update inventory item.
+        Item.OnCursorExit();
     }
 
     public void OnClick()
