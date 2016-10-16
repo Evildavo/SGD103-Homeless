@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class PlayerSleepManager : MonoBehaviour {
-
+    
     public enum SleepQualityEnum
     {
         GOOD,
@@ -10,6 +10,8 @@ public class PlayerSleepManager : MonoBehaviour {
         POOR
     }
 
+    public MessageBox MessageBox;
+    public GameTime GameTime;
     public Transform ZoneContainer;
     public ScreenFader ScreenFader;
 
@@ -18,12 +20,21 @@ public class PlayerSleepManager : MonoBehaviour {
     [ReadOnly]
     public SleepQualityEnum SleepQualityHere;
     public float FadeToBlackTime = 1.5f;
+    [ReadOnly]
+    public bool IsAsleep = false;
+    public float SleepTimeScale = 600.0f;
 
     // Player goes to sleep at the current location.
     public void Sleep()
     {
+        IsAsleep = true; 
+
+        // Fade in screen.
         ScreenFader.fadeTime = FadeToBlackTime;
         ScreenFader.fadeIn = false;
+
+        // Show the sleep message box.
+        MessageBox.Show("Zzzz...", gameObject);
     }
 
     void Start () {
