@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class UI : MonoBehaviour {
@@ -11,7 +12,7 @@ public class UI : MonoBehaviour {
     // Hides the game UI.
     public void Hide()
     {
-        HudButtons.gameObject.SetActive(false);
+        HudButtons.Hide();
         Inventory.Hide();
         StatPanel.gameObject.SetActive(false);
         MoneyPanel.gameObject.SetActive(false);

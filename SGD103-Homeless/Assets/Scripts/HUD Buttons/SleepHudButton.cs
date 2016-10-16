@@ -13,7 +13,7 @@ public class SleepHudButton : MonoBehaviour
     public Color PoorSleepLabelColour = Color.white;
     public Color OkSleepLabelColour = Color.white;
     public Color GoodSleepLabelColour = Color.white;
-
+    
     public void OnPointerEnter()
     {
         isMouseOver = true;
