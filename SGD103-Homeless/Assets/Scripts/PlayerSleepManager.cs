@@ -29,10 +29,13 @@ public class PlayerSleepManager : MonoBehaviour
     
     public MessageBox MessageBox;
     public GameTime GameTime;
-    public Transform ZoneContainer;
     public ScreenFader ScreenFader;
     public UI UI;
     public Inventory Inventory;
+    [Header("The order of zones in the container determines their order", order=0)]
+    [Space(-10, order=1)]
+    [Header("of effect when they overlap (last overrides first).", order=2)]
+    public Transform SleepZoneContainer;
 
     public bool HideUIDuringSleep = true;
     public float FadeToBlackTime = 1.5f;
@@ -264,7 +267,7 @@ public class PlayerSleepManager : MonoBehaviour
         {
             // Determine if we're in a public zone.
             InPublic = false;
-            PublicZone[] publicZones = ZoneContainer.GetComponentsInChildren<PublicZone>();
+            PublicZone[] publicZones = SleepZoneContainer.GetComponentsInChildren<PublicZone>();
             foreach (PublicZone zone in publicZones)
             {
                 if (zone.PlayerIsInside)
@@ -276,20 +279,12 @@ public class PlayerSleepManager : MonoBehaviour
 
             // Determine the quality of sleep here based on zones the player is in.
             SleepQualityHere = SleepQualityEnum.POOR;
-            SleepZone[] sleepZones = ZoneContainer.GetComponentsInChildren<SleepZone>();
+            SleepZone[] sleepZones = SleepZoneContainer.GetComponentsInChildren<SleepZone>();
             foreach (SleepZone zone in sleepZones)
             {
                 if (zone.PlayerIsInside)
                 {
-                    if (zone.HighQualitySleep)
-                    {
-                        SleepQualityHere = SleepQualityEnum.GOOD;
-                        break;
-                    }
-                    else
-                    {
-                        SleepQualityHere = SleepQualityEnum.OK;
-                    }
+                    SleepQualityHere = zone.SleepQuality;
                 }
             }
 
