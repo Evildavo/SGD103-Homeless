@@ -66,7 +66,7 @@ public class PlayerSleepManager : MonoBehaviour
         Invoke("OnFadeInComplete", FadeToBlackTime);
     }
 
-    public void WakeUp()
+    public void Wake()
     {
         IsAsleep = false;
         GameTime.TimeScale = GameTime.NormalTimeScale;
@@ -110,13 +110,13 @@ public class PlayerSleepManager : MonoBehaviour
             if (Mathf.Abs(GameTime.TimeOfDayHours - WakeUpHour) <= gameTimeDelta)
             {
                 GameTime.TimeOfDayHours = WakeUpHour;
-                WakeUp();
+                Wake();
             }
 
             // Wake up when max sleep hours is reached.
             if (hoursSlept > MaxSleepHours)
             {
-                WakeUp();
+                Wake();
             }
         }
         else

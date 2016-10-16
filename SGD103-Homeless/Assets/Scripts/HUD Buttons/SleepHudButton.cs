@@ -43,7 +43,7 @@ public class SleepHudButton : MonoBehaviour
         {
             HudButtonLabel.GetComponentInChildren<Text>().text = "Sleep here";
             HudButtonLabel.GetComponentInChildren<Text>().color = Color.white;
-            
+
             if (GiveSleepHint)
             {
                 switch (SleepManager.SleepQualityHere)
