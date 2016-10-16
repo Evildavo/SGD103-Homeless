@@ -4,6 +4,7 @@ using System.Collections;
 public class PlayerSleepManager : MonoBehaviour
 {
     private SleepQualityEnum sleepQualityAtSleep;
+    private float hoursSlept;
 
     public enum SleepQualityEnum
     {
@@ -27,7 +28,8 @@ public class PlayerSleepManager : MonoBehaviour
     public bool IsAsleep = false;
     public float SleepTimeScale = 12000.0f;
     [Range(0.0f, 24.0f)]
-    public float WakeUpAtHour = 6.5f;
+    public float WakeUpHour = 6.5f;
+    public float MaxSleepHours = 12.0f;
     [Range(0.0f, 1.0f)]
     [ReadOnly]
     public float SleepQuality = 1.0f;
@@ -39,6 +41,7 @@ public class PlayerSleepManager : MonoBehaviour
     public void Sleep()
     {
         IsAsleep = true;
+        hoursSlept = 0.0f;
 
         // Determine the quality of our sleep.
         sleepQualityAtSleep = SleepQualityHere;
@@ -98,10 +101,21 @@ public class PlayerSleepManager : MonoBehaviour
         // Handle waking up from sleep. 
         if (IsAsleep)
         {
-            // Wake up at a given hour.
-            if (Mathf.Abs(GameTime.TimeOfDayHours - WakeUpAtHour) <= Time.deltaTime / 60.0f / 60.0f * GameTime.TimeScale)
+            float gameTimeDelta = Time.deltaTime / 60.0f / 60.0f * GameTime.TimeScale;
+
+            // Count number of hours slept.
+            hoursSlept += gameTimeDelta;
+
+            // Wake up in morning.
+            if (Mathf.Abs(GameTime.TimeOfDayHours - WakeUpHour) <= gameTimeDelta)
             {
-                GameTime.TimeOfDayHours = WakeUpAtHour;
+                GameTime.TimeOfDayHours = WakeUpHour;
+                WakeUp();
+            }
+
+            // Wake up when max sleep hours is reached.
+            if (hoursSlept > MaxSleepHours)
+            {
                 WakeUp();
             }
         }
