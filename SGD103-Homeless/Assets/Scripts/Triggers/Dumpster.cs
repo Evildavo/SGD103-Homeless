@@ -37,7 +37,7 @@ public class Dumpster : MonoBehaviour {
                     if (yes)
                     {
                         PlayerState.HungerThirstSatiety += 0.2f;
-                        PlayerState.Health -= 0.2f;
+                        PlayerState.HealthTiredness -= 0.2f;
                     }
                 };
                 ConfirmationBox.Open(onChoiceMade, "You found food. Eat it?", "Yes", "No");

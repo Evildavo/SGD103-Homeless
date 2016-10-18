@@ -11,6 +11,7 @@ public class PlayerState : MonoBehaviour {
     public Text HealthText;
     public Text MoraleText;
 
+    [Header("Display settings:")]
     public Color NormalTextColour = Color.black;
     public Color WarningTextColour = Color.red;
     public Color HighlightTextColour = Color.yellow;
@@ -19,30 +20,103 @@ public class PlayerState : MonoBehaviour {
     public float HealthWarningThreshold = 0.2f;
     public float MoraleWarningThreshold = 0.2f;
 
+    [Header("Stats:")]
     public float Money = 0;
-
     [Range(0.0f, 1.0f)]
     public float HungerThirstSatiety = 1.0f;
     [Range(0.0f, 1.0f)]
-    public float Health = 1.0f;
+    public float HealthTiredness = 1.0f;
     [Range(0.0f, 1.0f)]
     public float Morale = 1.0f;
+
+    [Header("Settings:")] 
+    public float HungerGainPerHour = 0.0f;        
+    public float HealthLossPerHour = 0.0f;
+    public float MoraleLossPerHour = 0.0f;
+    
+    [Space(10.0f)]
+    public float MaxHungerHealthPenaltyPerHour = 0.0f;
     [Range(0.0f, 1.0f)]
-    [ReadOnly]
-    public float MoraleTarget = 1.0f;
+    public float HungerSatiatedAtLevel = 0.0f;
+    public float MaxSatietyHealthRewardPerHour = 0.0f;
+
+    [Header("Hunger goes down slower when satiated")]
+    public float MaxSatietyHungerRewardPerHour = 0.0f;
+
+    [Space(10.0f)]
+    public float MaxPoorHealthMoralePenaltyPerHour = 0.0f;
+    [Range(0.0f, 1.0f)]
+    public float HealthGoodAtLevel = 0.0f;
+    public float MaxGoodHealthMoraleRewardPerHour = 0.0f;
+
+    [Space(10.0f)]
+    public float SleepHungerGainFactor = 0.0f;
+    public float SleepMoraleLossFactor = 0.0f;
+    public float MinSleepHealthGainPerHour = 0.0f;
+    public float MaxSleepHealthGainPerHour = 0.0f;
+    
+    [Space(20.0f)]
     public bool HighlightHungerThirst = false;
     public bool HighlightHealth = false;
     public bool HighlightMorale = false;
-    public float HungerIncreasePerGameHour = 0.1f;
-    public float HealthDecreasePerGameHour = 0.1f;
-    public float MoraleMaxChangePerGameHour = 0.0f;
-    public float PercentHungerAffectsMorale = 0.5f;
-    public float PercentHealthAffectsMorale = 0.5f;
-    public float HungerIncreaseDuringSleep = 0.01f;
-    public float HealthIncreaseDuringSleep = 0.05f;
-    public float SleepQualityHealthIncreaseFactor = 1.0f;
-
+        
     void Update () {
+        float gameTimeDelta = 1.0f / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
+        bool asleep = SleepManager.IsAsleep;
+
+        if (!asleep)
+        {
+            // Apply base changes.
+            HungerThirstSatiety -= HungerGainPerHour * gameTimeDelta;
+            HealthTiredness -= HealthLossPerHour * gameTimeDelta;
+            Morale -= MoraleLossPerHour * gameTimeDelta;
+
+            // Hunger goes down slower when satiated.
+            if (HungerThirstSatiety > HungerSatiatedAtLevel)
+            {
+                HungerThirstSatiety += (HungerThirstSatiety - HungerSatiatedAtLevel) * MaxSatietyHungerRewardPerHour * gameTimeDelta;
+            }
+
+            // Hunger affects health.
+            if (HungerThirstSatiety < HungerSatiatedAtLevel)
+            {
+                HealthTiredness -= (HungerSatiatedAtLevel - HungerThirstSatiety) * MaxHungerHealthPenaltyPerHour * gameTimeDelta;
+            }
+            else if (HungerThirstSatiety > HungerSatiatedAtLevel)
+            {
+                HealthTiredness += (HungerThirstSatiety - HungerSatiatedAtLevel) * MaxSatietyHealthRewardPerHour * gameTimeDelta;
+            }
+
+            // Health affects morale.
+            if (HealthTiredness < HealthGoodAtLevel)
+            {
+                Morale -= (HealthGoodAtLevel - HealthTiredness) * MaxPoorHealthMoralePenaltyPerHour * gameTimeDelta;
+            }
+            else if (HealthTiredness > HealthGoodAtLevel)
+            {
+                Morale += (HealthTiredness - HealthGoodAtLevel) * MaxGoodHealthMoraleRewardPerHour * gameTimeDelta;
+            }
+        }
+        else
+        {
+            // Hunger and morale drop at a different rate while asleep.
+            HungerThirstSatiety -= HungerGainPerHour * SleepHungerGainFactor * gameTimeDelta;
+            Morale -= MoraleLossPerHour * SleepMoraleLossFactor * gameTimeDelta;
+
+            // Gain health based on sleep quality.
+            float minHealthGain = MinSleepHealthGainPerHour;
+            float maxHealthGain = MaxSleepHealthGainPerHour;
+            HealthTiredness += (minHealthGain + SleepManager.SleepQuality * (maxHealthGain - minHealthGain)) * gameTimeDelta;
+        }
+
+        // Limit stats to range 0-1.
+        if (Money < 0)
+        {
+            Money = 0;
+        }
+        HungerThirstSatiety = Mathf.Clamp(HungerThirstSatiety, 0.0f, 1.0f);
+        HealthTiredness = Mathf.Clamp(HealthTiredness, 0.0f, 1.0f);
+        Morale = Mathf.Clamp(Morale, 0.0f, 1.0f);
 
         // Highlight stats.
         HungerThirstText.fontStyle = FontStyle.Normal;
@@ -68,7 +142,7 @@ public class PlayerState : MonoBehaviour {
         {
             HealthText.color = HighlightTextColour;
         }
-        else if (Health <= HealthWarningThreshold)
+        else if (HealthTiredness <= HealthWarningThreshold)
         {
             HealthText.color = WarningTextColour;
             if (BoldTextDuringWarning)
@@ -108,57 +182,11 @@ public class PlayerState : MonoBehaviour {
         }
         if (HealthText)
         {
-            HealthText.text = "Health: " + (Health * 100).ToString("f0") + "%";
+            HealthText.text = "Health/Tiredness: " + (HealthTiredness * 100).ToString("f0") + "%";
         }
         if (MoraleText)
         {
             MoraleText.text = "Morale: " + (Morale * 100).ToString("f0") + "%";
         }
-
-        // Stats change over time.
-        var gameTimeDelta = 1.0f / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
-        if (!SleepManager.IsAsleep)
-        {
-            HungerThirstSatiety -= HungerIncreasePerGameHour * gameTimeDelta;
-            Health -= HealthDecreasePerGameHour * gameTimeDelta;
-        }
-        else
-        {
-            HungerThirstSatiety -= HungerIncreaseDuringSleep * gameTimeDelta;
-
-            // Gain health based on sleep quality.
-            Health += HealthIncreaseDuringSleep * 
-                      SleepManager.SleepQuality * 
-                      SleepQualityHealthIncreaseFactor *
-                      gameTimeDelta;
-        }
-
-        // Determine morale target based on a weighted average between hunger and health.
-        MoraleTarget = 
-            (HungerThirstSatiety * PercentHungerAffectsMorale + Health * (1.0f - PercentHungerAffectsMorale) +
-             Health * PercentHealthAffectsMorale + HungerThirstSatiety * (1.0f - PercentHealthAffectsMorale)) / 2.0f;
-
-        // Move morale towards morale target.
-        if (Morale <= MoraleTarget - MoraleMaxChangePerGameHour * gameTimeDelta)
-        {
-            Morale += MoraleMaxChangePerGameHour * gameTimeDelta;
-        }
-        else if (Morale >= MoraleTarget + MoraleMaxChangePerGameHour * gameTimeDelta)
-        {
-            Morale -= MoraleMaxChangePerGameHour * gameTimeDelta;
-        }
-        else
-        {
-            Morale = MoraleTarget;
-        }
-
-        // Limit stats to range 0-1.
-        if (Money < 0)
-        {
-            Money = 0;
-        }
-        HungerThirstSatiety = Mathf.Clamp(HungerThirstSatiety, 0.0f, 1.0f);
-        Health = Mathf.Clamp(Health, 0.0f, 1.0f);
-        Morale = Mathf.Clamp(Morale, 0.0f, 1.0f);
     }
 }
