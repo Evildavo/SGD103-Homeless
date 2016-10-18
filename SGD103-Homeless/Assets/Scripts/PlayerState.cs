@@ -74,27 +74,37 @@ public class PlayerState : MonoBehaviour {
             // Hunger goes down slower when satiated.
             if (HungerThirstSatiety > HungerSatiatedAtLevel)
             {
-                HungerThirstSatiety += (HungerThirstSatiety - HungerSatiatedAtLevel) * MaxSatietyHungerRewardPerHour * gameTimeDelta;
+                HungerThirstSatiety += 
+                    (HungerThirstSatiety - HungerSatiatedAtLevel) / (1.0f - HungerSatiatedAtLevel) * 
+                    MaxSatietyHungerRewardPerHour * gameTimeDelta;
             }
 
             // Hunger affects health.
             if (HungerThirstSatiety < HungerSatiatedAtLevel)
             {
-                HealthTiredness -= (HungerSatiatedAtLevel - HungerThirstSatiety) * MaxHungerHealthPenaltyPerHour * gameTimeDelta;
+                HealthTiredness -=
+                    (HungerSatiatedAtLevel - HungerThirstSatiety) / HungerSatiatedAtLevel * 
+                    MaxHungerHealthPenaltyPerHour * gameTimeDelta;
             }
             else if (HungerThirstSatiety > HungerSatiatedAtLevel)
             {
-                HealthTiredness += (HungerThirstSatiety - HungerSatiatedAtLevel) * MaxSatietyHealthRewardPerHour * gameTimeDelta;
+                HealthTiredness += 
+                    (HungerThirstSatiety - HungerSatiatedAtLevel) / (1.0f - HungerSatiatedAtLevel) * 
+                    MaxSatietyHealthRewardPerHour * gameTimeDelta;
             }
 
             // Health affects morale.
             if (HealthTiredness < HealthGoodAtLevel)
             {
-                Morale -= (HealthGoodAtLevel - HealthTiredness) * MaxPoorHealthMoralePenaltyPerHour * gameTimeDelta;
+                Morale -= 
+                    (HealthGoodAtLevel - HealthTiredness) / HealthGoodAtLevel * 
+                    MaxPoorHealthMoralePenaltyPerHour * gameTimeDelta;
             }
             else if (HealthTiredness > HealthGoodAtLevel)
             {
-                Morale += (HealthTiredness - HealthGoodAtLevel) * MaxGoodHealthMoraleRewardPerHour * gameTimeDelta;
+                Morale += 
+                    (HealthTiredness - HealthGoodAtLevel) / (1.0f - HealthGoodAtLevel) * 
+                    MaxGoodHealthMoraleRewardPerHour * gameTimeDelta;
             }
         }
         else
