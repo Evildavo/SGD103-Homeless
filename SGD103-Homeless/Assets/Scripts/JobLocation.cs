@@ -8,6 +8,9 @@ public class JobLocation : MonoBehaviour {
 
     public MessageBox MessageBox;
     public GameTime GameTime;
+    public PlayerState PlayerState;
+    public Inventory Inventory;
+    public InventoryItem ResumePrefab;
 
     public string Name;
     public float ChanceJobAvailablePerDay = 0.05f;
@@ -21,6 +24,11 @@ public class JobLocation : MonoBehaviour {
         public string Role;
         public float PayPerHour;
         public int HoursPerWeek;
+        public float MinHealthNeededToQualify;
+        public float MinMoraleNeededToQualify;
+        public float MinClothesCleanlinessToQualify;
+        public float ChanceOfSuccessWithoutResume;
+        public float ChanceOfSuccessWithResume;
 
         JobPositionProfile(string role, float payPerHour, int hoursPerWeek)
         {
@@ -72,6 +80,66 @@ public class JobLocation : MonoBehaviour {
     // Applies for the job that's available.
     public void ApplyForJob()
     {
-        Debug.Log("Applying for job");
+        // Check the basic criteria for acceptance.
+        bool healthOk = false;
+        bool moraleOk = false;
+        bool clothesOk = false;
+        if (PlayerState.HealthTiredness >= Job.MinHealthNeededToQualify)
+        {
+            healthOk = true;
+        }
+        else
+        {
+            MessageBox.Show(
+                "Application rejected. You seem too unwell to handle the job", gameObject);
+        }
+        if (PlayerState.Morale >= Job.MinMoraleNeededToQualify)
+        {
+            moraleOk = true;
+        }
+        else
+        {
+            MessageBox.Show(
+                "Application rejected. You need to have a more positive attitude", gameObject);
+        }
+        if (PlayerState.CurrentClothingCleanliness >= Job.MinClothesCleanlinessToQualify)
+        {
+            clothesOk = true;
+        }
+        else
+        {
+            MessageBox.Show(
+                "Application rejected. You should take better care of your appearance", gameObject);
+        }
+
+        // After the basic criteria there's a chance of success. Having a resume guarantees this step.
+        if (healthOk && moraleOk && clothesOk)
+        {
+            bool success = false;
+            float value = Random.Range(0.0f, 1.0f);
+            if (ResumePrefab && Inventory.HasItem(ResumePrefab))
+            {
+                success = (value <= Job.ChanceOfSuccessWithResume);
+            }
+            else
+            {
+                success = (value <= Job.ChanceOfSuccessWithoutResume);
+            }
+
+            // Report final decision.
+            if (success)
+            {
+                MessageBox.Show(
+                    "Congratulations! You start tomorrow at (time). Don't be late", gameObject);
+            }
+            else
+            {
+                MessageBox.Show(
+                    "Application rejected. Unfortunately the job is already taken. Try again another time", gameObject);
+            }
+        }
+
+        // In any case the job is no longer available today.
+        IsJobAvailableToday = false;
     }
 }

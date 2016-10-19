@@ -47,11 +47,17 @@ public class Supermarket : MonoBehaviour
         options.Add(new Menu.Option(OpenOutdoorItemMenu, "Buy outdoor equipment"));
         if (JobLocation.IsJobAvailableToday)
         {
-            options.Add(new Menu.Option(JobLocation.ApplyForJob, "Apply for job"));
+            options.Add(new Menu.Option(ApplyForJob, "Apply for job"));
         }
         options.Add(new Menu.Option(OnExitSelected, "Exit"));
 
         Menu.Show(options);
+    }
+
+    public void ApplyForJob()
+    {
+        JobLocation.ApplyForJob();
+        OpenMainMenu();
     }
 
     public void OpenFoodMenu()

@@ -54,8 +54,11 @@ public class PlayerState : MonoBehaviour {
     public float SleepMoraleLossFactor = 0.0f;
     public float MinSleepHealthGainPerHour = 0.0f;
     public float MaxSleepHealthGainPerHour = 0.0f;
-    
+
     [Space(20.0f)]
+    public float CurrentClothingCleanliness = 0.0f;
+
+    [Space(10.0f)]
     public bool HighlightHungerThirst = false;
     public bool HighlightHealth = false;
     public bool HighlightMorale = false;

@@ -20,10 +20,16 @@ public class ModelDiner : MonoBehaviour
         List<Menu.Option> options = new List<Menu.Option>();
         if (JobLocation.IsJobAvailableToday)
         {
-            options.Add(new Menu.Option(JobLocation.ApplyForJob, "Apply for job"));
+            options.Add(new Menu.Option(ApplyForJob, "Apply for job"));
         }
         options.Add(new Menu.Option(OnExit, "Exit"));
         Menu.Show(options);
+    }
+
+    public void ApplyForJob()
+    {
+        JobLocation.ApplyForJob();
+        OpenMainMenu();
     }
 
     void reset()
