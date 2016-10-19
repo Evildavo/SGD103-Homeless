@@ -20,6 +20,7 @@ public class JobLocation : MonoBehaviour {
         [Header("Note: Supports wrapping over (e.g. 11pm to 2am)")]
         public float ShiftFromHour;
         public float ShiftToHour;
+        public GameTime.DayOfTheWeekEnum PayDay;
         public float TimeAllowedEarly = 0.5f;
         public float MaxTimeAllowedLate = 0.5f;
         [ReadOnly]
@@ -72,6 +73,9 @@ public class JobLocation : MonoBehaviour {
     private int daysChecked = 0;
     private GameTime.DayOfTheWeekEnum jobStartsAfter;
     private bool workWeekStarted = false;
+    private float timeAtShiftStart = 0.0f;
+    private float payDue = 0.0f;
+    private float hoursWorkedThisWeek = 0.0f;
 
     public MessageBox MessageBox;
     public GameTime GameTime;
@@ -88,14 +92,14 @@ public class JobLocation : MonoBehaviour {
     public int GuaranteedAvailableAfterDaysChecked = -1;
     public float FadeToBlackTime = 2.0f;
     public float FadeInFromBlackTime = 2.0f;
-    public float WorkTimeScale = 12000.0f;
+    public float WorkTimeScale = 8000.0f;
 
     public bool IsJobAvailableToday = false;
     public JobPositionProfile Job;
 
     public bool PlayerHasJobHere = false;
     public bool IsPlayerAtWork = false;
-    public bool IsPlayerFinishedForToday = true;
+    public int LastDayWorked;
     [ReadOnly]
     public bool CanWorkNow = false;
 
@@ -255,8 +259,9 @@ public class JobLocation : MonoBehaviour {
         if (!IsPlayerAtWork)
         {
             IsPlayerAtWork = true;
-            IsPlayerFinishedForToday = false;
-            
+            LastDayWorked = GameTime.Day;
+            timeAtShiftStart = GameTime.TimeOfDayHours;
+
             // Fade to black.
             ScreenFader.fadeTime = FadeToBlackTime;
             ScreenFader.fadeIn = false;
@@ -328,7 +333,7 @@ public class JobLocation : MonoBehaviour {
                     {
                         CanWorkNow = true;
                     }
-                    else if (!IsPlayerAtWork && !IsPlayerFinishedForToday)
+                    else if (!IsPlayerAtWork && LastDayWorked != GameTime.Day)
                     {
                         Dismiss("Late for work");
                     }
@@ -360,7 +365,6 @@ public class JobLocation : MonoBehaviour {
             if (GameTime.TimeOfDayHoursDelta(now, Job.ShiftToHour).forward < gameTimeDelta)
             {
                 IsPlayerAtWork = false;
-                IsPlayerFinishedForToday = true;
                 GameTime.TimeScale = GameTime.NormalTimeScale;
 
                 // Show UI.
@@ -369,7 +373,32 @@ public class JobLocation : MonoBehaviour {
                 // Fade in from black.
                 ScreenFader.fadeTime = FadeInFromBlackTime;
                 ScreenFader.fadeIn = true;
-                MessageBox.Hide();
+
+                // Calculate earnings.
+                float hoursWorked = GameTime.TimeOfDayHoursDelta(timeAtShiftStart, Job.ShiftToHour).forward;
+                float pay = hoursWorked * Job.PayPerHour;
+                payDue += pay;
+                hoursWorked = Mathf.Min(hoursWorked, Job.HoursWorkPerShift); // No overpay for starting early.
+                hoursWorkedThisWeek += hoursWorked;
+                string message = "";
+                if (GameTime.DayOfTheWeek == Job.PayDay)
+                {
+                    // Pay day.
+                    message = "Work week complete. You worked a total of " +
+                              hoursWorkedThisWeek.ToString("f1") + " hours and have now earned $" +
+                              payDue.ToString("f2");
+                    PlayerState.Money += payDue;
+                    payDue = 0.0f;
+                    hoursWorkedThisWeek = 0.0f;
+                }
+                else
+                {
+                    message = "Work day complete. You worked " +
+                              hoursWorked.ToString("f1") + " hours and earned $" +
+                              pay.ToString("f2") + " (to be payed on " + 
+                              GameTime.DayOfTheWeekAsShortString(Job.PayDay) + ")";
+                }
+                MessageBox.ShowForTime(message, 8.0f, gameObject);
             }
         }
         else
