@@ -30,28 +30,53 @@ public class JobLocation : MonoBehaviour {
         public float MinClothesCleanlinessToQualify;
         public float ChanceOfSuccessWithoutResume;
         public float ChanceOfSuccessWithResume;
-        public GameTime.DayOfTheWeek WorkDay1;
-        public GameTime.DayOfTheWeek WorkDay2;
+        public GameTime.DayOfTheWeek WorkDayFrom;
+        public GameTime.DayOfTheWeek WorkDayTo;
         [Header("Note: Supports wrapping over (e.g. 11pm to 2am)")]
         public float ShiftFromHour;
         public float ShiftToHour;
         [ReadOnly]
         public JobLocation Location;
         [ReadOnly]
+        public int DaysWorkPerWeek;
+        [ReadOnly]
+        public int HoursWorkPerShift;
+        [ReadOnly]
         public int HoursWorkPerWeek;
         [ReadOnly]
         public float PayPerWeek;
 
-        public int GetHoursPerShift()
+        public void Calculate()
         {
+            // Calculate the number of days worked per week.
+            DaysWorkPerWeek = 1;
+            GameTime.DayOfTheWeek dayOfTheWeek = WorkDayFrom;
+            while (dayOfTheWeek != WorkDayTo && DaysWorkPerWeek < 7)
+            {
+                DaysWorkPerWeek += 1;
+                if (dayOfTheWeek == GameTime.DayOfTheWeek.SUNDAY)
+                {
+                    dayOfTheWeek = GameTime.DayOfTheWeek.MONDAY;
+                }
+                else
+                {
+                    dayOfTheWeek += 1;
+                }
+            }
+
+            // Calculate the number of hours worked per week.
             if (ShiftFromHour < ShiftToHour)
             {
-                return Mathf.RoundToInt(ShiftToHour - ShiftFromHour);
+                HoursWorkPerShift = Mathf.RoundToInt(ShiftToHour - ShiftFromHour);
             }
             else
             {
-                return Mathf.RoundToInt((24.0f - ShiftFromHour) + ShiftToHour);
+                HoursWorkPerShift = Mathf.RoundToInt((24.0f - ShiftFromHour) + ShiftToHour);
             }
+            HoursWorkPerWeek = HoursWorkPerShift * DaysWorkPerWeek;
+
+            // Calculate pay per week.
+            PayPerWeek = PayPerHour * HoursWorkPerWeek;
         }
     }
 
@@ -159,8 +184,8 @@ public class JobLocation : MonoBehaviour {
                 PlayerState.Jobs.Add(Job);
                 MessageBox.Show(
                     "Congratulations! From tomorrow you work " + 
-                    GameTime.DayOfTheWeekAsShortString(Job.WorkDay1) + " and " +
-                    GameTime.DayOfTheWeekAsShortString(Job.WorkDay2) + " from " +
+                    GameTime.DayOfTheWeekAsShortString(Job.WorkDayFrom) + " to " +
+                    GameTime.DayOfTheWeekAsShortString(Job.WorkDayTo) + " from " +
                     GameTime.GetTimeAsString(Job.ShiftFromHour) + " to " +
                     GameTime.GetTimeAsString(Job.ShiftToHour) + ". Don't be late!", gameObject);
             }
@@ -178,23 +203,13 @@ public class JobLocation : MonoBehaviour {
     void Start()
     {
         Job.Location = this;
+        Job.Calculate();
     }
 
     void Update()
     {
-        // Calculate the number of hours worked per week.
-        int daysWorked = 0;
-        if (Job.WorkDay1 != GameTime.DayOfTheWeek.NONE)
-        {
-            daysWorked++;
-        }
-        if (Job.WorkDay2 != GameTime.DayOfTheWeek.NONE)
-        {
-            daysWorked++;
-        }
-        Job.HoursWorkPerWeek = Job.GetHoursPerShift() * daysWorked;
-
-        // Calculate pay per week.
-        Job.PayPerWeek = Job.PayPerHour * Job.HoursWorkPerWeek;
+#if UNITY_EDITOR
+        Job.Calculate();
+#endif
     }
 }
