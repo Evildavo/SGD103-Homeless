@@ -408,7 +408,8 @@ public class JobLocation : MonoBehaviour {
                 string message = "Work day complete. You worked " +
                                  ((int)hoursWorked).ToString() + " hours and earned $" +
                                  pay.ToString("f2") + " (to be payed on " + 
-                                 GameTime.DayOfTheWeekAsShortString(Job.PayDay) + ")";
+                                 GameTime.DayOfTheWeekAsShortString(Job.PayDay) + " at " +
+                                 GameTime.GetTimeAsString(Job.PayTime) + ")";
                 MessageBox.ShowForTime(message, 8.0f, gameObject);
             }
         }
