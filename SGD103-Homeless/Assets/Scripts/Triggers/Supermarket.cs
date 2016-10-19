@@ -13,6 +13,7 @@ public class Supermarket : MonoBehaviour
     public PlayerSleepManager SleepManager;
     public InventoryItemDescription ItemDescription;
     public SleepHudButton SleepHudButton;
+    public JobLocation JobLocation;
     public FoodItem WaterPrefab;
     public FoodItem BreadPrefab;
     public FoodItem MandarinPrefab;
@@ -44,6 +45,10 @@ public class Supermarket : MonoBehaviour
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(OpenFoodMenu, "Buy food"));
         options.Add(new Menu.Option(OpenOutdoorItemMenu, "Buy outdoor equipment"));
+        if (JobLocation.JobAvailableToday)
+        {
+            options.Add(new Menu.Option(JobLocation.ApplyForJob, "Apply for job"));
+        }
         options.Add(new Menu.Option(OnExitSelected, "Exit"));
 
         Menu.Show(options);
@@ -51,6 +56,9 @@ public class Supermarket : MonoBehaviour
 
     public void OpenFoodMenu()
     {
+        // Hide job message.
+        MessageBox.Hide();
+
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(
             OnWaterSelected, "Water", WaterCost, PlayerState.CanAfford(WaterCost)));
@@ -73,6 +81,9 @@ public class Supermarket : MonoBehaviour
 
     public void OpenOutdoorItemMenu()
     {
+        // Hide job message.
+        MessageBox.Hide(); 
+
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(
             OnBuySleepingBag, "Buy a \"Pillow-Time\"(tm) sleeping bag", SleepingBagCost, PlayerState.CanAfford(SleepingBagCost)));
@@ -263,8 +274,9 @@ public class Supermarket : MonoBehaviour
     public void OnTrigger()
     {
         OpenMainMenu();
-        Debug.Log("Yeah Boi");
+        JobLocation.CheckForJob(true);
     }
+
     public void OnPlayerExit()
     {
         Menu.Hide();
@@ -274,6 +286,7 @@ public class Supermarket : MonoBehaviour
     void reset()
     {
         Menu.Hide();
+        MessageBox.Hide();
         if (Trigger)
         {
             Trigger.Reset();

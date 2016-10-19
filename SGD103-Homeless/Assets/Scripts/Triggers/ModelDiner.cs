@@ -5,6 +5,8 @@ public class ModelDiner : MonoBehaviour
 {
     public Trigger Trigger;
     public Menu Menu;
+    public MessageBox MessageBox;
+    public JobLocation JobLocation;
 
     void Start()
     {
@@ -13,9 +15,13 @@ public class ModelDiner : MonoBehaviour
         Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
     }
 
-    public void ShowMainMenu()
+    public void OpenMainMenu()
     {
         List<Menu.Option> options = new List<Menu.Option>();
+        if (JobLocation.JobAvailableToday)
+        {
+            options.Add(new Menu.Option(JobLocation.ApplyForJob, "Apply for job"));
+        }
         options.Add(new Menu.Option(OnExit, "Exit"));
         Menu.Show(options);
     }
@@ -23,6 +29,7 @@ public class ModelDiner : MonoBehaviour
     void reset()
     {
         Menu.Hide();
+        MessageBox.Hide();
         if (Trigger)
         {
             Trigger.Reset();
@@ -36,7 +43,8 @@ public class ModelDiner : MonoBehaviour
 
     public void OnTrigger()
     {
-        ShowMainMenu();
+        OpenMainMenu();
+        JobLocation.CheckForJob(true);
     }
 
     public void OnPlayerExit()
