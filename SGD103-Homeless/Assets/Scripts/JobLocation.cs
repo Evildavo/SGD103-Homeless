@@ -21,6 +21,7 @@ public class JobLocation : MonoBehaviour {
         public float ShiftFromHour;
         public float ShiftToHour;
         public GameTime.DayOfTheWeekEnum PayDay;
+        public float PayTime;
         public float TimeAllowedEarly = 0.5f;
         public float MaxTimeAllowedLate = 0.5f;
         [ReadOnly]
@@ -370,6 +371,19 @@ public class JobLocation : MonoBehaviour {
         float gameTimeDelta = GameTime.GameTimeDelta;
         float now = GameTime.TimeOfDayHours;
 
+        // Pay day (and time).
+        if (GameTime.DayOfTheWeek == Job.PayDay && 
+            Mathf.Abs(GameTime.TimeOfDayHours - Job.PayTime) <= gameTimeDelta)
+        {
+            string message = "Work week complete. You worked a total of " +
+                             ((int)hoursWorkedThisWeek).ToString() + " hours and have now earned $" +
+                             payDue.ToString("f2");
+            PlayerState.Money += payDue;
+            payDue = 0.0f;
+            hoursWorkedThisWeek = 0.0f;
+            MessageBox.ShowForTime(message, 10.0f, gameObject);
+        }
+
         if (IsPlayerAtWork)
         {
             // Stop work at the end of shift.
@@ -391,24 +405,10 @@ public class JobLocation : MonoBehaviour {
                 payDue += pay;
                 hoursWorked = Mathf.Min(hoursWorked, Job.HoursWorkPerShift); // No overpay for starting early.
                 hoursWorkedThisWeek += hoursWorked;
-                string message = "";
-                if (GameTime.DayOfTheWeek == Job.PayDay)
-                {
-                    // Pay day.
-                    message = "Work week complete. You worked a total of " +
-                              ((int)hoursWorkedThisWeek).ToString() + " hours and have now earned $" +
-                              payDue.ToString("f2");
-                    PlayerState.Money += payDue;
-                    payDue = 0.0f;
-                    hoursWorkedThisWeek = 0.0f;
-                }
-                else
-                {
-                    message = "Work day complete. You worked " +
-                              ((int)hoursWorked).ToString() + " hours and earned $" +
-                              pay.ToString("f2") + " (to be payed on " + 
-                              GameTime.DayOfTheWeekAsShortString(Job.PayDay) + ")";
-                }
+                string message = "Work day complete. You worked " +
+                                 ((int)hoursWorked).ToString() + " hours and earned $" +
+                                 pay.ToString("f2") + " (to be payed on " + 
+                                 GameTime.DayOfTheWeekAsShortString(Job.PayDay) + ")";
                 MessageBox.ShowForTime(message, 8.0f, gameObject);
             }
         }
