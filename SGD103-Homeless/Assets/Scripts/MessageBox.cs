@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UI;
 using System.Collections;
 
 public class MessageBox : MonoBehaviour
@@ -7,6 +8,9 @@ public class MessageBox : MonoBehaviour
     private float fromTime;
     private float closeAfterSeconds;
 
+    public Image WarningSymbol;
+
+    public bool IsWarning = false;
     [ReadOnly]
     public GameObject Source;
 
@@ -47,6 +51,16 @@ public class MessageBox : MonoBehaviour
     }
 	
 	void Update () {
+        if (IsWarning)
+        {
+            WarningSymbol.enabled = true;
+        }
+        else
+        {
+            WarningSymbol.enabled = false;
+        }
+
+        // Hide after time.
         if (closeAfterSeconds != 0 && Time.time - fromTime > closeAfterSeconds)
         {
             Hide();
