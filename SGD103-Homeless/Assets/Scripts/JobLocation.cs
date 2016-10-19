@@ -30,8 +30,9 @@ public class JobLocation : MonoBehaviour {
         public float MinClothesCleanlinessToQualify;
         public float ChanceOfSuccessWithoutResume;
         public float ChanceOfSuccessWithResume;
-        public GameTime.DayOfTheWeek WorkDayFrom;
-        public GameTime.DayOfTheWeek WorkDayTo;
+        public GameTime.DayOfTheWeek WorkFromDay;
+        public GameTime.DayOfTheWeek WorkToDay;
+        public bool WorkDaysInBetween = true;
         [Header("Note: Supports wrapping over (e.g. 11pm to 2am)")]
         public float ShiftFromHour;
         public float ShiftToHour;
@@ -49,18 +50,33 @@ public class JobLocation : MonoBehaviour {
         public void Calculate()
         {
             // Calculate the number of days worked per week.
-            DaysWorkPerWeek = 1;
-            GameTime.DayOfTheWeek dayOfTheWeek = WorkDayFrom;
-            while (dayOfTheWeek != WorkDayTo && DaysWorkPerWeek < 7)
+            if (WorkDaysInBetween)
             {
-                DaysWorkPerWeek += 1;
-                if (dayOfTheWeek == GameTime.DayOfTheWeek.SUNDAY)
+                DaysWorkPerWeek = 1;
+                GameTime.DayOfTheWeek dayOfTheWeek = WorkFromDay;
+                while (dayOfTheWeek != WorkToDay && DaysWorkPerWeek < 7)
                 {
-                    dayOfTheWeek = GameTime.DayOfTheWeek.MONDAY;
+                    DaysWorkPerWeek++;
+                    if (dayOfTheWeek == GameTime.DayOfTheWeek.SUNDAY)
+                    {
+                        dayOfTheWeek = GameTime.DayOfTheWeek.MONDAY;
+                    }
+                    else
+                    {
+                        dayOfTheWeek++;
+                    }
                 }
-                else
+            }
+            else
+            {
+                DaysWorkPerWeek = 0;
+                if (WorkFromDay != GameTime.DayOfTheWeek.NONE)
                 {
-                    dayOfTheWeek += 1;
+                    DaysWorkPerWeek++;
+                }
+                if (WorkToDay != GameTime.DayOfTheWeek.NONE)
+                {
+                    DaysWorkPerWeek++;
                 }
             }
 
@@ -182,12 +198,22 @@ public class JobLocation : MonoBehaviour {
             if (success)
             {
                 PlayerState.Jobs.Add(Job);
-                MessageBox.Show(
-                    "Congratulations! From tomorrow you work " + 
-                    GameTime.DayOfTheWeekAsShortString(Job.WorkDayFrom) + " to " +
-                    GameTime.DayOfTheWeekAsShortString(Job.WorkDayTo) + " from " +
+                string message = "Congratulations! From tomorrow you work ";
+                if (Job.WorkDaysInBetween)
+                {
+                    message += GameTime.DayOfTheWeekAsShortString(Job.WorkFromDay) + " to " +
+                               GameTime.DayOfTheWeekAsShortString(Job.WorkToDay);
+                }
+                else
+                {
+                    message += GameTime.DayOfTheWeekAsShortString(Job.WorkFromDay) + " and " +
+                               GameTime.DayOfTheWeekAsShortString(Job.WorkToDay);
+                }
+                message += " from " +
                     GameTime.GetTimeAsString(Job.ShiftFromHour) + " to " +
-                    GameTime.GetTimeAsString(Job.ShiftToHour) + ". Don't be late!", gameObject);
+                    GameTime.GetTimeAsString(Job.ShiftToHour) + ". Don't be late!";
+                                
+                MessageBox.Show(message, gameObject);
             }
             else
             {
