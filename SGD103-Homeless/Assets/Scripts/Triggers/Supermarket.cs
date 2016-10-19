@@ -45,7 +45,7 @@ public class Supermarket : MonoBehaviour
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(OpenFoodMenu, "Buy food"));
         options.Add(new Menu.Option(OpenOutdoorItemMenu, "Buy outdoor equipment"));
-        if (JobLocation.JobAvailableToday)
+        if (JobLocation.IsJobAvailableToday)
         {
             options.Add(new Menu.Option(JobLocation.ApplyForJob, "Apply for job"));
         }

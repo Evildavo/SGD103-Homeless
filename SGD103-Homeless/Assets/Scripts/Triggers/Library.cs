@@ -14,6 +14,7 @@ public class Library : MonoBehaviour {
     public PlayerState PlayerState;
     public GameTime GameTime;
     public Inventory Inventory;
+    public List<JobLocation> JobLocations;
 
     public float MoraleGainedPerSecondReading = 0.05f;
     public float JobSearchTimeSeconds = 4.0f;
@@ -157,9 +158,38 @@ public class Library : MonoBehaviour {
         // Search for jobs after a minimum amount of time.
         if (isJobSearching && Time.time - timeAtLastCheck > JobSearchTimeSeconds)
         {
-            MessageBox.ShowForTime("You didn't find any jobs today.", 2.0f, gameObject);
+            // Randomise the job list.
+            List<JobLocation> randomJobList = new List<JobLocation>(JobLocations);
+            randomJobList.Sort((a, b) => Random.Range(-1, 2));
+
+            // See if any jobs are available.
+            bool jobAvailable = false;
+            foreach (JobLocation job in randomJobList)
+            {
+                // Shows a message about job availability.
+                job.CheckForJob(false);
+                if (job.IsJobAvailableToday)
+                {
+                    string message = "A job position is available today as: " + job.Job.Role + 
+                                     "\nat " + job.Name + ". Resume updated.";
+                    MessageBox.Show(message, gameObject);
+
+                    jobAvailable = true;
+                    Menu.Show(getMainMenu());
+                    break;
+                }
+            }
+
+            // Stop searching.
             GameTime.TimeScale = GameTime.NormalTimeScale;
-            Menu.Show(getMainMenu());
+            isJobSearching = false;
+
+            // Report no jobs found.
+            if (!jobAvailable)
+            {
+                MessageBox.ShowForTime("You didn't find any jobs today.", 2.0f, gameObject);
+                Menu.Show(getMainMenu());
+            }
         }
 
         // Leave menu on E key.
