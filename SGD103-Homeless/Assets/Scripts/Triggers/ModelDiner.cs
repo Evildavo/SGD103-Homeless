@@ -43,8 +43,8 @@ public class ModelDiner : MonoBehaviour
 
     public void OnTrigger()
     {
-        OpenMainMenu();
         JobLocation.CheckForJob(true);
+        OpenMainMenu();
     }
 
     public void OnPlayerExit()
