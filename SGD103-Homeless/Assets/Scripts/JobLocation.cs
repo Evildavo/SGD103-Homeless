@@ -29,21 +29,26 @@ public class JobLocation : MonoBehaviour {
         public float MinClothesCleanlinessToQualify;
         public float ChanceOfSuccessWithoutResume;
         public float ChanceOfSuccessWithResume;
-
-        JobPositionProfile(string role, float payPerHour, int hoursPerWeek)
-        {
-            Role = role;
-            PayPerHour = payPerHour;
-            HoursPerWeek = hoursPerWeek;
-        }
+        [ReadOnly]
+        public JobLocation Location;
     }
 
     public bool IsJobAvailableToday = false;
-    public JobPositionProfile Job = null;
+    public JobPositionProfile Job;
 
     // Checks for a job and optionally displays a message if one is available.
     public void CheckForJob(bool showMessage = false)
     {
+        // Make sure we don't already have this job.
+        foreach (JobPositionProfile job in PlayerState.Jobs)
+        {
+            if (job == Job)
+            {
+                IsJobAvailableToday = false;
+                return;
+            }
+        }
+
         // Check if it's a new day (or we've never checked before).
         if (GameTime.Day != dayLastChecked || !hasChecked)
         {
@@ -129,8 +134,9 @@ public class JobLocation : MonoBehaviour {
             // Report final decision.
             if (success)
             {
+                PlayerState.Jobs.Add(Job);
                 MessageBox.Show(
-                    "Congratulations! You start tomorrow at (time). Don't be late", gameObject);
+                    "Congratulations! From tomorrow you work (day) and (day) from (time) to (time). Don't be late", gameObject);
             }
             else
             {
@@ -141,5 +147,10 @@ public class JobLocation : MonoBehaviour {
 
         // In any case the job is no longer available today.
         IsJobAvailableToday = false;
+    }
+
+    void Start()
+    {
+        Job.Location = this;
     }
 }
