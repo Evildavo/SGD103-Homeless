@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 
 
-public class Supermarket : MonoBehaviour {
-
-    private List<Menu.Option> mainMenuOptions = new List<Menu.Option>();
-
+public class Supermarket : MonoBehaviour
+{    
     public GameTime GameTime;
     public Trigger Trigger;
     public Menu Menu;
@@ -40,38 +38,53 @@ public class Supermarket : MonoBehaviour {
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
         Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
-        
-        mainMenuOptions.Add(new Menu.Option(OnFoodMenuSelected, "Buy food..."));
-        mainMenuOptions.Add(new Menu.Option(OnBuySleepingBag, "Buy a \"Pillow-Time\" sleeping bag"));
-        mainMenuOptions.Add(new Menu.Option(OnExitSelected, "Exit"));
     }
 
-    public void OnFoodMenuSelected()
+    public void OpenMainMenu()
     {
-        List<Menu.Option> subMenuOptions = new List<Menu.Option>();
-        subMenuOptions.Add(
-            new Menu.Option(OnWaterSelected, "Water", WaterCost, PlayerState.CanAfford(WaterCost)));
-        subMenuOptions.Add(
-            new Menu.Option(OnBreadSelected, "Bread", BreadCost, PlayerState.CanAfford(BreadCost)));
-        subMenuOptions.Add(
-            new Menu.Option(OnMandarinSelected, "Mandarin", MandarinCost, PlayerState.CanAfford(MandarinCost)));
-        subMenuOptions.Add(
-            new Menu.Option(OnAppleSelected, "Apple", AppleCost, PlayerState.CanAfford(AppleCost)));
-        subMenuOptions.Add(
-            new Menu.Option(OnPotatoChipsSelected, "Potato Chips", PotatoChipsCost, PlayerState.CanAfford(PotatoChipsCost)));
-        subMenuOptions.Add(
-            new Menu.Option(OnBiscuitsSelected, "Biscuits", BiscuitsCost, PlayerState.CanAfford(BiscuitsCost)));
-        subMenuOptions.Add(
-            new Menu.Option(OnChocolateBarSelected, "Chocolate Bar", ChocolateBarCost, PlayerState.CanAfford(ChocolateBarCost)));
-        subMenuOptions.Add(
-            new Menu.Option(OnBackButtonSelected, "Back"));
+        List<Menu.Option> options = new List<Menu.Option>();
+        options.Add(new Menu.Option(OpenFoodMenu, "Buy food"));
+        options.Add(new Menu.Option(OpenSleepMenu, "Buy outdoor equipment"));
+        options.Add(new Menu.Option(OnExitSelected, "Exit"));
 
-        Menu.Show(subMenuOptions);
+        Menu.Show(options);
     }
 
-    public void OnBackButtonSelected()
+    public void OpenFoodMenu()
     {
-        Menu.Show(mainMenuOptions);
+        List<Menu.Option> options = new List<Menu.Option>();
+        options.Add(new Menu.Option(
+            OnWaterSelected, "Water", WaterCost, PlayerState.CanAfford(WaterCost)));
+        options.Add(new Menu.Option(
+            OnBreadSelected, "Bread", BreadCost, PlayerState.CanAfford(BreadCost)));
+        options.Add(new Menu.Option(
+            OnMandarinSelected, "Mandarin", MandarinCost, PlayerState.CanAfford(MandarinCost)));
+        options.Add(new Menu.Option(
+            OnAppleSelected, "Apple", AppleCost, PlayerState.CanAfford(AppleCost)));
+        options.Add(new Menu.Option(
+            OnPotatoChipsSelected, "Potato Chips", PotatoChipsCost, PlayerState.CanAfford(PotatoChipsCost)));
+        options.Add(new Menu.Option(
+            OnBiscuitsSelected, "Biscuits", BiscuitsCost, PlayerState.CanAfford(BiscuitsCost)));
+        options.Add(new Menu.Option(
+            OnChocolateBarSelected, "Chocolate Bar", ChocolateBarCost, PlayerState.CanAfford(ChocolateBarCost)));
+        options.Add(new Menu.Option(OnBackSelected, "Back"));
+
+        Menu.Show(options);
+    }
+
+    public void OpenSleepMenu()
+    {
+        List<Menu.Option> options = new List<Menu.Option>();
+        options.Add(new Menu.Option(
+            OnBuySleepingBag, "Buy a \"Pillow-Time\"(tm) sleeping bag", SleepingBagCost, PlayerState.CanAfford(SleepingBagCost)));
+        options.Add(new Menu.Option(OnBackSelected, "Back"));
+
+        Menu.Show(options);
+    }
+
+    public void OnBackSelected()
+    {
+        OpenMainMenu();
     }
 
     public void OnWaterSelected()
@@ -87,7 +100,7 @@ public class Supermarket : MonoBehaviour {
             item.Inventory = Inventory;
             Inventory.AddItem(item);
         }
-        OnFoodMenuSelected();
+        OpenFoodMenu();
     }
 
     public void OnBreadSelected()
@@ -103,7 +116,7 @@ public class Supermarket : MonoBehaviour {
             item.Inventory = Inventory;
             Inventory.AddItem(item);
         }
-        OnFoodMenuSelected(); 
+        OpenFoodMenu(); 
     }
 
     public void OnMandarinSelected()
@@ -119,7 +132,7 @@ public class Supermarket : MonoBehaviour {
             item.Inventory = Inventory;
             Inventory.AddItem(item);
         }
-        OnFoodMenuSelected();
+        OpenFoodMenu();
     }
 
     public void OnAppleSelected()
@@ -135,7 +148,7 @@ public class Supermarket : MonoBehaviour {
             item.Inventory = Inventory;
             Inventory.AddItem(item);
         }
-        OnFoodMenuSelected();
+        OpenFoodMenu();
     }
 
     public void OnPotatoChipsSelected()
@@ -151,7 +164,7 @@ public class Supermarket : MonoBehaviour {
             item.Inventory = Inventory;
             Inventory.AddItem(item);
         }
-        OnFoodMenuSelected();
+        OpenFoodMenu();
     }
 
     public void OnBiscuitsSelected()
@@ -167,7 +180,7 @@ public class Supermarket : MonoBehaviour {
             item.Inventory = Inventory;
             Inventory.AddItem(item);
         }
-        OnFoodMenuSelected();
+        OpenFoodMenu();
     }
 
     public void OnChocolateBarSelected()
@@ -183,7 +196,7 @@ public class Supermarket : MonoBehaviour {
             item.Inventory = Inventory;
             Inventory.AddItem(item);
         }
-        OnFoodMenuSelected();
+        OpenFoodMenu();
     }
 
     public void OnExitSelected()
@@ -194,7 +207,7 @@ public class Supermarket : MonoBehaviour {
 
     public void OnTrigger()
     {
-        Menu.Show(mainMenuOptions);
+        OpenMainMenu();
         Debug.Log("Yeah Boi");
     }
 
@@ -211,7 +224,7 @@ public class Supermarket : MonoBehaviour {
             item.SleepHudButton = SleepHudButton;
             Inventory.AddItem(item);
         }
-        OnFoodMenuSelected();
+        OpenFoodMenu();
     }
 
     public void OnPlayerExit()
