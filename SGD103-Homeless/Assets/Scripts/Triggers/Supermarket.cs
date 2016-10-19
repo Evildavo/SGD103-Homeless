@@ -19,6 +19,11 @@ public class Supermarket : MonoBehaviour {
     public FoodItem PotatoChipsPrefab;
     public FoodItem BiscuitsPrefab;
     public FoodItem ChocolateBarPrefab;
+    public SleepItem SleepingBagPrefab;
+    public PlayerSleepManager SleepManager;
+    public InventoryItemDescription ItemDescription;
+    public SleepHudButton SleepHudButton;
+
 
     public float WaterCost;
     public float BreadCost;
@@ -27,6 +32,7 @@ public class Supermarket : MonoBehaviour {
     public float PotatoChipsCost;
     public float BiscuitsCost;
     public float ChocolateBarCost;
+    public float SleepingBagCost;
 
 
     void Start()
@@ -36,6 +42,7 @@ public class Supermarket : MonoBehaviour {
         Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
         
         mainMenuOptions.Add(new Menu.Option(OnFoodMenuSelected, "Buy food"));
+        mainMenuOptions.Add(new Menu.Option(OnBuySleepingBag, "Buy a \"Pillow-Time\" sleeping bag"));
         mainMenuOptions.Add(new Menu.Option(OnExitSelected, "Exit"));
     }
 
@@ -66,7 +73,6 @@ public class Supermarket : MonoBehaviour {
     {
         Menu.Show(mainMenuOptions);
     }
-
 
     public void OnWaterSelected()
     {
@@ -190,6 +196,22 @@ public class Supermarket : MonoBehaviour {
     {
         Menu.Show(mainMenuOptions);
         Debug.Log("Yeah Boi");
+    }
+
+    public void OnBuySleepingBag()
+    {
+        if (!Inventory.IsInventoryFull() && PlayerState.Money >= SleepingBagCost)
+        {
+            PlayerState.Money -= SleepingBagCost;
+
+            // Add item.
+            SleepItem item = Instantiate(SleepingBagPrefab);
+            item.SleepManager = SleepManager;
+            item.ItemDescription = ItemDescription;
+            item.SleepHudButton = SleepHudButton;
+            Inventory.AddItem(item);
+        }
+        OnFoodMenuSelected();
     }
 
     public void OnPlayerExit()

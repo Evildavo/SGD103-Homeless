@@ -131,25 +131,32 @@ public class Inventory : MonoBehaviour
             i++;
         }
     }
-
+    
     // Removes the item and moves other items to fill the gaps.
     // Warning: Currently also destroys the object.
     public void RemoveItem(InventoryItem item)
     {
         // Move items down to fill the slot.
         InventorySlot[] inventorySlots = SlotContainer.GetComponentsInChildren<InventorySlot>(true);
-        for (var i = item.InventoryIndex; i < inventorySlots.Length - 1; i++)
+        for (var i = item.InventoryIndex; i < inventorySlots.Length; i++)
         {
-            InventoryItem itemAbove = inventorySlots[i + 1].Item;
-            if (itemAbove)
+            if (i == inventorySlots.Length - 1)
             {
-                itemAbove.InventoryIndex = i;
-                itemAbove.transform.position = inventorySlots[i].transform.position;
-                inventorySlots[i].Item = itemAbove;
+                inventorySlots[i].Item = null;
             }
             else
             {
-                inventorySlots[i].Item = null;
+                InventoryItem itemAbove = inventorySlots[i + 1].Item;
+                if (itemAbove)
+                {
+                    itemAbove.InventoryIndex = i;
+                    itemAbove.transform.position = inventorySlots[i].transform.position;
+                    inventorySlots[i].Item = itemAbove;
+                }
+                else
+                {
+                    inventorySlots[i].Item = null;
+                }
             }
         }
         
