@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 public class MenuTriggerTest : MonoBehaviour
 {
-    private List<Menu.Option> options = new List<Menu.Option>();
-
     public Trigger Trigger;    
     public Menu Menu;
     public PlayerState PlayerState;
@@ -23,19 +21,26 @@ public class MenuTriggerTest : MonoBehaviour
     {
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
+    }
 
-        // Set up menu.
-        options.Add(new Menu.Option(OnFoodMenuSelected, "Buy food"));
-        options.Add(new Menu.Option(OnBuyAlcoholSelected, "Buy alcohol", AlcoholPrice));
-        options.Add(new Menu.Option(OnOptionASelected, "Say A"));
-        options.Add(new Menu.Option(OnOptionBSelected, "Say B"));
-        options.Add(new Menu.Option(OnSellWatchSelected, "Sell watch", WatchPrice));
-        options.Add(new Menu.Option(OnExit, "Exit"));
+    public void ShowMainMenu()
+    {
+        List<Menu.Option> mainMenu = new List<Menu.Option>();
+        mainMenu.Add(new Menu.Option(OnFoodMenuSelected, "Buy food"));
+        mainMenu.Add(new Menu.Option(
+            OnBuyAlcoholSelected, "Buy alcohol", AlcoholPrice, PlayerState.CanAfford(AlcoholPrice)));
+        mainMenu.Add(new Menu.Option(OnOptionASelected, "Say A"));
+        mainMenu.Add(new Menu.Option(OnOptionBSelected, "Say B"));
+        if (Inventory.HasItem(WatchItem))
+        {
+            mainMenu.Add(new Menu.Option(OnSellWatchSelected, "Sell watch", WatchPrice));
+        }
+        Menu.Show(mainMenu);
     }
 
     public void OnFoodMenuSelected()
     {
-        List<Menu.Option> options = new List<Menu.Option>();
+        List<Menu.Option> options = new List<Menu.Option>();        
         options.Add(new Menu.Option(OnBuyFoodSelected, "Buy banana", 0.5f));
         options.Add(new Menu.Option(OnBuyFoodSelected, "Buy oats", 1.0f));
         options.Add(new Menu.Option(OnBuyFoodSelected, "Buy bread", 2.5f));
@@ -66,6 +71,7 @@ public class MenuTriggerTest : MonoBehaviour
         {
             PlayerState.Money -= AlcoholPrice;
         }
+        ShowMainMenu();
     }
 
     public void OnOptionASelected()
@@ -93,21 +99,13 @@ public class MenuTriggerTest : MonoBehaviour
                 {
                     PlayerState.Money += WatchPrice;
                     Inventory.RemoveItem(WatchItem);
-
-                    // Remove this option and update the menu.
-                    for (var i = 0; i < options.Count; i++)
-                    {
-                        if (options[i].Name == name)
-                        {
-                            options.RemoveAt(i);
-                        }
-                    }
                 }
                 Menu.Hide();
                 Trigger.Reset();
             };
             ConfirmationBox.Open(onChoiceMade, "Sell watch?", "Yes", "No");
         }
+        ShowMainMenu();
     }
 
     public void OnExit()
@@ -118,7 +116,7 @@ public class MenuTriggerTest : MonoBehaviour
 
     public void OnTrigger()
     {
-        Menu.Show(options);
+        ShowMainMenu();
     }
     
     public void OnPlayerExit()

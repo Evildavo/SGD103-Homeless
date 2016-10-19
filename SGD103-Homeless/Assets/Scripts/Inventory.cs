@@ -70,11 +70,14 @@ public class Inventory : MonoBehaviour
     // Returns true if the inventory has the given item.
     public bool HasItem(InventoryItem item)
     {
-        foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
+        if (item)
         {
-            if (slot.Item.gameObject == item.gameObject)
+            foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
             {
-                return true;
+                if (slot.Item.gameObject == item.gameObject)
+                {
+                    return true;
+                }
             }
         }
         return false;
@@ -130,6 +133,7 @@ public class Inventory : MonoBehaviour
     }
 
     // Removes the item and moves other items to fill the gaps.
+    // Warning: Currently also destroys the object.
     public void RemoveItem(InventoryItem item)
     {
         // Move items down to fill the slot.

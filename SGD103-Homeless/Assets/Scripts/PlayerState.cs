@@ -59,6 +59,12 @@ public class PlayerState : MonoBehaviour {
     public bool HighlightHungerThirst = false;
     public bool HighlightHealth = false;
     public bool HighlightMorale = false;
+
+    // Returns true if the player can currently afford the given price.
+    public bool CanAfford(float price)
+    {
+        return (Money >= price);
+    }
         
     void Update () {
         float gameTimeDelta = 1.0f / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;

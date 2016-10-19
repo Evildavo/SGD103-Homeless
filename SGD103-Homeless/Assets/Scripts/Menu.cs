@@ -12,19 +12,28 @@ public class Menu : MonoBehaviour
         
         public string Name;
         public float Value;
+        public bool Enabled;
         public OnSelectedCallback Callback;
 
         // The given callback function is called if the player selects the option.
         // Value is the price. If it's zero it isn't displayed.
-        public Option(OnSelectedCallback onSelectedCallback, string name, float value = 0)
+        // If enabled is false the option will be greyed out and unselectable.
+        public Option(OnSelectedCallback onSelectedCallback, string name, float value = 0, bool enabled = true)
         {
             Callback = onSelectedCallback;
             Name = name;
             Value = value;
+            Enabled = enabled;
         }
     };
 
     public Transform MenuOptions;
+
+    public Color EnabledOptionColour = Color.black;
+    public Color EnabledValueColour = Color.black;
+    public Color DisabledOptionColour = Color.grey;
+    public Color DisabledValueColour = Color.grey;
+
 
     // Sets the options menu to display the given list of options.
     public void Show(List<Option> options)
@@ -42,9 +51,10 @@ public class Menu : MonoBehaviour
         int i = 0;
         foreach (Option option in options)
         {
-            menuOptions[i].optionInfo = option;
+            menuOptions[i].OptionInfo = option;
             menuOptions[i].OptionText.text = option.Name;
-            
+
+            // Format as price if value is not zero.
             if (option.Value != 0.0f)
             {
                 menuOptions[i].ValueText.text = "$" + option.Value.ToString("F2");
@@ -53,6 +63,8 @@ public class Menu : MonoBehaviour
             {
                 menuOptions[i].ValueText.text = "";
             }
+
+            // Enable option object.
             menuOptions[i].gameObject.SetActive(true);
             i++;
         }
