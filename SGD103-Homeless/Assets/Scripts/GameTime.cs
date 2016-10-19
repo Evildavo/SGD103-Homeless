@@ -26,9 +26,11 @@ public class GameTime : MonoBehaviour
     [Range(0.0f, 24.0f)]
     public float TimeOfDayHours = 0.0f;
     public float SunriseAtHour = 6.0f;
+    public bool StartWithNormalTimeScale = true;
     [ReadOnly]
     public bool IsNight = false;
-    public bool StartWithNormalTimeScale = true;
+    [ReadOnly]
+    public float GameTimeDelta = 0.0f;
 
     // Result for the TimeOfDayHoursDelta function.
     public struct Delta
@@ -153,8 +155,11 @@ public class GameTime : MonoBehaviour
 	
 	void Update ()
     {
+        // Calculate game time delta.
+        GameTimeDelta = Time.deltaTime / 60.0f / 60.0f * TimeScale;
+
         // Increment game-time.
-        TimeOfDayHours += Time.deltaTime / 60.0f / 60.0f * TimeScale;
+        TimeOfDayHours += GameTimeDelta;
         if (TimeOfDayHours >= 24.0f)
         {
             TimeOfDayHours = 0.0f;

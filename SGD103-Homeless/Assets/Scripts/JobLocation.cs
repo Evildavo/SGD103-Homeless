@@ -70,25 +70,32 @@ public class JobLocation : MonoBehaviour {
     private int dayLastChecked;
     private bool hasChecked = false;
     private int daysChecked = 0;
+    private GameTime.DayOfTheWeekEnum jobStartsAfter;
+    private bool workWeekStarted = false;
 
     public MessageBox MessageBox;
     public GameTime GameTime;
     public PlayerState PlayerState;
     public Inventory Inventory;
     public InventoryItem ResumePrefab;
+    public JobTrigger JobTrigger;
+    public UI UI;
+    public ScreenFader ScreenFader;
 
     public string Name;
     public float ChanceJobAvailablePerDay = 0.05f;
     [Header("Make job available after so many tries (-1 to disable).")]
     public int GuaranteedAvailableAfterDaysChecked = -1;
-    
+    public float FadeToBlackTime = 2.0f;
+    public float FadeInFromBlackTime = 2.0f;
+    public float WorkTimeScale = 12000.0f;
+
     public bool IsJobAvailableToday = false;
     public JobPositionProfile Job;
 
     public bool PlayerHasJobHere = false;
-    public GameTime.DayOfTheWeekEnum jobStartsAfter;
-    public bool workWeekStarted = false;
-
+    public bool IsPlayerAtWork = false;
+    public bool IsPlayerFinishedForToday = true;
     [ReadOnly]
     public bool CanWorkNow = false;
 
@@ -234,21 +241,46 @@ public class JobLocation : MonoBehaviour {
         MessageBox.ShowForTime(message, 8.0f, gameObject);
     }
 
-    void Start()
+    void OnFadeOutComplete()
     {
-        Job.Location = this;
-        Job.Calculate();
+        if (IsPlayerAtWork)
+        {
+            MessageBox.Show("Working...", gameObject);
+            GameTime.TimeScale = WorkTimeScale;
+        }
     }
 
-    void Update()
+    public void OnTriggerJob()
     {
-#if UNITY_EDITOR
-        Job.Calculate();
-#endif
+        if (!IsPlayerAtWork)
+        {
+            IsPlayerAtWork = true;
+            IsPlayerFinishedForToday = false;
+            
+            // Fade to black.
+            ScreenFader.fadeTime = FadeToBlackTime;
+            ScreenFader.fadeIn = false;
+            Invoke("OnFadeOutComplete", FadeToBlackTime);
 
-        // Determine if work has started yet.
+            // Hide UI.
+            UI.Hide();
+        }
+    }
+
+    public void OnPlayerExitJob()
+    {
+        if (IsPlayerAtWork)
+        {
+            UI.Show();
+            Dismiss("Leaving work early");
+        }
+    }
+
+    void checkCanWorkNow()
+    {
+        // Determine if work is about to start/has started.
         CanWorkNow = false;
-        if (PlayerHasJobHere)
+        if (PlayerHasJobHere && !IsPlayerAtWork)
         {
             // After the day the player got the job we start the first work week.
             if (!workWeekStarted && GameTime.DayOfTheWeek != jobStartsAfter)
@@ -296,13 +328,54 @@ public class JobLocation : MonoBehaviour {
                     {
                         CanWorkNow = true;
                     }
-                    else
+                    else if (!IsPlayerAtWork && !IsPlayerFinishedForToday)
                     {
                         Dismiss("Late for work");
                     }
                 }
             }
         }
+    }
+
+    void Start()
+    {
+        Job.Location = this;
+        Job.Calculate();
+
+        JobTrigger.RegisterOnTriggerListener(OnTriggerJob);
+        JobTrigger.RegisterOnPlayerExitListener(OnPlayerExitJob);
+    }
+
+    void Update()
+    {
+#if UNITY_EDITOR
+        Job.Calculate();
+#endif
+        float gameTimeDelta = GameTime.GameTimeDelta;
+        float now = GameTime.TimeOfDayHours;
+
+        if (IsPlayerAtWork)
+        {
+            // Stop work at the end of shift.
+            if (GameTime.TimeOfDayHoursDelta(now, Job.ShiftToHour).forward < gameTimeDelta)
+            {
+                IsPlayerAtWork = false;
+                IsPlayerFinishedForToday = true;
+                GameTime.TimeScale = GameTime.NormalTimeScale;
+
+                // Show UI.
+                UI.Show();
+
+                // Fade in from black.
+                ScreenFader.fadeTime = FadeInFromBlackTime;
+                ScreenFader.fadeIn = true;
+                MessageBox.Hide();
+            }
+        }
+        else
+        {
+            checkCanWorkNow();
+        }        
     }
 
 }
