@@ -41,7 +41,7 @@ public class Supermarket : MonoBehaviour {
         Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
         Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
         
-        mainMenuOptions.Add(new Menu.Option(OnFoodMenuSelected, "Buy food"));
+        mainMenuOptions.Add(new Menu.Option(OnFoodMenuSelected, "Buy food..."));
         mainMenuOptions.Add(new Menu.Option(OnBuySleepingBag, "Buy a \"Pillow-Time\" sleeping bag"));
         mainMenuOptions.Add(new Menu.Option(OnExitSelected, "Exit"));
     }
