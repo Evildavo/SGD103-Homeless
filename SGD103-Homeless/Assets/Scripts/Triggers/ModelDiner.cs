@@ -33,12 +33,6 @@ public class ModelDiner : MonoBehaviour
         Menu.Show(options);
     }
 
-    public void StartWork()
-    {
-        reset();
-        JobLocation.StartWork();
-    }
-
     public void ApplyForJob()
     {
         JobLocation.ApplyForJob();

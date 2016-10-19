@@ -230,18 +230,19 @@ public class JobLocation : MonoBehaviour {
         // In any case the job is no longer available today.
         IsJobAvailableToday = false;
     }
-
-    // Starts the working day.
-    public void StartWork()
-    {
-        Debug.Log("Starting work");
-    }
-
+    
     // Fires the player immediately with the given reason as explanation.
     public void Dismiss(string reason)
     {
         PlayerHasJobHere = false;
-        string message = "You have been dismissed from employment. Reason: " + reason;
+        string message = "You have been dismissed from employment. Reason: " + reason + ".";
+        if (payDue > 0.0f)
+        {
+            message += "Your pay comes to $" + payDue.ToString("f2");
+            PlayerState.Money += payDue;
+            payDue = 0.0f;
+            hoursWorkedThisWeek = 0.0f;
+        }
         MessageBox.ShowForTime(message, 8.0f, gameObject);
     }
 
@@ -256,6 +257,7 @@ public class JobLocation : MonoBehaviour {
 
     public void OnTriggerJob()
     {
+        // Start work.
         if (!IsPlayerAtWork)
         {
             IsPlayerAtWork = true;
@@ -385,7 +387,7 @@ public class JobLocation : MonoBehaviour {
                 {
                     // Pay day.
                     message = "Work week complete. You worked a total of " +
-                              hoursWorkedThisWeek.ToString("f1") + " hours and have now earned $" +
+                              ((int)hoursWorkedThisWeek).ToString() + " hours and have now earned $" +
                               payDue.ToString("f2");
                     PlayerState.Money += payDue;
                     payDue = 0.0f;
@@ -394,7 +396,7 @@ public class JobLocation : MonoBehaviour {
                 else
                 {
                     message = "Work day complete. You worked " +
-                              hoursWorked.ToString("f1") + " hours and earned $" +
+                              ((int)hoursWorked).ToString() + " hours and earned $" +
                               pay.ToString("f2") + " (to be payed on " + 
                               GameTime.DayOfTheWeekAsShortString(Job.PayDay) + ")";
                 }
