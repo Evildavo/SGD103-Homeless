@@ -6,7 +6,7 @@ public class FoodItem : InventoryItem
     public MessageBox MessageBox;
     public PlayerState PlayerState;
     public Inventory Inventory;
-    public float HungerSatietyBenefit = 0.1f;
+    public float HungerSatietyBenefit;
 
     public override void OnPrimaryAction()
     {
