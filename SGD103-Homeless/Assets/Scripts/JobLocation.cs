@@ -99,7 +99,7 @@ public class JobLocation : MonoBehaviour {
         {
             string message = "A job position is available today as: " + Job.Role + "\n" +
                              "$" + Job.PayPerHour.ToString("f2") + "/hr, " +
-                             Job.GetHoursPerShift() + " hours per week.";
+                             Job.HoursWorkPerWeek + " hours per week.";
             MessageBox.Show(message, gameObject);
         }
     }
