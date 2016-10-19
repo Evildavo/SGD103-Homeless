@@ -3,6 +3,18 @@ using System.Collections;
 
 public class GameTime : MonoBehaviour
 {
+    public enum DayOfTheWeek
+    {
+        NONE,
+        MONDAY,
+        TUESDAY,
+        WEDNESDAY,
+        THURSDAY,
+        FRIDAY,
+        SATURDAY,
+        SUNDAY
+    }
+
     [Header("Game time")]
     public float NormalTimeScale = 100.0f;
     public float AcceleratedTimeScale = 400.0f;
@@ -17,10 +29,33 @@ public class GameTime : MonoBehaviour
     public bool IsNight = false;
     public bool StartWithNormalTimeScale = true;
 
-    // Returns the time as a string in the format "11:34 pm".
-    public string GetTimeAsString()
+    // Returns the given day of the week as a short string.
+    public string DayOfTheWeekAsShortString(DayOfTheWeek dotw)
     {
-        int hour = (int)TimeOfDayHours;
+        switch (dotw)
+        {
+            case DayOfTheWeek.MONDAY:
+                return "Mon";
+            case DayOfTheWeek.TUESDAY:
+                return "Tue";
+            case DayOfTheWeek.WEDNESDAY:
+                return "Wed";
+            case DayOfTheWeek.THURSDAY:
+                return "Thu";
+            case DayOfTheWeek.FRIDAY:
+                return "Fri";
+            case DayOfTheWeek.SATURDAY:
+                return "Sat";
+            case DayOfTheWeek.SUNDAY:
+                return "Sun";
+        }
+        return "";
+    }
+
+    // Returns the given time as a string in the format "11:34 pm".
+    public string GetTimeAsString(float time)
+    {
+        int hour = (int)time;
         string amPmLabel;
         if (hour < 1)
         {
@@ -41,8 +76,14 @@ public class GameTime : MonoBehaviour
             hour -= 12;
             amPmLabel = "pm";
         }
-        int minutes = (int)((TimeOfDayHours - Mathf.Floor(TimeOfDayHours)) * 60.0f);
+        int minutes = (int)((time - Mathf.Floor(time)) * 60.0f);
         return hour.ToString() + ":" + minutes.ToString().PadLeft(2, '0') + " " + amPmLabel.ToUpper();
+    }
+
+    // Returns the current time as a string in the format "11:34 pm".
+    public string GetTimeAsString()
+    {
+        return GetTimeAsString(TimeOfDayHours);
     }
 
     void Start ()

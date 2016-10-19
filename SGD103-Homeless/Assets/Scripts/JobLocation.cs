@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[ExecuteInEditMode]
 public class JobLocation : MonoBehaviour {
     private int dayLastChecked;
     private bool hasChecked = false;
@@ -17,20 +18,41 @@ public class JobLocation : MonoBehaviour {
     [Header("Make job available after so many tries (-1 to disable).")]
     public int GuaranteedAvailableAfterDaysChecked = -1;
 
+
     // Represents a job position.
     [System.Serializable]
     public class JobPositionProfile
     {
         public string Role;
         public float PayPerHour;
-        public int HoursPerWeek;
         public float MinHealthNeededToQualify;
         public float MinMoraleNeededToQualify;
         public float MinClothesCleanlinessToQualify;
         public float ChanceOfSuccessWithoutResume;
         public float ChanceOfSuccessWithResume;
+        public GameTime.DayOfTheWeek WorkDay1;
+        public GameTime.DayOfTheWeek WorkDay2;
+        [Header("Note: Supports wrapping over (e.g. 11pm to 2am)")]
+        public float ShiftFromHour;
+        public float ShiftToHour;
         [ReadOnly]
         public JobLocation Location;
+        [ReadOnly]
+        public int HoursWorkPerWeek;
+        [ReadOnly]
+        public float PayPerWeek;
+
+        public int GetHoursPerShift()
+        {
+            if (ShiftFromHour < ShiftToHour)
+            {
+                return Mathf.RoundToInt(ShiftToHour - ShiftFromHour);
+            }
+            else
+            {
+                return Mathf.RoundToInt((24.0f - ShiftFromHour) + ShiftToHour);
+            }
+        }
     }
 
     public bool IsJobAvailableToday = false;
@@ -77,7 +99,7 @@ public class JobLocation : MonoBehaviour {
         {
             string message = "A job position is available today as: " + Job.Role + "\n" +
                              "$" + Job.PayPerHour.ToString("f2") + "/hr, " +
-                             Job.HoursPerWeek + " hours per week.\n";
+                             Job.GetHoursPerShift() + " hours per week.";
             MessageBox.Show(message, gameObject);
         }
     }
@@ -136,7 +158,11 @@ public class JobLocation : MonoBehaviour {
             {
                 PlayerState.Jobs.Add(Job);
                 MessageBox.Show(
-                    "Congratulations! From tomorrow you work (day) and (day) from (time) to (time). Don't be late", gameObject);
+                    "Congratulations! From tomorrow you work " + 
+                    GameTime.DayOfTheWeekAsShortString(Job.WorkDay1) + " and " +
+                    GameTime.DayOfTheWeekAsShortString(Job.WorkDay2) + " from " +
+                    GameTime.GetTimeAsString(Job.ShiftFromHour) + " to " +
+                    GameTime.GetTimeAsString(Job.ShiftToHour) + ". Don't be late!", gameObject);
             }
             else
             {
@@ -152,5 +178,23 @@ public class JobLocation : MonoBehaviour {
     void Start()
     {
         Job.Location = this;
+    }
+
+    void Update()
+    {
+        // Calculate the number of hours worked per week.
+        int daysWorked = 0;
+        if (Job.WorkDay1 != GameTime.DayOfTheWeek.NONE)
+        {
+            daysWorked++;
+        }
+        if (Job.WorkDay2 != GameTime.DayOfTheWeek.NONE)
+        {
+            daysWorked++;
+        }
+        Job.HoursWorkPerWeek = Job.GetHoursPerShift() * daysWorked;
+
+        // Calculate pay per week.
+        Job.PayPerWeek = Job.PayPerHour * Job.HoursWorkPerWeek;
     }
 }
