@@ -267,24 +267,30 @@ public class PlayerSleepManager : MonoBehaviour
         {
             // Determine if we're in a public zone.
             InPublic = false;
-            PublicZone[] publicZones = SleepZoneContainer.GetComponentsInChildren<PublicZone>();
-            foreach (PublicZone zone in publicZones)
+            if (SleepZoneContainer)
             {
-                if (zone.PlayerIsInside)
+                PublicZone[] publicZones = SleepZoneContainer.GetComponentsInChildren<PublicZone>();
+                foreach (PublicZone zone in publicZones)
                 {
-                    InPublic = true;
-                    break;
+                    if (zone.PlayerIsInside)
+                    {
+                        InPublic = true;
+                        break;
+                    }
                 }
             }
 
             // Determine the quality of sleep here based on zones the player is in.
             SleepQualityHere = SleepQualityEnum.POOR;
-            SleepZone[] sleepZones = SleepZoneContainer.GetComponentsInChildren<SleepZone>();
-            foreach (SleepZone zone in sleepZones)
+            if (SleepZoneContainer)
             {
-                if (zone.PlayerIsInside)
+                SleepZone[] sleepZones = SleepZoneContainer.GetComponentsInChildren<SleepZone>();
+                foreach (SleepZone zone in sleepZones)
                 {
-                    SleepQualityHere = zone.SleepQuality;
+                    if (zone.PlayerIsInside)
+                    {
+                        SleepQualityHere = zone.SleepQuality;
+                    }
                 }
             }
 
