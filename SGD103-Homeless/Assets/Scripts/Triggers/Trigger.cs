@@ -19,22 +19,24 @@ public class Trigger : MonoBehaviour
     public Text InteractHintText;
 
     public bool IsEnabled = true;
-    [ReadOnly]
-    public bool IsPlayerInsideTriggerZone = false;
-    [ReadOnly]
-    public bool IsActivated = false;
     public string TriggerName;
     public string InteractHintMessage;
     [Header("Leave blank to not show an interact message")]
     public string OutOfHoursMessage;
-    [ReadOnly]
-    public bool IsInActiveHour = false;
     [Header("Note: Also supports wrapping over (e.g. 11pm to 2am)")]
     [Range(0.0f, 24.0f)]
     public float ActiveFromHour = 0.0f;
     [Range(0.0f, 24.0f)]
     public float ActiveToHour = 24.0f;
-    
+    public Color TextColour = Color.black;
+
+    [ReadOnly]
+    public bool IsPlayerInsideTriggerZone = false;
+    [ReadOnly]
+    public bool IsActivated = false;
+    [ReadOnly]
+    public bool IsInActiveHour = false;
+
     // Register the function to call when the player activates the trigger.
     public void RegisterOnTriggerListener(TriggerListener function)
     {
@@ -75,6 +77,8 @@ public class Trigger : MonoBehaviour
             {
                 TriggerNameText.GetComponent<Text>().enabled = true;
                 InteractHintText.GetComponent<Text>().enabled = true;
+                TriggerNameText.GetComponent<Text>().color = TextColour;
+                InteractHintText.GetComponent<Text>().color = TextColour;
                 TriggerNameText.text = TriggerName;
                 if (IsInActiveHour)
                 {
