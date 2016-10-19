@@ -14,6 +14,8 @@ public class Library : MonoBehaviour {
     public PlayerState PlayerState;
     public GameTime GameTime;
     public Inventory Inventory;
+    public InventoryItemDescription ItemDescription;
+    public ResumeItem ResumeItem;
     public List<JobLocation> JobLocations;
 
     public float MoraleGainedPerSecondReading = 0.05f;
@@ -73,7 +75,7 @@ public class Library : MonoBehaviour {
     public void OnJobSearch()
     {
         // Ask if they still want to search with a full inventory.
-        if (Inventory.IsInventoryFull)
+        if (Inventory.IsInventoryFull && !Inventory.HasItem(ResumeItem))
         {
             ConfirmationBox.OnChoiceMade onChoice = (bool yes) =>
             {
@@ -189,6 +191,27 @@ public class Library : MonoBehaviour {
             {
                 MessageBox.ShowForTime("You didn't find any jobs today.", 2.0f, gameObject);
                 Menu.Show(getMainMenu());
+            }
+
+            // Add or update resumes.
+            if (!Inventory.IsInventoryFull)
+            {
+                if (Inventory.HasItem(ResumeItem))
+                {
+                    ResumeItem item = Inventory.ItemContainer.GetComponentInChildren<ResumeItem>();
+                    item.NumUses = 2;
+                    /*item.RelevantToDay = GameTime.Day;*/
+                    Inventory.ShowPreview();
+                }
+                else
+                {
+                    ResumeItem item = Instantiate(ResumeItem);
+                    item.InventoryItemDescription = ItemDescription;
+                    item.MessageBox = MessageBox;
+                    item.NumUses = 2;
+                    /*item.RelevantToDay = GameTime.Day;*/
+                    Inventory.AddItem(item);
+                }
             }
         }
 

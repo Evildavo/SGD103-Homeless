@@ -81,7 +81,7 @@ public class JobLocation : MonoBehaviour {
     public GameTime GameTime;
     public PlayerState PlayerState;
     public Inventory Inventory;
-    public InventoryItem ResumePrefab;
+    public ResumeItem ResumePrefab;
     public JobTrigger JobTrigger;
     public UI UI;
     public ScreenFader ScreenFader;
@@ -201,6 +201,15 @@ public class JobLocation : MonoBehaviour {
             if (ResumePrefab && Inventory.HasItem(ResumePrefab))
             {
                 success = (value <= Job.ChanceOfSuccessWithResume);
+
+                // Use up an inventory item.
+                ResumeItem resume = Inventory.ItemContainer.GetComponentInChildren<ResumeItem>();
+                resume.NumUses -= 1;
+                if (resume.NumUses == 0)
+                {
+                    Inventory.RemoveItem(resume);
+                }
+                Inventory.ShowPreview();
             }
             else
             {

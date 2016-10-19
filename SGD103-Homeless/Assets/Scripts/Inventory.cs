@@ -67,19 +67,16 @@ public class Inventory : MonoBehaviour
     {
         return isHidden;
     }
-
-    // Warning: Untested !!!
+    
     // Returns true if the inventory has the given item.
+    // They're compared just using ItemName.
     public bool HasItem(InventoryItem item)
     {
-        if (item)
+        foreach (InventoryItem existingItem in ItemContainer.GetComponentsInChildren<InventoryItem>(true))
         {
-            foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
+            if (item.ItemName == existingItem.ItemName)
             {
-                if (slot.Item.gameObject == item.gameObject)
-                {
-                    return true;
-                }
+                return true;
             }
         }
         return false;
