@@ -373,7 +373,8 @@ public class JobLocation : MonoBehaviour {
 
         // Pay day (and time).
         if (GameTime.DayOfTheWeek == Job.PayDay && 
-            Mathf.Abs(GameTime.TimeOfDayHours - Job.PayTime) <= gameTimeDelta)
+            Mathf.Abs(GameTime.TimeOfDayHours - Job.PayTime) <= gameTimeDelta &&
+            payDue > 0.0f)
         {
             string message = "Work week complete. You worked a total of " +
                              ((int)hoursWorkedThisWeek).ToString() + " hours and have now earned $" +
