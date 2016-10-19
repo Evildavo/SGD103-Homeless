@@ -4,6 +4,8 @@ using System.Collections;
 
 public class InventoryItem : MonoBehaviour {
 
+    public InventoryItemDescription InventoryItemDescription;
+
     public string ItemName;
     public string PrimaryActionDescription;
     public int InventoryIndex;
@@ -24,7 +26,11 @@ public class InventoryItem : MonoBehaviour {
     }
 
     // Override to do something when the user moves the mouse over the item in the inventory.
-    public virtual void OnCursorEnter() {}
+    // Call from derived.
+    public virtual void OnCursorEnter()
+    {
+        InventoryItemDescription.Source = gameObject;
+    }
 
     // Override to do something when the user moves the mouse away from the item in the inventory.
     public virtual void OnCursorExit() {}

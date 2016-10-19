@@ -6,12 +6,17 @@ public class FoodItem : InventoryItem
     public MessageBox MessageBox;
     public PlayerState PlayerState;
     public Inventory Inventory;
-    public float HungerSatietyBenefit;
+
+    public float HungerSatietyBenefitPerUse;
+    public int NumUses = 1;
+    public string PluralName;
 
     public override void OnPrimaryAction()
     {
-        PlayerState.HungerThirstSatiety += HungerSatietyBenefit;
+        // Increase stat.
+        PlayerState.HungerThirstSatiety += HungerSatietyBenefitPerUse;
 
+        // Show message depending on how full the player is after eating.
         if (PlayerState.HungerThirstSatiety > 0.6f)
         { 
             MessageBox.ShowForTime("You feel full", 2.0f, gameObject);
@@ -24,13 +29,35 @@ public class FoodItem : InventoryItem
         {
             MessageBox.ShowForTime("You're still hungry", 2.0f, gameObject);
         }
-        Inventory.RemoveItem(this);
+
+        // Consume item.
+        NumUses -= 1;
+        if (NumUses == 0)
+        {
+            Inventory.RemoveItem(this);
+        }
     }
-
-
+    
+    void updateItemDescription()
+    {
+        // Show plural name if there's more than one item.
+        if (InventoryItemDescription.Source == gameObject)
+        {
+            if (NumUses == 1)
+            {
+                InventoryItemDescription.ItemName.text = ItemName;
+            }
+            else
+            {
+                InventoryItemDescription.ItemName.text =
+                    NumUses.ToString() + " " + PluralName;
+            }
+        }
+    }
 
     void Update()
     {
+        updateItemDescription();
     }
 
 }

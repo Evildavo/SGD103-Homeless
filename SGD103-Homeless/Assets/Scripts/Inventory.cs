@@ -23,7 +23,7 @@ public class Inventory : MonoBehaviour
     public bool IsPreviewing = false;
     [ReadOnly]
     public bool IsInventoryFull = false;
-
+    
     // Shows the inventory.
     public void Show()
     {

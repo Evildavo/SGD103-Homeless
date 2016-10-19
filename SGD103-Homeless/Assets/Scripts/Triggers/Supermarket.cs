@@ -57,7 +57,7 @@ public class Supermarket : MonoBehaviour
         options.Add(new Menu.Option(
             OnBreadSelected, "Bread", BreadCost, PlayerState.CanAfford(BreadCost)));
         options.Add(new Menu.Option(
-            OnMandarinSelected, "Mandarin", MandarinCost, PlayerState.CanAfford(MandarinCost)));
+            OnMandarinSelected, "Bag of Mandarins", MandarinCost, PlayerState.CanAfford(MandarinCost)));
         options.Add(new Menu.Option(
             OnAppleSelected, "Apple", AppleCost, PlayerState.CanAfford(AppleCost)));
         options.Add(new Menu.Option(
@@ -94,6 +94,7 @@ public class Supermarket : MonoBehaviour
 
             // Add item.
             FoodItem item = Instantiate(WaterPrefab);
+            item.InventoryItemDescription = ItemDescription;
             item.PlayerState = PlayerState;
             item.MessageBox = MessageBox;
             item.Inventory = Inventory;
@@ -114,6 +115,7 @@ public class Supermarket : MonoBehaviour
 
             // Add item.
             FoodItem item = Instantiate(BreadPrefab);
+            item.InventoryItemDescription = ItemDescription;
             item.PlayerState = PlayerState;
             item.MessageBox = MessageBox;
             item.Inventory = Inventory;
@@ -134,6 +136,7 @@ public class Supermarket : MonoBehaviour
 
             // Add item.
             FoodItem item = Instantiate(MandarinPrefab);
+            item.InventoryItemDescription = ItemDescription;
             item.PlayerState = PlayerState;
             item.MessageBox = MessageBox;
             item.Inventory = Inventory;
@@ -154,6 +157,7 @@ public class Supermarket : MonoBehaviour
 
             // Add item.
             FoodItem item = Instantiate(ApplePrefab);
+            item.InventoryItemDescription = ItemDescription;
             item.PlayerState = PlayerState;
             item.MessageBox = MessageBox;
             item.Inventory = Inventory;
@@ -174,6 +178,7 @@ public class Supermarket : MonoBehaviour
 
             // Add item.
             FoodItem item = Instantiate(PotatoChipsPrefab);
+            item.InventoryItemDescription = ItemDescription;
             item.PlayerState = PlayerState;
             item.MessageBox = MessageBox;
             item.Inventory = Inventory;
@@ -194,6 +199,7 @@ public class Supermarket : MonoBehaviour
 
             // Add item.
             FoodItem item = Instantiate(BiscuitsPrefab);
+            item.InventoryItemDescription = ItemDescription;
             item.PlayerState = PlayerState;
             item.MessageBox = MessageBox;
             item.Inventory = Inventory;
@@ -214,6 +220,7 @@ public class Supermarket : MonoBehaviour
 
             // Add item.
             FoodItem item = Instantiate(ChocolateBarPrefab);
+            item.InventoryItemDescription = ItemDescription;
             item.PlayerState = PlayerState;
             item.MessageBox = MessageBox;
             item.Inventory = Inventory;
@@ -234,6 +241,7 @@ public class Supermarket : MonoBehaviour
 
             // Add item.
             SleepItem item = Instantiate(SleepingBagPrefab);
+            item.InventoryItemDescription = ItemDescription;
             item.SleepManager = SleepManager;
             item.ItemDescription = ItemDescription;
             item.SleepHudButton = SleepHudButton;
