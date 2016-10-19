@@ -30,6 +30,62 @@ public class GameTime : MonoBehaviour
     public bool IsNight = false;
     public bool StartWithNormalTimeScale = true;
 
+    // Result for the TimeOfDayHoursDelta function.
+    public struct Delta
+    {
+        public float forward;
+        public float backward;
+    }
+    
+    // Returns the number of hours between time-of-day hours a and b.
+    // As the 24 hour clock is a loop there are two possible answers, going either forward or backward.
+    public Delta TimeOfDayHoursDelta(float a, float b)
+    {
+        Delta delta;
+
+        // Forward direction.
+        if (a == b)
+        {
+            delta.forward = 0.0f;
+        }
+        else if (a < b)
+        {
+            delta.forward = b - a;
+        }
+        else
+        {
+            delta.forward = (24.0f - a) + b;
+        }
+
+        // Backward direction.
+        if (a == b)
+        {
+            delta.backward = 0.0f;
+        }
+        else if (a < b)
+        {
+            delta.backward = a + (24.0f - b);
+        }
+        else
+        {
+            delta.backward = a - b;
+        }
+        return delta;
+    }
+
+    // Returns the day of the week that follows the given day.
+    public DayOfTheWeekEnum NextDayAfter(DayOfTheWeekEnum day)
+    {
+        if (day == DayOfTheWeekEnum.SUNDAY)
+        {
+            return DayOfTheWeekEnum.MONDAY;
+        }
+        else
+        {
+            return day + 1;
+        }
+    }
+
     // Returns the given day of the week as a short string.
     public string DayOfTheWeekAsShortString(DayOfTheWeekEnum dotw)
     {
@@ -102,15 +158,8 @@ public class GameTime : MonoBehaviour
         if (TimeOfDayHours >= 24.0f)
         {
             TimeOfDayHours = 0.0f;
-            Day += 1;
-            if (DayOfTheWeek == DayOfTheWeekEnum.SUNDAY)
-            {
-                DayOfTheWeek = DayOfTheWeekEnum.MONDAY;
-            }
-            else
-            {
-                DayOfTheWeek += 1;
-            }
+            Day++;
+            DayOfTheWeek = NextDayAfter(DayOfTheWeek);
         }
 
         // Determine if it's night time.

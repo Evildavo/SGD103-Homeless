@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class ModelDiner : MonoBehaviour
 {
     public Trigger Trigger;
+    public JobTrigger JobTrigger;
     public Menu Menu;
     public MessageBox MessageBox;
     public JobLocation JobLocation;
@@ -26,6 +27,12 @@ public class ModelDiner : MonoBehaviour
         Menu.Show(options);
     }
 
+    public void StartWork()
+    {
+        reset();
+        JobLocation.StartWork();
+    }
+
     public void ApplyForJob()
     {
         JobLocation.ApplyForJob();
@@ -38,7 +45,7 @@ public class ModelDiner : MonoBehaviour
         MessageBox.Hide();
         if (Trigger)
         {
-            Trigger.Reset();
+            Trigger.Reset(Trigger.IsEnabled);
         }
     }
 
@@ -60,10 +67,32 @@ public class ModelDiner : MonoBehaviour
 
     public void OnTriggerUpdate()
     {
+        // Show warning that job is about to start.
+        if (JobLocation.CanWorkNow)
+        {
+            reset();
+            MessageBox.ShowForTime("Work is about to start.", 2.0f, gameObject);
+        }
+
         // Leave menu on E key.
         if (Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
         {
             reset();
+        }
+    }
+
+    public void Update()
+    {
+        // Switch to the job trigger when it's time to start work.
+        if (JobLocation.CanWorkNow)
+        {
+            Trigger.IsEnabled = false;
+            JobTrigger.IsEnabled = true;
+        }
+        else
+        {
+            Trigger.IsEnabled = true;
+            JobTrigger.IsEnabled = false;
         }
     }
 }

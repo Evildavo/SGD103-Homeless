@@ -3,22 +3,7 @@ using System.Collections;
 
 [ExecuteInEditMode]
 public class JobLocation : MonoBehaviour {
-    private int dayLastChecked;
-    private bool hasChecked = false;
-    private int daysChecked = 0;
-
-    public MessageBox MessageBox;
-    public GameTime GameTime;
-    public PlayerState PlayerState;
-    public Inventory Inventory;
-    public InventoryItem ResumePrefab;
-
-    public string Name;
-    public float ChanceJobAvailablePerDay = 0.05f;
-    [Header("Make job available after so many tries (-1 to disable).")]
-    public int GuaranteedAvailableAfterDaysChecked = -1;
-
-
+    
     // Represents a job position.
     [System.Serializable]
     public class JobPositionProfile
@@ -35,6 +20,8 @@ public class JobLocation : MonoBehaviour {
         [Header("Note: Supports wrapping over (e.g. 11pm to 2am)")]
         public float ShiftFromHour;
         public float ShiftToHour;
+        public float TimeAllowedEarly = 0.5f;
+        public float MaxTimeAllowedLate = 0.5f;
         [ReadOnly]
         public JobLocation Location;
         [ReadOnly]
@@ -80,53 +67,80 @@ public class JobLocation : MonoBehaviour {
         }
     }
 
+    private int dayLastChecked;
+    private bool hasChecked = false;
+    private int daysChecked = 0;
+
+    public MessageBox MessageBox;
+    public GameTime GameTime;
+    public PlayerState PlayerState;
+    public Inventory Inventory;
+    public InventoryItem ResumePrefab;
+
+    public string Name;
+    public float ChanceJobAvailablePerDay = 0.05f;
+    [Header("Make job available after so many tries (-1 to disable).")]
+    public int GuaranteedAvailableAfterDaysChecked = -1;
+    
     public bool IsJobAvailableToday = false;
     public JobPositionProfile Job;
+
+    public bool PlayerHasJobHere = false;
+    public GameTime.DayOfTheWeekEnum jobStartsFrom;
+    public bool workWeekStarted = false;
+
+    [ReadOnly]
+    public bool CanWorkNow = false;
+    [ReadOnly]
+    public bool WorkToday = false;
 
     // Checks for a job and optionally displays a message if one is available.
     public void CheckForJob(bool showMessage = false)
     {
         // Make sure we don't already have this job.
-        foreach (JobPositionProfile job in PlayerState.Jobs)
+        if (PlayerHasJobHere)
         {
-            if (job == Job)
-            {
-                IsJobAvailableToday = false;
-                return;
-            }
+            IsJobAvailableToday = false;
         }
-
-        // Check if it's a new day (or we've never checked before).
-        if (GameTime.Day != dayLastChecked || !hasChecked)
+        else
         {
-            // Randomly decide if a job is available today.
-            float value = Random.Range(0.0f, 1.0f);
-            if (value <= ChanceJobAvailablePerDay)
+            // Check if it's a new day (or we've never checked before).
+            if (GameTime.Day != dayLastChecked || !hasChecked)
+            {
+                // Randomly decide if a job is available today.
+                float value = Random.Range(0.0f, 1.0f);
+                if (value <= ChanceJobAvailablePerDay)
+                {
+                    IsJobAvailableToday = true;
+                }
+                hasChecked = true;
+                dayLastChecked = GameTime.Day;
+                ++daysChecked;
+            }
+
+            // Make job available as a one-time kindness to the player after so many tries.
+            const int DISABLED = -1;
+            if ((GuaranteedAvailableAfterDaysChecked != DISABLED &&
+                daysChecked > GuaranteedAvailableAfterDaysChecked) || IsJobAvailableToday)
             {
                 IsJobAvailableToday = true;
+                GuaranteedAvailableAfterDaysChecked = DISABLED;
             }
-            hasChecked = true;
-            dayLastChecked = GameTime.Day;
-            ++daysChecked;
-        }
 
-        // Make job available as a one-time kindness to the player after so many tries.
-        const int DISABLED = -1;
-        if ((GuaranteedAvailableAfterDaysChecked != DISABLED && 
-            daysChecked > GuaranteedAvailableAfterDaysChecked) || IsJobAvailableToday)
-        {
-            IsJobAvailableToday = true;
-            GuaranteedAvailableAfterDaysChecked = DISABLED;
+            // Show message about the job if it's available.
+            if (IsJobAvailableToday && Job != null)
+            {
+                string message = "A job position is available today as: " + Job.Role + "\n" +
+                                 "$" + Job.PayPerHour.ToString("f2") + "/hr, " +
+                                 Job.HoursWorkPerWeek + " hours per week.";
+                MessageBox.Show(message, gameObject);
+            }
         }
+    }
 
-        // Show message about the job if it's available.
-        if (IsJobAvailableToday && Job != null)
-        {
-            string message = "A job position is available today as: " + Job.Role + "\n" +
-                             "$" + Job.PayPerHour.ToString("f2") + "/hr, " +
-                             Job.HoursWorkPerWeek + " hours per week.";
-            MessageBox.Show(message, gameObject);
-        }
+    void RejectApplication(string reason)
+    {
+        MessageBox.Show("Application rejected. " + reason, gameObject);
     }
 
     // Applies for the job that's available.
@@ -142,8 +156,7 @@ public class JobLocation : MonoBehaviour {
         }
         else
         {
-            MessageBox.Show(
-                "Application rejected. You seem too unwell to handle the job", gameObject);
+            RejectApplication("You seem too unwell to handle the job");
         }
         if (PlayerState.Morale >= Job.MinMoraleNeededToQualify)
         {
@@ -151,8 +164,7 @@ public class JobLocation : MonoBehaviour {
         }
         else
         {
-            MessageBox.Show(
-                "Application rejected. You need to have a more positive attitude", gameObject);
+            RejectApplication("You need to have a more positive attitude");
         }
         if (PlayerState.CurrentClothingCleanliness >= Job.MinClothesCleanlinessToQualify)
         {
@@ -160,8 +172,7 @@ public class JobLocation : MonoBehaviour {
         }
         else
         {
-            MessageBox.Show(
-                "Application rejected. You should take better care of your appearance", gameObject);
+            RejectApplication("You should take better care of your appearance");
         }
 
         // After the basic criteria there's a chance of success. Having a resume guarantees this step.
@@ -181,7 +192,6 @@ public class JobLocation : MonoBehaviour {
             // Report final decision.
             if (success)
             {
-                PlayerState.Jobs.Add(Job);
                 string message = "Congratulations! From tomorrow you work " +
                                  GameTime.DayOfTheWeekAsShortString(Job.WorkFromDay) + " to " +
                                  GameTime.DayOfTheWeekAsShortString(Job.WorkToDay) + " from " +
@@ -189,16 +199,31 @@ public class JobLocation : MonoBehaviour {
                                  GameTime.GetTimeAsString(Job.ShiftToHour) + ". Don't be late!";
                                 
                 MessageBox.Show(message, gameObject);
+                PlayerHasJobHere = true;
+                workWeekStarted = false;
+                jobStartsFrom = GameTime.NextDayAfter(GameTime.DayOfTheWeek);
             }
             else
             {
-                MessageBox.Show(
-                    "Application rejected. Unfortunately the job is already taken. Try again another time", gameObject);
+                RejectApplication("Unfortunately the job is already taken. Try again another time");
             }
         }
 
         // In any case the job is no longer available today.
         IsJobAvailableToday = false;
+    }
+
+    // Starts the working day.
+    public void StartWork()
+    {
+        Debug.Log("Starting work");
+    }
+
+    // Fires the player immediately with the given reason as explanation.
+    public void Dismiss(string reason)
+    {
+        Debug.Log("You have been dismissed from employment. Reason: " + reason);
+        PlayerHasJobHere = false;
     }
 
     void Start()
@@ -212,5 +237,65 @@ public class JobLocation : MonoBehaviour {
 #if UNITY_EDITOR
         Job.Calculate();
 #endif
+
+        // Determine if work has started yet.
+        CanWorkNow = false;
+        if (PlayerHasJobHere)
+        {
+            // After the day the player got the job we start the first work week.
+            if (!workWeekStarted && GameTime.DayOfTheWeek != jobStartsFrom)
+            {
+                workWeekStarted = true;
+            }
+
+            // Check date and time.
+            if (workWeekStarted)
+            {
+                // Check if today is a work day.
+                bool workToday = false;
+                GameTime.DayOfTheWeekEnum dotw = Job.WorkFromDay;
+                int nDaysChecked = 0;
+                while (!workToday && dotw != Job.WorkToDay && nDaysChecked < 7)
+                {
+                    if (dotw == GameTime.DayOfTheWeek)
+                    {
+                        workToday = true;
+                    }
+                    dotw = GameTime.NextDayAfter(dotw);
+                    nDaysChecked++;
+                }
+                if (!workToday && dotw == GameTime.DayOfTheWeek)
+                {
+                    workToday = true;
+                }
+                WorkToday = workToday;
+
+                // Check if we're within time.
+                GameTime.Delta delta = GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, Job.ShiftFromHour);
+                bool earlyOrOnTime = (delta.forward <= delta.backward);
+                if (earlyOrOnTime)
+                {
+                    if (delta.forward <= Job.TimeAllowedEarly)
+                    {
+                        CanWorkNow = true;
+                    }
+                }
+
+                // Check if we're late.
+                else
+                {
+                    // A little late is fine.
+                    if (delta.backward <= Job.MaxTimeAllowedLate)
+                    {
+                        CanWorkNow = true;
+                    }
+                    else
+                    {
+                        /*Dismiss("Late for work");*/
+                    }
+                }
+            }
+        }
     }
+
 }

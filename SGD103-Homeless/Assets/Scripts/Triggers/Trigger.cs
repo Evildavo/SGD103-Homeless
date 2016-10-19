@@ -102,13 +102,13 @@ public class Trigger : MonoBehaviour
         }
     }
     
-    void Start()
+    protected void Start()
     {
         GetComponent<Renderer>().enabled = false;
         HideInteractionText();
     }
-    
-    void Update()
+
+    protected void Update()
     {
         // Determine if we're in the active hour. If from and to are flipped the period wraps (e.g. 11pm to 2am).
         if (GameTime)
@@ -147,8 +147,8 @@ public class Trigger : MonoBehaviour
             }
         }
     }
-    
-    void OnTriggerEnter(Collider other)
+
+    protected void OnTriggerEnter(Collider other)
     {
         if (other.gameObject == PlayerCharacter.gameObject)
         {
@@ -159,8 +159,8 @@ public class Trigger : MonoBehaviour
             }
         }
     }
-    
-    void OnTriggerExit(Collider other)
+
+    protected void OnTriggerExit(Collider other)
     {
         if (other.gameObject == PlayerCharacter.gameObject)
         {

@@ -57,7 +57,6 @@ public class PlayerState : MonoBehaviour {
 
     [Space(20.0f)]
     public float CurrentClothingCleanliness = 0.0f;
-    public List<JobLocation.JobPositionProfile> Jobs;
 
     [Space(10.0f)]
     public bool HighlightHungerThirst = false;

@@ -6,6 +6,7 @@ public class Supermarket : MonoBehaviour
 {    
     public GameTime GameTime;
     public Trigger Trigger;
+    public JobTrigger JobTrigger;
     public Menu Menu;
     public MessageBox MessageBox;
     public PlayerState PlayerState;
@@ -52,6 +53,12 @@ public class Supermarket : MonoBehaviour
         options.Add(new Menu.Option(OnExitSelected, "Exit"));
 
         Menu.Show(options);
+    }
+
+    public void StartWork()
+    {
+        reset();
+        JobLocation.StartWork();
     }
 
     public void ApplyForJob()
@@ -295,17 +302,39 @@ public class Supermarket : MonoBehaviour
         MessageBox.Hide();
         if (Trigger)
         {
-            Trigger.Reset();
+            Trigger.Reset(Trigger.IsEnabled);
         }
     }
 
     public void OnTriggerUpdate()
     {
+        // Show warning that job is about to start.
+        if (JobLocation.CanWorkNow)
+        {
+            reset();
+            MessageBox.ShowForTime("Work is about to start.", 2.0f, gameObject);
+        }
+
+        // Leave menu on E key.
         if (Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
         {
             reset();
         }
     }
 
+    public void Update()
+    {
+        // Switch to the job trigger when it's time to start work.
+        if (JobLocation.CanWorkNow)
+        {
+            Trigger.IsEnabled = false;
+            JobTrigger.IsEnabled = true;
+        }
+        else
+        {
+            Trigger.IsEnabled = true;
+            JobTrigger.IsEnabled = false;
+        }
+    }
 
 }
