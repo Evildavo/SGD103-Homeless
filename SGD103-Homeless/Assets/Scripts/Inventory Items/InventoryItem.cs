@@ -29,7 +29,14 @@ public class InventoryItem : MonoBehaviour {
     // Call from derived.
     public virtual void OnCursorEnter()
     {
-        InventoryItemDescription.Source = gameObject;
+        if (InventoryItemDescription)
+        {
+            InventoryItemDescription.Source = gameObject;
+        }
+        else
+        {
+            InventoryItemDescription.Source = null;
+        }
     }
 
     // Override to do something when the user moves the mouse away from the item in the inventory.
