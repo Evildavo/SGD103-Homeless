@@ -44,6 +44,7 @@ public class Menu : MonoBehaviour
         {
             menuOptions[i].optionInfo = option;
             menuOptions[i].OptionText.text = option.Name;
+            
             if (option.Value != 0.0f)
             {
                 menuOptions[i].ValueText.text = "$" + option.Value.ToString("F2");

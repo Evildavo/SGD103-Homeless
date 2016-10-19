@@ -38,6 +38,11 @@ public class SleepHudButton : MonoBehaviour
 
     public void Update()
     {
+        if (!SleepManager)
+        {
+            gameObject.SetActive(false);
+        }
+
         // Update the button label based on expected quality of sleep here.
         if (isMouseOver)
         {

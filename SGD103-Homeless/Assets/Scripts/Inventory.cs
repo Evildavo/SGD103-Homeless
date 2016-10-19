@@ -96,6 +96,12 @@ public class Inventory : MonoBehaviour
     // Instantiate the item before calling if it's a prefab.
     public void AddItem(InventoryItem item)
     {
+        if (IsInventoryFull())
+        {
+            Debug.LogWarning("Inventory is full.");
+            return;
+        }
+
         // Open inventory preview.
         if (OpenPreviewOnItemAdded)
         {
