@@ -30,8 +30,8 @@ public class JobLocation : MonoBehaviour {
         public float MinClothesCleanlinessToQualify;
         public float ChanceOfSuccessWithoutResume;
         public float ChanceOfSuccessWithResume;
-        public GameTime.DayOfTheWeek WorkFromDay;
-        public GameTime.DayOfTheWeek WorkToDay;
+        public GameTime.DayOfTheWeekEnum WorkFromDay;
+        public GameTime.DayOfTheWeekEnum WorkToDay;
         [Header("Note: Supports wrapping over (e.g. 11pm to 2am)")]
         public float ShiftFromHour;
         public float ShiftToHour;
@@ -50,13 +50,13 @@ public class JobLocation : MonoBehaviour {
         {
             // Calculate the number of days worked per week.
             DaysWorkPerWeek = 1;
-            GameTime.DayOfTheWeek dayOfTheWeek = WorkFromDay;
+            GameTime.DayOfTheWeekEnum dayOfTheWeek = WorkFromDay;
             while (dayOfTheWeek != WorkToDay && DaysWorkPerWeek < 7)
             {
                 DaysWorkPerWeek++;
-                if (dayOfTheWeek == GameTime.DayOfTheWeek.SUNDAY)
+                if (dayOfTheWeek == GameTime.DayOfTheWeekEnum.SUNDAY)
                 {
-                    dayOfTheWeek = GameTime.DayOfTheWeek.MONDAY;
+                    dayOfTheWeek = GameTime.DayOfTheWeekEnum.MONDAY;
                 }
                 else
                 {

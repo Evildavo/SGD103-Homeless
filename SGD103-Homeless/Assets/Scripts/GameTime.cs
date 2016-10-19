@@ -3,7 +3,7 @@ using System.Collections;
 
 public class GameTime : MonoBehaviour
 {
-    public enum DayOfTheWeek
+    public enum DayOfTheWeekEnum
     {
         NONE,
         MONDAY,
@@ -15,13 +15,14 @@ public class GameTime : MonoBehaviour
         SUNDAY
     }
 
-    [Header("Game time")]
+    [Header("Time scales")]
     public float NormalTimeScale = 100.0f;
     public float AcceleratedTimeScale = 400.0f;
     public float TimeScale = 100.0f;
 
-    [Header("Time-of-day")]
+    [Header("Date and time")]
     public int Day = 1;
+    public DayOfTheWeekEnum DayOfTheWeek = DayOfTheWeekEnum.MONDAY;
     [Range(0.0f, 24.0f)]
     public float TimeOfDayHours = 0.0f;
     public float SunriseAtHour = 6.0f;
@@ -30,23 +31,23 @@ public class GameTime : MonoBehaviour
     public bool StartWithNormalTimeScale = true;
 
     // Returns the given day of the week as a short string.
-    public string DayOfTheWeekAsShortString(DayOfTheWeek dotw)
+    public string DayOfTheWeekAsShortString(DayOfTheWeekEnum dotw)
     {
         switch (dotw)
         {
-            case DayOfTheWeek.MONDAY:
+            case DayOfTheWeekEnum.MONDAY:
                 return "Mon";
-            case DayOfTheWeek.TUESDAY:
+            case DayOfTheWeekEnum.TUESDAY:
                 return "Tue";
-            case DayOfTheWeek.WEDNESDAY:
+            case DayOfTheWeekEnum.WEDNESDAY:
                 return "Wed";
-            case DayOfTheWeek.THURSDAY:
+            case DayOfTheWeekEnum.THURSDAY:
                 return "Thu";
-            case DayOfTheWeek.FRIDAY:
+            case DayOfTheWeekEnum.FRIDAY:
                 return "Fri";
-            case DayOfTheWeek.SATURDAY:
+            case DayOfTheWeekEnum.SATURDAY:
                 return "Sat";
-            case DayOfTheWeek.SUNDAY:
+            case DayOfTheWeekEnum.SUNDAY:
                 return "Sun";
         }
         return "";
@@ -102,6 +103,14 @@ public class GameTime : MonoBehaviour
         {
             TimeOfDayHours = 0.0f;
             Day += 1;
+            if (DayOfTheWeek == DayOfTheWeekEnum.SUNDAY)
+            {
+                DayOfTheWeek = DayOfTheWeekEnum.MONDAY;
+            }
+            else
+            {
+                DayOfTheWeek += 1;
+            }
         }
 
         // Determine if it's night time.
