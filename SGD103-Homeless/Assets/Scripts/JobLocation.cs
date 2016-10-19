@@ -4,12 +4,15 @@ using System.Collections;
 public class JobLocation : MonoBehaviour {
     private int dayLastChecked;
     private bool hasChecked = false;
+    private int daysChecked = 0;
 
     public MessageBox MessageBox;
     public GameTime GameTime;
 
     public string Name;
     public float ChanceJobAvailablePerDay = 0.05f;
+    [Header("Make job available after so many tries (-1 to disable).")]
+    public int GuaranteedAvailableAfterDaysChecked = -1;
 
     // Represents a job position.
     [System.Serializable]
@@ -44,6 +47,16 @@ public class JobLocation : MonoBehaviour {
             }
             hasChecked = true;
             dayLastChecked = GameTime.Day;
+            ++daysChecked;
+        }
+
+        // Make job available as a one-time kindness to the player after so many tries.
+        const int DISABLED = -1;
+        if ((GuaranteedAvailableAfterDaysChecked != DISABLED && 
+            daysChecked > GuaranteedAvailableAfterDaysChecked) || IsJobAvailableToday)
+        {
+            IsJobAvailableToday = true;
+            GuaranteedAvailableAfterDaysChecked = DISABLED;
         }
 
         // Show message about the job if it's available.
