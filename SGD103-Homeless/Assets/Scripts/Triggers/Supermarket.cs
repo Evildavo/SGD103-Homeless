@@ -44,7 +44,7 @@ public class Supermarket : MonoBehaviour
     {
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(OpenFoodMenu, "Buy food"));
-        options.Add(new Menu.Option(OpenSleepMenu, "Buy outdoor equipment"));
+        options.Add(new Menu.Option(OpenOutdoorItemMenu, "Buy outdoor equipment"));
         options.Add(new Menu.Option(OnExitSelected, "Exit"));
 
         Menu.Show(options);
@@ -72,7 +72,7 @@ public class Supermarket : MonoBehaviour
         Menu.Show(options);
     }
 
-    public void OpenSleepMenu()
+    public void OpenOutdoorItemMenu()
     {
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(
@@ -86,10 +86,10 @@ public class Supermarket : MonoBehaviour
     {
         OpenMainMenu();
     }
-
+    
     public void OnWaterSelected()
     {
-        if (!Inventory.IsInventoryFull() && PlayerState.Money >= WaterCost)
+        if (!Inventory.IsInventoryFull())
         {
             PlayerState.Money -= WaterCost;
 
@@ -100,12 +100,16 @@ public class Supermarket : MonoBehaviour
             item.Inventory = Inventory;
             Inventory.AddItem(item);
         }
+        else
+        {
+            MessageBox.WarnInventoryFull(Inventory);
+        }
         OpenFoodMenu();
     }
 
     public void OnBreadSelected()
     {
-        if (!Inventory.IsInventoryFull() && PlayerState.Money >= WaterCost)
+        if (!Inventory.IsInventoryFull())
         {
             PlayerState.Money -= BreadCost;
 
@@ -116,12 +120,16 @@ public class Supermarket : MonoBehaviour
             item.Inventory = Inventory;
             Inventory.AddItem(item);
         }
+        else
+        {
+            MessageBox.WarnInventoryFull(Inventory);
+        }
         OpenFoodMenu(); 
     }
 
     public void OnMandarinSelected()
     {  
-        if (!Inventory.IsInventoryFull() && PlayerState.Money >= WaterCost)
+        if (!Inventory.IsInventoryFull())
         {
             PlayerState.Money -= MandarinCost;
 
@@ -132,12 +140,16 @@ public class Supermarket : MonoBehaviour
             item.Inventory = Inventory;
             Inventory.AddItem(item);
         }
+        else
+        {
+            MessageBox.WarnInventoryFull(Inventory);
+        }
         OpenFoodMenu();
     }
 
     public void OnAppleSelected()
     {
-        if (!Inventory.IsInventoryFull() && PlayerState.Money >= WaterCost)
+        if (!Inventory.IsInventoryFull())
         {
             PlayerState.Money -= AppleCost;
 
@@ -148,12 +160,16 @@ public class Supermarket : MonoBehaviour
             item.Inventory = Inventory;
             Inventory.AddItem(item);
         }
+        else
+        {
+            MessageBox.WarnInventoryFull(Inventory);
+        }
         OpenFoodMenu();
     }
 
     public void OnPotatoChipsSelected()
     {
-        if (!Inventory.IsInventoryFull() && PlayerState.Money >= WaterCost)
+        if (!Inventory.IsInventoryFull())
         {
             PlayerState.Money -= PotatoChipsCost;
 
@@ -164,12 +180,16 @@ public class Supermarket : MonoBehaviour
             item.Inventory = Inventory;
             Inventory.AddItem(item);
         }
+        else
+        {
+            MessageBox.WarnInventoryFull(Inventory);
+        }
         OpenFoodMenu();
     }
 
     public void OnBiscuitsSelected()
     {
-        if (!Inventory.IsInventoryFull() && PlayerState.Money >= WaterCost)
+        if (!Inventory.IsInventoryFull())
         {
             PlayerState.Money -= BiscuitsCost;
 
@@ -180,12 +200,16 @@ public class Supermarket : MonoBehaviour
             item.Inventory = Inventory;
             Inventory.AddItem(item);
         }
+        else
+        {
+            MessageBox.WarnInventoryFull(Inventory);
+        }
         OpenFoodMenu();
     }
 
     public void OnChocolateBarSelected()
     {
-        if (!Inventory.IsInventoryFull() && PlayerState.Money >= WaterCost)
+        if (!Inventory.IsInventoryFull())
         {
             PlayerState.Money -= ChocolateBarCost;
 
@@ -196,24 +220,16 @@ public class Supermarket : MonoBehaviour
             item.Inventory = Inventory;
             Inventory.AddItem(item);
         }
+        else
+        {
+            MessageBox.WarnInventoryFull(Inventory);
+        }
         OpenFoodMenu();
-    }
-
-    public void OnExitSelected()
-    {
-        reset();
-    }
-
-
-    public void OnTrigger()
-    {
-        OpenMainMenu();
-        Debug.Log("Yeah Boi");
     }
 
     public void OnBuySleepingBag()
     {
-        if (!Inventory.IsInventoryFull() && PlayerState.Money >= SleepingBagCost)
+        if (!Inventory.IsInventoryFull())
         {
             PlayerState.Money -= SleepingBagCost;
 
@@ -224,9 +240,24 @@ public class Supermarket : MonoBehaviour
             item.SleepHudButton = SleepHudButton;
             Inventory.AddItem(item);
         }
-        OpenFoodMenu();
+        else
+        {
+            MessageBox.WarnInventoryFull(Inventory);
+        }
+        OpenOutdoorItemMenu();
     }
 
+
+    public void OnExitSelected()
+    {
+        reset();
+    }
+
+    public void OnTrigger()
+    {
+        OpenMainMenu();
+        Debug.Log("Yeah Boi");
+    }
     public void OnPlayerExit()
     {
         Menu.Hide();
