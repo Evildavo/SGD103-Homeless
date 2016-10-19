@@ -344,7 +344,7 @@ public class JobLocation : MonoBehaviour {
                     {
                         CanWorkNow = true;
                     }
-                    else if (!IsPlayerAtWork && LastDayWorked != GameTime.Day)
+                    else if (!IsPlayerAtWork && delta.backward <= Job.MaxTimeAllowedLate + GameTime.GameTimeDelta)
                     {
                         Dismiss("Late for work");
                     }
