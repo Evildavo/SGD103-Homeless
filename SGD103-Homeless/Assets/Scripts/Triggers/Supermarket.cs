@@ -10,6 +10,9 @@ public class Supermarket : MonoBehaviour
     public MessageBox MessageBox;
     public PlayerState PlayerState;
     public Inventory Inventory;
+    public PlayerSleepManager SleepManager;
+    public InventoryItemDescription ItemDescription;
+    public SleepHudButton SleepHudButton;
     public FoodItem WaterPrefab;
     public FoodItem BreadPrefab;
     public FoodItem MandarinPrefab;
@@ -18,10 +21,6 @@ public class Supermarket : MonoBehaviour
     public FoodItem BiscuitsPrefab;
     public FoodItem ChocolateBarPrefab;
     public SleepItem SleepingBagPrefab;
-    public PlayerSleepManager SleepManager;
-    public InventoryItemDescription ItemDescription;
-    public SleepHudButton SleepHudButton;
-
 
     public float WaterCost;
     public float BreadCost;

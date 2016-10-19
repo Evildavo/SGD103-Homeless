@@ -13,6 +13,7 @@ public class Library : MonoBehaviour {
     public ConfirmationBox ConfirmationBox;
     public PlayerState PlayerState;
     public GameTime GameTime;
+    public Inventory Inventory;
 
     public float MoraleGainedPerSecondReading = 0.05f;
     public float JobSearchTimeSeconds = 4.0f;
@@ -58,14 +59,34 @@ public class Library : MonoBehaviour {
         options.Add(new Menu.Option(OnStopReading, "Stop reading"));
         return options;
     }
-    
-    public void OnJobSearch()
+
+    void jobSearch()
     {
         MessageBox.Show("Searching for jobs...", gameObject);
         Menu.Hide();
         GameTime.TimeScale = GameTime.AcceleratedTimeScale;
         isJobSearching = true;
         timeAtLastCheck = Time.time;
+    }
+    
+    public void OnJobSearch()
+    {
+        // Ask if they still want to search with a full inventory.
+        if (Inventory.IsInventoryFull())
+        {
+            ConfirmationBox.OnChoiceMade onChoice = (bool yes) =>
+            {
+                if (yes)
+                {
+                    jobSearch();
+                }
+            };
+            ConfirmationBox.Open(onChoice, "You don't have room in your inventory to take any resumes. Search anyway?", "Yes", "No");
+        }
+        else
+        {
+            jobSearch();
+        }
     }
 
     public void OnReadBook()

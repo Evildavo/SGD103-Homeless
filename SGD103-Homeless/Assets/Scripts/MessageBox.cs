@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UI;
 using System.Collections;
 
 public class MessageBox : MonoBehaviour
@@ -25,6 +24,18 @@ public class MessageBox : MonoBehaviour
         }
     }
 
+    void updateWarning()
+    {
+        if (IsWarning)
+        {
+            WarningSymbol.enabled = true;
+        }
+        else
+        {
+            WarningSymbol.enabled = false;
+        }
+    }
+
     // Opens the message box displaying the given message.
     // Source is used to keep track of who is updating the message box.
     // If the message is a warning it'll show a warning symbol.
@@ -35,6 +46,7 @@ public class MessageBox : MonoBehaviour
         closeAfterSeconds = 0;
         Source = source;
         IsWarning = isWarning;
+        updateWarning();
     }
 
     // Shows the message box for a number of seconds before closing.
@@ -46,6 +58,7 @@ public class MessageBox : MonoBehaviour
         fromTime = Time.time;
         closeAfterSeconds = seconds;
         IsWarning = isWarning;
+        updateWarning();
     }
 
     public void Hide()
@@ -68,14 +81,7 @@ public class MessageBox : MonoBehaviour
     }
 	
 	void Update () {
-        if (IsWarning)
-        {
-            WarningSymbol.enabled = true;
-        }
-        else
-        {
-            WarningSymbol.enabled = false;
-        }
+        updateWarning();
 
         // Hide after time.
         if (closeAfterSeconds != 0 && Time.time - fromTime > closeAfterSeconds)
