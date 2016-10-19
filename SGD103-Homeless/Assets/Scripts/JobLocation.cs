@@ -282,6 +282,7 @@ public class JobLocation : MonoBehaviour {
             // Hide UI.
             UI.Hide();
         }
+        JobTrigger.Reset(false);
     }
 
     public void OnPlayerExitJob()
@@ -291,6 +292,7 @@ public class JobLocation : MonoBehaviour {
             UI.Show();
             Dismiss("Leaving work early");
         }
+        JobTrigger.Reset(false);
     }
 
     void checkCanWorkNow()
