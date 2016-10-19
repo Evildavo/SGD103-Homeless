@@ -12,7 +12,7 @@ public class Supermarket : MonoBehaviour {
     public MessageBox MessageBox;
     public PlayerState PlayerState;
     public Inventory Inventory;
-    public WaterItem WaterPrefab;
+    public FoodItem WaterPrefab;
 
     public float WaterCost;
     
@@ -43,16 +43,16 @@ public class Supermarket : MonoBehaviour {
 
     public void OnWaterSelected()
     {  
-        if (!Inventory.IsInventoryFull())
+        if (!Inventory.IsInventoryFull() && PlayerState.Money >= WaterCost)
         {
             PlayerState.Money -= WaterCost;
 
             // Add item.
-            WaterItem waterItem = Instantiate(WaterPrefab);
-            waterItem.PlayerState = PlayerState;
-            waterItem.MessageBox = MessageBox;
-            waterItem.Inventory = Inventory;
-            Inventory.AddItem(waterItem);
+            FoodItem item = Instantiate(WaterPrefab);
+            item.PlayerState = PlayerState;
+            item.MessageBox = MessageBox;
+            item.Inventory = Inventory;
+            Inventory.AddItem(item);
         }
     }
 
