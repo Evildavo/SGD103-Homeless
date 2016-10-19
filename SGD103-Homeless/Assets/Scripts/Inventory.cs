@@ -125,8 +125,10 @@ public class Inventory : MonoBehaviour
     // Warning: Currently also destroys the object.
     public void RemoveItem(InventoryItem item)
     {
-        // Move items down to fill the slot.
         InventorySlot[] inventorySlots = SlotContainer.GetComponentsInChildren<InventorySlot>(true);
+        InventorySlot slot = inventorySlots[item.InventoryIndex];
+
+        // Move items down to fill the slot.
         for (var i = item.InventoryIndex; i < inventorySlots.Length; i++)
         {
             if (i == inventorySlots.Length - 1)
@@ -151,8 +153,18 @@ public class Inventory : MonoBehaviour
         
         // Destroy the object.
         Destroy(item.gameObject);
+
+        // Update the description for the slot now under the cursor.
+        if (slot.Item)
+        {
+            slot.OnPointerEnter(null);
+        }
+        else
+        {
+            ItemDescription.gameObject.SetActive(false);
+        }
     }
-    
+
     void Start()
     {
         if (HiddenAtStart)

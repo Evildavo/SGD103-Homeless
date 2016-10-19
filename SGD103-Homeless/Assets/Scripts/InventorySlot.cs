@@ -34,13 +34,10 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         }
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    void updateItemDescription()
     {
-        isOver = true;
-        if (Item && ItemDescription)
+        if (Item)
         {
-            Item.OnCursorEnter();
-
             // Update text.
             ItemDescription.gameObject.SetActive(true);
             ItemDescription.ItemName.text = Item.ItemName;
@@ -54,6 +51,20 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 position.x = transform.position.x;
                 ItemDescription.transform.position = position;
             }
+        }
+        else
+        {
+            ItemDescription.gameObject.SetActive(false);
+        }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        isOver = true;
+        if (Item && ItemDescription)
+        {
+            updateItemDescription();
+            Item.OnCursorEnter();
         }
     }
 
@@ -73,6 +84,8 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnClick()
     {
+        updateItemDescription();
+
         if (isOver && Item)
         {
             Item.OnPrimaryAction();

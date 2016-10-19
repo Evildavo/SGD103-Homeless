@@ -1,15 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FoodItem : InventoryItem
+public class FoodItem : MultiUseItem
 {
     public MessageBox MessageBox;
     public PlayerState PlayerState;
     public Inventory Inventory;
 
     public float HungerSatietyBenefitPerUse;
-    public int NumUses = 1;
-    public string PluralName;
 
     public override void OnPrimaryAction()
     {
@@ -38,26 +36,9 @@ public class FoodItem : InventoryItem
         }
     }
     
-    void updateItemDescription()
-    {
-        // Show plural name if there's more than one item.
-        if (InventoryItemDescription.Source == gameObject)
-        {
-            if (NumUses == 1)
-            {
-                InventoryItemDescription.ItemName.text = ItemName;
-            }
-            else
-            {
-                InventoryItemDescription.ItemName.text =
-                    NumUses.ToString() + " " + PluralName;
-            }
-        }
-    }
-
     void Update()
     {
-        updateItemDescription();
+        UpdateItemDescription();
     }
 
 }
