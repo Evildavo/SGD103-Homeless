@@ -72,7 +72,7 @@ public class Library : MonoBehaviour {
     public void OnJobSearch()
     {
         // Ask if they still want to search with a full inventory.
-        if (Inventory.IsInventoryFull())
+        if (Inventory.IsInventoryFull)
         {
             ConfirmationBox.OnChoiceMade onChoice = (bool yes) =>
             {

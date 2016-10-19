@@ -20,7 +20,7 @@ public class ObjectTriggerTest : MonoBehaviour {
     public void OnTrigger()
     {
         // Buy the item if we have room in the inventory.
-        if (!Inventory.IsInventoryFull())
+        if (!Inventory.IsInventoryFull)
         {
             // Charge the player everything they have.
             if (!FoodIsFree)

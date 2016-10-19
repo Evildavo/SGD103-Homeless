@@ -51,7 +51,7 @@ public class MenuTriggerTest : MonoBehaviour
     
     public void OnBuyFoodSelected()
     {
-        if (PlayerState.Money >= FoodPrice && !Inventory.IsInventoryFull())
+        if (PlayerState.Money >= FoodPrice && !Inventory.IsInventoryFull)
         {
             PlayerState.Money -= FoodPrice;
 

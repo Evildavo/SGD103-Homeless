@@ -17,10 +17,12 @@ public class Inventory : MonoBehaviour
     public bool CloseOnItemUse = true;
     public bool CloseOnClickOutside = true;
     public bool HiddenAtStart = true;
-    [ReadOnly]
-    public bool IsPreviewing = false;
     public float PreviewTime = 2.0f;
     public bool OpenPreviewOnItemAdded = true;
+    [ReadOnly]
+    public bool IsPreviewing = false;
+    [ReadOnly]
+    public bool IsInventoryFull = false;
 
     // Shows the inventory.
     public void Show()
@@ -82,24 +84,11 @@ public class Inventory : MonoBehaviour
         }
         return false;
     }
-
-    // Returns true if the inventory is full.
-    public bool IsInventoryFull()
-    {
-        foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
-        {
-            if (!slot.Item)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
     
     // Instantiate the item before calling if it's a prefab.
     public void AddItem(InventoryItem item)
     {
-        if (IsInventoryFull())
+        if (IsInventoryFull)
         {
             Debug.LogWarning("Inventory is full.");
             return;
@@ -178,6 +167,16 @@ public class Inventory : MonoBehaviour
     
     void Update()
     {
+        // Check if inventory is full.
+        IsInventoryFull = true;
+        foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
+        {
+            if (!slot.Item)
+            {
+                IsInventoryFull = false;
+            }
+        }
+
         // Handle previewing.
         if (IsPreviewing)
         {

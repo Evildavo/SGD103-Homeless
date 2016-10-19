@@ -88,7 +88,7 @@ public class Supermarket : MonoBehaviour
     
     public void OnWaterSelected()
     {
-        if (!Inventory.IsInventoryFull())
+        if (!Inventory.IsInventoryFull)
         {
             PlayerState.Money -= WaterCost;
 
@@ -108,7 +108,7 @@ public class Supermarket : MonoBehaviour
 
     public void OnBreadSelected()
     {
-        if (!Inventory.IsInventoryFull())
+        if (!Inventory.IsInventoryFull)
         {
             PlayerState.Money -= BreadCost;
 
@@ -128,7 +128,7 @@ public class Supermarket : MonoBehaviour
 
     public void OnMandarinSelected()
     {  
-        if (!Inventory.IsInventoryFull())
+        if (!Inventory.IsInventoryFull)
         {
             PlayerState.Money -= MandarinCost;
 
@@ -148,7 +148,7 @@ public class Supermarket : MonoBehaviour
 
     public void OnAppleSelected()
     {
-        if (!Inventory.IsInventoryFull())
+        if (!Inventory.IsInventoryFull)
         {
             PlayerState.Money -= AppleCost;
 
@@ -168,7 +168,7 @@ public class Supermarket : MonoBehaviour
 
     public void OnPotatoChipsSelected()
     {
-        if (!Inventory.IsInventoryFull())
+        if (!Inventory.IsInventoryFull)
         {
             PlayerState.Money -= PotatoChipsCost;
 
@@ -188,7 +188,7 @@ public class Supermarket : MonoBehaviour
 
     public void OnBiscuitsSelected()
     {
-        if (!Inventory.IsInventoryFull())
+        if (!Inventory.IsInventoryFull)
         {
             PlayerState.Money -= BiscuitsCost;
 
@@ -208,7 +208,7 @@ public class Supermarket : MonoBehaviour
 
     public void OnChocolateBarSelected()
     {
-        if (!Inventory.IsInventoryFull())
+        if (!Inventory.IsInventoryFull)
         {
             PlayerState.Money -= ChocolateBarCost;
 
@@ -228,7 +228,7 @@ public class Supermarket : MonoBehaviour
 
     public void OnBuySleepingBag()
     {
-        if (!Inventory.IsInventoryFull())
+        if (!Inventory.IsInventoryFull)
         {
             PlayerState.Money -= SleepingBagCost;
 
