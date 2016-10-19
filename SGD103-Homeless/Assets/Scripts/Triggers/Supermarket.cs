@@ -50,6 +50,12 @@ public class Supermarket : MonoBehaviour
         {
             options.Add(new Menu.Option(ApplyForJob, "Apply for job"));
         }
+        if (JobLocation.PlayerHasJobHere)
+        {
+            // Note that this is a ghost option to inform the player, not to be a useable menu item.
+            string message = "Work (" + JobLocation.GetWorkTimeSummaryShort() + ")";
+            options.Add(new Menu.Option(null, message, 0, false));
+        }
         options.Add(new Menu.Option(OnExitSelected, "Exit"));
 
         Menu.Show(options);

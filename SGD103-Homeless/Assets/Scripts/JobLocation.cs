@@ -86,13 +86,20 @@ public class JobLocation : MonoBehaviour {
     public JobPositionProfile Job;
 
     public bool PlayerHasJobHere = false;
-    public GameTime.DayOfTheWeekEnum jobStartsFrom;
+    public GameTime.DayOfTheWeekEnum jobStartsAfter;
     public bool workWeekStarted = false;
 
     [ReadOnly]
     public bool CanWorkNow = false;
-    [ReadOnly]
-    public bool WorkToday = false;
+
+    // Returns a short summary of the work days and times.
+    public string GetWorkTimeSummaryShort()
+    {
+        return GameTime.DayOfTheWeekAsShortString(Job.WorkFromDay) + " to " +
+               GameTime.DayOfTheWeekAsShortString(Job.WorkToDay) + ", " +
+               GameTime.GetTimeAsString(Job.ShiftFromHour) + " - " +
+               GameTime.GetTimeAsString(Job.ShiftToHour);
+    }
 
     // Checks for a job and optionally displays a message if one is available.
     public void CheckForJob(bool showMessage = false)
@@ -201,7 +208,7 @@ public class JobLocation : MonoBehaviour {
                 MessageBox.Show(message, gameObject);
                 PlayerHasJobHere = true;
                 workWeekStarted = false;
-                jobStartsFrom = GameTime.NextDayAfter(GameTime.DayOfTheWeek);
+                jobStartsAfter = GameTime.DayOfTheWeek;
             }
             else
             {
@@ -222,8 +229,9 @@ public class JobLocation : MonoBehaviour {
     // Fires the player immediately with the given reason as explanation.
     public void Dismiss(string reason)
     {
-        Debug.Log("You have been dismissed from employment. Reason: " + reason);
         PlayerHasJobHere = false;
+        string message = "You have been dismissed from employment. Reason: " + reason;
+        MessageBox.ShowForTime(message, 8.0f, gameObject);
     }
 
     void Start()
@@ -243,7 +251,7 @@ public class JobLocation : MonoBehaviour {
         if (PlayerHasJobHere)
         {
             // After the day the player got the job we start the first work week.
-            if (!workWeekStarted && GameTime.DayOfTheWeek != jobStartsFrom)
+            if (!workWeekStarted && GameTime.DayOfTheWeek != jobStartsAfter)
             {
                 workWeekStarted = true;
             }
@@ -268,7 +276,6 @@ public class JobLocation : MonoBehaviour {
                 {
                     workToday = true;
                 }
-                WorkToday = workToday;
 
                 // Check if we're within time.
                 GameTime.Delta delta = GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, Job.ShiftFromHour);
@@ -291,7 +298,7 @@ public class JobLocation : MonoBehaviour {
                     }
                     else
                     {
-                        /*Dismiss("Late for work");*/
+                        Dismiss("Late for work");
                     }
                 }
             }
