@@ -214,6 +214,7 @@ public class WriteYourSign : MonoBehaviour
             {
                 CardboardSign.CanvasMaterial.mainTexture = CanvasTexture;
                 CardboardSign.CanvasMaterial.color = Color.white;
+                CardboardSign.Show();
             }
         }
         else
