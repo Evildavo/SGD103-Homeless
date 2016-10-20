@@ -13,6 +13,9 @@ public class JobLocation : MonoBehaviour
     private float payDue = 0.0f;
     private float hoursWorkedThisWeek = 0.0f;
 
+    [ReadOnly]
+    public bool WorkToday;
+
     // Represents a job position.
     [System.Serializable]
     public class JobPositionProfile
@@ -327,6 +330,7 @@ public class JobLocation : MonoBehaviour
                 {
                     workToday = true;
                 }
+                workToday = workToday;
 
                 // Check if we're within time.
                 GameTime.Delta delta = GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, Job.ShiftFromHour);
