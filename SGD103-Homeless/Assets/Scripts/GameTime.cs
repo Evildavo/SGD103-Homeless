@@ -111,6 +111,29 @@ public class GameTime : MonoBehaviour
         return "";
     }
 
+    // Returns the given day of the week as a string.
+    public string DayOfTheWeekAsString(DayOfTheWeekEnum dotw)
+    {
+        switch (dotw)
+        {
+            case DayOfTheWeekEnum.MONDAY:
+                return "Monday";
+            case DayOfTheWeekEnum.TUESDAY:
+                return "Tuesday";
+            case DayOfTheWeekEnum.WEDNESDAY:
+                return "Wednesday";
+            case DayOfTheWeekEnum.THURSDAY:
+                return "Thursday";
+            case DayOfTheWeekEnum.FRIDAY:
+                return "Friday";
+            case DayOfTheWeekEnum.SATURDAY:
+                return "Saturday";
+            case DayOfTheWeekEnum.SUNDAY:
+                return "Sunday";
+        }
+        return "";
+    }
+
     // Returns the given time as a string in the format "11:34 pm".
     public string GetTimeAsString(float time)
     {
