@@ -6,6 +6,8 @@ public class Library : MonoBehaviour {
     private bool isJobSearching;
     private float timeAtLastCheck;
     private bool hasWarnedAboutClosing = false;
+    private bool jobSearchedToday = false;
+    private int dayOfLastJobSearch;
 
     public Trigger Trigger;
     public Menu Menu;
@@ -49,7 +51,7 @@ public class Library : MonoBehaviour {
     List<Menu.Option> getMainMenu()
     {
         List<Menu.Option> options = new List<Menu.Option>();
-        options.Add(new Menu.Option(OnJobSearch, "Job search"));
+        options.Add(new Menu.Option(OnJobSearch, "Job search", 0, !jobSearchedToday));
         options.Add(new Menu.Option(OnReadBook, "Read book"));
         options.Add(new Menu.Option(OnExit, "Exit"));
         return options;
@@ -69,6 +71,8 @@ public class Library : MonoBehaviour {
         Menu.Hide();
         GameTime.TimeScale = GameTime.AcceleratedTimeScale;
         isJobSearching = true;
+        jobSearchedToday = true;
+        dayOfLastJobSearch = GameTime.Day;
         timeAtLastCheck = Time.time;
     }
     
@@ -219,6 +223,15 @@ public class Library : MonoBehaviour {
         if (Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
         {
             reset();
+        }
+    }
+
+    void Update()
+    {
+        // Check if a day has ticked over so we can job search again.
+        if (jobSearchedToday && GameTime.Day != dayOfLastJobSearch)
+        {
+            jobSearchedToday = false;
         }
     }
 
