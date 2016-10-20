@@ -2,8 +2,17 @@
 using System.Collections;
 
 [ExecuteInEditMode]
-public class JobLocation : MonoBehaviour {
-    
+public class JobLocation : MonoBehaviour
+{
+    private int dayLastChecked;
+    private bool hasChecked = false;
+    private int daysChecked = 0;
+    private GameTime.DayOfTheWeekEnum jobStartsAfter;
+    private bool workWeekStarted = false;
+    private float timeAtShiftStart = 0.0f;
+    private float payDue = 0.0f;
+    private float hoursWorkedThisWeek = 0.0f;
+
     // Represents a job position.
     [System.Serializable]
     public class JobPositionProfile
@@ -68,15 +77,6 @@ public class JobLocation : MonoBehaviour {
             PayPerWeek = PayPerHour * HoursWorkPerWeek;
         }
     }
-
-    private int dayLastChecked;
-    private bool hasChecked = false;
-    private int daysChecked = 0;
-    private GameTime.DayOfTheWeekEnum jobStartsAfter;
-    private bool workWeekStarted = false;
-    private float timeAtShiftStart = 0.0f;
-    private float payDue = 0.0f;
-    private float hoursWorkedThisWeek = 0.0f;
 
     public MessageBox MessageBox;
     public GameTime GameTime;
@@ -370,12 +370,10 @@ public class JobLocation : MonoBehaviour {
 #if UNITY_EDITOR
         Job.Calculate();
 #endif
-        float gameTimeDelta = GameTime.GameTimeDelta;
-        float now = GameTime.TimeOfDayHours;
 
         // Pay day (and time).
         if (GameTime.DayOfTheWeek == Job.PayDay && 
-            Mathf.Abs(GameTime.TimeOfDayHours - Job.PayTime) <= gameTimeDelta &&
+            GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, Job.PayTime).shortest <= GameTime.GameTimeDelta &&
             payDue > 0.0f)
         {
             string message = "Work week complete. You worked a total of " +
@@ -390,7 +388,7 @@ public class JobLocation : MonoBehaviour {
         if (IsPlayerAtWork)
         {
             // Stop work at the end of shift.
-            if (GameTime.TimeOfDayHoursDelta(now, Job.ShiftToHour).forward < gameTimeDelta)
+            if (GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, Job.ShiftToHour).shortest < GameTime.GameTimeDelta)
             {
                 IsPlayerAtWork = false;
                 GameTime.TimeScale = GameTime.NormalTimeScale;

@@ -37,6 +37,9 @@ public class GameTime : MonoBehaviour
     {
         public float forward;
         public float backward;
+
+        // The shortest of either forward or backward.
+        public float shortest;
     }
     
     // Returns the number of hours between time-of-day hours a and b.
@@ -72,6 +75,9 @@ public class GameTime : MonoBehaviour
         {
             delta.backward = a - b;
         }
+
+        // Shortest.
+        delta.shortest = delta.forward < delta.backward ? delta.forward : delta.backward;
         return delta;
     }
 
