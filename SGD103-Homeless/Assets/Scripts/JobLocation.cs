@@ -377,7 +377,7 @@ public class JobLocation : MonoBehaviour
             payDue > 0.0f)
         {
             string message = "Work week complete. You worked a total of " +
-                             ((int)hoursWorkedThisWeek).ToString() + " hours and have now earned $" +
+                             System.Math.Round(hoursWorkedThisWeek, 2).ToString() + " hours and have now earned $" +
                              payDue.ToString("f2");
             PlayerState.Money += payDue;
             payDue = 0.0f;
@@ -402,12 +402,12 @@ public class JobLocation : MonoBehaviour
 
                 // Calculate earnings.
                 float hoursWorked = GameTime.TimeOfDayHoursDelta(timeAtShiftStart, Job.ShiftToHour).forward;
+                hoursWorked = Mathf.Min(hoursWorked, Job.HoursWorkPerShift); // No overpay for starting early.
                 float pay = hoursWorked * Job.PayPerHour;
                 payDue += pay;
-                hoursWorked = Mathf.Min(hoursWorked, Job.HoursWorkPerShift); // No overpay for starting early.
                 hoursWorkedThisWeek += hoursWorked;
                 string message = "Work day complete. You worked " +
-                                 ((int)hoursWorked).ToString() + " hours and earned $" +
+                                 System.Math.Round(hoursWorked, 2).ToString() + " hours and earned $" +
                                  pay.ToString("f2") + " (to be payed on " + 
                                  GameTime.DayOfTheWeekAsShortString(Job.PayDay) + " at " +
                                  GameTime.GetTimeAsString(Job.PayTime) + ")";
