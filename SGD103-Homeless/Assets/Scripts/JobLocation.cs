@@ -55,8 +55,8 @@ public class JobLocation : MonoBehaviour
         [Space(-10, order = 1)]
         [Header("it the next day results in dismissal", order = 2)]
         public float MinAverageHealthDuringShiftBeforeNotice = 0.3f;
-        [Header("This is rough, will probably disable:")]
         public float MinAverageMoraleDuringShiftBeforeNotice = 0.3f;
+        public float MinClothingCleanlinessBeforeNotice = 0.3f;
 
         [ReadOnly]
         public JobLocation Location;
@@ -553,6 +553,28 @@ public class JobLocation : MonoBehaviour
         {
             // No longer on notice for this reason.
             playerOnNoticeForReasons.Remove(NoticeReason.POOR_MORALE);
+        }
+        
+        // Handle warning notices for unclean clothes.
+        if (PlayerState.CurrentClothingCleanliness < Job.MinClothingCleanlinessBeforeNotice)
+        {
+            // Already on notice for this reason, so dismiss.
+            if (playerOnNoticeForReasons.Contains(NoticeReason.UNCLEAN_CLOTHES))
+            {
+                Dismiss("Unhygienic attire");
+            }
+
+            // Give a notice.
+            else
+            {
+                playerOnNoticeForReasons.Add(NoticeReason.UNCLEAN_CLOTHES);
+                MessageBox.ShowQueued("Warning Notice: You wore unhygienic clothing today.", 3.0f, gameObject, true);
+            }
+        }
+        else
+        {
+            // No longer on notice for this reason.
+            playerOnNoticeForReasons.Remove(NoticeReason.UNCLEAN_CLOTHES);
         }
     }
 
