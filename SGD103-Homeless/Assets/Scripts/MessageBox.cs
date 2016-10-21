@@ -116,6 +116,12 @@ public class MessageBox : MonoBehaviour
 
     public void Hide()
     {
+        // Clear top item from message queue.
+        if (IsDisplayed() && messageQueue.Count > 0)
+        {
+            messageQueue.Dequeue();
+        }
+
         gameObject.SetActive(false);
     }
 
