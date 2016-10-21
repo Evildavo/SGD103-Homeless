@@ -27,7 +27,8 @@ public class MessageBox : MonoBehaviour
         }
     }
 
-    public Image WarningSymbol;
+    public Image WarningSymbolLeft;
+    public Image WarningSymbolRight;
 
     public bool IsWarning = false;
     [ReadOnly]
@@ -39,11 +40,13 @@ public class MessageBox : MonoBehaviour
     {
         if (IsWarning)
         {
-            WarningSymbol.enabled = true;
+            WarningSymbolLeft.enabled = true;
+            WarningSymbolRight.enabled = true;
         }
         else
         {
-            WarningSymbol.enabled = false;
+            WarningSymbolLeft.enabled = false;
+            WarningSymbolRight.enabled = false;
         }
     }
 
