@@ -26,7 +26,7 @@ public class JobLocation : MonoBehaviour
         POOR_HEALTH,
         POOR_MORALE,
         UNCLEAN_CLOTHES,
-        UNDER_INFLUENCE_OF_ALCOHOL
+        UNDER_INFLUENCE_OF_ALCOHOL // Special. No visible warning is given.
     }
 
     // Represents a job position.
@@ -57,6 +57,8 @@ public class JobLocation : MonoBehaviour
         public float MinAverageHealthDuringShiftBeforeNotice = 0.3f;
         public float MinAverageMoraleDuringShiftBeforeNotice = 0.3f;
         public float MinClothingCleanlinessBeforeNotice = 0.3f;
+        public float MaxInebriationBeforeNotice = 0.3f;
+        public float MaxInebriationBeforeDismissal = 0.6f;
 
         [ReadOnly]
         public JobLocation Location;
@@ -575,6 +577,33 @@ public class JobLocation : MonoBehaviour
         {
             // No longer on notice for this reason.
             playerOnNoticeForReasons.Remove(NoticeReason.UNCLEAN_CLOTHES);
+        }
+
+        // Dismiss for drunkness.
+        if (PlayerState.Inebriation > Job.MaxInebriationBeforeDismissal)
+        {
+            Dismiss("Found under the influence of alcohol");
+        }
+
+        // Handle warning notices for being under the influence of alcohol.
+        if (PlayerState.Inebriation > Job.MaxInebriationBeforeNotice)
+        {
+            // Already on notice for this reason, so dismiss.
+            if (playerOnNoticeForReasons.Contains(NoticeReason.UNDER_INFLUENCE_OF_ALCOHOL))
+            {
+                Dismiss("Found under the influence of alcohol");
+            }
+
+            // Record a notice (hidden from the player).
+            else
+            {
+                playerOnNoticeForReasons.Add(NoticeReason.UNDER_INFLUENCE_OF_ALCOHOL);
+            }
+        }
+        else
+        {
+            // No longer on notice for this reason.
+            playerOnNoticeForReasons.Remove(NoticeReason.UNDER_INFLUENCE_OF_ALCOHOL);
         }
     }
 

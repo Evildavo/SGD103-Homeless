@@ -61,8 +61,13 @@ public class PlayerState : MonoBehaviour {
     public float WorkHealthLossFactor;
     public float WorkMoraleLossFactor;
 
-    [Space(20.0f)]
+    [Space(10.0f)]
+    [Range(0.0f, 1.0f)]
+    public float Inebriation = 0.0f;
+    [Range(0.0f, 1.0f)]
     public float CurrentClothingCleanliness = 0.0f;
+    
+    [Space(10.0f)]
     public bool IsAtWork = false;
 
     [Space(10.0f)]
