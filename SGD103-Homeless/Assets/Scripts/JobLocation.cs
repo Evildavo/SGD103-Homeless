@@ -14,9 +14,10 @@ public class JobLocation : MonoBehaviour
     private float hoursWorkedThisWeek = 0.0f;
     private bool playerStartedLate = false;
     private List<NoticeReason> playerOnNoticeForReasons = new List<NoticeReason>();
-    private float healthDuringShiftSum;
     private int numUpdateTicksDuringShift;
-    
+    private float healthDuringShiftSum;
+    private float moraleDuringShiftSum;
+
     // When the player is on notice for some issue.
     enum NoticeReason
     {
@@ -50,6 +51,8 @@ public class JobLocation : MonoBehaviour
         public float TimeAllowedLateBeforeNotice = 0.1f;
         public float TimeAllowedLateBeforeDismissal = 0.5f;
         public float MinAverageHealthDuringShiftBeforeNotice = 0.3f;
+        [Header("This is rough, will probably disable:")]
+        public float MinAverageMoraleDuringShiftBeforeNotice = 0.3f;
         [ReadOnly]
         public JobLocation Location;
         [ReadOnly]
@@ -291,11 +294,12 @@ public class JobLocation : MonoBehaviour
             PlayerState.IsAtWork = true;
             LastDayWorked = GameTime.Day;
             timeAtShiftStart = GameTime.TimeOfDayHours;
-            healthDuringShiftSum = 0.0f;
             numUpdateTicksDuringShift = 0;
+            healthDuringShiftSum = 0.0f;
+            moraleDuringShiftSum = 0.0f;
 
             // Fade to black.
-    ScreenFader.fadeTime = FadeToBlackTime;
+            ScreenFader.fadeTime = FadeToBlackTime;
             ScreenFader.fadeIn = false;
             Invoke("OnFadeOutComplete", FadeToBlackTime);
 
@@ -520,6 +524,29 @@ public class JobLocation : MonoBehaviour
         {
             // No longer on notice for this reason.
             playerOnNoticeForReasons.Remove(NoticeReason.POOR_HEALTH);
+        }
+
+        // Handle warning notices for poor morale.
+        float averageMoraleDuringShift = moraleDuringShiftSum / numUpdateTicksDuringShift;
+        if (averageMoraleDuringShift < Job.MinAverageMoraleDuringShiftBeforeNotice)
+        {
+            // Already on notice for this reason, so dismiss.
+            if (playerOnNoticeForReasons.Contains(NoticeReason.POOR_MORALE))
+            {
+                Dismiss("Bad attitude");
+            }
+
+            // Give a notice.
+            else
+            {
+                playerOnNoticeForReasons.Add(NoticeReason.POOR_MORALE);
+                MessageBox.ShowQueued("Warning Notice: You had a bad attitude today.", 3.0f, gameObject, true);
+            }
+        }
+        else
+        {
+            // No longer on notice for this reason.
+            playerOnNoticeForReasons.Remove(NoticeReason.POOR_MORALE);
         }
     }
 
