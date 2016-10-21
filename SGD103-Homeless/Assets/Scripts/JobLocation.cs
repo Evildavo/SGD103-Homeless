@@ -14,6 +14,8 @@ public class JobLocation : MonoBehaviour
     private float hoursWorkedThisWeek = 0.0f;
     private bool playerStartedLate = false;
     private List<NoticeReason> playerOnNoticeForReasons = new List<NoticeReason>();
+    private float healthDuringShiftSum;
+    private int numUpdateTicksDuringShift;
     
     // When the player is on notice for some issue.
     enum NoticeReason
@@ -47,6 +49,7 @@ public class JobLocation : MonoBehaviour
         public float TimeAllowedEarly = 0.5f;
         public float TimeAllowedLateBeforeNotice = 0.1f;
         public float TimeAllowedLateBeforeDismissal = 0.5f;
+        public float MinAverageHealthDuringShiftBeforeNotice = 0.3f;
         [ReadOnly]
         public JobLocation Location;
         [ReadOnly]
@@ -288,9 +291,11 @@ public class JobLocation : MonoBehaviour
             PlayerState.IsAtWork = true;
             LastDayWorked = GameTime.Day;
             timeAtShiftStart = GameTime.TimeOfDayHours;
+            healthDuringShiftSum = 0.0f;
+            numUpdateTicksDuringShift = 0;
 
             // Fade to black.
-            ScreenFader.fadeTime = FadeToBlackTime;
+    ScreenFader.fadeTime = FadeToBlackTime;
             ScreenFader.fadeIn = false;
             Invoke("OnFadeOutComplete", FadeToBlackTime);
 
@@ -400,7 +405,7 @@ public class JobLocation : MonoBehaviour
 #if UNITY_EDITOR
         Job.Calculate();
 #endif
-
+        
         // Pay day (and time).
         if (GameTime.DayOfTheWeek == Job.PayDay && 
             GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, Job.PayTime).shortest <= GameTime.GameTimeDelta &&
@@ -417,6 +422,10 @@ public class JobLocation : MonoBehaviour
 
         if (IsPlayerAtWork)
         {
+            // Update the data for calculating average health over the shift. 
+            healthDuringShiftSum += PlayerState.HealthTiredness;
+            numUpdateTicksDuringShift++;
+
             // Stop work at the end of shift.
             if (GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, Job.ShiftToHour).shortest < GameTime.GameTimeDelta)
             {
@@ -488,6 +497,29 @@ public class JobLocation : MonoBehaviour
         {
             // No longer on notice for this reason.
             playerOnNoticeForReasons.Remove(NoticeReason.LATE_FOR_WORK);
+        }
+
+        // Handle warning notices for poor health.
+        float averageHealthDuringShift = healthDuringShiftSum / numUpdateTicksDuringShift;
+        if (averageHealthDuringShift < Job.MinAverageHealthDuringShiftBeforeNotice)
+        {
+            // Already on notice for this reason, so dismiss.
+            if (playerOnNoticeForReasons.Contains(NoticeReason.POOR_HEALTH))
+            {
+                Dismiss("Poor work performance");
+            }
+
+            // Give a notice.
+            else
+            {
+                playerOnNoticeForReasons.Add(NoticeReason.POOR_HEALTH);
+                MessageBox.ShowQueued("Warning Notice: You performed poorly today.", 3.0f, gameObject, true);
+            }
+        }
+        else
+        {
+            // No longer on notice for this reason.
+            playerOnNoticeForReasons.Remove(NoticeReason.POOR_HEALTH);
         }
     }
 
