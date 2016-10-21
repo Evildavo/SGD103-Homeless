@@ -73,13 +73,13 @@ public class MessageQueueTestTrigger : MonoBehaviour
 
     void onQueuedMessage2Selected()
     {
-        MessageBox.ShowQueued("Test queued message 2", 2.0f, gameObject);
+        MessageBox.ShowQueued("Test queued message 2", 4.0f, gameObject);
         showMainMenu();
     }
 
     void onQueuedMessage3Selected()
     {
-        MessageBox.ShowQueued("Test queued message 3", 2.0f, gameObject);
+        MessageBox.ShowQueued("Test queued message 3", 2.0f, gameObject, true);
         showMainMenu();
     }
 
@@ -99,8 +99,8 @@ public class MessageQueueTestTrigger : MonoBehaviour
 
     void onStopSustainedMessage()
     {
-        MessageBox.ShowNext();
         showingSustainedMessage = false;
+        MessageBox.ShowNext();
         showMainMenu();
     }
 

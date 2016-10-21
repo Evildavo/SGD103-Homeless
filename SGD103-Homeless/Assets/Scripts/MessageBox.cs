@@ -32,6 +32,8 @@ public class MessageBox : MonoBehaviour
     public bool IsWarning = false;
     [ReadOnly]
     public GameObject Source;
+    [Header("A gap between queued messages being shown")]
+    public float QueuedMessageDelaySeconds = 0.5f;
 
     // Tells the message box to show the standard "Inventory is full" warning for a couple of seconds.
     // Give a reference to the inventory to open a preview of the inventory.
@@ -56,7 +58,7 @@ public class MessageBox : MonoBehaviour
         }
     }
 
-    // Displays the given message now.
+    // Show the message now.
     void displayMessage(Message message)
     {
         gameObject.SetActive(true);
@@ -95,16 +97,18 @@ public class MessageBox : MonoBehaviour
         }
     }
 
-    // Closes the current message and shows the next message in the queue if there are any.
+    void showNext()
+    {
+        displayMessage(messageQueue.Dequeue());
+    }
+
+    // Closes the current message and shows the next message in the queue if there are any (with a gap in between).
     public void ShowNext()
     {
+        Hide();
         if (messageQueue.Count > 0)
         {
-            displayMessage(messageQueue.Dequeue());
-        }
-        else
-        {
-            Hide();
+            Invoke("showNext", QueuedMessageDelaySeconds);
         }
     }
     
@@ -139,10 +143,11 @@ public class MessageBox : MonoBehaviour
             Hide();
         }
 
-        // Display the next message in the queue when current message is hidden.
+        // Display the next message in the queue when current message is hidden (with a gap).
         if (!IsDisplayed() && messageQueue.Count > 0)
         {
-            displayMessage(messageQueue.Dequeue());
+            Invoke("showNext", QueuedMessageDelaySeconds);
         }
     }
+
 }
