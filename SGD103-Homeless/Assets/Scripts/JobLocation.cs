@@ -58,6 +58,7 @@ public class JobLocation : MonoBehaviour
         public float MinAverageMoraleDuringShiftBeforeNotice = 0.3f;
         public float MinClothingCleanlinessBeforeNotice = 0.3f;
         public float MaxInebriationBeforeNotice = 0.3f;
+        [Header("Player is fired immediately for turning up to work drunk")]
         public float MaxInebriationBeforeDismissal = 0.6f;
 
         [ReadOnly]
@@ -297,21 +298,29 @@ public class JobLocation : MonoBehaviour
         // Start work.
         if (!IsPlayerAtWork)
         {
-            IsPlayerAtWork = true;
-            PlayerState.IsAtWork = true;
-            LastDayWorked = GameTime.Day;
-            timeAtShiftStart = GameTime.TimeOfDayHours;
-            numUpdateTicksDuringShift = 0;
-            healthDuringShiftSum = 0.0f;
-            moraleDuringShiftSum = 0.0f;
+            // Dismiss for drunkness.
+            if (PlayerState.Inebriation > Job.MaxInebriationBeforeDismissal)
+            {
+                Dismiss("Under the influence of alcohol");
+            }
+            else
+            {
+                IsPlayerAtWork = true;
+                PlayerState.IsAtWork = true;
+                LastDayWorked = GameTime.Day;
+                timeAtShiftStart = GameTime.TimeOfDayHours;
+                numUpdateTicksDuringShift = 0;
+                healthDuringShiftSum = 0.0f;
+                moraleDuringShiftSum = 0.0f;
 
-            // Fade to black.
-            ScreenFader.fadeTime = FadeToBlackTime;
-            ScreenFader.fadeIn = false;
-            Invoke("OnFadeOutComplete", FadeToBlackTime);
+                // Fade to black.
+                ScreenFader.fadeTime = FadeToBlackTime;
+                ScreenFader.fadeIn = false;
+                Invoke("OnFadeOutComplete", FadeToBlackTime);
 
-            // Hide UI.
-            UI.Hide();
+                // Hide UI.
+                UI.Hide();
+            }
         }
         JobTrigger.Reset(false);
     }
@@ -577,12 +586,6 @@ public class JobLocation : MonoBehaviour
         {
             // No longer on notice for this reason.
             playerOnNoticeForReasons.Remove(NoticeReason.UNCLEAN_CLOTHES);
-        }
-
-        // Dismiss for drunkness.
-        if (PlayerState.Inebriation > Job.MaxInebriationBeforeDismissal)
-        {
-            Dismiss("Found under the influence of alcohol");
         }
 
         // Handle warning notices for being under the influence of alcohol.
