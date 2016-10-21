@@ -147,13 +147,7 @@ public class MessageBox : MonoBehaviour
         // Hide after time.
         if (closeAfterSeconds != 0 && Time.time - fromTime > closeAfterSeconds)
         {
-            Hide();
-        }
-
-        // Display the next message in the queue when current message is hidden (with a gap).
-        if (!IsDisplayed() && messageQueue.Count > 0)
-        {
-            Invoke("showNext", QueuedMessageDelaySeconds);
+            ShowNext();
         }
     }
 
