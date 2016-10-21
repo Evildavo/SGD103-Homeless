@@ -14,13 +14,9 @@ public class NewStand : MonoBehaviour
 
     public void OnTrigger()
     {
-        MessageBox.ShowForTime("", 4.0f, gameObject);
-        Invoke("resetTrigger", 4.0f);
-    }
-
-    void resetTrigger()
-    {
-        Trigger.Reset();
+        const float MESSAGE_TIME = 4.0f;
+        MessageBox.ShowForTime("", MESSAGE_TIME, gameObject);
+        Trigger.ResetWithCooloff(MESSAGE_TIME + 0.5f);
     }
 
     void Update()

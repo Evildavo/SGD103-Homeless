@@ -25,7 +25,7 @@ public class CharacterTriggerTest : MonoBehaviour {
     {
         if (!InteractSound.isPlaying)
         {
-            Trigger.Reset();
+            Trigger.ResetWithCooloff();
         }
     }
 }

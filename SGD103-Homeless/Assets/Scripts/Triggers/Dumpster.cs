@@ -44,7 +44,8 @@ public class Dumpster : MonoBehaviour {
                 };
                 ConfirmationBox.Open(onChoiceMade, "You found food. Eat it?", "Yes", "No");
                 GameTime.TimeScale = GameTime.NormalTimeScale;
-                Trigger.Reset();
+                Trigger.Reset(false);
+                // TODO: Reset later.
             }
             timeAtLastCheck = Time.time;
         }

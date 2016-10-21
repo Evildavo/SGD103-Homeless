@@ -68,7 +68,19 @@ public class Trigger : MonoBehaviour
         IsEnabled = enabled;
         IsActivated = false;
     }
-    
+
+    // Resets the trigger back to enabled after a cooloff time.
+    public void ResetWithCooloff(float seconds = 1.0f)
+    {
+        Invoke("reenableTrigger", seconds);
+        IsActivated = false;
+    }
+
+    void reenableTrigger()
+    {
+        IsEnabled = true;
+    }
+
     public void ShowInteractionText()
     {
         if (TriggerNameText && InteractHintText)
@@ -176,5 +188,6 @@ public class Trigger : MonoBehaviour
             }
         }
     }
+
 
 }
