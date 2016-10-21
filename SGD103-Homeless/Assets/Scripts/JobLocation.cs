@@ -50,9 +50,14 @@ public class JobLocation : MonoBehaviour
         public float TimeAllowedEarly = 0.5f;
         public float TimeAllowedLateBeforeNotice = 0.1f;
         public float TimeAllowedLateBeforeDismissal = 0.5f;
+        
+        [Header("Receiving a notice and then not correcting ", order = 0)]
+        [Space(-10, order = 1)]
+        [Header("it the next day results in dismissal", order = 2)]
         public float MinAverageHealthDuringShiftBeforeNotice = 0.3f;
         [Header("This is rough, will probably disable:")]
         public float MinAverageMoraleDuringShiftBeforeNotice = 0.3f;
+
         [ReadOnly]
         public JobLocation Location;
         [ReadOnly]
