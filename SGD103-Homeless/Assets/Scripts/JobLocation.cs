@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 [ExecuteInEditMode]
 public class JobLocation : MonoBehaviour
@@ -13,9 +13,18 @@ public class JobLocation : MonoBehaviour
     private float payDue = 0.0f;
     private float hoursWorkedThisWeek = 0.0f;
     private bool playerStartedLate = false;
-
-    [ReadOnly]
-    public bool WorkToday;
+    private List<NoticeReason> playerOnNoticeForReasons = new List<NoticeReason>();
+    
+    // When the player is on notice for some issue.
+    enum NoticeReason
+    {
+        NONE,
+        LATE_FOR_WORK,
+        POOR_HEALTH,
+        POOR_MORALE,
+        UNCLEAN_CLOTHES,
+        UNDER_INFLUENCE_OF_ALCOHOL
+    }
 
     // Represents a job position.
     [System.Serializable]
@@ -439,10 +448,26 @@ public class JobLocation : MonoBehaviour
                             GameTime.GetTimeAsString(Job.PayTime) + ")";
         MessageBox.ShowForTime(message, 5.0f, gameObject);
 
-        // Give warning notices.
+        // Handle warning notices for lateness to work.
         if (playerStartedLate)
         {
-            MessageBox.ShowQueued("Warning Notice: You started work late today.", 3.0f, gameObject, true);
+            // Already on notice for this reason, so dismiss.
+            if (playerOnNoticeForReasons.Contains(NoticeReason.LATE_FOR_WORK))
+            {
+                Dismiss("Repeatedly late for work");
+            }
+
+            // Give a notice.
+            else
+            {
+                playerOnNoticeForReasons.Add(NoticeReason.LATE_FOR_WORK);
+                MessageBox.ShowQueued("Warning Notice: You started work late today.", 3.0f, gameObject, true);
+            }
+        }
+        else
+        {
+            // No longer on notice for this reason.
+            playerOnNoticeForReasons.Remove(NoticeReason.LATE_FOR_WORK);
         }
     }
 
