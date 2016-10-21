@@ -18,15 +18,15 @@ public class MessageQueueTestTrigger : MonoBehaviour
         }
         if (showingSustainedMessage)
         {
-            MessageBox.Hide();
+            MessageBox.ShowNext();
         }
     }
 
     void Start()
     {
         Trigger.RegisterOnTriggerListener(OnTrigger);
-        Trigger.RegisterOnPlayerExitListener(OnTrigger);
-        Trigger.RegisterOnTriggerUpdateListener(OnTrigger);
+        Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
+        Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
     }
 
     void showMainMenu()
@@ -34,7 +34,9 @@ public class MessageQueueTestTrigger : MonoBehaviour
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(onRegularMessageSelected, "Regular message"));
         options.Add(new Menu.Option(onWarningMessageSelected, "Warning message"));
-        options.Add(new Menu.Option(onQueuedMessageSelected, "Queued message"));
+        options.Add(new Menu.Option(onQueuedMessage1Selected, "Queued message 1"));
+        options.Add(new Menu.Option(onQueuedMessage2Selected, "Queued message 2"));
+        options.Add(new Menu.Option(onQueuedMessage3Selected, "Queued message 3"));
         options.Add(new Menu.Option(onNotificationMessageSelected, "Notification message"));
         if (showingSustainedMessage)
         {
@@ -52,33 +54,54 @@ public class MessageQueueTestTrigger : MonoBehaviour
     void onRegularMessageSelected()
     {
         MessageBox.ShowForTime("Test alert message", 2.0f, gameObject);
+        showingSustainedMessage = false;
+        showMainMenu();
     }
 
     void onWarningMessageSelected()
     {
         MessageBox.ShowForTime("Test warning message", 2.0f, gameObject, true);
+        showingSustainedMessage = false;
+        showMainMenu();
     }
 
-    void onQueuedMessageSelected()
+    void onQueuedMessage1Selected()
     {
-        //MessageBox.ShowQueued("Test queued message", 2.0f, gameObject);
+        MessageBox.ShowQueued("Test queued message 1", 2.0f, gameObject);
+        showMainMenu();
+    }
+
+    void onQueuedMessage2Selected()
+    {
+        MessageBox.ShowQueued("Test queued message 2", 2.0f, gameObject);
+        showMainMenu();
+    }
+
+    void onQueuedMessage3Selected()
+    {
+        MessageBox.ShowQueued("Test queued message 3", 2.0f, gameObject);
+        showMainMenu();
     }
 
     void onNotificationMessageSelected()
     {
         MessageBox.ShowForTime("Test notification message", 2.0f, gameObject);
+        showingSustainedMessage = false;
+        showMainMenu();
     }
 
     void onSustainedMessageSelected()
     {
         MessageBox.Show("Test sustained message", gameObject);
         showingSustainedMessage = true;
+        showMainMenu();
     }
 
     void onStopSustainedMessage()
     {
-        MessageBox.Hide();
+        MessageBox.ShowNext();
         showingSustainedMessage = false;
+        showMainMenu();
     }
 
     void onExit()
