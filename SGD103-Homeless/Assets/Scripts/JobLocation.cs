@@ -275,6 +275,7 @@ public class JobLocation : MonoBehaviour
         if (!IsPlayerAtWork)
         {
             IsPlayerAtWork = true;
+            PlayerState.IsAtWork = true;
             LastDayWorked = GameTime.Day;
             timeAtShiftStart = GameTime.TimeOfDayHours;
 
@@ -392,7 +393,7 @@ public class JobLocation : MonoBehaviour
             PlayerState.Money += payDue;
             payDue = 0.0f;
             hoursWorkedThisWeek = 0.0f;
-            MessageBox.ShowQueued(message, 10.0f, gameObject);
+            MessageBox.ShowQueued(message, 7.0f, gameObject);
         }
 
         if (IsPlayerAtWork)
@@ -401,6 +402,7 @@ public class JobLocation : MonoBehaviour
             if (GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, Job.ShiftToHour).shortest < GameTime.GameTimeDelta)
             {
                 IsPlayerAtWork = false;
+                PlayerState.IsAtWork = false;
                 GameTime.TimeScale = GameTime.NormalTimeScale;
                 MessageBox.Hide();
                 
@@ -435,12 +437,12 @@ public class JobLocation : MonoBehaviour
                             pay.ToString("f2") + " (to be payed on " +
                             GameTime.DayOfTheWeekAsShortString(Job.PayDay) + " at " +
                             GameTime.GetTimeAsString(Job.PayTime) + ")";
-        MessageBox.ShowForTime(message, 8.0f, gameObject);
+        MessageBox.ShowForTime(message, 5.0f, gameObject);
 
         // Give warning notices.
         if (playerStartedLate)
         {
-            MessageBox.ShowQueued("Warning Notice: You started work late today.", 4.0f, gameObject, true);
+            MessageBox.ShowQueued("Warning Notice: You started work late today.", 3.0f, gameObject, true);
         }
     }
 
