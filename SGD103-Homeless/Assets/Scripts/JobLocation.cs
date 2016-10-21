@@ -332,30 +332,34 @@ public class JobLocation : MonoBehaviour
                     workToday = true;
                 }
 
-                // Check if we're within time.
-                GameTime.Delta delta = GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, Job.ShiftFromHour);
-                bool earlyOrOnTime = (delta.forward <= delta.backward);
-                if (earlyOrOnTime)
+                // Check the time.
+                if (workToday)
                 {
-                    if (delta.forward <= Job.TimeAllowedEarly)
+                    // Check if we're within time.
+                    GameTime.Delta delta = GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, Job.ShiftFromHour);
+                    bool earlyOrOnTime = (delta.forward <= delta.backward);
+                    if (earlyOrOnTime)
                     {
-                        CanWorkNow = true;
-                        playerStartedLate = false;
+                        if (delta.forward <= Job.TimeAllowedEarly)
+                        {
+                            CanWorkNow = true;
+                            playerStartedLate = false;
+                        }
                     }
-                }
 
-                // Check if we're late.
-                else
-                {
-                    // A little late is fine.
-                    if (delta.backward <= Job.MaxTimeAllowedLate)
+                    // Check if we're late.
+                    else
                     {
-                        CanWorkNow = true;
-                        playerStartedLate = true;
-                    }
-                    else if (!IsPlayerAtWork && delta.backward <= Job.MaxTimeAllowedLate + GameTime.GameTimeDelta)
-                    {
-                        Dismiss("Late for work");
+                        // A little late is fine.
+                        if (delta.backward <= Job.MaxTimeAllowedLate)
+                        {
+                            CanWorkNow = true;
+                            playerStartedLate = true;
+                        }
+                        else if (!IsPlayerAtWork && delta.backward <= Job.MaxTimeAllowedLate + GameTime.GameTimeDelta)
+                        {
+                            Dismiss("Late for work");
+                        }
                     }
                 }
             }
