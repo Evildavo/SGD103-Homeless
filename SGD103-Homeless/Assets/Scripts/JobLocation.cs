@@ -433,6 +433,7 @@ public class JobLocation : MonoBehaviour
         {
             // Update the data for calculating average health over the shift. 
             healthDuringShiftSum += PlayerState.HealthTiredness;
+            moraleDuringShiftSum += PlayerState.Morale;
             numUpdateTicksDuringShift++;
 
             // Stop work at the end of shift.
