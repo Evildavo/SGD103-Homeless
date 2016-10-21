@@ -76,8 +76,8 @@ public class PlayerState : MonoBehaviour {
     }
         
     void Update () {
-        float gameTimeDelta = 1.0f / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;
-
+        float gameTimeDelta = 1.0f / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;  
+              
         if (SleepManager.IsAsleep)
         {
             // Hunger and morale drop at a different rate while asleep.
@@ -102,42 +102,42 @@ public class PlayerState : MonoBehaviour {
             HungerThirstSatiety -= HungerGainPerHour * gameTimeDelta;
             HealthTiredness -= HealthLossPerHour * gameTimeDelta;
             Morale -= MoraleLossPerHour * gameTimeDelta;
+        }
 
-            // Hunger goes down slower when satiated.
-            if (HungerThirstSatiety > HungerSatiatedAtLevel)
-            {
-                HungerThirstSatiety +=
-                    (HungerThirstSatiety - HungerSatiatedAtLevel) / (1.0f - HungerSatiatedAtLevel) *
-                    MaxSatietyHungerRewardPerHour * gameTimeDelta;
-            }
+        // Hunger goes down slower when satiated.
+        if (HungerThirstSatiety > HungerSatiatedAtLevel)
+        {
+            HungerThirstSatiety +=
+                (HungerThirstSatiety - HungerSatiatedAtLevel) / (1.0f - HungerSatiatedAtLevel) *
+                MaxSatietyHungerRewardPerHour * gameTimeDelta;
+        }
 
-            // Hunger affects health.
-            if (HungerThirstSatiety < HungerSatiatedAtLevel)
-            {
-                HealthTiredness -=
-                    (HungerSatiatedAtLevel - HungerThirstSatiety) / HungerSatiatedAtLevel *
-                    MaxHungerHealthPenaltyPerHour * gameTimeDelta;
-            }
-            else if (HungerThirstSatiety > HungerSatiatedAtLevel)
-            {
-                HealthTiredness +=
-                    (HungerThirstSatiety - HungerSatiatedAtLevel) / (1.0f - HungerSatiatedAtLevel) *
-                    MaxSatietyHealthRewardPerHour * gameTimeDelta;
-            }
+        // Hunger affects health.
+        if (HungerThirstSatiety < HungerSatiatedAtLevel)
+        {
+            HealthTiredness -=
+                (HungerSatiatedAtLevel - HungerThirstSatiety) / HungerSatiatedAtLevel *
+                MaxHungerHealthPenaltyPerHour * gameTimeDelta;
+        }
+        else if (HungerThirstSatiety > HungerSatiatedAtLevel)
+        {
+            HealthTiredness +=
+                (HungerThirstSatiety - HungerSatiatedAtLevel) / (1.0f - HungerSatiatedAtLevel) *
+                MaxSatietyHealthRewardPerHour * gameTimeDelta;
+        }
 
-            // Health affects morale.
-            if (HealthTiredness < HealthGoodAtLevel)
-            {
-                Morale -=
-                    (HealthGoodAtLevel - HealthTiredness) / HealthGoodAtLevel *
-                    MaxPoorHealthMoralePenaltyPerHour * gameTimeDelta;
-            }
-            else if (HealthTiredness > HealthGoodAtLevel)
-            {
-                Morale +=
-                    (HealthTiredness - HealthGoodAtLevel) / (1.0f - HealthGoodAtLevel) *
-                    MaxGoodHealthMoraleRewardPerHour * gameTimeDelta;
-            }
+        // Health affects morale.
+        if (HealthTiredness < HealthGoodAtLevel)
+        {
+            Morale -=
+                (HealthGoodAtLevel - HealthTiredness) / HealthGoodAtLevel *
+                MaxPoorHealthMoralePenaltyPerHour * gameTimeDelta;
+        }
+        else if (HealthTiredness > HealthGoodAtLevel)
+        {
+            Morale +=
+                (HealthTiredness - HealthGoodAtLevel) / (1.0f - HealthGoodAtLevel) *
+                MaxGoodHealthMoraleRewardPerHour * gameTimeDelta;
         }
 
         // Limit stats to range 0-1.
