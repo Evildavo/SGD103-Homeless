@@ -33,7 +33,7 @@ public class MessageBox : MonoBehaviour
     [ReadOnly]
     public GameObject Source;
     [Header("A gap between queued messages being shown")]
-    public float QueuedMessageDelaySeconds = 0.5f;
+    public float QueuedMessageDelaySeconds = 0.15f;
 
     void updateWarning()
     {
