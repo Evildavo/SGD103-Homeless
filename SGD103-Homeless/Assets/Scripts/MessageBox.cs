@@ -7,7 +7,7 @@ public class MessageBox : MonoBehaviour
     private float fromTime;
     private float closeAfterSeconds;
     private Queue<Message> messageQueue = new Queue<Message>();
-
+    
     // Message that can be queued.
     [System.Serializable]
     public struct Message

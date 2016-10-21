@@ -10,7 +10,9 @@ public class Dumpster : MonoBehaviour {
     public ConfirmationBox ConfirmationBox;
 
     public float ChanceOfFindingFoodPerSecond = 0.1f;
-    
+    public float HungerSatietyBenefit;
+    public float HealthDetriment;
+
     void Start()
     {
         Trigger.RegisterOnTriggerListener(OnTrigger);
@@ -36,8 +38,8 @@ public class Dumpster : MonoBehaviour {
                 {
                     if (yes)
                     {
-                        PlayerState.HungerThirstSatiety += 0.2f;
-                        PlayerState.HealthTiredness -= 0.2f;
+                        PlayerState.HungerThirstSatiety += HungerSatietyBenefit;
+                        PlayerState.HealthTiredness -= HealthDetriment;
                     }
                 };
                 ConfirmationBox.Open(onChoiceMade, "You found food. Eat it?", "Yes", "No");
