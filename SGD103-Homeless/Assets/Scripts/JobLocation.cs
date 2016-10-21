@@ -12,6 +12,7 @@ public class JobLocation : MonoBehaviour
     private float timeAtShiftStart = 0.0f;
     private float payDue = 0.0f;
     private float hoursWorkedThisWeek = 0.0f;
+    private bool playerStartedLate = false;
 
     [ReadOnly]
     public bool WorkToday;
@@ -330,7 +331,6 @@ public class JobLocation : MonoBehaviour
                 {
                     workToday = true;
                 }
-                workToday = workToday;
 
                 // Check if we're within time.
                 GameTime.Delta delta = GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, Job.ShiftFromHour);
@@ -340,6 +340,7 @@ public class JobLocation : MonoBehaviour
                     if (delta.forward <= Job.TimeAllowedEarly)
                     {
                         CanWorkNow = true;
+                        playerStartedLate = false;
                     }
                 }
 
@@ -350,6 +351,7 @@ public class JobLocation : MonoBehaviour
                     if (delta.backward <= Job.MaxTimeAllowedLate)
                     {
                         CanWorkNow = true;
+                        playerStartedLate = true;
                     }
                     else if (!IsPlayerAtWork && delta.backward <= Job.MaxTimeAllowedLate + GameTime.GameTimeDelta)
                     {
@@ -404,18 +406,27 @@ public class JobLocation : MonoBehaviour
                 ScreenFader.fadeTime = FadeInFromBlackTime;
                 ScreenFader.fadeIn = true;
 
+                // Display warning notices first.
+                if (playerStartedLate)
+                {
+                    MessageBox.ShowForTime("Warning Notice: You started work late today.", 4.0f, gameObject, true);
+                }
+
                 // Calculate earnings.
-                float hoursWorked = GameTime.TimeOfDayHoursDelta(timeAtShiftStart, Job.ShiftToHour).forward;
-                hoursWorked = Mathf.Min(hoursWorked, Job.HoursWorkPerShift); // No overpay for starting early.
-                float pay = hoursWorked * Job.PayPerHour;
-                payDue += pay;
-                hoursWorkedThisWeek += hoursWorked;
-                string message = "Work day complete. You worked " +
-                                 System.Math.Round(hoursWorked, 2).ToString() + " hours and earned $" +
-                                 pay.ToString("f2") + " (to be payed on " + 
-                                 GameTime.DayOfTheWeekAsShortString(Job.PayDay) + " at " +
-                                 GameTime.GetTimeAsString(Job.PayTime) + ")";
-                MessageBox.ShowForTime(message, 8.0f, gameObject);
+                {
+                    float hoursWorked = GameTime.TimeOfDayHoursDelta(timeAtShiftStart, Job.ShiftToHour).forward;
+                    hoursWorked = Mathf.Min(hoursWorked, Job.HoursWorkPerShift); // No overpay for starting early.
+                    float pay = hoursWorked * Job.PayPerHour;
+                    payDue += pay;
+                    hoursWorkedThisWeek += hoursWorked;
+                    string message = "Work day complete. You worked " +
+                                     System.Math.Round(hoursWorked, 2).ToString() + " hours and earned $" +
+                                     pay.ToString("f2") + " (to be payed on " +
+                                     GameTime.DayOfTheWeekAsShortString(Job.PayDay) + " at " +
+                                     GameTime.GetTimeAsString(Job.PayTime) + ")";
+
+                    MessageBox.ShowForTime(message, 8.0f, gameObject);
+                }
             }
         }
         else
