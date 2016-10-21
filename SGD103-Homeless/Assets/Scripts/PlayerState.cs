@@ -52,8 +52,9 @@ public class PlayerState : MonoBehaviour {
     [Space(10.0f)]
     public float SleepHungerGainFactor = 0.0f;
     public float SleepMoraleLossFactor = 0.0f;
-    public float MinSleepHealthGainPerHour = 0.0f;
-    public float MaxSleepHealthGainPerHour = 0.0f;
+    [Header("Not counting bonus from a sleeping bag")]
+    public float MinSleepingRoughHealthGainPerHour = 0.0f;
+    public float MaxSleepingRoughHealthGainPerHour = 0.0f;
 
     [Space(10.0f)]
     public float WorkHungerGainFactor;
@@ -77,7 +78,7 @@ public class PlayerState : MonoBehaviour {
         
     void Update () {
         float gameTimeDelta = 1.0f / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;  
-              
+        
         if (SleepManager.IsAsleep)
         {
             // Hunger and morale drop at a different rate while asleep.
@@ -85,8 +86,8 @@ public class PlayerState : MonoBehaviour {
             Morale -= MoraleLossPerHour * SleepMoraleLossFactor * gameTimeDelta;
 
             // Gain health based on sleep quality.
-            float minHealthGain = MinSleepHealthGainPerHour;
-            float maxHealthGain = MaxSleepHealthGainPerHour;
+            float minHealthGain = MinSleepingRoughHealthGainPerHour;
+            float maxHealthGain = MaxSleepingRoughHealthGainPerHour;
             HealthTiredness += (minHealthGain + SleepManager.SleepQuality * (maxHealthGain - minHealthGain)) * gameTimeDelta;
         }
         else if (IsAtWork)
