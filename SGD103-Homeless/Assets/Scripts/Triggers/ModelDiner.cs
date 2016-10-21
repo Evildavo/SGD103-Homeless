@@ -42,7 +42,7 @@ public class ModelDiner : MonoBehaviour
     void reset()
     {
         Menu.Hide();
-        MessageBox.Hide();
+        MessageBox.ShowNext();
         if (Trigger)
         {
             Trigger.Reset(Trigger.IsEnabled);

@@ -35,17 +35,6 @@ public class MessageBox : MonoBehaviour
     [Header("A gap between queued messages being shown")]
     public float QueuedMessageDelaySeconds = 0.5f;
 
-    // Tells the message box to show the standard "Inventory is full" warning for a couple of seconds.
-    // Give a reference to the inventory to open a preview of the inventory.
-    public void WarnInventoryFull(Inventory inventory = null)
-    {
-        ShowForTime("You don't have room in your inventory", 2.0f, null, true);
-        if (inventory)
-        {
-            inventory.ShowPreview();
-        }
-    }
-
     void updateWarning()
     {
         if (IsWarning)
@@ -56,6 +45,11 @@ public class MessageBox : MonoBehaviour
         {
             WarningSymbol.enabled = false;
         }
+    }
+
+    void showNext()
+    {
+        displayMessage(messageQueue.Dequeue());
     }
 
     // Show the message now.
@@ -70,21 +64,36 @@ public class MessageBox : MonoBehaviour
         updateWarning();
     }
 
-    // Opens the message box displaying the given message.
+    // Tells the message box to show the standard "Inventory is full" warning for a couple of seconds.
+    // Give a reference to the inventory to open a preview of the inventory.
+    public void WarnInventoryFull(Inventory inventory = null)
+    {
+        ShowForTime("You don't have room in your inventory", 2.0f, null, true);
+        if (inventory)
+        {
+            inventory.ShowPreview();
+        }
+    }
+
+    // Opens the message box displaying the given message, interrupting any currently shown message.
     // Source is used to keep track of who is updating the message box.
     // If the message is a warning it'll show a warning symbol.
+    // @remark Generally used for sustained message boxes (e.g. "Sleeping...").
     public void Show(string message, GameObject source = null, bool isWarning = false)
     {
         displayMessage(new Message(message, 0.0f, source, isWarning));
     }
 
-    // Shows the message box for a number of seconds before closing.
+    // Shows the message box for a number of seconds before closing, interrupting any currently shown message.
+    // @remark Generally used to respond to a player's action (e.g. "You feel full" after eating an item),
+    // or for an urgent alerts that can't be waited for.
     public void ShowForTime(string message, float seconds, GameObject source = null, bool isWarning = false)
     {
         displayMessage(new Message(message, seconds, source, isWarning));
     }
 
     // Adds the message to the message queue, to be showed after any currently shown messages are finished.
+    // @remark Generally used to notify the player of something (e.g. "The library will close shortly").
     public void ShowQueued(string message, float seconds, GameObject source = null, bool isWarning = false)
     {
         // Add message to queue.
@@ -95,11 +104,6 @@ public class MessageBox : MonoBehaviour
         {
             displayMessage(messageQueue.Dequeue());
         }
-    }
-
-    void showNext()
-    {
-        displayMessage(messageQueue.Dequeue());
     }
 
     // Closes the current message and shows the next message in the queue if there are any (with a gap in between).

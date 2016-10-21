@@ -39,7 +39,7 @@ public class Library : MonoBehaviour {
         hasWarnedAboutClosing = false;
         PlayerState.HighlightMorale = false;
         Menu.Hide();
-        MessageBox.Hide();
+        MessageBox.ShowNext();
         GameTime.TimeScale = GameTime.NormalTimeScale;
         if (Trigger)
         {
@@ -116,7 +116,7 @@ public class Library : MonoBehaviour {
     public void OnStopReading()
     {
         Menu.Show(getMainMenu());
-        MessageBox.Hide();
+        MessageBox.ShowNext();
         PlayerState.HighlightMorale = false;
         GameTime.TimeScale = GameTime.NormalTimeScale;
         isReading = false;
@@ -140,7 +140,7 @@ public class Library : MonoBehaviour {
         if (!Trigger.IsInActiveHour)
         {
             reset();
-            MessageBox.ShowForTime("Library has closed.", 2.0f, gameObject);
+            MessageBox.ShowQueued("Library has closed.", 2.0f, gameObject);
         }
 
         // Show warning when the library is about to close.
@@ -150,7 +150,7 @@ public class Library : MonoBehaviour {
             if (!hasWarnedAboutClosing &&
                 Mathf.Abs(GameTime.TimeOfDayHours - Trigger.ActiveToHour) <= CLOSE_WARNING_GAME_HOURS)
             {
-                MessageBox.ShowForTime("Library will be closing in 1 hour", 2.0f, gameObject);
+                MessageBox.ShowForTime("Library will be closing in 1 hour", 2.0f, gameObject, true);
                 hasWarnedAboutClosing = true;
             }
         }
