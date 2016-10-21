@@ -45,7 +45,8 @@ public class JobLocation : MonoBehaviour
         public GameTime.DayOfTheWeekEnum PayDay;
         public float PayTime;
         public float TimeAllowedEarly = 0.5f;
-        public float MaxTimeAllowedLate = 0.5f;
+        public float TimeAllowedLateBeforeNotice = 0.1f;
+        public float TimeAllowedLateBeforeDismissal = 0.5f;
         [ReadOnly]
         public JobLocation Location;
         [ReadOnly]
@@ -360,13 +361,22 @@ public class JobLocation : MonoBehaviour
                     // Check if we're late.
                     else
                     {
-                        // A little late is fine.
-                        if (delta.backward <= Job.MaxTimeAllowedLate)
+                        // A little late is forgiven.
+                        if (delta.backward <= Job.TimeAllowedLateBeforeNotice)
+                        {
+                            CanWorkNow = true;
+                            playerStartedLate = false;
+                        }
+
+                        // A bit more late puts the player on notice.
+                        else if (delta.backward <= Job.TimeAllowedLateBeforeDismissal)
                         {
                             CanWorkNow = true;
                             playerStartedLate = true;
                         }
-                        else if (!IsPlayerAtWork && delta.backward <= Job.MaxTimeAllowedLate + GameTime.GameTimeDelta)
+
+                        // Really late results in dismissal.
+                        else if (!IsPlayerAtWork && delta.backward <= Job.TimeAllowedLateBeforeDismissal + GameTime.GameTimeDelta)
                         {
                             Dismiss("Late for work");
                         }
@@ -433,9 +443,19 @@ public class JobLocation : MonoBehaviour
 
     void onFadeInComplete()
     {
-        // Calculate earnings and hours worked.
-        float hoursWorked = GameTime.TimeOfDayHoursDelta(timeAtShiftStart, Job.ShiftToHour).forward;
-        hoursWorked = Mathf.Min(hoursWorked, Job.HoursWorkPerShift); // No overpay for starting early.
+        // Calculate hours worked. 
+        // No overpay is given for starting early, but no penalty is removed for starting very slightly late.
+        float hoursWorked;
+        if (playerStartedLate)
+        {
+            hoursWorked = GameTime.TimeOfDayHoursDelta(timeAtShiftStart, Job.ShiftToHour).forward;
+        }
+        else
+        {
+            hoursWorked = Job.HoursWorkPerShift;
+        }
+
+        // Calculate earnings.
         float pay = hoursWorked * Job.PayPerHour;
         payDue += pay;
         hoursWorkedThisWeek += hoursWorked;
