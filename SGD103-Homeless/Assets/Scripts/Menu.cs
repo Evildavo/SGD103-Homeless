@@ -74,6 +74,11 @@ public class Menu : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
+
+    public bool IsDisplayed()
+    {
+        return gameObject.activeInHierarchy;
+    }
     
 	void Start ()
     {

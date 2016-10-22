@@ -7,6 +7,13 @@ public class Greg : MonoBehaviour {
     public AudioClip HelloAudio;
     public Menu Menu;
 
+    void Start()
+    {
+        CharacterTrigger.RegisterOnTriggerListener(OnTrigger);
+        CharacterTrigger.RegisterOnPlayerExitListener(OnPlayerExit);
+        CharacterTrigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
+    }
+
     public void OnTrigger()
     {
         CharacterTrigger.Speak("Hi, my name's Greg. Would you like to buy something?", HelloAudio, showBuyMenu);
@@ -16,11 +23,14 @@ public class Greg : MonoBehaviour {
     {
         reset();
     }
-    
-    void Start()
+
+    public void OnTriggerUpdate()
     {
-        CharacterTrigger.RegisterOnTriggerListener(OnTrigger);
-        CharacterTrigger.RegisterOnPlayerExitListener(OnPlayerExit);
+        // Leave menu on E key.
+        if (Menu.IsDisplayed() && Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
+        {
+            reset();
+        }
     }
 
     void showBuyMenu()
