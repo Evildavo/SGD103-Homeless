@@ -31,7 +31,7 @@ public class Greg : Character {
     public void OnTrigger()
     {
         Speak("Hi, my name's Greg", HelloAudio);
-        AddCaptionChangeCue(3.0f, "Want some drugs?");
+        AddCaptionChangeCue(2.0f, "Want some drugs?");
         PlayerCharacter.ShowStandardDialogueMenu(
             "Please! I need your help",
             "I can manage",

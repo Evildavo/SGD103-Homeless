@@ -12,7 +12,6 @@ public class Character : MonoBehaviour
     private AudioClip audioClip;
     private Queue<CaptionChangeCue> captionChangeCues;
     private CaptionChangeCue? nextCue = null;
-    private string combinedCaptionTextSoFar = "";
 
     struct CaptionChangeCue
     {
@@ -63,7 +62,6 @@ public class Character : MonoBehaviour
         currentSkippable = skippable;
         captionChangeCues = new Queue<CaptionChangeCue>();
         nextCue = null;
-        combinedCaptionTextSoFar = text;
 
         // Calculate dialogue length.
         dialogueLengthTime = calculateDialogueLength(text, audio);
@@ -86,7 +84,13 @@ public class Character : MonoBehaviour
     // A callback can be given that's called at the moment we change to this caption.
     public void AddCaptionChangeCue(float audioPositionSeconds, string text, OnCaptionChanged callback = null)
     {
+        // Add the cue.
         captionChangeCues.Enqueue(new CaptionChangeCue(audioPositionSeconds, text, callback));
+
+        // Recalculate dialogue length to include the caption.
+        dialogueLengthTime = Mathf.Max(
+            dialogueLengthTime, 
+            audioPositionSeconds + calculateDialogueLength(text, audioClip));
     }
 
     float calculateDialogueLength(string text, AudioClip audio)
@@ -137,10 +141,6 @@ public class Character : MonoBehaviour
         {
             nextCue.Value.Callback();
         }
-
-        // Recalculate display length based on current caption.
-        combinedCaptionTextSoFar += text;
-        dialogueLengthTime = calculateDialogueLength(combinedCaptionTextSoFar, audioClip);
 
         // Display the caption.
         displayCaption(text);
