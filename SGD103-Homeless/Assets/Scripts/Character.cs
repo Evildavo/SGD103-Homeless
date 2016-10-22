@@ -3,7 +3,6 @@ using System.Collections;
 
 public class Character : MonoBehaviour
 {
-    private MessageBox MessageBox;
     private OnFinishedSpeaking callback;
     private float dialogueLengthTime;
     private float delayAfter;
@@ -12,7 +11,9 @@ public class Character : MonoBehaviour
     private bool justStartedSpeaking;
 
     public CharacterDialogueManager DialogueManager;
-    
+    [ReadOnly]
+    public MessageBox MessageBox;
+
     public string SpeakerName;
     public Color SpeakerTextColour = Color.white;
 

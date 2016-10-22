@@ -8,6 +8,8 @@ public class Greg : Character {
     public AudioClip HelloAudio;
     public Menu Menu;
     public PlayerState PlayerState;
+    public Inventory Inventory;
+    public AlcoholItem AlcoholPrefab;
 
     public float DrugsCost;
     public float AlcoholCost;
@@ -62,8 +64,23 @@ public class Greg : Character {
 
     void onBuyAlcoholSelected()
     {
-        Speak("Sure thing.");
-        Debug.Log("Buying alcohol"); //
+        if (!Inventory.IsInventoryFull)
+        {
+            Speak("Sure thing.");
+
+            // Remove money.
+            PlayerState.Money -= AlcoholCost;
+
+            // Add item.
+            AlcoholItem item = Instantiate(AlcoholPrefab);
+            item.InventoryItemDescription = Inventory.ItemDescription;
+            item.MessageBox = MessageBox;
+            Inventory.AddItem(item);
+        }
+        else
+        {
+            MessageBox.WarnInventoryFull(Inventory);
+        }
         showBuyMenu();
     }
 
