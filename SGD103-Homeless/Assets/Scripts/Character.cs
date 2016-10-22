@@ -18,11 +18,13 @@ public class Character : MonoBehaviour
     {
         public float AudioPositionSeconds;
         public string Text;
+        public OnCaptionChanged Callback;
 
-        public CaptionChangeCue(float audioPositionSeconds, string text)
+        public CaptionChangeCue(float audioPositionSeconds, string text, OnCaptionChanged callback = null)
         {
             AudioPositionSeconds = audioPositionSeconds;
             Text = text;
+            Callback = callback;
         }
     }
 
@@ -38,6 +40,9 @@ public class Character : MonoBehaviour
 
     // Callback for when dialogue has finished being spoken.
     public delegate void OnFinishedSpeaking();
+        
+    // Callback for when the caption changes on cue.
+    public delegate void OnCaptionChanged();
 
     // Speaks dialogue. 
     // Text is the written transcript, used for captions.
@@ -78,9 +83,10 @@ public class Character : MonoBehaviour
 
     // Adds the given cue to be changed at the given time in the audio.
     // Call after Speak().
-    public void AddCaptionChangeCue(float audioPositionSeconds, string text)
+    // A callback can be given that's called at the moment we change to this caption.
+    public void AddCaptionChangeCue(float audioPositionSeconds, string text, OnCaptionChanged callback = null)
     {
-        captionChangeCues.Enqueue(new CaptionChangeCue(audioPositionSeconds, text));
+        captionChangeCues.Enqueue(new CaptionChangeCue(audioPositionSeconds, text, callback));
     }
 
     float calculateDialogueLength(string text, AudioClip audio)
@@ -125,6 +131,12 @@ public class Character : MonoBehaviour
     {
         string text = nextCue.Value.Text;
         justStartedCue = true;
+
+        // Run callback function.
+        if (nextCue.Value.Callback != null)
+        {
+            nextCue.Value.Callback();
+        }
 
         // Recalculate display length based on current caption.
         combinedCaptionTextSoFar += text;
