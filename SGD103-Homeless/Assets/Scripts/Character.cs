@@ -156,6 +156,16 @@ public class Character : MonoBehaviour
         }
     }
 
+    bool skipPressed()
+    {
+        return (Input.GetButtonDown("Primary") ||
+                Input.GetKeyDown("e") ||
+                Input.GetKeyDown("return") ||
+                Input.GetKeyDown("enter") ||
+                Input.GetKeyDown("space") ||
+                Input.GetKeyDown("escape"));
+    }
+
     // Call from derived.
     protected void Start()
     {
@@ -178,7 +188,7 @@ public class Character : MonoBehaviour
                 }
 
                 // Skip on player presses any key.
-                if (currentSkippable && Input.anyKeyDown && !justStartedCue)
+                if (currentSkippable && skipPressed() && !justStartedCue)
                 {
                     if (audioClip && nextCue.HasValue)
                     {
@@ -201,7 +211,7 @@ public class Character : MonoBehaviour
             else
             {
                 // Skip on player presses any key.
-                if (currentSkippable && Input.anyKeyDown && !justStartedCue)
+                if (currentSkippable && skipPressed() && !justStartedCue)
                 {
                     GetComponent<AudioSource>().Stop();
                     finishSpeaking();

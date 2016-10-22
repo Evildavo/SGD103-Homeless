@@ -35,6 +35,10 @@ public class Greg : Character {
 
     public void OnPlayerExit()
     {
+        if (IsSpeaking)
+        {
+            Speak("Hey, where are you going?");
+        }
         reset();
     }
 
