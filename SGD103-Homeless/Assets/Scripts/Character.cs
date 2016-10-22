@@ -71,6 +71,7 @@ public class Character : MonoBehaviour
         {
             AudioSource audioSource = GetComponent<AudioSource>();
             audioSource.clip = audio;
+            audioSource.time = 0.0f;
             audioSource.Play();
         }
     }
@@ -105,7 +106,7 @@ public class Character : MonoBehaviour
 
     void displayCaption(string text)
     {
-        if (DialogueManager.ShowCaptions && audioClip != null)
+        if (DialogueManager.ShowCaptions || audioClip == null)
         {
             string message = "";
             if (SpeakerName != "")
@@ -123,6 +124,7 @@ public class Character : MonoBehaviour
     void showNextCaption()
     {
         string text = nextCue.Value.Text;
+        justStartedCue = true;
 
         // Recalculate display length based on current caption.
         combinedCaptionTextSoFar += text;
@@ -168,10 +170,13 @@ public class Character : MonoBehaviour
                 {
                     if (audioClip && nextCue.HasValue)
                     {
-                        GetComponent<AudioSource>().time = nextCue.Value.AudioPositionSeconds;
+                        float cueAudioPosition = nextCue.Value.AudioPositionSeconds;
+                        if (cueAudioPosition < audioClip.length)
+                        {
+                            GetComponent<AudioSource>().time = cueAudioPosition;
+                        }
                     }
                     showNextCaption();
-                    justStartedCue = true;
                 }
                 justStartedCue = false;
 

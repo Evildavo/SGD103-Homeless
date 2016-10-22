@@ -30,8 +30,7 @@ public class Greg : Character {
     public void OnTrigger()
     {
         Speak("Hi, my name's Greg. Would you like to buy something?", HelloAudio, showBuyMenu);
-        AddCaptionChangeCue(0.5f, "Want some drugs?");
-        AddCaptionChangeCue(5.0f, "You know you want some!");
+        AddCaptionChangeCue(3.0f, "Want some drugs?");
     }
 
     public void OnPlayerExit()
@@ -42,7 +41,7 @@ public class Greg : Character {
     public void OnTriggerUpdate()
     {
         // Leave menu on E key.
-        if (Menu.IsDisplayed() && Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
+        if (Menu.IsDisplayed() && !IsSpeaking && Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
         {
             reset();
         }
