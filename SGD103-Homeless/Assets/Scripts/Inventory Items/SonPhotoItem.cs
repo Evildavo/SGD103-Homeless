@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class SunPhotoItem : InventoryItem
+public class SonPhotoItem : InventoryItem
 {
     private bool isShowingPhoto = false;
     private float timeAtPhotoShown;

@@ -10,6 +10,7 @@ public class Greg : Character {
     public PlayerState PlayerState;
     public Inventory Inventory;
     public AlcoholItem AlcoholPrefab;
+    public SonPhotoItem SonPhotoItem;
 
     public float DrugsCost;
     public float AlcoholCost;
@@ -63,7 +64,8 @@ public class Greg : Character {
 
     void onBuyDrugsSelected()
     {
-        PlayerCharacter.Speak("(No. I just can't do that)");
+        PlayerCharacter.Speak("I just can't do that");
+        SonPhotoItem.ShowPhoto();
         showBuyMenu();
     }
 
