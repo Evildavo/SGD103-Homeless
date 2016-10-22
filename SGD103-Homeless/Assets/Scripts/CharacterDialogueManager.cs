@@ -9,5 +9,6 @@ public class CharacterDialogueManager : MonoBehaviour {
     public bool MustWaitForAudioToFinish = false;
     public bool MustWaitCalculatedLenghtFromText = true;
     public float SecondsPerTextCharacter = 0.08f;
+    public float MinimumCalculatedDialogueTime = 1.2f;
 
 }

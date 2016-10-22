@@ -49,6 +49,7 @@ public class Character : MonoBehaviour
             {
                 dialogueLengthTime = Mathf.Max(dialogueLengthTime, audio.length);
             }
+            dialogueLengthTime = Mathf.Max(dialogueLengthTime, DialogueManager.MinimumCalculatedDialogueTime);
         }
         else
         {
