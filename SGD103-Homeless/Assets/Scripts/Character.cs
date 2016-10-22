@@ -1,14 +1,29 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class Character : MonoBehaviour
 {
-    private OnFinishedSpeaking callback;
+    private OnFinishedSpeaking onFinishedCallback;
     private float dialogueLengthTime;
     private float delayAfter;
     private float timeAtStartedSpeaking;
     private bool currentSkippable;
-    private bool justStartedSpeaking;
+    private bool justStartedCue;
+    private AudioClip audioClip;
+    private Queue<CaptionChangeCue> captionChangeCues;
+    private CaptionChangeCue? nextCue = null;
+
+    struct CaptionChangeCue
+    {
+        public float AudioPositionSeconds;
+        public string Text;
+
+        public CaptionChangeCue(float audioPositionSeconds, string text)
+        {
+            AudioPositionSeconds = audioPositionSeconds;
+            Text = text;
+        }
+    }
 
     public CharacterDialogueManager DialogueManager;
     [ReadOnly]
@@ -33,12 +48,15 @@ public class Character : MonoBehaviour
                       float delayAfterSeconds = 0.15f,
                       bool skippable = true)
     {
-        this.callback = callback;
+        audioClip = audio;
+        onFinishedCallback = callback;
         IsSpeaking = true;
-        justStartedSpeaking = true;
+        justStartedCue = true;
         delayAfter = delayAfterSeconds;
         timeAtStartedSpeaking = Time.time;
         currentSkippable = skippable;
+        captionChangeCues = new Queue<CaptionChangeCue>();
+        nextCue = null;
 
         // Calculate dialogue length.
         if (DialogueManager.MustWaitCalculatedLenghtFromText || audio == null)
@@ -58,7 +76,27 @@ public class Character : MonoBehaviour
         }
 
         // Display caption.
-        if (DialogueManager.ShowCaptions)
+        displayCaption(text);
+
+        // Play audio.
+        if (audio)
+        {
+            AudioSource audioSource = GetComponent<AudioSource>();
+            audioSource.clip = audio;
+            audioSource.Play();
+        }
+    }
+
+    // Adds the given cue to be changed at the given time in the audio.
+    // Call after Speak().
+    public void AddCaptionChangeCue(float audioPositionSeconds, string text)
+    {
+        captionChangeCues.Enqueue(new CaptionChangeCue(audioPositionSeconds, text));
+    }
+
+    void displayCaption(string text)
+    {
+        if (DialogueManager.ShowCaptions && audioClip != null)
         {
             string message = "";
             if (SpeakerName != "")
@@ -71,13 +109,18 @@ public class Character : MonoBehaviour
             }
             MessageBox.ShowForTime(message, dialogueLengthTime, gameObject, false, SpeakerTextColour);
         }
+    }
 
-        // Play audio.
-        if (audio)
+    void showNextCaption()
+    {
+        displayCaption(nextCue.Value.Text);
+        if (captionChangeCues.Count > 0)
         {
-            AudioSource audioSource = GetComponent<AudioSource>();
-            audioSource.clip = audio;
-            audioSource.Play();
+            nextCue = captionChangeCues.Dequeue();
+        }
+        else
+        {
+            nextCue = null;
         }
     }
 
@@ -93,18 +136,45 @@ public class Character : MonoBehaviour
         // Wait to finish speaking.
         if (IsSpeaking)
         {
-            // Skip on player presses any key.
-            if (currentSkippable && Input.anyKeyDown && !justStartedSpeaking)
+            // Handle cue changes.
+            if (captionChangeCues.Count > 0 || nextCue.HasValue)
             {
-                GetComponent<AudioSource>().Stop();
-                finishSpeaking();
-            }
-            justStartedSpeaking = false;
+                // Get the next cue.
+                if (!nextCue.HasValue)
+                {
+                    nextCue = captionChangeCues.Dequeue();
+                }
 
-            // Finish speaking after enough time has passed.
-            if (Time.time - timeAtStartedSpeaking >= dialogueLengthTime + delayAfter)
+                // Skip on player presses any key.
+                if (currentSkippable && Input.anyKeyDown && !justStartedCue)
+                {
+                    GetComponent<AudioSource>().time = nextCue.Value.AudioPositionSeconds;
+                    showNextCaption();
+                    justStartedCue = true;
+                }
+                justStartedCue = false;
+
+                // Change to next cue after enough time has passed.
+                if (Time.time - timeAtStartedSpeaking >= nextCue.Value.AudioPositionSeconds)
+                {
+                    showNextCaption();
+                }
+            }
+            else
             {
-                finishSpeaking();
+                // Skip on player presses any key.
+                if (currentSkippable && Input.anyKeyDown && !justStartedCue)
+                {
+                    GetComponent<AudioSource>().Stop();
+                    finishSpeaking();
+                }
+                justStartedCue = false;
+
+                // Finish speaking after enough time has passed.
+                if (Time.time - timeAtStartedSpeaking >= dialogueLengthTime + delayAfter)
+                {
+                    finishSpeaking();
+                }
             }
         }
     }
@@ -120,9 +190,9 @@ public class Character : MonoBehaviour
         }
 
         // Run the OnFinishedSpeaking callback.
-        if (callback != null)
+        if (onFinishedCallback != null)
         {
-            callback();
+            onFinishedCallback();
         }
     }
 

@@ -30,6 +30,7 @@ public class Greg : Character {
     public void OnTrigger()
     {
         Speak("Hi, my name's Greg. Would you like to buy something?", HelloAudio, showBuyMenu);
+        AddCaptionChangeCue(0.5f, "Want some drugs?");
     }
 
     public void OnPlayerExit()
