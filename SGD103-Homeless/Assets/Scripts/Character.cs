@@ -158,12 +158,19 @@ public class Character : MonoBehaviour
 
     bool skipPressed()
     {
-        return (Input.GetButtonDown("Primary") ||
-                Input.GetKeyDown("e") ||
-                Input.GetKeyDown("return") ||
-                Input.GetKeyDown("enter") ||
-                Input.GetKeyDown("space") ||
-                Input.GetKeyDown("escape"));
+        if (currentSkippable)
+        {
+            return (Input.GetButtonDown("Primary") ||
+                    Input.GetKeyDown("e") ||
+                    Input.GetKeyDown("return") ||
+                    Input.GetKeyDown("enter") ||
+                    Input.GetKeyDown("space") ||
+                    Input.GetKeyDown("escape"));
+        }
+        else
+        {
+            return false;
+        }
     }
 
     // Call from derived.
