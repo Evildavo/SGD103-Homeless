@@ -166,14 +166,17 @@ public class Character : MonoBehaviour
                 // Skip on player presses any key.
                 if (currentSkippable && Input.anyKeyDown && !justStartedCue)
                 {
-                    GetComponent<AudioSource>().time = nextCue.Value.AudioPositionSeconds;
+                    if (audioClip && nextCue.HasValue)
+                    {
+                        GetComponent<AudioSource>().time = nextCue.Value.AudioPositionSeconds;
+                    }
                     showNextCaption();
                     justStartedCue = true;
                 }
                 justStartedCue = false;
 
                 // Change to next cue after enough time has passed.
-                if (Time.time - timeAtStartedSpeaking >= nextCue.Value.AudioPositionSeconds)
+                if (nextCue.HasValue && Time.time - timeAtStartedSpeaking >= nextCue.Value.AudioPositionSeconds)
                 {
                     showNextCaption();
                 }
