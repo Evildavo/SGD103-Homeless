@@ -3,19 +3,25 @@ using System.Collections.Generic;
 
 public class Greg : Character
 {
+    private bool playerSoldWatch = false;
+
     public Trigger Trigger;
     public PlayerCharacter PlayerCharacter;
     public AudioClip HelloAudio;
     public Menu Menu;
     public ConfirmationBox ConfirmationBox;
+    public GameTime GameTime;
     public PlayerState PlayerState;
     public Inventory Inventory;
     public AlcoholItem AlcoholPrefab;
     public SonPhotoItem SonPhotoItem;
+    public WatchItem WatchPrefab;
+    public WatchHudButton WatchHudButton;
 
     public float SellingToGregValueFactor = 0.65f;
     public float DrugsCost;
     public float AlcoholCost;
+    public float WatchBuyBackCost;
 
     new void Start()
     {
@@ -93,6 +99,10 @@ public class Greg : Character
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(onBuyDrugsSelected, "Drugs", DrugsCost, PlayerState.CanAfford(DrugsCost)));
         options.Add(new Menu.Option(onBuyAlcoholSelected, "Cheap Alcohol", AlcoholCost, PlayerState.CanAfford(AlcoholCost)));
+        if (playerSoldWatch)
+        {
+            options.Add(new Menu.Option(onBuyWatchSelected, "Buy Watch", WatchBuyBackCost, PlayerState.CanAfford(WatchBuyBackCost)));
+        }
         options.Add(new Menu.Option(onExitSelected, "Exit"));
 
         Menu.Show(options);
@@ -128,6 +138,37 @@ public class Greg : Character
         showBuySellMenu();
     }
 
+    void onBuyWatchSelected()
+    {
+        if (!Inventory.IsInventoryFull)
+        {
+            Speak("Just couldn't part with it eh?");
+            AddCaptionChangeCue(2.0f, "In near-original condition too");
+
+            // Remove money.
+            PlayerState.Money -= WatchBuyBackCost;
+
+            // Add item.
+            WatchItem item = Instantiate(WatchPrefab);
+            item.InventoryItemDescription = Inventory.ItemDescription;
+            item.MessageBox = MessageBox;
+            item.GameTime = GameTime;
+            item.ItemName = "Watch (tarnished)";
+            item.ItemValue = item.ItemValue * 0.75f;
+            item.Tarnished = true;
+            Inventory.AddItem(item);
+
+            // Put watch back on HUD.
+            WatchHudButton.Watch = item;
+            WatchHudButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            MessageBox.WarnInventoryFull(Inventory);
+        }
+        showBuySellMenu();
+    }
+
     void onPlayerSellingItem(InventoryItem item)
     {
         float gregOffer = Mathf.Floor(item.ItemValue * SellingToGregValueFactor);
@@ -136,6 +177,12 @@ public class Greg : Character
         {
             if (yes)
             {
+                // Check if the item being sold is the watch.
+                if (item.ItemName == "Watch" || item.ItemName == "Watch (tarnished)")
+                {
+                    playerSoldWatch = true;
+                }
+
                 // Player sold the item to Greg.
                 PlayerState.Money += gregOffer;
 

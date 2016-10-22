@@ -8,6 +8,8 @@ public class WatchItem : InventoryItem
 
     public float CloseAfterSeconds = 1.8f;
 
+    public bool Tarnished = false;
+
     public override void OnPrimaryAction()
     {
         MessageBox.ShowForTime("", CloseAfterSeconds, gameObject, false);
