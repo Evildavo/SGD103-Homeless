@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CharacterTrigger : Trigger
+public class Character : MonoBehaviour
 {
     private MessageBox MessageBox;
     private OnFinishedSpeaking callback;
@@ -12,6 +12,9 @@ public class CharacterTrigger : Trigger
     private bool justStartedSpeaking;
 
     public CharacterDialogueManager DialogueManager;
+    
+    public string SpeakerName;
+    public Color SpeakerTextColour = Color.white;
 
     [ReadOnly]
     public bool IsSpeaking = false;
@@ -55,7 +58,16 @@ public class CharacterTrigger : Trigger
         // Display caption.
         if (DialogueManager.ShowCaptions)
         {
-            MessageBox.ShowForTime(text, dialogueLengthTime, gameObject);
+            string message = "";
+            if (SpeakerName != "")
+            {
+                message = SpeakerName + ": " + text;
+            }
+            else
+            {
+                message = text;
+            }
+            MessageBox.ShowForTime(message, dialogueLengthTime, gameObject, false/*, SpeakerTextColour*/);
         }
 
         // Play audio.
@@ -67,16 +79,15 @@ public class CharacterTrigger : Trigger
         }
     }
 
-    new void Start()
+    // Call from derived.
+    protected void Start()
     {
-        base.Start();
         MessageBox = DialogueManager.MessageBox;
     }
 
-    new void Update()
+    // Call from derived.
+    protected void Update()
     {
-        base.Update();
-
         // Wait to finish speaking.
         if (IsSpeaking)
         {
@@ -113,13 +124,4 @@ public class CharacterTrigger : Trigger
         }
     }
 
-    new void OnTriggerEnter(Collider other)
-    {
-        base.OnTriggerEnter(other);
-    }
-
-    new void OnTriggerExit(Collider other)
-    {
-        base.OnTriggerExit(other);
-    }
 }

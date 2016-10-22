@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerCharacter : MonoBehaviour {
+public class PlayerCharacter : Character
+{        
     
-	void Start () {
-	
+	new void Start () {
+        base.Start();
 	}
 	
-	void Update () {
-	
+	new void Update () {
+        base.Update();
 	}
 }

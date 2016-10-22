@@ -1,22 +1,33 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class Greg : MonoBehaviour {
+public class Greg : Character {
 
-    public CharacterTrigger CharacterTrigger;
+    public Trigger Trigger;
+    public PlayerCharacter PlayerCharacter;
     public AudioClip HelloAudio;
     public Menu Menu;
+    public PlayerState PlayerState;
 
-    void Start()
+    public float DrugsCost;
+    public float AlcoholCost;
+
+    new void Start()
     {
-        CharacterTrigger.RegisterOnTriggerListener(OnTrigger);
-        CharacterTrigger.RegisterOnPlayerExitListener(OnPlayerExit);
-        CharacterTrigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
+        base.Start();
+        Trigger.RegisterOnTriggerListener(OnTrigger);
+        Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
+        Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
+    }
+
+    new void Update()
+    {
+        base.Update();
     }
 
     public void OnTrigger()
     {
-        CharacterTrigger.Speak("Hi, my name's Greg. Would you like to buy something?", HelloAudio, showBuyMenu);
+        Speak("Hi, my name's Greg. Would you like to buy something?", HelloAudio, showBuyMenu);
     }
 
     public void OnPlayerExit()
@@ -36,9 +47,24 @@ public class Greg : MonoBehaviour {
     void showBuyMenu()
     {
         List<Menu.Option> options = new List<Menu.Option>();
+        options.Add(new Menu.Option(onBuyDrugsSelected, "Drugs", DrugsCost, PlayerState.CanAfford(DrugsCost)));
+        options.Add(new Menu.Option(onBuyAlcoholSelected, "Cheap Alcohol", AlcoholCost, PlayerState.CanAfford(AlcoholCost)));
         options.Add(new Menu.Option(onExitSelected, "Exit"));
 
         Menu.Show(options);
+    }
+
+    void onBuyDrugsSelected()
+    {
+        PlayerCharacter.Speak("(No. I just can't do that)");
+        showBuyMenu();
+    }
+
+    void onBuyAlcoholSelected()
+    {
+        Speak("Sure thing.");
+        Debug.Log("Buying alcohol"); //
+        showBuyMenu();
     }
 
     void onExitSelected()
@@ -49,7 +75,7 @@ public class Greg : MonoBehaviour {
     void reset()
     {
         Menu.Hide();
-        CharacterTrigger.Reset();
+        Trigger.Reset();
     }
 
 }

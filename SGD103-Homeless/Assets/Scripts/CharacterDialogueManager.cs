@@ -10,11 +10,4 @@ public class CharacterDialogueManager : MonoBehaviour {
     public bool MustWaitCalculatedLenghtFromText = true;
     public float SecondsPerTextCharacter = 0.08f;
 
-    void Start () {
-	
-	}
-	
-	void Update () {
-	
-	}
 }
