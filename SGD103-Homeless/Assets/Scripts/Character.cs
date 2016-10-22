@@ -12,6 +12,7 @@ public class Character : MonoBehaviour
     private AudioClip audioClip;
     private Queue<CaptionChangeCue> captionChangeCues;
     private CaptionChangeCue? nextCue = null;
+    private string combinedCaptionTextSoFar = "";
 
     struct CaptionChangeCue
     {
@@ -57,23 +58,10 @@ public class Character : MonoBehaviour
         currentSkippable = skippable;
         captionChangeCues = new Queue<CaptionChangeCue>();
         nextCue = null;
+        combinedCaptionTextSoFar = text;
 
         // Calculate dialogue length.
-        if (DialogueManager.MustWaitCalculatedLenghtFromText || audio == null)
-        {
-            // Calculate from text.
-            dialogueLengthTime = text.Length * DialogueManager.SecondsPerTextCharacter;
-            if (DialogueManager.MustWaitForAudioToFinish && audio)
-            {
-                dialogueLengthTime = Mathf.Max(dialogueLengthTime, audio.length);
-            }
-            dialogueLengthTime = Mathf.Max(dialogueLengthTime, DialogueManager.MinimumCalculatedDialogueTime);
-        }
-        else
-        {
-            // Calculate from audio.
-            dialogueLengthTime = audio.length;
-        }
+        dialogueLengthTime = calculateDialogueLength(text, audio);
 
         // Display caption.
         displayCaption(text);
@@ -92,6 +80,27 @@ public class Character : MonoBehaviour
     public void AddCaptionChangeCue(float audioPositionSeconds, string text)
     {
         captionChangeCues.Enqueue(new CaptionChangeCue(audioPositionSeconds, text));
+    }
+
+    float calculateDialogueLength(string text, AudioClip audio)
+    {
+        float length = 0.0f;
+        if (DialogueManager.MustWaitCalculatedLenghtFromText || audio == null)
+        {
+            // Calculate from text.
+            length = text.Length * DialogueManager.SecondsPerTextCharacter;
+            if (DialogueManager.MustWaitForAudioToFinish && audio)
+            {
+                length = Mathf.Max(length, audio.length);
+            }
+            length = Mathf.Max(length, DialogueManager.MinimumCalculatedDialogueTime);
+        }
+        else
+        {
+            // Calculate from audio.
+            length = audio.length;
+        }
+        return length;
     }
 
     void displayCaption(string text)
@@ -113,7 +122,16 @@ public class Character : MonoBehaviour
 
     void showNextCaption()
     {
-        displayCaption(nextCue.Value.Text);
+        string text = nextCue.Value.Text;
+
+        // Recalculate display length based on current caption.
+        combinedCaptionTextSoFar += text;
+        dialogueLengthTime = calculateDialogueLength(combinedCaptionTextSoFar, audioClip);
+
+        // Display the caption.
+        displayCaption(text);
+
+        // Get the next caption.
         if (captionChangeCues.Count > 0)
         {
             nextCue = captionChangeCues.Dequeue();

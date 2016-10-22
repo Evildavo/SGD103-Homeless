@@ -31,6 +31,7 @@ public class Greg : Character {
     {
         Speak("Hi, my name's Greg. Would you like to buy something?", HelloAudio, showBuyMenu);
         AddCaptionChangeCue(0.5f, "Want some drugs?");
+        AddCaptionChangeCue(5.0f, "You know you want some!");
     }
 
     public void OnPlayerExit()
