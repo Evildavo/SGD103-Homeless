@@ -14,16 +14,19 @@ public class Menu : MonoBehaviour
         public float Value;
         public bool Enabled;
         public OnSelectedCallback Callback;
+        public Color? OptionTextColourOverride;
 
         // The given callback function is called if the player selects the option.
         // Value is the price. If it's zero it isn't displayed.
         // If enabled is false the option will be greyed out and unselectable.
-        public Option(OnSelectedCallback onSelectedCallback, string name, float value = 0, bool enabled = true)
+        public Option(OnSelectedCallback onSelectedCallback, string name, 
+                     float value = 0, bool enabled = true, Color? optionTextColour = null)
         {
             Callback = onSelectedCallback;
             Name = name;
             Value = value;
             Enabled = enabled;
+            OptionTextColourOverride = optionTextColour;
         }
     };
 

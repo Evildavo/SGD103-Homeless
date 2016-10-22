@@ -25,7 +25,14 @@ public class MenuOption : MonoBehaviour {
     {
         if (OptionInfo.Enabled)
         {
-            OptionText.color = Menu.EnabledOptionColour;
+            if (OptionInfo.OptionTextColourOverride.HasValue)
+            {
+                OptionText.color = OptionInfo.OptionTextColourOverride.Value;
+            }
+            else
+            {
+                OptionText.color = Menu.EnabledOptionColour;
+            }
             ValueText.color = Menu.EnabledValueColour;
         }
         else

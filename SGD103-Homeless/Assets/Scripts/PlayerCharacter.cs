@@ -6,6 +6,10 @@ public class PlayerCharacter : Character
 
     public Menu Menu;
 
+    public Color SubmissiveOptionColor = Color.white;
+    public Color PridefulOptionColor = Color.white;
+    public Color SelfishOptionColor = Color.white;
+
     // Standard types of response.
     public enum ResponseType
     {
@@ -50,15 +54,15 @@ public class PlayerCharacter : Character
         List<Menu.Option> options = new List<Menu.Option>();
         if (submissiveOption != "")
         {
-            options.Add(new Menu.Option(submissiveSelected, submissiveOption));
+            options.Add(new Menu.Option(submissiveSelected, submissiveOption, 0, true, SubmissiveOptionColor));
         }
         if (pridefulOption != "")
         {
-            options.Add(new Menu.Option(pridefulSelected, pridefulOption));
+            options.Add(new Menu.Option(pridefulSelected, pridefulOption, 0, true, PridefulOptionColor));
         }
         if (selfishOption != "")
         {
-            options.Add(new Menu.Option(selfishSelected, selfishOption));
+            options.Add(new Menu.Option(selfishSelected, selfishOption, 0, true, SelfishOptionColor));
         }
         options.Add(new Menu.Option(exitSelected, "Exit"));
         Menu.Show(options);
