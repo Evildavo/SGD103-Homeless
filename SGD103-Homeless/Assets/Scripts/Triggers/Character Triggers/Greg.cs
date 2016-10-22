@@ -30,8 +30,39 @@ public class Greg : Character {
 
     public void OnTrigger()
     {
-        Speak("Hi, my name's Greg. Would you like to buy something?", HelloAudio, showBuyMenu);
+        Speak("Hi, my name's Greg", HelloAudio);
         AddCaptionChangeCue(3.0f, "Want some drugs?");
+        PlayerCharacter.ShowStandardDialogueMenu(
+            "Please! I need your help",
+            "I can manage",
+            "Give me stuff now",
+            onResponseChosen);
+
+        //Speak("Hi, my name's Greg. Would you like to buy something?", HelloAudio, showBuyMenu);
+        //AddCaptionChangeCue(3.0f, "Want some drugs?");
+    }
+
+    void onResponseChosen(PlayerCharacter.ResponseType response)
+    {
+        if (response == PlayerCharacter.ResponseType.SUBMISSIVE)
+        {
+            Speak("Whoa now. Calm down. I can help you.");
+            showBuyMenu();
+        }
+        else if (response == PlayerCharacter.ResponseType.PRIDEFUL)
+        {
+            Speak("Have it your way.");
+            reset();
+        }
+        else if (response == PlayerCharacter.ResponseType.SELFISH)
+        {
+            Speak("Hey, there's no need for that sort of attitude.");
+            showBuyMenu();
+        }
+        else
+        {
+            reset();
+        }
     }
 
     public void OnPlayerExit()
