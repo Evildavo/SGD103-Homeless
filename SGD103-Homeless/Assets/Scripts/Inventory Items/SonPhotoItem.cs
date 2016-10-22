@@ -7,10 +7,11 @@ public class SonPhotoItem : InventoryItem
     private bool isShowingPhoto = false;
     private float timeAtPhotoShown;
 
+    public MessageBox MessageBox;
     public Image SonPhotoImage;
 
     public float ShowPhotoForSeconds = 3.0f;
-
+    
     // Shows the photo of the the player character's son briefly.
     public void ShowPhoto()
     {
@@ -23,6 +24,12 @@ public class SonPhotoItem : InventoryItem
     {
         SonPhotoImage.gameObject.SetActive(false);
         isShowingPhoto = false;
+    }
+
+    // Don't allow sale.
+    public override void OnSellRequested()
+    {
+        MessageBox.ShowForTime("You can't sell this", 2.0f, gameObject, true);
     }
 
     public override void OnPrimaryAction()

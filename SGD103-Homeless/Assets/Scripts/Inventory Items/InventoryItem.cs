@@ -8,6 +8,9 @@ public class InventoryItem : MonoBehaviour {
 
     public string ItemName;
     public string PrimaryActionDescription;
+    [Header("Used in calculation when selling the item")]
+    public float ItemValue;
+    public bool CanBeSold = true;
     public int InventoryIndex;
 
     // Override to do some action when the primary item action is performed.
@@ -41,5 +44,8 @@ public class InventoryItem : MonoBehaviour {
 
     // Override to do something when the user moves the mouse away from the item in the inventory.
     public virtual void OnCursorExit() {}
+
+    // Override to do something when the player attempts to sell the item.
+    public virtual void OnSellRequested() { }
 
 }

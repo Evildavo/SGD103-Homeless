@@ -55,7 +55,7 @@ public class ConfirmationBox : MonoBehaviour {
 
     void Start()
     {
-        Close();
+        //Close();
     }
 
     void Update()

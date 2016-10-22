@@ -1,17 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class Greg : Character {
-
+public class Greg : Character
+{
     public Trigger Trigger;
     public PlayerCharacter PlayerCharacter;
     public AudioClip HelloAudio;
     public Menu Menu;
+    public ConfirmationBox ConfirmationBox;
     public PlayerState PlayerState;
     public Inventory Inventory;
     public AlcoholItem AlcoholPrefab;
     public SonPhotoItem SonPhotoItem;
 
+    public float SellingToGregValueFactor = 0.65f;
     public float DrugsCost;
     public float AlcoholCost;
 
@@ -47,7 +49,7 @@ public class Greg : Character {
         {
             Speak("Sure can. What are you after?");
             AddCaptionChangeCue(2.0f, "Drugs perhaps?");
-            showBuyMenu();
+            showBuySellMenu();
         }
         else if (response == PlayerCharacter.ResponseType.PRIDEFUL)
         {
@@ -58,7 +60,7 @@ public class Greg : Character {
         {
             Speak("Hey, there's no need for that sort of attitude.");
             AddCaptionChangeCue(2.0f, "You look like you could use some drugs.");
-            showBuyMenu();
+            showBuySellMenu();
         }
         else
         {
@@ -84,8 +86,10 @@ public class Greg : Character {
         }
     }
 
-    void showBuyMenu()
+    void showBuySellMenu()
     {
+        Inventory.EnterSellMode(onPlayerSellingItem);
+
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(onBuyDrugsSelected, "Drugs", DrugsCost, PlayerState.CanAfford(DrugsCost)));
         options.Add(new Menu.Option(onBuyAlcoholSelected, "Cheap Alcohol", AlcoholCost, PlayerState.CanAfford(AlcoholCost)));
@@ -96,9 +100,10 @@ public class Greg : Character {
 
     void onBuyDrugsSelected()
     {
-        PlayerCharacter.Speak("I just can't do that");
+        MessageBox.ShowForTime("I just can't do that", 2.0f);
+        //PlayerCharacter.Speak("I just can't do that");
         SonPhotoItem.ShowPhoto();
-        showBuyMenu();
+        showBuySellMenu();
     }
 
     void onBuyAlcoholSelected()
@@ -120,7 +125,26 @@ public class Greg : Character {
         {
             MessageBox.WarnInventoryFull(Inventory);
         }
-        showBuyMenu();
+        showBuySellMenu();
+    }
+
+    void onPlayerSellingItem(InventoryItem item)
+    {
+        float gregOffer = Mathf.Floor(item.ItemValue * SellingToGregValueFactor);
+
+        ConfirmationBox.OnChoiceMade onChoice = (bool yes) =>
+        {
+            if (yes)
+            {
+                // Player sold the item to Greg.
+                PlayerState.Money += gregOffer;
+
+                Inventory.RemoveItem(item);
+                showBuySellMenu();
+            }
+        };
+        ConfirmationBox.Open(onChoice, 
+            "I'll give you $" + gregOffer.ToString("f2") + " for it. That ok?", "Yes", "No");
     }
 
     void onExitSelected()
@@ -132,6 +156,7 @@ public class Greg : Character {
     {
         Menu.Hide();
         Trigger.Reset();
+        Inventory.ExitSellMode();
     }
 
 }

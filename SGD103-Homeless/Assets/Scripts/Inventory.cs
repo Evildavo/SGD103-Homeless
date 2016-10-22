@@ -8,6 +8,7 @@ public class Inventory : MonoBehaviour
     private bool isHidden = false;
 
     public InventoryItemDescription ItemDescription;
+    public InventorySellModeItemDescription SellModeItemDescription;
     public Transform SlotContainer;
     public Transform ItemContainer;
     public InventoryHudButton InventoryHudButton;
@@ -19,11 +20,57 @@ public class Inventory : MonoBehaviour
     public bool HiddenAtStart = true;
     public float PreviewTime = 2.0f;
     public bool OpenPreviewOnItemAdded = true;
+
+    [Space(20)]
+    public bool InSellMode = false;
     [ReadOnly]
     public bool IsPreviewing = false;
     [ReadOnly]
     public bool IsInventoryFull = false;
-    
+    public OnItemSold ItemSoldCallback;
+
+    // Callback for when the players sells an item in sell mode.
+    public delegate void OnItemSold(InventoryItem item);
+
+    // Enters mode for selling items.
+    public void EnterSellMode(OnItemSold onItemSold)
+    {
+        InSellMode = true;
+        ItemSoldCallback = onItemSold;
+
+        // Show the inventory in sell mode.
+        IsPreviewing = false;
+        isHidden = false;
+        ItemDescription.gameObject.SetActive(false);
+        foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
+        {
+            slot.Show();
+        }
+        ResetSellModeItemDescription();
+    }
+
+    // Exit sell mode.
+    public void ExitSellMode()
+    {
+        InSellMode = false;
+        SellModeItemDescription.gameObject.SetActive(false);
+        Hide();
+    }
+
+    public void ResetSellModeItemDescription()
+    {
+        // Set to default.
+        SellModeItemDescription.gameObject.SetActive(true);
+        SellModeItemDescription.ItemName.text = "Sell an item";
+        SellModeItemDescription.ItemValue.text = "";
+        SellModeItemDescription.GetComponent<Image>().enabled = true;
+
+        // Move description text to the default position.
+        Vector3 position = SellModeItemDescription.transform.position;
+        position.x = SellModeItemDescription.CentrePosition.transform.position.x;
+        SellModeItemDescription.transform.position = position;
+    }
+
     // Shows the inventory.
     public void Show()
     {
@@ -186,29 +233,40 @@ public class Inventory : MonoBehaviour
             }
         }
 
-        // Handle previewing.
-        if (IsPreviewing)
+        // Handle sell mode.
+        if (InSellMode)
         {
-            // Keep preview open if the cursor is over an item.
-            if (ItemDescription.gameObject.activeInHierarchy && ItemDescription.ItemName.text != "")
+            if (IsHidden())
             {
-                timeAtPreviewStart = Time.time;
-            }
-
-            // Close the inventory after preview time has passed.
-            if (Time.time - timeAtPreviewStart > PreviewTime)
-            {
-                IsPreviewing = false;
-                Hide();
+                Show();
             }
         }
-
-        // Close if the mouse was clicked while not over an item.
-        if (CloseOnClickOutside && Input.GetButtonDown("Primary") &&
-            (!ItemDescription.gameObject.activeInHierarchy || ItemDescription.ItemName.text == "") &&
-            !InventoryHudButton.IsCursorOver)
+        else
         {
-            Hide();
+            // Handle previewing.
+            if (IsPreviewing)
+            {
+                // Keep preview open if the cursor is over an item.
+                if (ItemDescription.gameObject.activeInHierarchy && ItemDescription.ItemName.text != "")
+                {
+                    timeAtPreviewStart = Time.time;
+                }
+
+                // Close the inventory after preview time has passed.
+                if (Time.time - timeAtPreviewStart > PreviewTime)
+                {
+                    IsPreviewing = false;
+                    Hide();
+                }
+            }
+
+            // Close if the mouse was clicked while not over an item.
+            if (CloseOnClickOutside && Input.GetButtonDown("Primary") &&
+                (!ItemDescription.gameObject.activeInHierarchy || ItemDescription.ItemName.text == "") &&
+                !InventoryHudButton.IsCursorOver)
+            {
+                Hide();
+            }
         }
     }
 
