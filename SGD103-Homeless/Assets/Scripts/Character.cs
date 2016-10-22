@@ -30,7 +30,7 @@ public class Character : MonoBehaviour
     public void Speak(string text,
                       AudioClip audio = null,
                       OnFinishedSpeaking callback = null,
-                      float delayAfterSeconds = 0.0f,
+                      float delayAfterSeconds = 0.15f,
                       bool skippable = true)
     {
         this.callback = callback;
