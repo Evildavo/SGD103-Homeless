@@ -7,7 +7,7 @@ public class MessageBox : MonoBehaviour
     private float fromTime;
     private float closeAfterSeconds;
     private Queue<Message> messageQueue = new Queue<Message>();
-
+    
     // Message that can be queued.
     [System.Serializable]
     public struct Message
@@ -27,6 +27,7 @@ public class MessageBox : MonoBehaviour
         }
     }
 
+    public Text MainText;
     public Image WarningSymbolLeft;
     public Image WarningSymbolRight;
 
@@ -90,8 +91,19 @@ public class MessageBox : MonoBehaviour
     // Shows the message box for a number of seconds before closing, interrupting any currently shown message.
     // @remark Generally used to respond to a player's action (e.g. "You feel full" after eating an item),
     // or for an urgent alerts that can't be waited for.
-    public void ShowForTime(string message, float seconds, GameObject source = null, bool isWarning = false)
+    public void ShowForTime(string message, float seconds, 
+                            GameObject source = null, 
+                            bool isWarning = false,
+                            Color? textColour = null)
     {
+        if (textColour.HasValue)
+        {
+            MainText.color = textColour.Value;
+        }
+        else
+        {
+            MainText.color = Color.white;
+        }
         displayMessage(new Message(message, seconds, source, isWarning));
     }
 

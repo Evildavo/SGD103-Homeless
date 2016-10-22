@@ -67,7 +67,7 @@ public class Character : MonoBehaviour
             {
                 message = text;
             }
-            MessageBox.ShowForTime(message, dialogueLengthTime, gameObject, false/*, SpeakerTextColour*/);
+            MessageBox.ShowForTime(message, dialogueLengthTime, gameObject, false, SpeakerTextColour);
         }
 
         // Play audio.
