@@ -10,10 +10,10 @@ public class Begging : MonoBehaviour
     {
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
-        Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
+        Trigger.RegisterOnCloseRequested(Reset);
     }
 
-    void reset()
+    void Reset()
     {
         WriteYourSign.Hide();
         Trigger.Reset();
@@ -24,23 +24,12 @@ public class Begging : MonoBehaviour
         WriteYourSign.Show();
     }
 
-    public void OnPlayerExit()
-    {
-        reset();
-    }
-
     public void OnTriggerUpdate()
     {
         // Reset the trigger if the user closes the sign editor.
         if (!WriteYourSign.IsShown())
         {
-            reset();
-        }
-
-        // Leave trigger on E key.
-        if (Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
-        {
-            reset();
+            Reset();
         }
     }
 

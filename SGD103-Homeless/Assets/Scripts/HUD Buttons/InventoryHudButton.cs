@@ -6,6 +6,7 @@ public class InventoryHudButton : MonoBehaviour {
 
     public Inventory Inventory;
     public Transform HudButtonLabel;
+    public PlayerState PlayerState;
 
     [ReadOnly]
     public bool IsCursorOver = false;
@@ -28,15 +29,24 @@ public class InventoryHudButton : MonoBehaviour {
 
     public void OnClick()
     {
-        // Toggle inventory.
-        bool inventoryHidden = Inventory.IsHidden();
-        if (inventoryHidden)
+        if (Inventory.InSellMode && PlayerState.CurrentTrigger != null)
         {
+            // Close the trigger.
+            PlayerState.CurrentTrigger.Close();
             Inventory.Show();
         }
         else
         {
-            Inventory.Hide();
+            // Toggle inventory.
+            bool inventoryHidden = Inventory.IsHidden();
+            if (inventoryHidden)
+            {
+                Inventory.Show();
+            }
+            else
+            {
+                Inventory.Hide();
+            }
         }
     }
 

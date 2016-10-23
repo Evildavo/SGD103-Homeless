@@ -13,7 +13,7 @@ public class ModelDiner : MonoBehaviour
     {
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
-        Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
+        Trigger.RegisterOnCloseRequested(Reset);
     }
 
     public void OpenMainMenu()
@@ -29,7 +29,7 @@ public class ModelDiner : MonoBehaviour
             string message = "Work (" + JobLocation.GetWorkTimeSummaryShort() + ")";
             options.Add(new Menu.Option(null, message, 0, false));
         }
-        options.Add(new Menu.Option(OnExit, "Exit"));
+        options.Add(new Menu.Option(Reset, "Exit"));
         Menu.Show(options);
     }
 
@@ -39,7 +39,7 @@ public class ModelDiner : MonoBehaviour
         OpenMainMenu();
     }
 
-    void reset()
+    void Reset()
     {
         Menu.Hide();
         MessageBox.ShowNext();
@@ -48,36 +48,20 @@ public class ModelDiner : MonoBehaviour
             Trigger.Reset(Trigger.IsEnabled);
         }
     }
-
-    public void OnExit()
-    {
-        reset();
-    }
-
+    
     public void OnTrigger()
     {
         JobLocation.CheckForJob(true);
         OpenMainMenu();
     }
-
-    public void OnPlayerExit()
-    {
-        reset();
-    }
-
+    
     public void OnTriggerUpdate()
     {
         // Show warning that job is about to start.
         if (JobLocation.CanWorkNow)
         {
-            reset();
+            Reset();
             MessageBox.ShowForTime("Work is about to start.", 2.0f, gameObject);
-        }
-
-        // Leave menu on E key.
-        if (Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
-        {
-            reset();
         }
     }
 

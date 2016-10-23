@@ -17,7 +17,7 @@ public class Dumpster : MonoBehaviour {
     {
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
-        Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
+        Trigger.RegisterOnCloseRequested(Reset);
     }
 
     public void OnTrigger()
@@ -50,11 +50,12 @@ public class Dumpster : MonoBehaviour {
             timeAtLastCheck = Time.time;
         }
     }
-    
-    public void OnPlayerExit()
+
+    public void Reset()
     {
         GameTime.TimeScale = GameTime.NormalTimeScale;
         ConfirmationBox.Close();
         Trigger.Reset();
     }
+    
 }

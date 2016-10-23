@@ -28,7 +28,7 @@ public class Greg : Character
         base.Start();
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
-        Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
+        Trigger.RegisterOnCloseRequested(Reset);
     }
 
     new void Update()
@@ -60,7 +60,7 @@ public class Greg : Character
         else if (response == PlayerCharacter.ResponseType.PRIDEFUL)
         {
             Speak("Have it your way.");
-            reset();
+            Reset();
         }
         else if (response == PlayerCharacter.ResponseType.SELFISH)
         {
@@ -70,7 +70,7 @@ public class Greg : Character
         }
         else
         {
-            reset();
+            Reset();
         }
     }
 
@@ -80,16 +80,13 @@ public class Greg : Character
         {
             Speak("Hey, where are you going?");
         }
-        reset();
     }
 
-    public void OnTriggerUpdate()
+    public void Reset()
     {
-        // Leave menu on E key.
-        if (Menu.IsDisplayed() && !IsSpeaking && Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
-        {
-            reset();
-        }
+        Menu.Hide();
+        Trigger.Reset();
+        Inventory.ExitSellMode();
     }
 
     void showBuySellMenu()
@@ -103,7 +100,7 @@ public class Greg : Character
         {
             options.Add(new Menu.Option(onBuyWatchSelected, "Buy Watch", WatchBuyBackCost, PlayerState.CanAfford(WatchBuyBackCost)));
         }
-        options.Add(new Menu.Option(onExitSelected, "Exit"));
+        options.Add(new Menu.Option(Reset, "Exit"));
 
         Menu.Show(options);
     }
@@ -192,18 +189,6 @@ public class Greg : Character
         };
         ConfirmationBox.Open(onChoice, 
             "I'll give you $" + gregOffer.ToString("f2") + " for it. That ok?", "Yes", "No");
-    }
-
-    void onExitSelected()
-    {
-        reset();
-    }
-
-    void reset()
-    {
-        Menu.Hide();
-        Trigger.Reset();
-        Inventory.ExitSellMode();
     }
 
 }

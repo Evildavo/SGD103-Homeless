@@ -29,11 +29,11 @@ public class Library : MonoBehaviour {
     {
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
-        Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
+        Trigger.RegisterOnCloseRequested(Reset);
     }
 
     // Reset to starting values.
-    void reset()
+    void Reset()
     {
         isReading = false;
         hasWarnedAboutClosing = false;
@@ -53,7 +53,7 @@ public class Library : MonoBehaviour {
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(OnJobSearch, "Job search", 0, !jobSearchedToday));
         options.Add(new Menu.Option(OnReadBook, "Read book"));
-        options.Add(new Menu.Option(OnExit, "Exit"));
+        options.Add(new Menu.Option(Reset, "Exit"));
         return options;
     }
 
@@ -107,12 +107,7 @@ public class Library : MonoBehaviour {
         GameTime.TimeScale = GameTime.AcceleratedTimeScale;
         isReading = true;
     }
-
-    public void OnExit()
-    {
-        reset();
-    }
-
+    
     public void OnStopReading()
     {
         Menu.Show(getMainMenu());
@@ -128,18 +123,13 @@ public class Library : MonoBehaviour {
         isReading = false;
         Menu.Show(getMainMenu());
     }
-
-    public void OnPlayerExit()
-    {
-        reset();
-    }
-
+    
     public void OnTriggerUpdate()
     {
         // If the library closes exit.
         if (!Trigger.IsInActiveHour)
         {
-            reset();
+            Reset();
             MessageBox.ShowQueued("Library has closed.", 2.0f, gameObject);
         }
 
@@ -217,12 +207,6 @@ public class Library : MonoBehaviour {
                     Inventory.AddItem(item);
                 }
             }
-        }
-
-        // Leave menu on E key.
-        if (Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
-        {
-            reset();
         }
     }
 

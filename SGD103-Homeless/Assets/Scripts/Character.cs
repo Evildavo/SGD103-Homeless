@@ -161,6 +161,7 @@ public class Character : MonoBehaviour
         if (currentSkippable)
         {
             return (Input.GetButtonDown("Primary") ||
+                    Input.GetButtonDown("Secondary") ||
                     Input.GetKeyDown("e") ||
                     Input.GetKeyDown("return") ||
                     Input.GetKeyDown("enter") ||

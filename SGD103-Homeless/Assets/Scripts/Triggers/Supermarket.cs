@@ -38,7 +38,7 @@ public class Supermarket : MonoBehaviour
     {
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
-        Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
+        Trigger.RegisterOnCloseRequested(Reset);
     }
 
     public void OpenMainMenu()
@@ -56,7 +56,7 @@ public class Supermarket : MonoBehaviour
             string message = "Work (" + JobLocation.GetWorkTimeSummaryShort() + ")";
             options.Add(new Menu.Option(null, message, 0, false));
         }
-        options.Add(new Menu.Option(OnExitSelected, "Exit"));
+        options.Add(new Menu.Option(Reset, "Exit"));
 
         Menu.Show(options);
     }
@@ -272,24 +272,13 @@ public class Supermarket : MonoBehaviour
         OpenOutdoorItemMenu();
     }
 
-
-    public void OnExitSelected()
-    {
-        reset();
-    }
-
     public void OnTrigger()
     {
         JobLocation.CheckForJob(true);
         OpenMainMenu();
     }
 
-    public void OnPlayerExit()
-    {
-        reset();
-    }
-
-    void reset()
+    void Reset()
     {
         Menu.Hide();
         MessageBox.ShowNext();
@@ -304,14 +293,8 @@ public class Supermarket : MonoBehaviour
         // Show warning that job is about to start.
         if (JobLocation.CanWorkNow)
         {
-            reset();
+            Reset();
             MessageBox.ShowForTime("Work is about to start.", 2.0f, gameObject);
-        }
-
-        // Leave menu on E key.
-        if (Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
-        {
-            reset();
         }
     }
 

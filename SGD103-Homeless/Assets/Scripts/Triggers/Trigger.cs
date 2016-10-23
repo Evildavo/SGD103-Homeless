@@ -9,11 +9,13 @@ public class Trigger : MonoBehaviour
     private TriggerListener onTriggerUpdate;
     private TriggerListener onPlayerEnter;
     private TriggerListener onPlayerExit;
+    private TriggerListener onTriggerClose;
 
     // The format for trigger listener functions.
     public delegate void TriggerListener();
 
     public PlayerCharacter PlayerCharacter;
+    public PlayerState PlayerState;
     public GameTime GameTime;
     public Text TriggerNameText;
     public Text InteractHintText;
@@ -36,6 +38,14 @@ public class Trigger : MonoBehaviour
     public bool IsActivated = false;
     [ReadOnly]
     public bool IsInActiveHour = false;
+
+    public bool ExitPressed()
+    {
+        return Input.GetButtonDown("Secondary") ||
+               Input.GetKeyDown("e") ||
+               Input.GetKeyDown("enter") ||
+               Input.GetKeyDown("return");
+    }
 
     // Register the function to call when the player activates the trigger.
     public void RegisterOnTriggerListener(TriggerListener function)
@@ -61,12 +71,33 @@ public class Trigger : MonoBehaviour
         onPlayerExit = function;
     }
 
+    // Register the function to call when the player attempts to close or exit the trigger.
+    // Call Reset() on the trigger to actually exit.
+    public void RegisterOnCloseRequested(TriggerListener function)
+    {
+        onTriggerClose = function;
+    }
+
+    // Requests that the trigger be closed (may be reset).
+    public void Close()
+    {
+        if (onTriggerClose != null)
+        {
+            onTriggerClose();
+        }
+        else
+        {
+            Reset();
+        }
+    }
+
     // Resets the trigger after being triggered. 
     // If enabled is false the player won't be able to reactivate the trigger.
     public void Reset(bool enabled = true)
     {
         IsEnabled = enabled;
         IsActivated = false;
+        PlayerState.CurrentTrigger = null;
     }
 
     // Resets the trigger back to enabled after a cooloff time.
@@ -74,6 +105,7 @@ public class Trigger : MonoBehaviour
     {
         Invoke("reenableTrigger", seconds);
         IsActivated = false;
+        PlayerState.CurrentTrigger = null;
     }
 
     void reenableTrigger()
@@ -126,6 +158,13 @@ public class Trigger : MonoBehaviour
 
     protected void Update()
     {
+        // Exit on trigger exit key pressed.
+        if (IsActivated && ExitPressed())
+        {
+            Close();
+            return;
+        }
+
         // Determine if we're in the active hour. If from and to are flipped the period wraps (e.g. 11pm to 2am).
         if (GameTime)
         {
@@ -151,6 +190,7 @@ public class Trigger : MonoBehaviour
                 HideInteractionText();
                 if (onTrigger != null)
                 {
+                    PlayerState.CurrentTrigger = this;
                     onTrigger();
                 }
             }
@@ -182,9 +222,13 @@ public class Trigger : MonoBehaviour
         {
             IsPlayerInsideTriggerZone = false;
             HideInteractionText();
-            if (onPlayerExit != null)
+            if (IsActivated)
             {
-                onPlayerExit();
+                if (onPlayerExit != null)
+                {
+                    onPlayerExit();
+                }
+                Close();
             }
         }
     }

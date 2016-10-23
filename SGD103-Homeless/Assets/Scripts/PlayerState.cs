@@ -71,6 +71,9 @@ public class PlayerState : MonoBehaviour {
     public bool IsAtWork = false;
 
     [Space(10.0f)]
+    public Trigger CurrentTrigger;
+
+    [Space(10.0f)]
     public bool HighlightHungerThirst = false;
     public bool HighlightHealth = false;
     public bool HighlightMorale = false;
