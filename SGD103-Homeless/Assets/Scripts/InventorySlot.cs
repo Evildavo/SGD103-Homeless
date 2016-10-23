@@ -148,7 +148,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (isOver && Item && Input.GetButtonDown("Secondary"))
         {
             // Discard the item.
-            if (Item.CanBeDiscarded && !Inventory.InSellMode)
+            if (Item.CanBeDiscarded)
             {
                 Item.OnDiscard();
                 Inventory.RemoveItem(Item);
