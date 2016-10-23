@@ -9,10 +9,6 @@ public class UI : MonoBehaviour {
     // Hides the game UI.
     public void Hide()
     {
-        if (Main.PlayerState.CurrentTrigger != null)
-        {
-            Main.PlayerState.CurrentTrigger.Close();
-        }
         Main.HudButtons.Hide();
         Main.Inventory.Hide();
         Main.Menu.Hide();

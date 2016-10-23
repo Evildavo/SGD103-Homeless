@@ -130,7 +130,7 @@ public class PlayerSleepManager : MonoBehaviour
                 // Fade to black.
                 Main.ScreenFader.fadeTime = FadeToBlackTime;
                 Main.ScreenFader.fadeIn = false;
-
+                
                 // Hide UI.
                 if (HideUIDuringSleep)
                 {

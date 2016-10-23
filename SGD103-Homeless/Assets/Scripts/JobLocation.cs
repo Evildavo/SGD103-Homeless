@@ -268,6 +268,14 @@ public class JobLocation : MonoBehaviour
     public void Dismiss(string reason)
     {
         PlayerHasJobHere = false;
+        
+        // If we're at work, stop working.
+        if (IsPlayerAtWork)
+        {
+            stopWork();
+        }
+
+        // Show dismissed message and give final pay.
         string message = "You have been dismissed from employment. Reason: " + reason + ".";
         if (payDue > 0.0f)
         {
@@ -276,7 +284,7 @@ public class JobLocation : MonoBehaviour
             payDue = 0.0f;
             hoursWorkedThisWeek = 0.0f;
         }
-        Main.MessageBox.ShowQueued(message, 8.0f, gameObject);
+        Main.MessageBox.ShowQueued(message, 6.0f, gameObject);
     }
 
     void OnFadeOutComplete()
@@ -411,7 +419,7 @@ public class JobLocation : MonoBehaviour
     {
         Job.Location = this;
         Job.Calculate();
-
+        
         JobTrigger.RegisterOnTriggerListener(OnTriggerJob);
         JobTrigger.RegisterOnPlayerExitListener(OnPlayerExitJob);
     }
@@ -447,20 +455,7 @@ public class JobLocation : MonoBehaviour
             // Stop work at the end of shift.
             if (GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, Job.ShiftToHour).shortest < GameTime.GameTimeDelta)
             {
-                IsPlayerAtWork = false;
-                Main.PlayerState.IsAtWork = false;
-                GameTime.TimeScale = GameTime.NormalTimeScale;
-                Main.MessageBox.Hide();
-                JobTrigger.Reset(false);
-
-                // Show UI.
-                Main.UI.Show();
-
-                // Fade in from black.
-                Main.ScreenFader.fadeTime = FadeInFromBlackTime;
-                Main.ScreenFader.fadeIn = true;
-
-                Invoke("onFadeInComplete", FadeInFromBlackTime);
+                stopWork();
             }
         }
         else
@@ -606,6 +601,27 @@ public class JobLocation : MonoBehaviour
         {
             // No longer on notice for this reason.
             playerOnNoticeForReasons.Remove(NoticeReason.UNDER_INFLUENCE_OF_ALCOHOL);
+        }
+    }
+
+    void stopWork()
+    {
+        if (IsPlayerAtWork)
+        {
+            IsPlayerAtWork = false;
+            Main.PlayerState.IsAtWork = false;
+            Main.GameTime.TimeScale = Main.GameTime.NormalTimeScale;
+            Main.MessageBox.Hide();
+            JobTrigger.Reset(false);
+
+            // Show UI.
+            Main.UI.Show();
+
+            // Fade in from black.
+            Main.ScreenFader.fadeTime = FadeInFromBlackTime;
+            Main.ScreenFader.fadeIn = true;
+
+            Invoke("onFadeInComplete", FadeInFromBlackTime);
         }
     }
 
