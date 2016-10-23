@@ -22,6 +22,12 @@ public class PlayerState : MonoBehaviour {
     [Range(0.0f, 1.0f)]
     public float Morale = 1.0f;
 
+    [Space(10.0f)]
+    [Range(0.0f, 1.0f)]
+    public float Inebriation = 0.0f;
+    [Range(0.0f, 1.0f)]
+    public float CurrentClothingCleanliness = 0.0f;
+
     [Header("Settings:")] 
     public float HungerGainPerHour = 0.0f;        
     public float HealthLossPerHour = 0.0f;
@@ -53,12 +59,6 @@ public class PlayerState : MonoBehaviour {
     public float WorkHungerGainFactor;
     public float WorkHealthLossFactor;
     public float WorkMoraleLossFactor;
-
-    [Space(10.0f)]
-    [Range(0.0f, 1.0f)]
-    public float Inebriation = 0.0f;
-    [Range(0.0f, 1.0f)]
-    public float CurrentClothingCleanliness = 0.0f;
     
     [Space(10.0f)]
     public bool IsAtWork = false;
