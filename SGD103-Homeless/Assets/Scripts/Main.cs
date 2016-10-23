@@ -16,6 +16,7 @@ public class Main : MonoBehaviour {
     public DiscardHint DiscardHint;
     public StatPanel StatPanel;
     public MoneyPanel MoneyPanel;
+    public ObjectiveList ObjectiveList;
     public ScreenFader ScreenFader;
     public GameTime GameTime;
     public CharacterDialogueManager DialogueManager;

@@ -44,13 +44,4 @@ public class ObjectiveList : MonoBehaviour {
         Destroy(objective.gameObject);
     }
 
-    //
-    void Update()
-    {
-        if (Input.anyKeyDown)
-        {
-            NewObjective("Get more alcohol");
-        }
-    }
-
 }
