@@ -61,7 +61,9 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 ItemDescription.ItemName.text = Item.ItemName;
                 ItemDescription.ItemAction.text = Item.PrimaryActionDescription;
                 ItemDescription.GetComponent<Image>().enabled = true;
-                DiscardHint.gameObject.SetActive(true);
+
+                // Show the discard hint.
+                DiscardHint.gameObject.SetActive(Item.CanBeDiscarded);
 
                 // Move description text to the slot.
                 Vector3 position = ItemDescription.transform.position;

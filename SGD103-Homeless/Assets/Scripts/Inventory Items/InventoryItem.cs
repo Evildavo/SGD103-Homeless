@@ -11,6 +11,10 @@ public class InventoryItem : MonoBehaviour {
     [Header("Used in calculation when selling the item")]
     public float ItemValue;
     public bool CanBeSold = true;
+    public bool CanBeDiscarded = true;
+    [Header("If adding the item to inventory in editor manually, ", order=0)]
+    [Space(-10, order=1)]
+    [Header("set the correct index (zero indexed)", order=2)]
     public int InventoryIndex;
 
     // Override to do some action when the primary item action is performed.
