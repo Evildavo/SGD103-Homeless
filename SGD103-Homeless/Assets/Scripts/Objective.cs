@@ -124,7 +124,7 @@ public class Objective : MonoBehaviour {
             // Fade position.
             {
                 Vector3 position = currentPosition;
-                position.y -= (1.0f - fadeProgress) * FadeDistance;
+                position.x -= (1.0f - fadeProgress) * FadeDistance;
                 transform.position = position;
             }
 
@@ -160,7 +160,7 @@ public class Objective : MonoBehaviour {
             // Fade position.
             {
                 Vector3 position = currentPosition;
-                position.y += fadeProgress * FadeDistance;
+                position.x += fadeProgress * FadeDistance;
                 transform.position = position;
             }
 
