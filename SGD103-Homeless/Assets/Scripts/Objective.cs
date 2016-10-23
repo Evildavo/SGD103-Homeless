@@ -10,6 +10,7 @@ public class Objective : MonoBehaviour {
     private Vector3 targetPosition;
     private Vector3 currentPosition;
 
+    public ObjectiveList ObjectiveList;
     public Transform BasePosition;
     public Sprite CheckBoxUnchecked;
     public Sprite CheckBoxChecked;
@@ -123,7 +124,7 @@ public class Objective : MonoBehaviour {
             // Fade position.
             {
                 Vector3 position = currentPosition;
-                position.y += (1.0f - fadeProgress) * FadeDistance;
+                position.y -= (1.0f - fadeProgress) * FadeDistance;
                 transform.position = position;
             }
 
@@ -159,14 +160,14 @@ public class Objective : MonoBehaviour {
             // Fade position.
             {
                 Vector3 position = currentPosition;
-                position.y -= fadeProgress * FadeDistance;
+                position.y += fadeProgress * FadeDistance;
                 transform.position = position;
             }
 
             // Destroy when finished fading.
             if (fadeProgress >= 1.0f)
             {
-                Destroy(gameObject);
+                ObjectiveList.RemoveObjective(this);
             }
         }
 
