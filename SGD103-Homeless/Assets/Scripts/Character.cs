@@ -176,7 +176,10 @@ public class Character : MonoBehaviour
     // Call from derived.
     protected void Start()
     {
-        MessageBox = DialogueManager.MessageBox;
+        if (DialogueManager)
+        {
+            MessageBox = DialogueManager.MessageBox;
+        }
     }
 
     // Call from derived.

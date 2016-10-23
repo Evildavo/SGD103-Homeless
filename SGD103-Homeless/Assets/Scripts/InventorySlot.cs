@@ -109,6 +109,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         }
     }
 
+    // Primary button press.
     public void OnClick()
     {
         updateItemDescription();
@@ -137,6 +138,20 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                     DiscardHint.gameObject.SetActive(false);
                     Inventory.Hide();
                 }
+            }
+        }
+    }
+
+    void Update()
+    {
+        // On secondary button press.
+        if (isOver && Item && Input.GetButtonDown("Secondary"))
+        {
+            // Discard the item.
+            if (Item.CanBeDiscarded)
+            {
+                Item.OnDiscard();
+                Inventory.RemoveItem(Item);
             }
         }
     }

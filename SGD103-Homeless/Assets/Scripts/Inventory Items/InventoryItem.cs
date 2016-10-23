@@ -52,4 +52,7 @@ public class InventoryItem : MonoBehaviour {
     // Override to do something when the player attempts to sell the item.
     public virtual void OnSellRequested() { }
 
+    // Override to do something when the player discards the item.
+    public virtual void OnDiscard() { }
+
 }
