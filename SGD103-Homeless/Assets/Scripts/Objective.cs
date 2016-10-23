@@ -7,22 +7,29 @@ public class Objective : MonoBehaviour {
     private float fadeProgress = 1.0f;
     private float timeAtFadeStart;
     private float initialPanelAlpha;
-    private Vector3 initialPosition;
+    private Vector3 targetPosition;
+    private Vector3 currentPosition;
 
+    public Transform BasePosition;
     public Sprite CheckBoxUnchecked;
     public Sprite CheckBoxChecked;
     public Image CheckBox;
     public Text Text;
     public Image Panel;
-    
+
+    public string ObjectiveName;
     public bool Achieved = false;
     public float FadeTime;
     public float FadeDistance;
+    public int SlotNum;
+    public float YOffsetBetweenObjectives;
+    public float SlidePerSecond;
 
     void Start () {
         initialPanelAlpha = Panel.color.a;
-        initialPosition = transform.position;
+        currentPosition = transform.position;
 
+        updateTargetPosition();
         startFadeIn();
     }
 
@@ -42,7 +49,42 @@ public class Objective : MonoBehaviour {
         fadeProgress = 0.0f;
     }
 
+    void updateTargetPosition()
+    {
+        var position = BasePosition.position;
+        position.y -= YOffsetBetweenObjectives * SlotNum;
+
+        targetPosition = position;
+    }
+
     void Update () {
+        Text.text = ObjectiveName;
+        updateTargetPosition();
+
+        // Move towards target position.
+        if (currentPosition != targetPosition)
+        {
+            var position = currentPosition;
+            if (currentPosition.y < targetPosition.y)
+            {
+                position.y += SlidePerSecond;
+
+                if (position.y >= targetPosition.y)
+                {
+                    position.y = targetPosition.y;
+                }
+            }
+            else if (currentPosition.y > targetPosition.y)
+            {
+                position.y -= SlidePerSecond;
+
+                if (position.y <= targetPosition.y)
+                {
+                    position.y = targetPosition.y;
+                }
+            }
+            currentPosition = position;
+        }
 
         // Start fading in.
         if (!Achieved && achieved)
@@ -80,7 +122,7 @@ public class Objective : MonoBehaviour {
 
             // Fade position.
             {
-                Vector3 position = initialPosition;
+                Vector3 position = currentPosition;
                 position.y += (1.0f - fadeProgress) * FadeDistance;
                 transform.position = position;
             }
@@ -93,7 +135,7 @@ public class Objective : MonoBehaviour {
         }
 
         // Handle fade out.
-        if (achieved && fadeProgress != 1.0f)
+        else if (achieved && fadeProgress != 1.0f)
         {
             fadeProgress = (Time.time - timeAtFadeStart) / FadeTime;
 
@@ -116,7 +158,7 @@ public class Objective : MonoBehaviour {
 
             // Fade position.
             {
-                Vector3 position = initialPosition;
+                Vector3 position = currentPosition;
                 position.y -= fadeProgress * FadeDistance;
                 transform.position = position;
             }
@@ -126,6 +168,12 @@ public class Objective : MonoBehaviour {
             {
                 Destroy(gameObject);
             }
+        }
+
+        // Update position when not fading.
+        else
+        {
+            transform.position = currentPosition;
         }
 	}
 }
