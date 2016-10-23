@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class Objective : MonoBehaviour {
-    private bool achieved = false;
+    private bool visible = false;
     private float fadeProgress = 1.0f;
     private float timeAtFadeStart;
     private float initialPanelAlpha;
@@ -19,6 +19,7 @@ public class Objective : MonoBehaviour {
     public Image Panel;
 
     public string ObjectiveName;
+    public bool Disappearing = false;
     public bool Achieved = false;
     public float FadeTime;
     public float FadeDistance;
@@ -32,20 +33,35 @@ public class Objective : MonoBehaviour {
 
         updateTargetPosition();
         startFadeIn();
+
+        // Clear the colour at first.
+        {
+            Color colour = CheckBox.color;
+            colour.a = 0.0f;
+            CheckBox.color = colour;
+        }
+        {
+            Color colour = Text.color;
+            colour.a = 0.0f;
+            Text.color = colour;
+        }
+        {
+            Color colour = Panel.color;
+            colour.a = 0.0f;
+            Panel.color = colour;
+        }
     }
 
     void startFadeOut()
     {
-        achieved = true;
-        CheckBox.sprite = CheckBoxChecked;
+        visible = true;
         timeAtFadeStart = Time.time;
         fadeProgress = 0.0f;
     }
 
     void startFadeIn()
     {
-        achieved = false;
-        CheckBox.sprite = CheckBoxUnchecked;
+        visible = false;
         timeAtFadeStart = Time.time;
         fadeProgress = 0.0f;
     }
@@ -61,6 +77,17 @@ public class Objective : MonoBehaviour {
     void Update () {
         Text.text = ObjectiveName;
         updateTargetPosition();
+
+        // Fade out when achieved.
+        if (Achieved)
+        {
+            CheckBox.sprite = CheckBoxChecked;
+            Disappearing = true;
+        }
+        else
+        {
+            CheckBox.sprite = CheckBoxUnchecked;
+        }
 
         // Move towards target position.
         if (currentPosition != targetPosition)
@@ -88,19 +115,19 @@ public class Objective : MonoBehaviour {
         }
 
         // Start fading in.
-        if (!Achieved && achieved)
+        if (!Disappearing && visible)
         {
             startFadeIn();
         }
 
         // Start fading out. 
-        if (Achieved && !achieved)
+        if (Disappearing && !visible)
         {
             startFadeOut();
         }
 
         // Handle fade in.
-        if (!achieved && fadeProgress != 1.0f)
+        if (!visible && fadeProgress != 1.0f)
         {
             fadeProgress = (Time.time - timeAtFadeStart) / FadeTime;
 
@@ -136,7 +163,7 @@ public class Objective : MonoBehaviour {
         }
 
         // Handle fade out.
-        else if (achieved && fadeProgress != 1.0f)
+        else if (visible && fadeProgress != 1.0f)
         {
             fadeProgress = (Time.time - timeAtFadeStart) / FadeTime;
 

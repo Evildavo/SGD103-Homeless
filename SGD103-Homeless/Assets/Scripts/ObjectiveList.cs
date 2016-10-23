@@ -6,19 +6,26 @@ public class ObjectiveList : MonoBehaviour {
     public Objective ObjectivePrefab;
     public Transform BasePosition;
 
-    public Objective NewObjective(string text)
+    [Header("Objectives are removed when full")]
+    public int NumSlots;
+
+    public Objective NewObjective(string name)
     {
         // Push other objectives down one slot.
         foreach (Objective other in GetComponentsInChildren<Objective>())
         {
             other.SlotNum++;
+            if (other.SlotNum > NumSlots - 1)
+            {
+                other.Disappearing = true;
+            }
         }
 
         // Create new objective.
         Objective objective = Instantiate(ObjectivePrefab, transform, false) as Objective;
         objective.ObjectiveList = this;
         objective.BasePosition = BasePosition;
-        objective.ObjectiveName = text;        
+        objective.ObjectiveName = name;    
         return objective;
     }
 
@@ -37,6 +44,7 @@ public class ObjectiveList : MonoBehaviour {
         Destroy(objective.gameObject);
     }
 
+    //
     void Update()
     {
         if (Input.anyKeyDown)
