@@ -3,8 +3,7 @@ using System.Collections;
 
 public class NewStand : MonoBehaviour
 {
-    public MessageBox MessageBox;
-    public GameTime GameTime;
+    public Main Main;
     public Trigger Trigger;
 
     void Start()
@@ -15,17 +14,18 @@ public class NewStand : MonoBehaviour
     public void OnTrigger()
     {
         const float MESSAGE_TIME = 4.0f;
-        MessageBox.ShowForTime("", MESSAGE_TIME, gameObject);
+        Main.MessageBox.ShowForTime("", MESSAGE_TIME, gameObject);
         Trigger.ResetWithCooloff(MESSAGE_TIME + 0.5f);
     }
 
     void Update()
     {
+        var MessageBox = Main.MessageBox;
         if (MessageBox.IsDisplayed() && MessageBox.Source == gameObject)
         {
            
             MessageBox.SetMessage("Today is " + 
-                GameTime.DayOfTheWeekAsString(GameTime.DayOfTheWeek));
+                Main.GameTime.DayOfTheWeekAsString(Main.GameTime.DayOfTheWeek));
         }
     }
     

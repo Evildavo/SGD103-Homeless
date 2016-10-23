@@ -27,9 +27,7 @@ public class Character : MonoBehaviour
         }
     }
 
-    public CharacterDialogueManager DialogueManager;
-    [ReadOnly]
-    public MessageBox MessageBox;
+    public Main Main;
 
     public string SpeakerName;
     public Color SpeakerTextColour = Color.white;
@@ -95,16 +93,17 @@ public class Character : MonoBehaviour
 
     float calculateDialogueLength(string text, AudioClip audio)
     {
+        var dialogue = Main.DialogueManager; 
         float length = 0.0f;
-        if (DialogueManager.MustWaitCalculatedLenghtFromText || audio == null)
+        if (dialogue.MustWaitCalculatedLenghtFromText || audio == null)
         {
             // Calculate from text.
-            length = text.Length * DialogueManager.SecondsPerTextCharacter;
-            if (DialogueManager.MustWaitForAudioToFinish && audio)
+            length = text.Length * dialogue.SecondsPerTextCharacter;
+            if (dialogue.MustWaitForAudioToFinish && audio)
             {
                 length = Mathf.Max(length, audio.length);
             }
-            length = Mathf.Max(length, DialogueManager.MinimumCalculatedDialogueTime);
+            length = Mathf.Max(length, dialogue.MinimumCalculatedDialogueTime);
         }
         else
         {
@@ -116,7 +115,7 @@ public class Character : MonoBehaviour
 
     void displayCaption(string text)
     {
-        if (DialogueManager.ShowCaptions || audioClip == null)
+        if (Main.DialogueManager.ShowCaptions || audioClip == null)
         {
             string message = "";
             if (SpeakerName != "")
@@ -127,7 +126,7 @@ public class Character : MonoBehaviour
             {
                 message = text;
             }
-            MessageBox.ShowForTime(message, dialogueLengthTime, gameObject, false, SpeakerTextColour);
+            Main.MessageBox.ShowForTime(message, dialogueLengthTime, gameObject, false, SpeakerTextColour);
         }
     }
 
@@ -171,15 +170,6 @@ public class Character : MonoBehaviour
         else
         {
             return false;
-        }
-    }
-
-    // Call from derived.
-    protected void Start()
-    {
-        if (DialogueManager)
-        {
-            MessageBox = DialogueManager.MessageBox;
         }
     }
 
@@ -243,9 +233,9 @@ public class Character : MonoBehaviour
         IsSpeaking = false;
 
         // Close the message box.
-        if (MessageBox.IsDisplayed())
+        if (Main.MessageBox.IsDisplayed())
         {
-            MessageBox.ShowNext();
+            Main.MessageBox.ShowNext();
         }
 
         // Run the OnFinishedSpeaking callback.

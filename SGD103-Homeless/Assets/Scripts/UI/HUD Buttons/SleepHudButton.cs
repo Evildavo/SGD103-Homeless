@@ -6,9 +6,8 @@ public class SleepHudButton : MonoBehaviour
 {
     private bool isMouseOver = false;
 
-    public Inventory Inventory;
-    public Transform HudButtonLabel;
-    public PlayerSleepManager SleepManager;
+    public Main Main;
+
     public bool GiveSleepHint = true;
     public Color PoorSleepLabelColour = Color.white;
     public Color OkSleepLabelColour = Color.white;
@@ -16,6 +15,7 @@ public class SleepHudButton : MonoBehaviour
     
     public void OnPointerEnter()
     {
+        var HudButtonLabel = Main.HudButtons.HudButtonLabel;
         isMouseOver = true;
         HudButtonLabel.gameObject.SetActive(true);
         HudButtonLabel.GetComponentInChildren<Text>().text = "";
@@ -26,6 +26,7 @@ public class SleepHudButton : MonoBehaviour
 
     public void OnPointerExit()
     {
+        var HudButtonLabel = Main.HudButtons.HudButtonLabel;
         isMouseOver = false;
         HudButtonLabel.gameObject.SetActive(false);
         HudButtonLabel.GetComponentInChildren<Text>().color = Color.white;
@@ -33,12 +34,12 @@ public class SleepHudButton : MonoBehaviour
 
     public void OnClick()
     {
-        SleepManager.Sleep();
+        Main.SleepManager.Sleep();
     }
 
     public void Update()
     {
-        if (!SleepManager)
+        if (!Main.SleepManager)
         {
             gameObject.SetActive(false);
         }
@@ -46,12 +47,13 @@ public class SleepHudButton : MonoBehaviour
         // Update the button label based on expected quality of sleep here.
         if (isMouseOver)
         {
+            var HudButtonLabel = Main.HudButtons.HudButtonLabel;
             HudButtonLabel.GetComponentInChildren<Text>().color = Color.white;
             HudButtonLabel.GetComponentInChildren<Text>().text = "Sleep here";
 
             if (GiveSleepHint)
             {
-                switch (SleepManager.SleepQualityHere)
+                switch (Main.SleepManager.SleepQualityHere)
                 {
                     case PlayerSleepManager.SleepQualityEnum.POOR:
                         HudButtonLabel.GetComponentInChildren<Text>().text += " (bad)";
@@ -68,7 +70,7 @@ public class SleepHudButton : MonoBehaviour
                 }
             }
             
-            SleepItem sleepItem = SleepManager.GetBestSleepItem();
+            SleepItem sleepItem = Main.SleepManager.GetBestSleepItem();
             if (sleepItem)
             {
                 HudButtonLabel.GetComponentInChildren<Text>().text += "\nusing " + sleepItem.ItemName + "";

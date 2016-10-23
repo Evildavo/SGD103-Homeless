@@ -2,10 +2,9 @@
 using System.Collections;
 
 public class CharacterTriggerTest : MonoBehaviour {
-
+    
     public Trigger Trigger;
     public AudioSource InteractSound;
-    public PlayerState PlayerState;
 
     void Start()
     {

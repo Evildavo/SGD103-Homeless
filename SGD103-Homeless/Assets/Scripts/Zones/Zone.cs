@@ -4,7 +4,7 @@ using System.Collections;
 
 public class Zone : MonoBehaviour
 {
-    public PlayerCharacter PlayerCharacter;
+    public Main Main;
 
     [ReadOnly]
     public bool PlayerIsInside = false;
@@ -21,7 +21,7 @@ public class Zone : MonoBehaviour
     // Override and call base.
     public virtual void OnTriggerEnter(Collider other)
     {
-        if (PlayerCharacter && other.gameObject == PlayerCharacter.gameObject)
+        if (Main.PlayerCharacter && other.gameObject == Main.PlayerCharacter.gameObject)
         {
             PlayerIsInside = true;
         }
@@ -30,7 +30,7 @@ public class Zone : MonoBehaviour
     // Override and call base.
     public virtual void OnTriggerExit(Collider other)
     {
-        if (PlayerCharacter && other.gameObject == PlayerCharacter.gameObject)
+        if (Main.PlayerCharacter && other.gameObject == Main.PlayerCharacter.gameObject)
         {
             PlayerIsInside = false;
         }

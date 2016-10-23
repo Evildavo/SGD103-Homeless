@@ -11,15 +11,15 @@ public class MultiUseItem : InventoryItem {
     public void UpdateItemDescription()
     {
         // Show plural name if there's more than one item.
-        if (InventoryItemDescription.Source == gameObject)
+        if (Main.ItemDescription.Source == gameObject)
         {
             if (NumUses == 1)
             {
-                InventoryItemDescription.ItemName.text = ItemName;
+                Main.ItemDescription.ItemName.text = ItemName;
             }
             else
             {
-                InventoryItemDescription.ItemName.text =
+                Main.ItemDescription.ItemName.text =
                     NumUses.ToString() + " " + PluralName;
             }
         }

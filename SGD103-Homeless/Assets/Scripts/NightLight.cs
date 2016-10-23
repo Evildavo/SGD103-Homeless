@@ -3,15 +3,23 @@ using System.Collections;
 
 public class NightLight : MonoBehaviour {
     private bool switched = true;
-    
-    public GameTime GameTime;
+
+    public enum LightType
+    {
+        GENERIC,
+        STREET,
+        VEHICLE,
+        SKY
+    }
+
+    public Main Main;
 
     public float MaxSwitchDelaySeconds;
-    public bool IsVehicleLight = false;
+    public LightType Type = LightType.GENERIC;
 
     void Start ()
     {
-        if (GameTime.IsNight)
+        if (Main.GameTime.IsNight)
         {
             GetComponent<Light>().enabled = true;
         }
@@ -24,12 +32,12 @@ public class NightLight : MonoBehaviour {
 	void Update () {
         if (switched)
         {
-            if (GameTime.IsNight && GetComponent<Light>().enabled == false)
+            if (Main.GameTime.IsNight && GetComponent<Light>().enabled == false)
             {
                 switched = false;
                 Invoke("EnableLight", Random.Range(0.0f, MaxSwitchDelaySeconds));
             }
-            else if (!GameTime.IsNight && GetComponent<Light>().enabled == true)
+            else if (!Main.GameTime.IsNight && GetComponent<Light>().enabled == true)
             {
                 switched = false;
                 Invoke("DisableLight", Random.Range(0.0f, MaxSwitchDelaySeconds));

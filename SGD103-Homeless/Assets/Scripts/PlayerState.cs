@@ -1,15 +1,8 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections.Generic;
 
 public class PlayerState : MonoBehaviour {
 
-    public GameTime GameTime;
-    public PlayerSleepManager SleepManager;
-    public Text MoneyText;
-    public Text HungerThirstText;
-    public Text HealthText;
-    public Text MoraleText;
+    public Main Main;
 
     [Header("Display settings:")]
     public Color NormalTextColour = Color.black;
@@ -85,9 +78,9 @@ public class PlayerState : MonoBehaviour {
     }
         
     void Update () {
-        float gameTimeDelta = 1.0f / 60.0f / 60.0f * Time.deltaTime * GameTime.TimeScale;  
+        float gameTimeDelta = 1.0f / 60.0f / 60.0f * Time.deltaTime * Main.GameTime.TimeScale;  
         
-        if (SleepManager.IsAsleep)
+        if (Main.SleepManager.IsAsleep)
         {
             // Hunger and morale drop at a different rate while asleep.
             HungerThirstSatiety -= HungerGainPerHour * SleepHungerGainFactor * gameTimeDelta;
@@ -96,7 +89,7 @@ public class PlayerState : MonoBehaviour {
             // Gain health based on sleep quality.
             float minHealthGain = MinSleepingRoughHealthGainPerHour;
             float maxHealthGain = MaxSleepingRoughHealthGainPerHour;
-            HealthTiredness += (minHealthGain + SleepManager.SleepQuality * (maxHealthGain - minHealthGain)) * gameTimeDelta;
+            HealthTiredness += (minHealthGain + Main.SleepManager.SleepQuality * (maxHealthGain - minHealthGain)) * gameTimeDelta;
         }
         else if (IsAtWork)
         {
@@ -159,74 +152,75 @@ public class PlayerState : MonoBehaviour {
         Morale = Mathf.Clamp(Morale, 0.0f, 1.0f);
 
         // Highlight stats.
-        HungerThirstText.fontStyle = FontStyle.Normal;
-        HealthText.fontStyle = FontStyle.Normal;
-        MoraleText.fontStyle = FontStyle.Normal;
+        var stats = Main.StatPanel;
+        stats.HungerThirstText.fontStyle = FontStyle.Normal;
+        stats.HealthText.fontStyle = FontStyle.Normal;
+        stats.MoraleText.fontStyle = FontStyle.Normal;
         if (HighlightHungerThirst)
         {
-            HungerThirstText.color = HighlightTextColour;
+            stats.HungerThirstText.color = HighlightTextColour;
         }
         else if (HungerThirstSatiety <= HungerWarningThreshold)
         {
-            HungerThirstText.color = WarningTextColour;
+            stats.HungerThirstText.color = WarningTextColour;
             if (BoldTextDuringWarning)
             {
-                HungerThirstText.fontStyle = FontStyle.Bold;
+                stats.HungerThirstText.fontStyle = FontStyle.Bold;
             }
         }
         else
         {
-            HungerThirstText.color = NormalTextColour;
+            stats.HungerThirstText.color = NormalTextColour;
         }
         if (HighlightHealth)
         {
-            HealthText.color = HighlightTextColour;
+            stats.HealthText.color = HighlightTextColour;
         }
         else if (HealthTiredness <= HealthWarningThreshold)
         {
-            HealthText.color = WarningTextColour;
+            stats.HealthText.color = WarningTextColour;
             if (BoldTextDuringWarning)
             {
-                HealthText.fontStyle = FontStyle.Bold;
+                stats.HealthText.fontStyle = FontStyle.Bold;
             }
         }
         else
         {
-            HealthText.color = NormalTextColour;
+            stats.HealthText.color = NormalTextColour;
         }
         if (HighlightMorale)
         {
-            MoraleText.color = HighlightTextColour;
+            stats.MoraleText.color = HighlightTextColour;
         }
         else if (Morale <= MoraleWarningThreshold)
         {
-            MoraleText.color = WarningTextColour;
+            stats.MoraleText.color = WarningTextColour;
             if (BoldTextDuringWarning)
             {
-                MoraleText.fontStyle = FontStyle.Bold;
+                stats.MoraleText.fontStyle = FontStyle.Bold;
             }
         }
         else
         {
-            MoraleText.color = NormalTextColour;
+            stats.MoraleText.color = NormalTextColour;
         }
 
         // Update stat texts.
-        if (MoneyText)
+        if (Main.MoneyPanel.MoneyText)
         {
-            MoneyText.text = "$" + Money.ToString("F2");
+            Main.MoneyPanel.MoneyText.text = "$" + Money.ToString("F2");
         }
-        if (HungerThirstText)
+        if (stats.HungerThirstText)
         {
-            HungerThirstText.text = "Hunger/Thirst: " + (HungerThirstSatiety * 100).ToString("f0") + "%";
+            stats.HungerThirstText.text = "Hunger/Thirst: " + (HungerThirstSatiety * 100).ToString("f0") + "%";
         }
-        if (HealthText)
+        if (stats.HealthText)
         {
-            HealthText.text = "Health/Tiredness: " + (HealthTiredness * 100).ToString("f0") + "%";
+            stats.HealthText.text = "Health/Tiredness: " + (HealthTiredness * 100).ToString("f0") + "%";
         }
-        if (MoraleText)
+        if (stats.MoraleText)
         {
-            MoraleText.text = "Morale: " + (Morale * 100).ToString("f0") + "%";
+            stats.MoraleText.text = "Morale: " + (Morale * 100).ToString("f0") + "%";
         }
     }
 }

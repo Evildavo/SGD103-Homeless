@@ -7,16 +7,13 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 {
     private bool isOver = false;
 
-    public InventoryItemDescription ItemDescription;
-    public InventorySellModeItemDescription SellModeItemDescription;
-    public DiscardHint DiscardHint;
-    public Inventory Inventory;
+    public Main Main;
     public InventoryItem Item;
     
     void Start()
     {
-        ItemDescription.gameObject.SetActive(false);
-        DiscardHint.gameObject.SetActive(false);
+        Main.ItemDescription.gameObject.SetActive(false);
+        Main.DiscardHint.gameObject.SetActive(false);
     }
 
     public void Show()
@@ -41,29 +38,31 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         if (Item)
         {
-            if (Inventory.InSellMode)
+            if (Main.Inventory.InSellMode)
             {
                 // Update text.
-                SellModeItemDescription.gameObject.SetActive(true);
-                SellModeItemDescription.ItemName.text = Item.ItemName;
-                SellModeItemDescription.ItemValue.text = "$" + Item.ItemValue.ToString("f2");
-                SellModeItemDescription.GetComponent<Image>().enabled = true;
+                var SellItemDescription = Main.SellItemDescription;
+                SellItemDescription.gameObject.SetActive(true);
+                SellItemDescription.ItemName.text = Item.ItemName;
+                SellItemDescription.ItemValue.text = "$" + Item.ItemValue.ToString("f2");
+                SellItemDescription.GetComponent<Image>().enabled = true;
 
                 // Move description text to the slot.
-                Vector3 position = SellModeItemDescription.transform.position;
+                Vector3 position = SellItemDescription.transform.position;
                 position.x = transform.position.x;
-                SellModeItemDescription.transform.position = position;
+                SellItemDescription.transform.position = position;
             }
             else
             {
                 // Update text.
+                var ItemDescription = Main.ItemDescription;
                 ItemDescription.gameObject.SetActive(true);
                 ItemDescription.ItemName.text = Item.ItemName;
                 ItemDescription.ItemAction.text = Item.PrimaryActionDescription;
                 ItemDescription.GetComponent<Image>().enabled = true;
 
                 // Show the discard hint.
-                DiscardHint.gameObject.SetActive(Item.CanBeDiscarded);
+                Main.DiscardHint.gameObject.SetActive(Item.CanBeDiscarded);
 
                 // Move description text to the slot.
                 Vector3 position = ItemDescription.transform.position;
@@ -73,14 +72,14 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         }
         else
         {
-            ItemDescription.gameObject.SetActive(false);
+            Main.ItemDescription.gameObject.SetActive(false);
         }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         isOver = true;
-        if (Item && ItemDescription)
+        if (Item && Main.ItemDescription)
         {
             updateItemDescription();
             Item.OnCursorEnter();
@@ -91,15 +90,15 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         isOver = false;
 
-        if (Inventory.InSellMode)
+        if (Main.Inventory.InSellMode)
         {
-            Inventory.ResetSellModeItemDescription();
+            Main.Inventory.ResetSellModeItemDescription();
         }
         else
         {
             // Hide description text.
-            ItemDescription.gameObject.SetActive(false);
-            DiscardHint.gameObject.SetActive(false);
+            Main.ItemDescription.gameObject.SetActive(false);
+            Main.DiscardHint.gameObject.SetActive(false);
         }
 
         // Update inventory item.
@@ -116,27 +115,27 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         
         if (isOver && Item)
         {
-            if (Inventory.InSellMode)
+            if (Main.Inventory.InSellMode)
             {
                 // Handle selling the item.
                 Item.OnSellRequested();
                 if (Item.CanBeSold)
                 {
-                    Inventory.ItemSoldCallback(Item);
+                    Main.Inventory.ItemSoldCallback(Item);
                 }
             }
             else
             {
                 // Handle click.
                 Item.OnPrimaryAction();
-                if (Inventory.CloseOnItemUse)
+                if (Main.Inventory.CloseOnItemUse)
                 {
-                    ItemDescription.gameObject.SetActive(false);
-                    ItemDescription.ItemName.text = "";
-                    ItemDescription.ItemAction.text = "";
-                    ItemDescription.GetComponent<Image>().enabled = false;
-                    DiscardHint.gameObject.SetActive(false);
-                    Inventory.Hide();
+                    Main.ItemDescription.gameObject.SetActive(false);
+                    Main.ItemDescription.ItemName.text = "";
+                    Main.ItemDescription.ItemAction.text = "";
+                    Main.ItemDescription.GetComponent<Image>().enabled = false;
+                    Main.DiscardHint.gameObject.SetActive(false);
+                    Main.Inventory.Hide();
                 }
             }
         }
@@ -151,7 +150,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             if (Item.CanBeDiscarded)
             {
                 Item.OnDiscard();
-                Inventory.RemoveItem(Item);
+                Main.Inventory.RemoveItem(Item);
             }
         }
     }

@@ -4,10 +4,8 @@ using System.Collections;
 public class Dumpster : MonoBehaviour {
     private float timeAtLastCheck;
 
+    public Main Main;
     public Trigger Trigger;
-    public GameTime GameTime;
-    public PlayerState PlayerState;
-    public ConfirmationBox ConfirmationBox;
 
     public float ChanceOfFindingFoodPerSecond = 0.1f;
     public float HungerSatietyBenefit;
@@ -23,7 +21,7 @@ public class Dumpster : MonoBehaviour {
     public void OnTrigger()
     {
         timeAtLastCheck = Time.time;
-        GameTime.TimeScale = GameTime.AcceleratedTimeScale;
+        Main.GameTime.TimeScale = Main.GameTime.AcceleratedTimeScale;
     }
 
     public void OnTriggerUpdate()
@@ -38,12 +36,12 @@ public class Dumpster : MonoBehaviour {
                 {
                     if (yes)
                     {
-                        PlayerState.HungerThirstSatiety += HungerSatietyBenefit;
-                        PlayerState.HealthTiredness -= HealthDetriment;
+                        Main.PlayerState.HungerThirstSatiety += HungerSatietyBenefit;
+                        Main.PlayerState.HealthTiredness -= HealthDetriment;
                     }
                 };
-                ConfirmationBox.Open(onChoiceMade, "You found food. Eat it?", "Yes", "No");
-                GameTime.TimeScale = GameTime.NormalTimeScale;
+                Main.ConfirmationBox.Open(onChoiceMade, "You found food. Eat it?", "Yes", "No");
+                Main.GameTime.TimeScale = Main.GameTime.NormalTimeScale;
                 Trigger.Reset(false);
                 // TODO: Reset later.
             }
@@ -53,8 +51,8 @@ public class Dumpster : MonoBehaviour {
 
     public void Reset()
     {
-        GameTime.TimeScale = GameTime.NormalTimeScale;
-        ConfirmationBox.Close();
+        Main.GameTime.TimeScale = Main.GameTime.NormalTimeScale;
+        Main.ConfirmationBox.Close();
         Trigger.Reset();
     }
     

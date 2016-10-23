@@ -14,15 +14,13 @@ public class Trigger : MonoBehaviour
     // The format for trigger listener functions.
     public delegate void TriggerListener();
 
-    public PlayerCharacter PlayerCharacter;
-    public PlayerState PlayerState;
-    public GameTime GameTime;
-    public Text TriggerNameText;
-    public Text InteractHintText;
+    public Main Main;
 
     public bool IsEnabled = true;
     public string TriggerName;
     public string InteractHintMessage;
+    public bool CloseOnUserInput = true;
+    public bool CloseOnLeaveTrigger = true;
     [Header("Leave blank to not show an interact message")]
     public string OutOfHoursMessage;
     [Header("Note: Also supports wrapping over (e.g. 11pm to 2am)")]
@@ -97,7 +95,7 @@ public class Trigger : MonoBehaviour
     {
         IsEnabled = enabled;
         IsActivated = false;
-        PlayerState.CurrentTrigger = null;
+        Main.PlayerState.CurrentTrigger = null;
     }
 
     // Resets the trigger back to enabled after a cooloff time.
@@ -105,7 +103,7 @@ public class Trigger : MonoBehaviour
     {
         Invoke("reenableTrigger", seconds);
         IsActivated = false;
-        PlayerState.CurrentTrigger = null;
+        Main.PlayerState.CurrentTrigger = null;
     }
 
     void reenableTrigger()
@@ -115,6 +113,9 @@ public class Trigger : MonoBehaviour
 
     public void ShowInteractionText()
     {
+        var TriggerNameText = Main.InteractPrompt.TriggerNameText;
+        var InteractHintText = Main.InteractPrompt.InteractHintText;
+
         if (TriggerNameText && InteractHintText)
         {
             if (IsInActiveHour || (!IsInActiveHour && OutOfHoursMessage != ""))
@@ -143,6 +144,9 @@ public class Trigger : MonoBehaviour
 
     public void HideInteractionText()
     {
+        var TriggerNameText = Main.InteractPrompt.TriggerNameText;
+        var InteractHintText = Main.InteractPrompt.InteractHintText;
+
         if (TriggerNameText && InteractHintText)
         {
             TriggerNameText.GetComponent<Text>().enabled = false;
@@ -159,16 +163,16 @@ public class Trigger : MonoBehaviour
     protected void Update()
     {
         // Exit on trigger exit key pressed.
-        if (IsActivated && ExitPressed())
+        if (IsActivated && CloseOnUserInput && ExitPressed())
         {
             Close();
             return;
         }
 
         // Determine if we're in the active hour. If from and to are flipped the period wraps (e.g. 11pm to 2am).
-        if (GameTime)
+        if (Main.GameTime)
         {
-            float time = GameTime.TimeOfDayHours;
+            float time = Main.GameTime.TimeOfDayHours;
             if (ActiveFromHour < ActiveToHour)
             {
                 IsInActiveHour = (time >= ActiveFromHour && time <= ActiveToHour);
@@ -190,7 +194,7 @@ public class Trigger : MonoBehaviour
                 HideInteractionText();
                 if (onTrigger != null)
                 {
-                    PlayerState.CurrentTrigger = this;
+                    Main.PlayerState.CurrentTrigger = this;
                     onTrigger();
                 }
             }
@@ -206,7 +210,7 @@ public class Trigger : MonoBehaviour
 
     protected void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject == PlayerCharacter.gameObject)
+        if (other.gameObject == Main.PlayerCharacter.gameObject)
         {
             IsPlayerInsideTriggerZone = true;
             if (onPlayerEnter != null)
@@ -218,7 +222,7 @@ public class Trigger : MonoBehaviour
 
     protected void OnTriggerExit(Collider other)
     {
-        if (other.gameObject == PlayerCharacter.gameObject)
+        if (other.gameObject == Main.PlayerCharacter.gameObject)
         {
             IsPlayerInsideTriggerZone = false;
             HideInteractionText();
@@ -228,7 +232,10 @@ public class Trigger : MonoBehaviour
                 {
                     onPlayerExit();
                 }
-                Close();
+                if (CloseOnLeaveTrigger)
+                {
+                    Close();
+                }
             }
         }
     }

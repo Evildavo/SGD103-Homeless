@@ -3,14 +3,14 @@ using System.Collections;
 
 public class FoodItem : MultiUseItem
 {
-    public MessageBox MessageBox;
-    public PlayerState PlayerState;
-    public Inventory Inventory;
 
     public float HungerSatietyBenefitPerUse;
 
     public override void OnPrimaryAction()
     {
+        var PlayerState = Main.PlayerState;
+        var MessageBox = Main.MessageBox;
+
         // Increase stat.
         PlayerState.HungerThirstSatiety += HungerSatietyBenefitPerUse;
 
@@ -32,7 +32,7 @@ public class FoodItem : MultiUseItem
         NumUses -= 1;
         if (NumUses == 0)
         {
-            Inventory.RemoveItem(this);
+            Main.Inventory.RemoveItem(this);
         }
     }
     

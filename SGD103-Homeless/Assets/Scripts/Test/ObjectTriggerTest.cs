@@ -4,12 +4,10 @@ using System.Collections;
 
 public class ObjectTriggerTest : MonoBehaviour {
 
+    public Main Main;
     public Trigger Trigger;
     public AudioSource InteractSound;
-    public PlayerState PlayerState;
-    public Inventory Inventory;
     public FoodItemTest FoodItemPrefab;
-    public MessageBox MessageBox;
     public bool FoodIsFree = false;
 
     void Start()
@@ -20,6 +18,8 @@ public class ObjectTriggerTest : MonoBehaviour {
     public void OnTrigger()
     {
         // Buy the item if we have room in the inventory.
+        var Inventory = Main.Inventory;
+        var PlayerState = Main.PlayerState;
         if (!Inventory.IsInventoryFull)
         {
             // Charge the player everything they have.
@@ -32,9 +32,7 @@ public class ObjectTriggerTest : MonoBehaviour {
             if (Inventory && FoodItemPrefab)
             {
                 FoodItemTest foodItem = Instantiate(FoodItemPrefab);
-                foodItem.PlayerState = PlayerState;
-                foodItem.MessageBox = MessageBox;
-                foodItem.Inventory = Inventory;
+                foodItem.Main = Main;
                 foodItem.GetComponent<Image>().color = Random.ColorHSV(0.0f, 0.5f, 0.7f, 1.0f, 0.7f, 1.0f, 1.0f, 1.0f);
                 Inventory.AddItem(foodItem);
             }

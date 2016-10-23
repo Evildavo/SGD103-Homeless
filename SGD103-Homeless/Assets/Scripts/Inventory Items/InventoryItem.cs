@@ -2,9 +2,9 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class InventoryItem : MonoBehaviour {
-
-    public InventoryItemDescription InventoryItemDescription;
+public class InventoryItem : MonoBehaviour
+{
+    public Main Main;
 
     public string ItemName;
     public string PrimaryActionDescription;
@@ -12,9 +12,11 @@ public class InventoryItem : MonoBehaviour {
     public float ItemValue;
     public bool CanBeSold = true;
     public bool CanBeDiscarded = true;
-    [Header("If adding the item to inventory in editor manually, ", order=0)]
+    [Header("If adding the item to inventory in editor manually ", order=0)]
     [Space(-10, order=1)]
-    [Header("set the correct index (zero indexed)", order=2)]
+    [Header("set the correct index (zero indexed). Also, don't forget to", order=2)]
+    [Space(-10, order = 3)]
+    [Header("set the Item reference in the Inventory Slot", order = 4)]
     public int InventoryIndex;
 
     // Override to do some action when the primary item action is performed.
@@ -36,13 +38,13 @@ public class InventoryItem : MonoBehaviour {
     // Call from derived.
     public virtual void OnCursorEnter()
     {
-        if (InventoryItemDescription)
+        if (Main.ItemDescription)
         {
-            InventoryItemDescription.Source = gameObject;
+            Main.ItemDescription.Source = gameObject;
         }
         else
         {
-            InventoryItemDescription.Source = null;
+            Main.ItemDescription.Source = null;
         }
     }
 

@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class ModelDiner : MonoBehaviour
+public class MotelDiner : MonoBehaviour
 {
+    public Main Main;
     public Trigger Trigger;
     public JobTrigger JobTrigger;
-    public Menu Menu;
-    public MessageBox MessageBox;
     public JobLocation JobLocation;
 
     void Start()
@@ -30,7 +29,7 @@ public class ModelDiner : MonoBehaviour
             options.Add(new Menu.Option(null, message, 0, false));
         }
         options.Add(new Menu.Option(Reset, "Exit"));
-        Menu.Show(options);
+        Main.Menu.Show(options);
     }
 
     public void ApplyForJob()
@@ -41,8 +40,8 @@ public class ModelDiner : MonoBehaviour
 
     void Reset()
     {
-        Menu.Hide();
-        MessageBox.ShowNext();
+        Main.Menu.Hide();
+        Main.MessageBox.ShowNext();
         if (Trigger)
         {
             Trigger.Reset(Trigger.IsEnabled);
@@ -61,7 +60,7 @@ public class ModelDiner : MonoBehaviour
         if (JobLocation.CanWorkNow)
         {
             Reset();
-            MessageBox.ShowForTime("Work is about to start.", 2.0f, gameObject);
+            Main.MessageBox.ShowForTime("Work is about to start.", 2.0f, gameObject);
         }
     }
 

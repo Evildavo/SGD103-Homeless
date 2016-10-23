@@ -4,17 +4,13 @@ using System.Collections;
 public class SleepItem : InventoryItem
 {
     private bool isOver = false;
-
-    public PlayerSleepManager SleepManager;
-    public InventoryItemDescription ItemDescription;
-    public SleepHudButton SleepHudButton;
-
+    
     public float ImprovesSleepQualityPercent = 0.0f;
     
     // Call in the base class if deriving.
     public override void OnPrimaryAction()
     {
-        SleepManager.Sleep(this);
+        Main.SleepManager.Sleep(this);
     }
 
     // Call in the base class if deriving.
@@ -27,7 +23,7 @@ public class SleepItem : InventoryItem
     // Call in the base class if deriving.
     public override void OnCursorExit()
     {
-        ItemDescription.ItemAction.color = Color.white;
+        Main.ItemDescription.ItemAction.color = Color.white;
         isOver = false;
     }
 
@@ -36,10 +32,12 @@ public class SleepItem : InventoryItem
     {
         if (isOver)
         {
+            var SleepHudButton = Main.HudButtons.SleepHudButton;
+            var ItemDescription = Main.ItemDescription;
             PrimaryActionDescription = "Click to Sleep";
             if (SleepHudButton && SleepHudButton.GiveSleepHint)
             {
-                switch (SleepManager.SleepQualityHere)
+                switch (Main.SleepManager.SleepQualityHere)
                 {
                     case PlayerSleepManager.SleepQualityEnum.POOR:
                         PrimaryActionDescription += " (bad)";

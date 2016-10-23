@@ -5,13 +5,12 @@ using System.Collections;
 public class WatchHudButton : MonoBehaviour {
     private bool isMouseOver = false;
 
-    public Inventory Inventory;
-    public Transform HudButtonLabel;
-    public GameTime GameTime;
+    public Main Main;
     public WatchItem Watch;
 
     public void OnPointerEnter()
     {
+        var HudButtonLabel = Main.HudButtons.HudButtonLabel;
         isMouseOver = true;
         HudButtonLabel.gameObject.SetActive(true);
         HudButtonLabel.GetComponentInChildren<Text>().text = "";
@@ -22,6 +21,7 @@ public class WatchHudButton : MonoBehaviour {
 
     public void OnPointerExit()
     {
+        var HudButtonLabel = Main.HudButtons.HudButtonLabel;
         isMouseOver = false;
         HudButtonLabel.gameObject.SetActive(false);
     }
@@ -43,7 +43,8 @@ public class WatchHudButton : MonoBehaviour {
         // Update the button label to show the time.
         if (isMouseOver)
         {
-            HudButtonLabel.GetComponentInChildren<Text>().text = GameTime.GetTimeAsString();
+            var HudButtonLabel = Main.HudButtons.HudButtonLabel;
+            HudButtonLabel.GetComponentInChildren<Text>().text = Main.GameTime.GetTimeAsString();
         }
     }
 }

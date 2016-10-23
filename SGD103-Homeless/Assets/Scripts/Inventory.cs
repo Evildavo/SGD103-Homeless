@@ -7,12 +7,9 @@ public class Inventory : MonoBehaviour
     private float timeAtPreviewStart;
     private bool isHidden = false;
 
-    public InventoryItemDescription ItemDescription;
-    public InventorySellModeItemDescription SellModeItemDescription;
-    public DiscardHint DiscardHint;
+    public Main Main;
     public Transform SlotContainer;
     public Transform ItemContainer;
-    public InventoryHudButton InventoryHudButton;
 
     [Tooltip("A value of 0 will disable hiding")]
     public int DeadZonePixels = 25;
@@ -42,8 +39,8 @@ public class Inventory : MonoBehaviour
         // Show the inventory in sell mode.
         IsPreviewing = false;
         isHidden = false;
-        ItemDescription.gameObject.SetActive(false);
-        DiscardHint.gameObject.SetActive(false);
+        Main.ItemDescription.gameObject.SetActive(false);
+        Main.DiscardHint.gameObject.SetActive(false);
         foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
         {
             slot.Show();
@@ -55,22 +52,22 @@ public class Inventory : MonoBehaviour
     public void ExitSellMode()
     {
         InSellMode = false;
-        SellModeItemDescription.gameObject.SetActive(false);
+        Main.SellItemDescription.gameObject.SetActive(false);
         Hide();
     }
 
     public void ResetSellModeItemDescription()
     {
         // Set to default.
-        SellModeItemDescription.gameObject.SetActive(true);
-        SellModeItemDescription.ItemName.text = "Sell an item";
-        SellModeItemDescription.ItemValue.text = "";
-        SellModeItemDescription.GetComponent<Image>().enabled = true;
+        Main.SellItemDescription.gameObject.SetActive(true);
+        Main.SellItemDescription.ItemName.text = "Sell an item";
+        Main.SellItemDescription.ItemValue.text = "";
+        Main.SellItemDescription.GetComponent<Image>().enabled = true;
 
         // Move description text to the default position.
-        Vector3 position = SellModeItemDescription.transform.position;
-        position.x = SellModeItemDescription.CentrePosition.transform.position.x;
-        SellModeItemDescription.transform.position = position;
+        Vector3 position = Main.SellItemDescription.transform.position;
+        position.x = Main.SellItemDescription.CentrePosition.transform.position.x;
+        Main.SellItemDescription.transform.position = position;
     }
 
     // Shows the inventory.
@@ -78,11 +75,11 @@ public class Inventory : MonoBehaviour
     {
         IsPreviewing = false;
         isHidden = false;
-        ItemDescription.ItemName.text = "";
-        ItemDescription.ItemAction.text = "";
-        ItemDescription.GetComponent<Image>().enabled = false;
-        ItemDescription.gameObject.SetActive(true);
-        DiscardHint.gameObject.SetActive(false);
+        Main.ItemDescription.ItemName.text = "";
+        Main.ItemDescription.ItemAction.text = "";
+        Main.ItemDescription.GetComponent<Image>().enabled = false;
+        Main.ItemDescription.gameObject.SetActive(true);
+        Main.DiscardHint.gameObject.SetActive(false);
         foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
         {
             slot.Show();
@@ -105,8 +102,8 @@ public class Inventory : MonoBehaviour
     public void Hide()
     {
         isHidden = true;
-        ItemDescription.gameObject.SetActive(false);
-        DiscardHint.gameObject.SetActive(false);
+        Main.ItemDescription.gameObject.SetActive(false);
+        Main.DiscardHint.gameObject.SetActive(false);
         foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
         {
             slot.Hide();
@@ -209,8 +206,8 @@ public class Inventory : MonoBehaviour
         }
         else
         {
-            ItemDescription.gameObject.SetActive(false);
-            DiscardHint.gameObject.SetActive(false);
+            Main.ItemDescription.gameObject.SetActive(false);
+            Main.DiscardHint.gameObject.SetActive(false);
         }
     }
 
@@ -252,7 +249,7 @@ public class Inventory : MonoBehaviour
             if (IsPreviewing)
             {
                 // Keep preview open if the cursor is over an item.
-                if (ItemDescription.gameObject.activeInHierarchy && ItemDescription.ItemName.text != "")
+                if (Main.ItemDescription.gameObject.activeInHierarchy && Main.ItemDescription.ItemName.text != "")
                 {
                     timeAtPreviewStart = Time.time;
                 }
@@ -267,8 +264,8 @@ public class Inventory : MonoBehaviour
 
             // Close if the mouse was clicked while not over an item.
             if (CloseOnClickOutside && Input.GetButtonDown("Primary") &&
-                (!ItemDescription.gameObject.activeInHierarchy || ItemDescription.ItemName.text == "") &&
-                !InventoryHudButton.IsCursorOver)
+                (!Main.ItemDescription.gameObject.activeInHierarchy || Main.ItemDescription.ItemName.text == "") &&
+                !Main.HudButtons.InventoryHudButton.IsCursorOver)
             {
                 Hide();
             }

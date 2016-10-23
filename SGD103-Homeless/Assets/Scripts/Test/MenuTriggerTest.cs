@@ -4,12 +4,8 @@ using System.Collections.Generic;
 
 public class MenuTriggerTest : MonoBehaviour
 {
+    public Main Main;
     public Trigger Trigger;    
-    public Menu Menu;
-    public PlayerState PlayerState;
-    public Inventory Inventory;
-    public MessageBox MessageBox;
-    public ConfirmationBox ConfirmationBox;
     public FoodItemTest FoodItem;
     public WatchItem WatchItem;
 
@@ -28,14 +24,14 @@ public class MenuTriggerTest : MonoBehaviour
         List<Menu.Option> mainMenu = new List<Menu.Option>();
         mainMenu.Add(new Menu.Option(OnFoodMenuSelected, "Buy food"));
         mainMenu.Add(new Menu.Option(
-            OnBuyAlcoholSelected, "Buy alcohol", AlcoholPrice, PlayerState.CanAfford(AlcoholPrice)));
+            OnBuyAlcoholSelected, "Buy alcohol", AlcoholPrice, Main.PlayerState.CanAfford(AlcoholPrice)));
         mainMenu.Add(new Menu.Option(OnOptionASelected, "Say A"));
         mainMenu.Add(new Menu.Option(OnOptionBSelected, "Say B"));
-        if (Inventory.HasItem(WatchItem))
+        if (Main.Inventory.HasItem(WatchItem))
         {
             mainMenu.Add(new Menu.Option(OnSellWatchSelected, "Sell watch", WatchPrice));
         }
-        Menu.Show(mainMenu);
+        Main.Menu.Show(mainMenu);
     }
 
     public void OnFoodMenuSelected()
@@ -46,45 +42,43 @@ public class MenuTriggerTest : MonoBehaviour
         options.Add(new Menu.Option(OnBuyFoodSelected, "Buy bread", 2.5f));
         options.Add(new Menu.Option(OnBuyFoodSelected, "Buy can beans", 4.0f));
         options.Add(new Menu.Option(OnBuyFoodSelected, "Buy biscuits", 5.0f));
-        Menu.Show(options);
+        Main.Menu.Show(options);
     }
     
     public void OnBuyFoodSelected()
     {
-        if (PlayerState.Money >= FoodPrice && !Inventory.IsInventoryFull)
+        if (Main.PlayerState.Money >= FoodPrice && !Main.Inventory.IsInventoryFull)
         {
-            PlayerState.Money -= FoodPrice;
+            Main.PlayerState.Money -= FoodPrice;
 
             // Add food to the inventory.
             FoodItemTest foodItem = Instantiate(FoodItem);
-            foodItem.PlayerState = PlayerState;
-            foodItem.MessageBox = MessageBox;
-            foodItem.Inventory = Inventory;
+            foodItem.Main = Main;
             foodItem.GetComponent<Image>().color = Random.ColorHSV(0.0f, 0.5f, 0.7f, 1.0f, 0.7f, 1.0f, 1.0f, 1.0f);
-            Inventory.AddItem(foodItem);
+            Main.Inventory.AddItem(foodItem);
         }
     }
 
     public void OnBuyAlcoholSelected()
     {
-        if (PlayerState.Money >= AlcoholPrice)
+        if (Main.PlayerState.Money >= AlcoholPrice)
         {
-            PlayerState.Money -= AlcoholPrice;
+            Main.PlayerState.Money -= AlcoholPrice;
         }
         ShowMainMenu();
     }
 
     public void OnOptionASelected()
     {
-        MessageBox.ShowForTime("Hello", 3, gameObject);
-        Menu.Hide();
+        Main.MessageBox.ShowForTime("Hello", 3, gameObject);
+        Main.Menu.Hide();
         Trigger.Reset();
     }
 
     public void OnOptionBSelected()
     {
-        MessageBox.ShowForTime("Cool", 3, gameObject);
-        Menu.Hide();
+        Main.MessageBox.ShowForTime("Cool", 3, gameObject);
+        Main.Menu.Hide();
         Trigger.Reset();
     }
 
@@ -97,20 +91,20 @@ public class MenuTriggerTest : MonoBehaviour
             {
                 if (yes)
                 {
-                    PlayerState.Money += WatchPrice;
-                    Inventory.RemoveItem(WatchItem);
+                    Main.PlayerState.Money += WatchPrice;
+                    Main.Inventory.RemoveItem(WatchItem);
                 }
-                Menu.Hide();
+                Main.Menu.Hide();
                 Trigger.Reset();
             };
-            ConfirmationBox.Open(onChoiceMade, "Sell watch?", "Yes", "No");
+            Main.ConfirmationBox.Open(onChoiceMade, "Sell watch?", "Yes", "No");
         }
         ShowMainMenu();
     }
 
     public void OnExit()
     {
-        Menu.Hide();
+        Main.Menu.Hide();
         Trigger.Reset();
     }
 
@@ -121,7 +115,7 @@ public class MenuTriggerTest : MonoBehaviour
     
     public void OnPlayerExit()
     {
-        Menu.Hide();
+        Main.Menu.Hide();
         Trigger.Reset();
     }
         

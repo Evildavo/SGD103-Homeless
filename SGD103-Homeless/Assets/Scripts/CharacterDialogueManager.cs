@@ -3,8 +3,6 @@ using System.Collections;
 
 public class CharacterDialogueManager : MonoBehaviour {
 
-    public MessageBox MessageBox;
-
     public bool ShowCaptions = true;
     public bool MustWaitForAudioToFinish = false;
     public bool MustWaitCalculatedLenghtFromText = true;

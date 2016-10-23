@@ -6,7 +6,7 @@ public class Sun : MonoBehaviour
 {
     private float lastTime;
 
-    public GameTime GameTime;
+    public Main Main;
 
     public float EnvironmentUpdateIntervalGameHours = 0.2f;
     public float DeclinationAngleOffset = 30.0f;
@@ -15,6 +15,8 @@ public class Sun : MonoBehaviour
     
     void Update()
     {
+        var GameTime = Main.GameTime;
+
         // Adjust sun light based on time.
         Light light = GetComponent<Light>();
         light.color = ColourGradient.Evaluate(GameTime.TimeOfDayHours / 24.0f);

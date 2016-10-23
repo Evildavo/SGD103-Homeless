@@ -6,8 +6,7 @@ public class SonPhotoItem : InventoryItem
 {
     private bool isShowingPhoto = false;
     private float timeAtPhotoShown;
-
-    public MessageBox MessageBox;
+    
     public Image SonPhotoImage;
 
     public float ShowPhotoForSeconds = 3.0f;
@@ -29,7 +28,7 @@ public class SonPhotoItem : InventoryItem
     // Don't allow sale.
     public override void OnSellRequested()
     {
-        MessageBox.ShowForTime("You can't sell this", 2.0f, gameObject);
+        Main.MessageBox.ShowForTime("You can't sell this", 2.0f, gameObject);
     }
 
     public override void OnPrimaryAction()

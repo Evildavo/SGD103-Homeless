@@ -3,17 +3,10 @@ using System.Collections.Generic;
 
 
 public class Supermarket : MonoBehaviour
-{    
-    public GameTime GameTime;
+{
+    public Main Main;
     public Trigger Trigger;
     public JobTrigger JobTrigger;
-    public Menu Menu;
-    public MessageBox MessageBox;
-    public PlayerState PlayerState;
-    public Inventory Inventory;
-    public PlayerSleepManager SleepManager;
-    public InventoryItemDescription ItemDescription;
-    public SleepHudButton SleepHudButton;
     public JobLocation JobLocation;
     public FoodItem WaterPrefab;
     public FoodItem BreadPrefab;
@@ -58,7 +51,7 @@ public class Supermarket : MonoBehaviour
         }
         options.Add(new Menu.Option(Reset, "Exit"));
 
-        Menu.Show(options);
+        Main.Menu.Show(options);
     }
 
     public void ApplyForJob()
@@ -71,32 +64,32 @@ public class Supermarket : MonoBehaviour
     {
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(
-            OnWaterSelected, "Water", WaterCost, PlayerState.CanAfford(WaterCost)));
+            OnWaterSelected, "Water", WaterCost, Main.PlayerState.CanAfford(WaterCost)));
         options.Add(new Menu.Option(
-            OnBreadSelected, "Bread", BreadCost, PlayerState.CanAfford(BreadCost)));
+            OnBreadSelected, "Bread", BreadCost, Main.PlayerState.CanAfford(BreadCost)));
         options.Add(new Menu.Option(
-            OnMandarinSelected, "Bag of Mandarins", MandarinCost, PlayerState.CanAfford(MandarinCost)));
+            OnMandarinSelected, "Bag of Mandarins", MandarinCost, Main.PlayerState.CanAfford(MandarinCost)));
         options.Add(new Menu.Option(
-            OnAppleSelected, "Apple", AppleCost, PlayerState.CanAfford(AppleCost)));
+            OnAppleSelected, "Apple", AppleCost, Main.PlayerState.CanAfford(AppleCost)));
         options.Add(new Menu.Option(
-            OnPotatoChipsSelected, "Potato Chips", PotatoChipsCost, PlayerState.CanAfford(PotatoChipsCost)));
+            OnPotatoChipsSelected, "Potato Chips", PotatoChipsCost, Main.PlayerState.CanAfford(PotatoChipsCost)));
         options.Add(new Menu.Option(
-            OnBiscuitsSelected, "Biscuits", BiscuitsCost, PlayerState.CanAfford(BiscuitsCost)));
+            OnBiscuitsSelected, "Biscuits", BiscuitsCost, Main.PlayerState.CanAfford(BiscuitsCost)));
         options.Add(new Menu.Option(
-            OnChocolateBarSelected, "Chocolate Bar", ChocolateBarCost, PlayerState.CanAfford(ChocolateBarCost)));
+            OnChocolateBarSelected, "Chocolate Bar", ChocolateBarCost, Main.PlayerState.CanAfford(ChocolateBarCost)));
         options.Add(new Menu.Option(OnBackSelected, "Back"));
 
-        Menu.Show(options);
+        Main.Menu.Show(options);
     }
 
     public void OpenOutdoorItemMenu()
     {
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(
-            OnBuySleepingBag, "Buy a \"Pillow-Time\"(tm) sleeping bag", SleepingBagCost, PlayerState.CanAfford(SleepingBagCost)));
+            OnBuySleepingBag, "Buy a \"Pillow-Time\"(tm) sleeping bag", SleepingBagCost, Main.PlayerState.CanAfford(SleepingBagCost)));
         options.Add(new Menu.Option(OnBackSelected, "Back"));
 
-        Menu.Show(options);
+        Main.Menu.Show(options);
     }
 
     public void OnBackSelected()
@@ -106,168 +99,144 @@ public class Supermarket : MonoBehaviour
     
     public void OnWaterSelected()
     {
-        if (!Inventory.IsInventoryFull)
+        if (!Main.Inventory.IsInventoryFull)
         {
-            PlayerState.Money -= WaterCost;
+            Main.PlayerState.Money -= WaterCost;
 
             // Add item.
             FoodItem item = Instantiate(WaterPrefab);
-            item.InventoryItemDescription = ItemDescription;
-            item.PlayerState = PlayerState;
-            item.MessageBox = MessageBox;
-            item.Inventory = Inventory;
-            Inventory.AddItem(item);
+            item.Main = Main;
+            Main.Inventory.AddItem(item);
         }
         else
         {
-            MessageBox.WarnInventoryFull(Inventory);
+            Main.MessageBox.WarnInventoryFull(Main.Inventory);
         }
         OpenFoodMenu();
     }
 
     public void OnBreadSelected()
     {
-        if (!Inventory.IsInventoryFull)
+        if (!Main.Inventory.IsInventoryFull)
         {
-            PlayerState.Money -= BreadCost;
+            Main.PlayerState.Money -= BreadCost;
 
             // Add item.
             FoodItem item = Instantiate(BreadPrefab);
-            item.InventoryItemDescription = ItemDescription;
-            item.PlayerState = PlayerState;
-            item.MessageBox = MessageBox;
-            item.Inventory = Inventory;
-            Inventory.AddItem(item);
+            item.Main = Main;
+            Main.Inventory.AddItem(item);
         }
         else
         {
-            MessageBox.WarnInventoryFull(Inventory);
+            Main.MessageBox.WarnInventoryFull(Main.Inventory);
         }
         OpenFoodMenu(); 
     }
 
     public void OnMandarinSelected()
     {  
-        if (!Inventory.IsInventoryFull)
+        if (!Main.Inventory.IsInventoryFull)
         {
-            PlayerState.Money -= MandarinCost;
+            Main.PlayerState.Money -= MandarinCost;
 
             // Add item.
             FoodItem item = Instantiate(MandarinPrefab);
-            item.InventoryItemDescription = ItemDescription;
-            item.PlayerState = PlayerState;
-            item.MessageBox = MessageBox;
-            item.Inventory = Inventory;
-            Inventory.AddItem(item);
+            item.Main = Main;
+            Main.Inventory.AddItem(item);
         }
         else
         {
-            MessageBox.WarnInventoryFull(Inventory);
+            Main.MessageBox.WarnInventoryFull(Main.Inventory);
         }
         OpenFoodMenu();
     }
 
     public void OnAppleSelected()
     {
-        if (!Inventory.IsInventoryFull)
+        if (!Main.Inventory.IsInventoryFull)
         {
-            PlayerState.Money -= AppleCost;
+            Main.PlayerState.Money -= AppleCost;
 
             // Add item.
             FoodItem item = Instantiate(ApplePrefab);
-            item.InventoryItemDescription = ItemDescription;
-            item.PlayerState = PlayerState;
-            item.MessageBox = MessageBox;
-            item.Inventory = Inventory;
-            Inventory.AddItem(item);
+            item.Main = Main;
+            Main.Inventory.AddItem(item);
         }
         else
         {
-            MessageBox.WarnInventoryFull(Inventory);
+            Main.MessageBox.WarnInventoryFull(Main.Inventory);
         }
         OpenFoodMenu();
     }
 
     public void OnPotatoChipsSelected()
     {
-        if (!Inventory.IsInventoryFull)
+        if (!Main.Inventory.IsInventoryFull)
         {
-            PlayerState.Money -= PotatoChipsCost;
+            Main.PlayerState.Money -= PotatoChipsCost;
 
             // Add item.
             FoodItem item = Instantiate(PotatoChipsPrefab);
-            item.InventoryItemDescription = ItemDescription;
-            item.PlayerState = PlayerState;
-            item.MessageBox = MessageBox;
-            item.Inventory = Inventory;
-            Inventory.AddItem(item);
+            item.Main = Main;
+            Main.Inventory.AddItem(item);
         }
         else
         {
-            MessageBox.WarnInventoryFull(Inventory);
+            Main.MessageBox.WarnInventoryFull(Main.Inventory);
         }
         OpenFoodMenu();
     }
 
     public void OnBiscuitsSelected()
     {
-        if (!Inventory.IsInventoryFull)
+        if (!Main.Inventory.IsInventoryFull)
         {
-            PlayerState.Money -= BiscuitsCost;
+            Main.PlayerState.Money -= BiscuitsCost;
 
             // Add item.
             FoodItem item = Instantiate(BiscuitsPrefab);
-            item.InventoryItemDescription = ItemDescription;
-            item.PlayerState = PlayerState;
-            item.MessageBox = MessageBox;
-            item.Inventory = Inventory;
-            Inventory.AddItem(item);
+            item.Main = Main;
+            Main.Inventory.AddItem(item);
         }
         else
         {
-            MessageBox.WarnInventoryFull(Inventory);
+            Main.MessageBox.WarnInventoryFull(Main.Inventory);
         }
         OpenFoodMenu();
     }
 
     public void OnChocolateBarSelected()
     {
-        if (!Inventory.IsInventoryFull)
+        if (!Main.Inventory.IsInventoryFull)
         {
-            PlayerState.Money -= ChocolateBarCost;
+            Main.PlayerState.Money -= ChocolateBarCost;
 
             // Add item.
             FoodItem item = Instantiate(ChocolateBarPrefab);
-            item.InventoryItemDescription = ItemDescription;
-            item.PlayerState = PlayerState;
-            item.MessageBox = MessageBox;
-            item.Inventory = Inventory;
-            Inventory.AddItem(item);
+            item.Main = Main;
+            Main.Inventory.AddItem(item);
         }
         else
         {
-            MessageBox.WarnInventoryFull(Inventory);
+            Main.MessageBox.WarnInventoryFull(Main.Inventory);
         }
         OpenFoodMenu();
     }
 
     public void OnBuySleepingBag()
     {
-        if (!Inventory.IsInventoryFull)
+        if (!Main.Inventory.IsInventoryFull)
         {
-            PlayerState.Money -= SleepingBagCost;
+            Main.PlayerState.Money -= SleepingBagCost;
 
             // Add item.
             SleepItem item = Instantiate(SleepingBagPrefab);
-            item.InventoryItemDescription = ItemDescription;
-            item.SleepManager = SleepManager;
-            item.ItemDescription = ItemDescription;
-            item.SleepHudButton = SleepHudButton;
-            Inventory.AddItem(item);
+            item.Main = Main;
+            Main.Inventory.AddItem(item);
         }
         else
         {
-            MessageBox.WarnInventoryFull(Inventory);
+            Main.MessageBox.WarnInventoryFull(Main.Inventory);
         }
         OpenOutdoorItemMenu();
     }
@@ -280,8 +249,8 @@ public class Supermarket : MonoBehaviour
 
     void Reset()
     {
-        Menu.Hide();
-        MessageBox.ShowNext();
+        Main.Menu.Hide();
+        Main.MessageBox.ShowNext();
         if (Trigger)
         {
             Trigger.Reset(Trigger.IsEnabled);
@@ -294,7 +263,7 @@ public class Supermarket : MonoBehaviour
         if (JobLocation.CanWorkNow)
         {
             Reset();
-            MessageBox.ShowForTime("Work is about to start.", 2.0f, gameObject);
+            Main.MessageBox.ShowForTime("Work is about to start.", 2.0f, gameObject);
         }
     }
 

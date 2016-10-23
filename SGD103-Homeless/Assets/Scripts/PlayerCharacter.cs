@@ -4,8 +4,6 @@ using System.Collections.Generic;
 public class PlayerCharacter : Character
 {
 
-    public Menu Menu;
-
     public Color SubmissiveOptionColor = Color.white;
     public Color PridefulOptionColor = Color.white;
     public Color SelfishOptionColor = Color.white;
@@ -33,22 +31,22 @@ public class PlayerCharacter : Character
     {
         Menu.Option.OnSelectedCallback submissiveSelected = () =>
         {
-            Menu.Hide();
+            Main.Menu.Hide();
             callback(ResponseType.SUBMISSIVE);
         };
         Menu.Option.OnSelectedCallback pridefulSelected = () =>
         {
-            Menu.Hide();
+            Main.Menu.Hide();
             callback(ResponseType.PRIDEFUL);
         };
         Menu.Option.OnSelectedCallback selfishSelected = () =>
         {
-            Menu.Hide();
+            Main.Menu.Hide();
             callback(ResponseType.SELFISH);
         };
         Menu.Option.OnSelectedCallback exitSelected = () =>
         {
-            Menu.Hide();
+            Main.Menu.Hide();
             callback(ResponseType.NONE);
         };
         List<Menu.Option> options = new List<Menu.Option>();
@@ -65,12 +63,8 @@ public class PlayerCharacter : Character
             options.Add(new Menu.Option(selfishSelected, selfishOption, 0, true, SelfishOptionColor));
         }
         options.Add(new Menu.Option(exitSelected, "Exit"));
-        Menu.Show(options);
+        Main.Menu.Show(options);
     }
-    
-	new void Start () {
-        base.Start();
-	}
 	
 	new void Update () {
         base.Update();

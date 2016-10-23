@@ -4,28 +4,20 @@ using System.Collections.Generic;
 public class Greg : Character
 {
     private bool playerSoldWatch = false;
-
+    
     public Trigger Trigger;
-    public PlayerCharacter PlayerCharacter;
     public AudioClip HelloAudio;
-    public Menu Menu;
-    public ConfirmationBox ConfirmationBox;
-    public GameTime GameTime;
-    public PlayerState PlayerState;
-    public Inventory Inventory;
     public AlcoholItem AlcoholPrefab;
     public SonPhotoItem SonPhotoItem;
     public WatchItem WatchPrefab;
-    public WatchHudButton WatchHudButton;
 
     public float SellingToGregValueFactor = 0.65f;
     public float DrugsCost;
     public float AlcoholCost;
     public float WatchBuyBackCost;
 
-    new void Start()
+    void Start()
     {
-        base.Start();
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
         Trigger.RegisterOnCloseRequested(Reset);
@@ -39,7 +31,7 @@ public class Greg : Character
     public void OnTrigger()
     {
         Speak("Hi, my name's Greg. Would you like to buy something from me?", HelloAudio);
-        PlayerCharacter.ShowStandardDialogueMenu(
+        Main.PlayerCharacter.ShowStandardDialogueMenu(
             "Can you help me?",
             "I can manage",
             "Give me stuff now",
@@ -84,30 +76,30 @@ public class Greg : Character
 
     public void Reset()
     {
-        Menu.Hide();
+        Main.Menu.Hide();
         Trigger.Reset();
-        Inventory.ExitSellMode();
+        Main.Inventory.ExitSellMode();
     }
 
     void showBuySellMenu()
     {
-        Inventory.EnterSellMode(onPlayerSellingItem);
+        Main.Inventory.EnterSellMode(onPlayerSellingItem);
 
         List<Menu.Option> options = new List<Menu.Option>();
-        options.Add(new Menu.Option(onBuyDrugsSelected, "Drugs", DrugsCost, PlayerState.CanAfford(DrugsCost)));
-        options.Add(new Menu.Option(onBuyAlcoholSelected, "Cheap Alcohol", AlcoholCost, PlayerState.CanAfford(AlcoholCost)));
+        options.Add(new Menu.Option(onBuyDrugsSelected, "Drugs", DrugsCost, Main.PlayerState.CanAfford(DrugsCost)));
+        options.Add(new Menu.Option(onBuyAlcoholSelected, "Cheap Alcohol", AlcoholCost, Main.PlayerState.CanAfford(AlcoholCost)));
         if (playerSoldWatch)
         {
-            options.Add(new Menu.Option(onBuyWatchSelected, "Buy Watch", WatchBuyBackCost, PlayerState.CanAfford(WatchBuyBackCost)));
+            options.Add(new Menu.Option(onBuyWatchSelected, "Buy Watch", WatchBuyBackCost, Main.PlayerState.CanAfford(WatchBuyBackCost)));
         }
         options.Add(new Menu.Option(Reset, "Exit"));
 
-        Menu.Show(options);
+        Main.Menu.Show(options);
     }
 
     void onBuyDrugsSelected()
     {
-        MessageBox.ShowForTime("I just can't do that", 2.0f);
+        Main.MessageBox.ShowForTime("I just can't do that", 2.0f);
         //PlayerCharacter.Speak("I just can't do that");
         SonPhotoItem.ShowPhoto();
         showBuySellMenu();
@@ -115,53 +107,51 @@ public class Greg : Character
 
     void onBuyAlcoholSelected()
     {
-        if (!Inventory.IsInventoryFull)
+        if (!Main.Inventory.IsInventoryFull)
         {
             Speak("Sure thing.");
 
             // Remove money.
-            PlayerState.Money -= AlcoholCost;
+            Main.PlayerState.Money -= AlcoholCost;
 
             // Add item.
             AlcoholItem item = Instantiate(AlcoholPrefab);
-            item.InventoryItemDescription = Inventory.ItemDescription;
-            item.MessageBox = MessageBox;
-            Inventory.AddItem(item);
+            item.Main = Main;
+            Main.Inventory.AddItem(item);
         }
         else
         {
-            MessageBox.WarnInventoryFull(Inventory);
+            Main.MessageBox.WarnInventoryFull(Main.Inventory);
         }
         showBuySellMenu();
     }
 
     void onBuyWatchSelected()
     {
-        if (!Inventory.IsInventoryFull)
+        if (!Main.Inventory.IsInventoryFull)
         {
             Speak("Just couldn't part with it eh?");
             AddCaptionChangeCue(2.0f, "In near-original condition too");
 
             // Remove money.
-            PlayerState.Money -= WatchBuyBackCost;
+            Main.PlayerState.Money -= WatchBuyBackCost;
 
             // Add item.
             WatchItem item = Instantiate(WatchPrefab);
-            item.InventoryItemDescription = Inventory.ItemDescription;
-            item.MessageBox = MessageBox;
-            item.GameTime = GameTime;
+            item.Main = Main;
             item.ItemName = "Watch (tarnished)";
             item.ItemValue = item.ItemValue * 0.75f;
             item.Tarnished = true;
-            Inventory.AddItem(item);
+            Main.Inventory.AddItem(item);
 
             // Put watch back on HUD.
+            var WatchHudButton = Main.HudButtons.WatchHudButton;
             WatchHudButton.Watch = item;
             WatchHudButton.gameObject.SetActive(true);
         }
         else
         {
-            MessageBox.WarnInventoryFull(Inventory);
+            Main.MessageBox.WarnInventoryFull(Main.Inventory);
         }
         showBuySellMenu();
     }
@@ -181,13 +171,13 @@ public class Greg : Character
                 }
 
                 // Player sold the item to Greg.
-                PlayerState.Money += gregOffer;
+                Main.PlayerState.Money += gregOffer;
 
-                Inventory.RemoveItem(item);
+                Main.Inventory.RemoveItem(item);
                 showBuySellMenu();
             }
         };
-        ConfirmationBox.Open(onChoice, 
+        Main.ConfirmationBox.Open(onChoice, 
             "I'll give you $" + gregOffer.ToString("f2") + " for it. That ok?", "Yes", "No");
     }
 

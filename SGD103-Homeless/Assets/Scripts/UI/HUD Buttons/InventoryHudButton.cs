@@ -4,15 +4,14 @@ using System.Collections;
 
 public class InventoryHudButton : MonoBehaviour {
 
-    public Inventory Inventory;
-    public Transform HudButtonLabel;
-    public PlayerState PlayerState;
+    public Main Main;
 
     [ReadOnly]
     public bool IsCursorOver = false;
 
     public void OnPointerEnter()
     {
+        var HudButtonLabel = Main.HudButtons.HudButtonLabel;
         IsCursorOver = true;
         HudButtonLabel.gameObject.SetActive(true);
         HudButtonLabel.GetComponentInChildren<Text>().text = "Open/Close Inventory";
@@ -23,16 +22,18 @@ public class InventoryHudButton : MonoBehaviour {
 
     public void OnPointerExit()
     {
+        var HudButtonLabel = Main.HudButtons.HudButtonLabel;
         IsCursorOver = false;
         HudButtonLabel.gameObject.SetActive(false);
     }
 
     public void OnClick()
     {
-        if (Inventory.InSellMode && PlayerState.CurrentTrigger != null)
+        var Inventory = Main.Inventory;
+        if (Inventory.InSellMode && Main.PlayerState.CurrentTrigger != null)
         {
             // Close the trigger.
-            PlayerState.CurrentTrigger.Close();
+            Main.PlayerState.CurrentTrigger.Close();
             Inventory.Show();
         }
         else

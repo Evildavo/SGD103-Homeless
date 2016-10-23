@@ -106,14 +106,9 @@ public class JobLocation : MonoBehaviour
         }
     }
 
-    public MessageBox MessageBox;
-    public GameTime GameTime;
-    public PlayerState PlayerState;
-    public Inventory Inventory;
+    public Main Main;
     public ResumeItem ResumePrefab;
     public JobTrigger JobTrigger;
-    public UI UI;
-    public ScreenFader ScreenFader;
 
     public string Name;
     public float ChanceJobAvailablePerDay = 0.05f;
@@ -135,10 +130,10 @@ public class JobLocation : MonoBehaviour
     // Returns a short summary of the work days and times.
     public string GetWorkTimeSummaryShort()
     {
-        return GameTime.DayOfTheWeekAsShortString(Job.WorkFromDay) + " to " +
-               GameTime.DayOfTheWeekAsShortString(Job.WorkToDay) + ", " +
-               GameTime.GetTimeAsString(Job.ShiftFromHour) + " - " +
-               GameTime.GetTimeAsString(Job.ShiftToHour);
+        return Main.GameTime.DayOfTheWeekAsShortString(Job.WorkFromDay) + " to " +
+               Main.GameTime.DayOfTheWeekAsShortString(Job.WorkToDay) + ", " +
+               Main.GameTime.GetTimeAsString(Job.ShiftFromHour) + " - " +
+               Main.GameTime.GetTimeAsString(Job.ShiftToHour);
     }
 
     // Checks for a job and optionally displays a message if one is available.
@@ -152,7 +147,7 @@ public class JobLocation : MonoBehaviour
         else
         {
             // Check if it's a new day (or we've never checked before).
-            if (GameTime.Day != dayLastChecked || !hasChecked)
+            if (Main.GameTime.Day != dayLastChecked || !hasChecked)
             {
                 // Randomly decide if a job is available today.
                 float value = Random.Range(0.0f, 1.0f);
@@ -161,7 +156,7 @@ public class JobLocation : MonoBehaviour
                     IsJobAvailableToday = true;
                 }
                 hasChecked = true;
-                dayLastChecked = GameTime.Day;
+                dayLastChecked = Main.GameTime.Day;
                 ++daysChecked;
             }
 
@@ -180,14 +175,14 @@ public class JobLocation : MonoBehaviour
                 string message = "A job position is available today as: " + Job.Role + "\n" +
                                  "$" + Job.PayPerHour.ToString("f2") + "/hr, " +
                                  Job.HoursWorkPerWeek + " hours per week.";
-                MessageBox.Show(message, gameObject);
+                Main.MessageBox.Show(message, gameObject);
             }
         }
     }
 
     void RejectApplication(string reason)
     {
-        MessageBox.Show("Application rejected. " + reason, gameObject);
+        Main.MessageBox.Show("Application rejected. " + reason, gameObject);
     }
 
     // Applies for the job that's available.
@@ -197,7 +192,7 @@ public class JobLocation : MonoBehaviour
         bool healthOk = false;
         bool moraleOk = false;
         bool clothesOk = false;
-        if (PlayerState.HealthTiredness >= Job.MinHealthNeededToQualify)
+        if (Main.PlayerState.HealthTiredness >= Job.MinHealthNeededToQualify)
         {
             healthOk = true;
         }
@@ -205,7 +200,7 @@ public class JobLocation : MonoBehaviour
         {
             RejectApplication("You seem too unwell to handle the job");
         }
-        if (PlayerState.Morale >= Job.MinMoraleNeededToQualify)
+        if (Main.PlayerState.Morale >= Job.MinMoraleNeededToQualify)
         {
             moraleOk = true;
         }
@@ -213,7 +208,7 @@ public class JobLocation : MonoBehaviour
         {
             RejectApplication("You need to have a more positive attitude");
         }
-        if (PlayerState.CurrentClothingCleanliness >= Job.MinClothesCleanlinessToQualify)
+        if (Main.PlayerState.CurrentClothingCleanliness >= Job.MinClothesCleanlinessToQualify)
         {
             clothesOk = true;
         }
@@ -227,18 +222,18 @@ public class JobLocation : MonoBehaviour
         {
             bool success = false;
             float value = Random.Range(0.0f, 1.0f);
-            if (ResumePrefab && Inventory.HasItem(ResumePrefab))
+            if (ResumePrefab && Main.Inventory.HasItem(ResumePrefab))
             {
                 success = (value <= Job.ChanceOfSuccessWithResume);
 
                 // Use up an inventory item.
-                ResumeItem resume = Inventory.ItemContainer.GetComponentInChildren<ResumeItem>();
+                ResumeItem resume = Main.Inventory.ItemContainer.GetComponentInChildren<ResumeItem>();
                 resume.NumUses -= 1;
                 if (resume.NumUses == 0)
                 {
-                    Inventory.RemoveItem(resume);
+                    Main.Inventory.RemoveItem(resume);
                 }
-                Inventory.ShowPreview();
+                Main.Inventory.ShowPreview();
             }
             else
             {
@@ -249,15 +244,15 @@ public class JobLocation : MonoBehaviour
             if (success)
             {
                 string message = "Congratulations! From tomorrow you work " +
-                                 GameTime.DayOfTheWeekAsShortString(Job.WorkFromDay) + " to " +
-                                 GameTime.DayOfTheWeekAsShortString(Job.WorkToDay) + " from " +
-                                 GameTime.GetTimeAsString(Job.ShiftFromHour) + " to " +
-                                 GameTime.GetTimeAsString(Job.ShiftToHour) + ". Don't be late!";
-                                
-                MessageBox.Show(message, gameObject);
+                                 Main.GameTime.DayOfTheWeekAsShortString(Job.WorkFromDay) + " to " +
+                                 Main.GameTime.DayOfTheWeekAsShortString(Job.WorkToDay) + " from " +
+                                 Main.GameTime.GetTimeAsString(Job.ShiftFromHour) + " to " +
+                                 Main.GameTime.GetTimeAsString(Job.ShiftToHour) + ". Don't be late!";
+
+                Main.MessageBox.Show(message, gameObject);
                 PlayerHasJobHere = true;
                 workWeekStarted = false;
-                jobStartsAfter = GameTime.DayOfTheWeek;
+                jobStartsAfter = Main.GameTime.DayOfTheWeek;
             }
             else
             {
@@ -277,19 +272,19 @@ public class JobLocation : MonoBehaviour
         if (payDue > 0.0f)
         {
             message += "Your pay comes to $" + payDue.ToString("f2");
-            PlayerState.Money += payDue;
+            Main.PlayerState.Money += payDue;
             payDue = 0.0f;
             hoursWorkedThisWeek = 0.0f;
         }
-        MessageBox.ShowQueued(message, 8.0f, gameObject);
+        Main.MessageBox.ShowQueued(message, 8.0f, gameObject);
     }
 
     void OnFadeOutComplete()
     {
         if (IsPlayerAtWork)
         {
-            MessageBox.Show("Working...", gameObject);
-            GameTime.TimeScale = WorkTimeScale;
+            Main.MessageBox.Show("Working...", gameObject);
+            Main.GameTime.TimeScale = WorkTimeScale;
         }
     }
 
@@ -299,37 +294,36 @@ public class JobLocation : MonoBehaviour
         if (!IsPlayerAtWork)
         {
             // Dismiss for drunkness.
-            if (PlayerState.Inebriation > Job.MaxInebriationBeforeDismissal)
+            if (Main.PlayerState.Inebriation > Job.MaxInebriationBeforeDismissal)
             {
                 Dismiss("Under the influence of alcohol");
             }
             else
             {
                 IsPlayerAtWork = true;
-                PlayerState.IsAtWork = true;
-                LastDayWorked = GameTime.Day;
-                timeAtShiftStart = GameTime.TimeOfDayHours;
+                Main.PlayerState.IsAtWork = true;
+                LastDayWorked = Main.GameTime.Day;
+                timeAtShiftStart = Main.GameTime.TimeOfDayHours;
                 numUpdateTicksDuringShift = 0;
                 healthDuringShiftSum = 0.0f;
                 moraleDuringShiftSum = 0.0f;
 
                 // Fade to black.
-                ScreenFader.fadeTime = FadeToBlackTime;
-                ScreenFader.fadeIn = false;
+                Main.ScreenFader.fadeTime = FadeToBlackTime;
+                Main.ScreenFader.fadeIn = false;
                 Invoke("OnFadeOutComplete", FadeToBlackTime);
 
                 // Hide UI.
-                UI.Hide();
+                Main.UI.Hide();
             }
         }
-        JobTrigger.Reset(false);
     }
 
     public void OnPlayerExitJob()
     {
         if (IsPlayerAtWork)
         {
-            UI.Show();
+            Main.UI.Show();
             Dismiss("Leaving work early");
         }
         JobTrigger.Reset(false);
@@ -341,8 +335,10 @@ public class JobLocation : MonoBehaviour
         CanWorkNow = false;
         if (PlayerHasJobHere && !IsPlayerAtWork)
         {
+            var GameTime = Main.GameTime;
+
             // After the day the player got the job we start the first work week.
-            if (!workWeekStarted && GameTime.DayOfTheWeek != jobStartsAfter)
+            if (!workWeekStarted && Main.GameTime.DayOfTheWeek != jobStartsAfter)
             {
                 workWeekStarted = true;
             }
@@ -425,8 +421,9 @@ public class JobLocation : MonoBehaviour
 #if UNITY_EDITOR
         Job.Calculate();
 #endif
-        
+
         // Pay day (and time).
+        var GameTime = Main.GameTime;
         if (GameTime.DayOfTheWeek == Job.PayDay && 
             GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, Job.PayTime).shortest <= GameTime.GameTimeDelta &&
             payDue > 0.0f)
@@ -434,33 +431,34 @@ public class JobLocation : MonoBehaviour
             string message = "Work week complete. You worked a total of " +
                              System.Math.Round(hoursWorkedThisWeek, 2).ToString() + " hours and have now earned $" +
                              payDue.ToString("f2");
-            PlayerState.Money += payDue;
+            Main.PlayerState.Money += payDue;
             payDue = 0.0f;
             hoursWorkedThisWeek = 0.0f;
-            MessageBox.ShowQueued(message, 7.0f, gameObject);
+            Main.MessageBox.ShowQueued(message, 7.0f, gameObject);
         }
 
         if (IsPlayerAtWork)
         {
             // Update the data for calculating average health over the shift. 
-            healthDuringShiftSum += PlayerState.HealthTiredness;
-            moraleDuringShiftSum += PlayerState.Morale;
+            healthDuringShiftSum += Main.PlayerState.HealthTiredness;
+            moraleDuringShiftSum += Main.PlayerState.Morale;
             numUpdateTicksDuringShift++;
 
             // Stop work at the end of shift.
             if (GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, Job.ShiftToHour).shortest < GameTime.GameTimeDelta)
             {
                 IsPlayerAtWork = false;
-                PlayerState.IsAtWork = false;
+                Main.PlayerState.IsAtWork = false;
                 GameTime.TimeScale = GameTime.NormalTimeScale;
-                MessageBox.Hide();
-                
+                Main.MessageBox.Hide();
+                JobTrigger.Reset(false);
+
                 // Show UI.
-                UI.Show();
+                Main.UI.Show();
 
                 // Fade in from black.
-                ScreenFader.fadeTime = FadeInFromBlackTime;
-                ScreenFader.fadeIn = true;
+                Main.ScreenFader.fadeTime = FadeInFromBlackTime;
+                Main.ScreenFader.fadeIn = true;
 
                 Invoke("onFadeInComplete", FadeInFromBlackTime);
             }
@@ -478,7 +476,7 @@ public class JobLocation : MonoBehaviour
         float hoursWorked;
         if (playerStartedLate)
         {
-            hoursWorked = GameTime.TimeOfDayHoursDelta(timeAtShiftStart, Job.ShiftToHour).forward;
+            hoursWorked = Main.GameTime.TimeOfDayHoursDelta(timeAtShiftStart, Job.ShiftToHour).forward;
         }
         else
         {
@@ -491,11 +489,12 @@ public class JobLocation : MonoBehaviour
         hoursWorkedThisWeek += hoursWorked;
 
         // Give a report on the day's work.
+        var MessageBox = Main.MessageBox;
         string message = "Work day complete. You worked " +
                             System.Math.Round(hoursWorked, 2).ToString() + " hours and earned $" +
                             pay.ToString("f2") + " (to be payed on " +
-                            GameTime.DayOfTheWeekAsShortString(Job.PayDay) + " at " +
-                            GameTime.GetTimeAsString(Job.PayTime) + ")";
+                            Main.GameTime.DayOfTheWeekAsShortString(Job.PayDay) + " at " +
+                            Main.GameTime.GetTimeAsString(Job.PayTime) + ")";
         MessageBox.ShowForTime(message, 5.0f, gameObject);
 
         // Handle warning notices for lateness to work.
@@ -567,7 +566,7 @@ public class JobLocation : MonoBehaviour
         }
         
         // Handle warning notices for unclean clothes.
-        if (PlayerState.CurrentClothingCleanliness < Job.MinClothingCleanlinessBeforeNotice)
+        if (Main.PlayerState.CurrentClothingCleanliness < Job.MinClothingCleanlinessBeforeNotice)
         {
             // Already on notice for this reason, so dismiss.
             if (playerOnNoticeForReasons.Contains(NoticeReason.UNCLEAN_CLOTHES))
@@ -589,7 +588,7 @@ public class JobLocation : MonoBehaviour
         }
 
         // Handle warning notices for being under the influence of alcohol.
-        if (PlayerState.Inebriation > Job.MaxInebriationBeforeNotice)
+        if (Main.PlayerState.Inebriation > Job.MaxInebriationBeforeNotice)
         {
             // Already on notice for this reason, so dismiss.
             if (playerOnNoticeForReasons.Contains(NoticeReason.UNDER_INFLUENCE_OF_ALCOHOL))
