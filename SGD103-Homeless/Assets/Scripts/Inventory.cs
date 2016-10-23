@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using System.Collections.Generic;
 
 public class Inventory : MonoBehaviour
 {
     private float timeAtPreviewStart;
     private bool isHidden = false;
+    private List<OnItemAdded> onItemAddedCallbacks = new List<OnItemAdded>();
 
     public Main Main;
     public Transform SlotContainer;
@@ -26,15 +27,25 @@ public class Inventory : MonoBehaviour
     [ReadOnly]
     public bool IsInventoryFull = false;
     public OnItemSold ItemSoldCallback;
+    
+    // Callback for when an item is added to the inventory.
+    public delegate void OnItemAdded(InventoryItem item);
 
     // Callback for when the players sells an item in sell mode.
     public delegate void OnItemSold(InventoryItem item);
 
+    // Registers the given function to be called when an item is added to the inventory.
+    public void RegisterOnItemAdded(OnItemAdded callback)
+    {
+        onItemAddedCallbacks.Add(callback);
+    }
+
     // Enters mode for selling items.
-    public void EnterSellMode(OnItemSold onItemSold)
+    // Uses the given callback for when requests to sell an item.
+    public void EnterSellMode(OnItemSold callback)
     {
         InSellMode = true;
-        ItemSoldCallback = onItemSold;
+        ItemSoldCallback = callback;
 
         // Show the inventory in sell mode.
         IsPreviewing = false;
@@ -160,10 +171,16 @@ public class Inventory : MonoBehaviour
                 {
                     slot.Hide();
                 }
-                return;
+                break;
             }
             i++;
         }
+
+        // Notify listeners.
+        foreach (OnItemAdded callback in onItemAddedCallbacks)
+        {
+            callback(item);
+        }        
     }
     
     // Removes the item and moves other items to fill the gaps.
