@@ -9,6 +9,7 @@ public class Inventory : MonoBehaviour
 
     public InventoryItemDescription ItemDescription;
     public InventorySellModeItemDescription SellModeItemDescription;
+    public DiscardHint DiscardHint;
     public Transform SlotContainer;
     public Transform ItemContainer;
     public InventoryHudButton InventoryHudButton;
@@ -42,6 +43,7 @@ public class Inventory : MonoBehaviour
         IsPreviewing = false;
         isHidden = false;
         ItemDescription.gameObject.SetActive(false);
+        DiscardHint.gameObject.SetActive(false);
         foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
         {
             slot.Show();
@@ -80,6 +82,7 @@ public class Inventory : MonoBehaviour
         ItemDescription.ItemAction.text = "";
         ItemDescription.GetComponent<Image>().enabled = false;
         ItemDescription.gameObject.SetActive(true);
+        DiscardHint.gameObject.SetActive(false);
         foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
         {
             slot.Show();
@@ -103,6 +106,7 @@ public class Inventory : MonoBehaviour
     {
         isHidden = true;
         ItemDescription.gameObject.SetActive(false);
+        DiscardHint.gameObject.SetActive(false);
         foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
         {
             slot.Hide();
@@ -206,6 +210,7 @@ public class Inventory : MonoBehaviour
         else
         {
             ItemDescription.gameObject.SetActive(false);
+            DiscardHint.gameObject.SetActive(false);
         }
     }
 

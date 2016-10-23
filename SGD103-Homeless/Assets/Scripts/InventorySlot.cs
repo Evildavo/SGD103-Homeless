@@ -9,12 +9,14 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public InventoryItemDescription ItemDescription;
     public InventorySellModeItemDescription SellModeItemDescription;
+    public DiscardHint DiscardHint;
     public Inventory Inventory;
     public InventoryItem Item;
     
     void Start()
     {
         ItemDescription.gameObject.SetActive(false);
+        DiscardHint.gameObject.SetActive(false);
     }
 
     public void Show()
@@ -59,6 +61,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 ItemDescription.ItemName.text = Item.ItemName;
                 ItemDescription.ItemAction.text = Item.PrimaryActionDescription;
                 ItemDescription.GetComponent<Image>().enabled = true;
+                DiscardHint.gameObject.SetActive(true);
 
                 // Move description text to the slot.
                 Vector3 position = ItemDescription.transform.position;
@@ -94,6 +97,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         {
             // Hide description text.
             ItemDescription.gameObject.SetActive(false);
+            DiscardHint.gameObject.SetActive(false);
         }
 
         // Update inventory item.
@@ -128,6 +132,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                     ItemDescription.ItemName.text = "";
                     ItemDescription.ItemAction.text = "";
                     ItemDescription.GetComponent<Image>().enabled = false;
+                    DiscardHint.gameObject.SetActive(false);
                     Inventory.Hide();
                 }
             }
