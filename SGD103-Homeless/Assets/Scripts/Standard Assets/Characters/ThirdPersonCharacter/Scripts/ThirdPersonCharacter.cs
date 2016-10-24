@@ -28,6 +28,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		Vector3 m_CapsuleCenter;
 		CapsuleCollider m_Capsule;
 		bool m_Crouching;
+        
+        bool isVomiting = false;
 
 
 		void Start()
@@ -43,37 +45,57 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		}
 
 
+        public void VomitStart()
+        {
+            isVomiting = true;
+            m_Crouching = true;
+            m_TurnAmount = 0.0f;
+            m_ForwardAmount = 0.0f;
+        }
+
+        public void VomitEnd()
+        {
+            isVomiting = false;
+            m_Crouching = false;
+        }
+
+
 		public void Move(Vector3 move, bool crouch, bool jump)
 		{
+            if (!isVomiting)
+            {
 
-			// convert the world relative moveInput vector into a local-relative
-			// turn amount and forward amount required to head in the desired
-			// direction.
-			if (move.magnitude > 1f) move.Normalize();
-			move = transform.InverseTransformDirection(move);
-			CheckGroundStatus();
-			move = Vector3.ProjectOnPlane(move, m_GroundNormal);
-			m_TurnAmount = Mathf.Atan2(move.x, move.z);
-			m_ForwardAmount = move.z;
+                // convert the world relative moveInput vector into a local-relative
+                // turn amount and forward amount required to head in the desired
+                // direction.
+                if (move.magnitude > 1f) move.Normalize();
+                move = transform.InverseTransformDirection(move);
+                CheckGroundStatus();
+                move = Vector3.ProjectOnPlane(move, m_GroundNormal);
+                m_TurnAmount = Mathf.Atan2(move.x, move.z);
+                m_ForwardAmount = move.z;
 
-			ApplyExtraTurnRotation();
+                ApplyExtraTurnRotation();
 
-			// control and velocity handling is different when grounded and airborne:
-			if (m_IsGrounded)
-			{
-				HandleGroundedMovement(crouch, jump);
-			}
-			else
-			{
-				HandleAirborneMovement();
-			}
+                // control and velocity handling is different when grounded and airborne:
+                if (m_IsGrounded)
+                {
+                    HandleGroundedMovement(crouch, jump);
+                }
+                else
+                {
+                    HandleAirborneMovement();
+                }
 
-			ScaleCapsuleForCrouching(crouch);
-			PreventStandingInLowHeadroom();
+                ScaleCapsuleForCrouching(crouch);
+                PreventStandingInLowHeadroom();
 
-			// send input and other state parameters to the animator
-			UpdateAnimator(move);
-		}
+            }
+
+
+            // send input and other state parameters to the animator
+            UpdateAnimator(move);
+        }
 
 
 		void ScaleCapsuleForCrouching(bool crouch)

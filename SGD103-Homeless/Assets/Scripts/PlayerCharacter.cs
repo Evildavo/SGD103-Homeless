@@ -1,12 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityStandardAssets.Characters.ThirdPerson;
 
 public class PlayerCharacter : Character
 {
+    private float timeAtStartedVomiting;
 
+    public AudioClip VomitSound;
+    
     public Color SubmissiveOptionColor = Color.white;
     public Color PridefulOptionColor = Color.white;
     public Color SelfishOptionColor = Color.white;
+
+    public float VomitDurationSeconds;
+    [ReadOnly]
+    public bool IsVomiting = false;
 
     // Standard types of response.
     public enum ResponseType
@@ -65,8 +73,39 @@ public class PlayerCharacter : Character
         options.Add(new Menu.Option(exitSelected, "Exit"));
         Main.Menu.Show(options);
     }
+
+    // Makes the player character start to vomit.
+    public void Vomit()
+    {
+        if (!IsVomiting)
+        {
+            IsVomiting = true;
+            timeAtStartedVomiting = Time.time;
+
+            // Restrict movement.
+            GetComponent<ThirdPersonCharacter>().VomitStart();
+
+            // Play vomit sound.
+            AudioSource audio = GetComponent<AudioSource>();
+            audio.clip = VomitSound;
+            audio.time = 0.0f;
+            audio.Play();
+        }
+    }
 	
 	new void Update () {
         base.Update();
+
+        // Handle vomiting.
+        if (IsVomiting)
+        {
+            // Stop after time.
+            if (Time.time - timeAtStartedVomiting > VomitDurationSeconds)
+            {
+                IsVomiting = false;
+                GetComponent<ThirdPersonCharacter>().VomitEnd();
+                GetComponent<AudioSource>().Stop();
+            }
+        }
 	}
 }

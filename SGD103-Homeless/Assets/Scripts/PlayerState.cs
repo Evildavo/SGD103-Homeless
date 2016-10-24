@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 
 public class PlayerState : MonoBehaviour {
+    private float timeAtLastVomit;
+    private bool hasVomited = false;
 
     public Main Main;
 
@@ -62,6 +64,9 @@ public class PlayerState : MonoBehaviour {
 
     [Space(10.0f)]
     public float InebriationDecreasesPerHour;
+    public float StartsVomitingAtInebriation;
+    public float VomitIntervalAtMaxInebriationSeconds;
+    public float HungerSatietyLostPerVomit;
 
     [Space(10.0f)]
     public bool IsAtWork = false;
@@ -147,6 +152,22 @@ public class PlayerState : MonoBehaviour {
 
         // Reduce inebriation over time.
         Inebriation -= InebriationDecreasesPerHour * gameTimeDelta;
+
+        // Vomit at regular intervals if intoxicated.
+        if (Inebriation >= StartsVomitingAtInebriation)
+        {
+            float intensity = (Inebriation - StartsVomitingAtInebriation) / (1.0f - StartsVomitingAtInebriation);
+            
+            if (!hasVomited || (intensity != 0.0f &&
+                 Time.time - timeAtLastVomit - Main.PlayerCharacter.VomitDurationSeconds > 
+                 VomitIntervalAtMaxInebriationSeconds / intensity))
+            {
+                hasVomited = true;
+                timeAtLastVomit = Time.time;
+                HungerThirstSatiety -= HungerSatietyLostPerVomit;
+                Main.PlayerCharacter.Vomit();
+            }
+        }        
 
         // Limit stats to range 0-1.
         if (Money < 0)
