@@ -19,6 +19,8 @@ public class AlcoholItem : MultiUseItem
         PlayerState.Inebriation += InebriationIncreasePerUse;
         PlayerState.Addiction += AddictionIncreasePerUse;
 
+        PlayerState.CompleteDrinkAlcoholObjective();
+
         // Show message depending on how inebriated the player is after drinking.
         if (PlayerState.Inebriation > 0.8f)
         {

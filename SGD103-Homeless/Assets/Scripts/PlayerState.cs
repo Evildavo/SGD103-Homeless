@@ -9,7 +9,6 @@ public class PlayerState : MonoBehaviour {
     private List<Objective> alcoholObjectives = new List<Objective>();
 
     public Main Main;
-    public List<AlcoholItem> AlcoholPrefabs;
 
     [Header("Display settings:")]
     public Color NormalTextColour = Color.black;
@@ -96,28 +95,15 @@ public class PlayerState : MonoBehaviour {
     {
         return (Money >= price);
     }
-
-    void Start()
+    
+    // Completes all drink alcohol objectives.
+    public void CompleteDrinkAlcoholObjective()
     {
-        Main.Inventory.RegisterOnItemAdded(onItemAdded);
-    }
-
-    void onItemAdded(InventoryItem item)
-    {
-        // Remove an objective if we found alcohol.
-        foreach (AlcoholItem alcohol in AlcoholPrefabs)
+        foreach (Objective objective in alcoholObjectives)
         {
-            if (item.ItemName == alcohol.ItemName)
-            {
-                if (alcoholObjectives.Count > 0)
-                {
-                    int last = alcoholObjectives.Count - 1;
-                    alcoholObjectives[last].Achieved = true;
-                    alcoholObjectives.RemoveAt(last);
-                }
-                break;
-            }
+            objective.Achieved = true;
         }
+        alcoholObjectives.Clear();
     }
 
     void Update () {
@@ -219,7 +205,7 @@ public class PlayerState : MonoBehaviour {
                 hasSpawnedObjective = true;
                 timeAtLastObjectiveSpawn = Time.time;
                 
-                alcoholObjectives.Add(Main.ObjectiveList.NewObjective("Get more alcohol"));
+                alcoholObjectives.Add(Main.ObjectiveList.NewObjective("Drink more alcohol"));
             }
         }
 
