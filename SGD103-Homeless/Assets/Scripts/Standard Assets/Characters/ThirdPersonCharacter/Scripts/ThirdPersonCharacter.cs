@@ -28,7 +28,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 		Vector3 m_CapsuleCenter;
 		CapsuleCollider m_Capsule;
 		bool m_Crouching;
-        
+
+        float wonkeyWalkAngleRad = 0.0f;
         bool isVomiting = false;
 
 
@@ -60,11 +61,17 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         }
 
 
-		public void Move(Vector3 move, bool crouch, bool jump)
+        public void SetWonkyWalkAngle(float radians)
+        {
+            wonkeyWalkAngleRad = radians;
+        }
+
+
+        public void Move(Vector3 move, bool crouch, bool jump)
 		{
             if (!isVomiting)
             {
-
+                
                 // convert the world relative moveInput vector into a local-relative
                 // turn amount and forward amount required to head in the desired
                 // direction.
@@ -74,6 +81,11 @@ namespace UnityStandardAssets.Characters.ThirdPerson
                 move = Vector3.ProjectOnPlane(move, m_GroundNormal);
                 m_TurnAmount = Mathf.Atan2(move.x, move.z);
                 m_ForwardAmount = move.z;
+
+
+                // Walk wonky.
+                m_TurnAmount += wonkeyWalkAngleRad * move.magnitude * Time.deltaTime;
+
 
                 ApplyExtraTurnRotation();
 

@@ -74,6 +74,11 @@ public class PlayerCharacter : Character
         Main.Menu.Show(options);
     }
 
+    public void SetWonkyWalkAngle(float angle)
+    {
+        GetComponent<ThirdPersonCharacter>().SetWonkyWalkAngle(angle * Mathf.Deg2Rad);
+    }
+
     // Makes the player character start to vomit.
     public void Vomit()
     {

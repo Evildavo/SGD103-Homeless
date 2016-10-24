@@ -70,7 +70,10 @@ public class PlayerState : MonoBehaviour {
 
     [Space(10.0f)]
     public float InebriationDecreasesPerHour;
-    public float StartsVomitingAtInebriation;
+    public float AlcoholEffectsStartAtInebriation;
+    public bool WalkWonkeyWhenIntoxicated;
+    public bool VomitWhenIntoxicated;
+    public float WonkyWalkAngleAtMaxInebriationDegrees;
     public float VomitIntervalAtMaxInebriationSeconds;
     public float HungerSatietyLostPerVomit;
 
@@ -187,21 +190,35 @@ public class PlayerState : MonoBehaviour {
         // Reduce inebriation over time.
         Inebriation -= InebriationDecreasesPerHour * gameTimeDelta;
 
-        // Vomit at regular intervals if intoxicated.
-        if (Inebriation >= StartsVomitingAtInebriation)
+        // Handle alcohol effects.
+        if (Inebriation >= AlcoholEffectsStartAtInebriation)
         {
-            float intensity = (Inebriation - StartsVomitingAtInebriation) / (1.0f - StartsVomitingAtInebriation);
-            
-            if (!hasVomited || (intensity != 0.0f &&
-                 Time.time - timeAtLastVomit - Main.PlayerCharacter.VomitDurationSeconds > 
-                 VomitIntervalAtMaxInebriationSeconds / intensity))
-            {
-                hasVomited = true;
-                timeAtLastVomit = Time.time;
+            float intensity = (Inebriation - AlcoholEffectsStartAtInebriation) / (1.0f - AlcoholEffectsStartAtInebriation);
 
-                HungerThirstSatiety -= HungerSatietyLostPerVomit;
-                Main.PlayerCharacter.Vomit();
+            // Walking wonky.
+            if (WalkWonkeyWhenIntoxicated)
+            {
+                Main.PlayerCharacter.SetWonkyWalkAngle(WonkyWalkAngleAtMaxInebriationDegrees);
             }
+
+            // Vomit at regular intervals if intoxicated.
+            if (VomitWhenIntoxicated)
+            {
+                if (!hasVomited || (intensity != 0.0f &&
+                     Time.time - timeAtLastVomit - Main.PlayerCharacter.VomitDurationSeconds >
+                     VomitIntervalAtMaxInebriationSeconds / intensity))
+                {
+                    hasVomited = true;
+                    timeAtLastVomit = Time.time;
+
+                    HungerThirstSatiety -= HungerSatietyLostPerVomit;
+                    Main.PlayerCharacter.Vomit();
+                }
+            }
+        }
+        else
+        {
+            Main.PlayerCharacter.SetWonkyWalkAngle(0.0f);
         }
 
         // Addiction affects morale.
