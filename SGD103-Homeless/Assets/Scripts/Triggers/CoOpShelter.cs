@@ -16,6 +16,7 @@ public class CoOpShelter : MonoBehaviour {
 	void Start () {
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
+        Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
         Trigger.RegisterOnCloseRequested(reset);
     }
 
@@ -158,6 +159,14 @@ public class CoOpShelter : MonoBehaviour {
         if ((serviceOpened || serviceClosed) && inMainMenu)
         {
             OpenMainMenu();
+        }
+    }
+
+    public void OnPlayerExit()
+    {
+        if (SoupKitchenEvent.IsCurrentlyAttending)
+        {
+            SoupKitchenEvent.Leave();
         }
     }
 

@@ -40,17 +40,38 @@ public class EventAtLocation : MonoBehaviour {
         OnPlayerAttends();
     }
 
+    // Leaves the event.
+    public void Leave()
+    {
+        IsCurrentlyAttending = false;
+        Main.GameTime.TimeScale = Main.GameTime.NormalTimeScale;
+        Main.MessageBox.Hide();
+
+        // Show UI.
+        Main.UI.Show();
+
+        // Fade in from black.
+        Main.ScreenFader.fadeTime = FadeInFromBlackTime;
+        Main.ScreenFader.fadeIn = true;
+
+        Invoke("onFadeInComplete", FadeInFromBlackTime);
+        OnPlayerLeaves();
+    }
+
+    public bool ExitPressed()
+    {
+        return Input.GetButtonDown("Secondary") ||
+               Input.GetKeyDown("e") ||
+               Input.GetKeyDown("enter") ||
+               Input.GetKeyDown("return");
+    }
+
     // Override to do something when the player attends the event.
     protected virtual void OnPlayerAttends() { }
 
     // Override to do something when the event ends while the player was attending it.
     protected virtual void OnPlayerLeaves() { }
-
-    // Call from derived.
-    protected void Start () {
-	
-	}
-
+    
     // Call from derived.
     protected void Update ()
     {
@@ -60,22 +81,16 @@ public class EventAtLocation : MonoBehaviour {
         var GameTime = Main.GameTime;
         if (IsCurrentlyAttending)
         {
+            // On user input, leave.
+            if (ExitPressed())
+            {
+                Leave();
+            }
+
             // At the end of the event, leave.
             if (GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, ToHour).shortest <= GameTime.GameTimeDelta)
             {
-                IsCurrentlyAttending = false;
-                GameTime.TimeScale = GameTime.NormalTimeScale;
-                Main.MessageBox.Hide();
-
-                // Show UI.
-                Main.UI.Show();
-
-                // Fade in from black.
-                Main.ScreenFader.fadeTime = FadeInFromBlackTime;
-                Main.ScreenFader.fadeIn = true;
-
-                Invoke("onFadeInComplete", FadeInFromBlackTime);
-                OnPlayerLeaves();
+                Leave();
             }
         }
         else

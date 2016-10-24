@@ -26,10 +26,6 @@ public class SoupKitchenEvent : EventAtLocation {
         Main.PlayerState.HighlightHungerThirst = false;
         Main.PlayerState.HighlightMorale = false;
     }
-
-    new void Start () {
-        base.Start();
-	}
 	
 	new void Update () {
         base.Update();
