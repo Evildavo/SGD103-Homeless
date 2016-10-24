@@ -69,6 +69,7 @@ public class PlayerState : MonoBehaviour {
     public float StartsVomitingAtInebriation;
     public float VomitIntervalAtMaxInebriationSeconds;
     public float HungerSatietyLostPerVomit;
+    public float MaxAddictionMoralePenaltyPerHour;
 
     [Space(10.0f)]
     public bool IsAtWork = false;
@@ -169,7 +170,10 @@ public class PlayerState : MonoBehaviour {
                 HungerThirstSatiety -= HungerSatietyLostPerVomit;
                 Main.PlayerCharacter.Vomit();
             }
-        }        
+        }
+
+        // Addiction affects morale.
+        Morale -= Addiction * MaxAddictionMoralePenaltyPerHour * gameTimeDelta;
 
         // Limit stats to range 0-1.
         if (Money < 0)
