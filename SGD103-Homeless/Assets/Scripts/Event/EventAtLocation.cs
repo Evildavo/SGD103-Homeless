@@ -37,19 +37,9 @@ public class EventAtLocation : MonoBehaviour {
         // Hide UI.
         Main.UI.Hide();
     }
-    
-    void OnFadeOutComplete()
-    {
-        if (IsCurrentlyAttending)
-        {
-            // Show attendance message and accelerate time.
-            if (DuringAttendanceMessage != "")
-            {
-                Main.MessageBox.Show(DuringAttendanceMessage, gameObject);
-            }
-            Main.GameTime.TimeScale = AttendanceTimeScale;
-        }
-    }
+
+    // Override to do something when the event ends while the player was attending it.
+    protected virtual void OnEventFinished() { }
 
     // Call from derived.
     protected void Start () {
@@ -80,6 +70,7 @@ public class EventAtLocation : MonoBehaviour {
                 Main.ScreenFader.fadeIn = true;
 
                 Invoke("onFadeInComplete", FadeInFromBlackTime);
+                OnEventFinished();
             }
         }
         else
@@ -95,6 +86,19 @@ public class EventAtLocation : MonoBehaviour {
                     IsOpen = true;
                 }
             }
+        }
+    }
+
+    void OnFadeOutComplete()
+    {
+        if (IsCurrentlyAttending)
+        {
+            // Show attendance message and accelerate time.
+            if (DuringAttendanceMessage != "")
+            {
+                Main.MessageBox.Show(DuringAttendanceMessage, gameObject);
+            }
+            Main.GameTime.TimeScale = AttendanceTimeScale;
         }
     }
 
