@@ -18,7 +18,7 @@ public class CoOpShelter : MonoBehaviour {
     public class WeeklyEvent
     {
         public Main Main;
-        public GameTime.DayOfTheWeekEnum[] Days;
+        public GameTime.DayOfTheWeekEnum Day;
         [Header("Note: Does NOT support wrapping (e.g. 11pm to 2am).")]
         public float FromHour;
         public float ToHour;
@@ -27,16 +27,7 @@ public class CoOpShelter : MonoBehaviour {
         public bool IsOpen()
         {
             // Determine if open today.
-            bool openToday = false;
-            foreach (GameTime.DayOfTheWeekEnum day in Days)
-            {
-                if (day == Main.GameTime.DayOfTheWeek)
-                {
-                    openToday = true;
-                    break;
-                }
-            }
-            if (openToday)
+            if (Day == Main.GameTime.DayOfTheWeek)
             {
                 // Determine if open now.
                 if (Main.GameTime.TimeOfDayHours > FromHour &&
@@ -81,6 +72,7 @@ public class CoOpShelter : MonoBehaviour {
 
     public void OpenCoOpShopMenu()
     {
+        Main.MessageBox.ShowNext();
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(OpenMainMenu, "Exit"));
 
@@ -90,7 +82,21 @@ public class CoOpShelter : MonoBehaviour {
 
     public void ReadNoticeBoard()
     {
-        Debug.Log("Reading notice board");
+        var GameTime = Main.GameTime;
+        string message = 
+            "Soup Kitchen: " +
+            GameTime.DayOfTheWeekAsShortString(SoupKitchenEvent.Day) + " " +
+            GameTime.GetTimeAsString(SoupKitchenEvent.FromHour) + " to " +
+            GameTime.GetTimeAsString(SoupKitchenEvent.ToHour) + "\n" +
+            "Counselling: " +
+            GameTime.DayOfTheWeekAsShortString(CounsellingEvent.Day) + " " +
+            GameTime.GetTimeAsString(CounsellingEvent.FromHour) + " to " +
+            GameTime.GetTimeAsString(CounsellingEvent.ToHour) + "\n" +
+            "Addiction Support: " +
+            GameTime.DayOfTheWeekAsShortString(AddictionSupportEvent.Day) + " " +
+            GameTime.GetTimeAsString(AddictionSupportEvent.FromHour) + " to " +
+            GameTime.GetTimeAsString(AddictionSupportEvent.ToHour) + "\n";
+        Main.MessageBox.Show(message, gameObject);
         OpenMainMenu();
     }
 
@@ -175,6 +181,7 @@ public class CoOpShelter : MonoBehaviour {
     void reset()
     {
         Main.Menu.Hide();
+        Main.MessageBox.ShowNext();
         Trigger.Reset();
     }
 
