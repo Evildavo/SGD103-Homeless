@@ -70,6 +70,7 @@ public class PlayerState : MonoBehaviour {
 
     [Space(10.0f)]
     public float InebriationDecreasesPerHour;
+    [Header("Heavy effects")]
     public float AlcoholEffectsStartAtInebriation;
     [Header("Turns slightly while walking")]
     public bool WalkWonkeyWhenIntoxicated;
@@ -194,7 +195,7 @@ public class PlayerState : MonoBehaviour {
         // Handle alcohol effects.
         if (Inebriation >= AlcoholEffectsStartAtInebriation)
         {
-            float intensity = (Inebriation - AlcoholEffectsStartAtInebriation) / (1.0f - AlcoholEffectsStartAtInebriation);
+            float intoxication = (Inebriation - AlcoholEffectsStartAtInebriation) / (1.0f - AlcoholEffectsStartAtInebriation);
 
             // Walking wonky.
             if (WalkWonkeyWhenIntoxicated)
@@ -205,9 +206,9 @@ public class PlayerState : MonoBehaviour {
             // Vomit at regular intervals if intoxicated.
             if (VomitWhenIntoxicated)
             {
-                if (!hasVomited || (intensity != 0.0f &&
+                if (!hasVomited || (intoxication != 0.0f &&
                      Time.time - timeAtLastVomit - Main.PlayerCharacter.VomitDurationSeconds >
-                     VomitIntervalAtMaxInebriationSeconds / intensity))
+                     VomitIntervalAtMaxInebriationSeconds / intoxication))
                 {
                     hasVomited = true;
                     timeAtLastVomit = Time.time;
@@ -226,12 +227,13 @@ public class PlayerState : MonoBehaviour {
         Morale -= Addiction * MaxAddictionMoralePenaltyPerHour * gameTimeDelta;
 
         // Spawn alcohol objectives sometimes while addicted.
-        if (Addiction >= SpawnObjectivesAboveAddictionLevel)
+        // Don't spawn while already heavily intoxicated.
+        if (Addiction >= SpawnObjectivesAboveAddictionLevel && Inebriation < AlcoholEffectsStartAtInebriation)
         {
-            float level = (Addiction - SpawnObjectivesAboveAddictionLevel) / (1.0f - SpawnObjectivesAboveAddictionLevel);
+            float addictionLevel = (Addiction - SpawnObjectivesAboveAddictionLevel) / (1.0f - SpawnObjectivesAboveAddictionLevel);
 
-            if (!hasSpawnedObjective || (level != 0.0f &&
-                Time.time - timeAtLastObjectiveSpawn > ObjectiveSpawnIntervalAtMaxAddictionSeconds / level))
+            if (!hasSpawnedObjective || (addictionLevel != 0.0f &&
+                Time.time - timeAtLastObjectiveSpawn > ObjectiveSpawnIntervalAtMaxAddictionSeconds / addictionLevel))
             {
                 hasSpawnedObjective = true;
                 timeAtLastObjectiveSpawn = Time.time;
