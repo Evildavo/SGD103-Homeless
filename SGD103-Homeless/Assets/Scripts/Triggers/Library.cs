@@ -191,7 +191,6 @@ public class Library : MonoBehaviour {
                     ResumeItem item = Inventory.ItemContainer.GetComponentInChildren<ResumeItem>();
                     item.NumUses = 2;
                     /*item.RelevantToDay = GameTime.Day;*/
-                    Inventory.ShowPreview();
                 }
                 else
                 {
@@ -201,6 +200,7 @@ public class Library : MonoBehaviour {
                     /*item.RelevantToDay = GameTime.Day;*/
                     Inventory.AddItem(item);
                 }
+                Inventory.ShowPreview();
             }
         }
     }
