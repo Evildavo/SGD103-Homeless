@@ -70,14 +70,15 @@ public class PlayerState : MonoBehaviour {
 
     [Space(10.0f)]
     public float InebriationDecreasesPerHour;
-    [Header("Heavy effects")]
     public float AlcoholEffectsStartAtInebriation;
     [Header("Turns slightly while walking")]
     public bool WalkWonkeyWhenIntoxicated;
     public bool VomitWhenIntoxicated;
+    public bool WalkSlowerWhenIntoxicated;
     public float WonkyWalkAngleAtMaxInebriationDegrees;
     public float VomitIntervalAtMaxInebriationSeconds;
     public float HungerSatietyLostPerVomit;
+    public float WalkSpeedFactorAtMaxInebriation = 1.0f;
 
     [Space(10.0f)]
     public float MaxAddictionMoralePenaltyPerHour;
@@ -217,10 +218,17 @@ public class PlayerState : MonoBehaviour {
                     Main.PlayerCharacter.Vomit();
                 }
             }
+
+            // Walk slower.
+            if (WalkSlowerWhenIntoxicated)
+            {
+                Main.PlayerCharacter.SetWalkSpeedFactor(WalkSpeedFactorAtMaxInebriation);
+            }
         }
         else
         {
             Main.PlayerCharacter.SetWonkyWalkAngle(0.0f);
+            Main.PlayerCharacter.SetWalkSpeedFactor(1.0f);
         }
 
         // Addiction affects morale.

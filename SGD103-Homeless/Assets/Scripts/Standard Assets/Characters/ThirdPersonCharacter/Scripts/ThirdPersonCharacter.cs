@@ -31,9 +31,10 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
         float wonkeyWalkAngleRad = 0.0f;
         bool isVomiting = false;
+        float walkSpeedFactor = 1.0f;
 
 
-		void Start()
+        void Start()
 		{
 			m_Animator = GetComponent<Animator>();
 			m_Rigidbody = GetComponent<Rigidbody>();
@@ -59,11 +60,15 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             isVomiting = false;
             m_Crouching = false;
         }
-
-
+        
         public void SetWonkyWalkAngle(float radians)
         {
             wonkeyWalkAngleRad = radians;
+        }
+
+        public void SetWalkSpeedFactor(float factor)
+        {
+            walkSpeedFactor = factor;
         }
 
 
@@ -80,7 +85,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
                 CheckGroundStatus();
                 move = Vector3.ProjectOnPlane(move, m_GroundNormal);
                 m_TurnAmount = Mathf.Atan2(move.x, move.z);
-                m_ForwardAmount = move.z;
+                m_ForwardAmount = move.z * walkSpeedFactor;
 
 
                 // Walk wonky.

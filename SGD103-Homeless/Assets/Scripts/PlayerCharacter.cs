@@ -79,6 +79,11 @@ public class PlayerCharacter : Character
         GetComponent<ThirdPersonCharacter>().SetWonkyWalkAngle(angle * Mathf.Deg2Rad);
     }
 
+    public void SetWalkSpeedFactor(float factor)
+    {
+        GetComponent<ThirdPersonCharacter>().SetWalkSpeedFactor(factor);
+    }
+
     // Makes the player character start to vomit.
     public void Vomit()
     {
