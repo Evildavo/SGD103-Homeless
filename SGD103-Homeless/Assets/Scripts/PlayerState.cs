@@ -71,6 +71,7 @@ public class PlayerState : MonoBehaviour {
     [Space(10.0f)]
     public float InebriationDecreasesPerHour;
     public float AlcoholEffectsStartAtInebriation;
+    [Header("Turns slightly while walking")]
     public bool WalkWonkeyWhenIntoxicated;
     public bool VomitWhenIntoxicated;
     public float WonkyWalkAngleAtMaxInebriationDegrees;
