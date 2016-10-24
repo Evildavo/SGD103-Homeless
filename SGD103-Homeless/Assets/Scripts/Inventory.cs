@@ -242,6 +242,30 @@ public class Inventory : MonoBehaviour
     
     void Update()
     {
+        // Open inventory on "i" key.
+        if (Input.GetKeyDown("i"))
+        {
+            if (InSellMode && Main.PlayerState.CurrentTrigger != null)
+            {
+                // Close the trigger.
+                Main.PlayerState.CurrentTrigger.Close();
+                Show();
+            }
+            else
+            {
+                // Toggle inventory.
+                bool inventoryHidden = IsHidden();
+                if (inventoryHidden)
+                {
+                    Show();
+                }
+                else
+                {
+                    Hide();
+                }
+            }
+        }
+
         // Check if inventory is full.
         IsInventoryFull = true;
         foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
