@@ -6,6 +6,8 @@ public class CoOpShelter : MonoBehaviour {
     private bool wasSoupKitchenOpen = false;
     private bool wasCounsellingOpen = false;
     private bool wasAddictionSupportOpen = false;
+    private float activeFromHour;
+    private float activeToHour;
 
     public Main Main;
     public Trigger Trigger;
@@ -13,7 +15,11 @@ public class CoOpShelter : MonoBehaviour {
     public EventAtLocation CounsellingEvent;
     public EventAtLocation AddictionSupportEvent;
 
-	void Start () {
+	void Start ()
+    {
+        activeFromHour = Trigger.ActiveFromHour;
+        activeToHour = Trigger.ActiveToHour;
+
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
         Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
@@ -98,14 +104,14 @@ public class CoOpShelter : MonoBehaviour {
 
     public void AttendCounselling()
     {
-        Debug.Log("Counselling attended");
-        OpenMainMenu();
+        CounsellingEvent.Attend();
+        Main.Menu.Hide();
     }
 
     public void AttendAddictionSupport()
     {
-        Debug.Log("Addiction support therapy attended");
-        OpenMainMenu();
+        AddictionSupportEvent.Attend();
+        Main.Menu.Hide();
     }
 
     public void OnTrigger()
@@ -139,19 +145,19 @@ public class CoOpShelter : MonoBehaviour {
         else if (wasCounsellingOpen && CounsellingEvent && !CounsellingEvent.IsOpen)
         {
             Main.MessageBox.ShowQueued("Counselling services have closed for today", 4.0f, gameObject);
-            wasCounsellingOpen = true;
+            wasCounsellingOpen = false;
             serviceClosed = true;
         }
         if (!wasAddictionSupportOpen && AddictionSupportEvent && AddictionSupportEvent.IsOpen)
         {
-            Main.MessageBox.ShowForTime("Addiction support therapy has opened for today", 4.0f, gameObject);
+            Main.MessageBox.ShowForTime("Addiction support therapy has opened for tonight", 4.0f, gameObject);
             wasAddictionSupportOpen = true;
             serviceOpened = true;
         }
         else if (wasAddictionSupportOpen && AddictionSupportEvent && !AddictionSupportEvent.IsOpen)
         {
-            Main.MessageBox.ShowQueued("Addiction support therapy has closed for today", 4.0f, gameObject);
-            wasAddictionSupportOpen = true;
+            Main.MessageBox.ShowQueued("Addiction support therapy has closed for tonight", 4.0f, gameObject);
+            wasAddictionSupportOpen = false;
             serviceClosed = true;
         }
 
@@ -168,6 +174,14 @@ public class CoOpShelter : MonoBehaviour {
         {
             SoupKitchenEvent.Leave();
         }
+        if (CounsellingEvent.IsCurrentlyAttending)
+        {
+            CounsellingEvent.Leave();
+        }
+        if (AddictionSupportEvent.IsCurrentlyAttending)
+        {
+            AddictionSupportEvent.Leave();
+        }
     }
 
     void reset()
@@ -175,6 +189,21 @@ public class CoOpShelter : MonoBehaviour {
         Main.Menu.Hide();
         Main.MessageBox.ShowNext();
         Trigger.Reset();
+    }
+    
+    void Update()
+    {
+        // Set closing hours differently when an event is on.
+        if (SoupKitchenEvent.IsOpen || CounsellingEvent.IsOpen || AddictionSupportEvent.IsOpen)
+        {
+            Trigger.ActiveFromHour = 0.0f;
+            Trigger.ActiveToHour = 24.0f;
+        }
+        else
+        {
+            Trigger.ActiveFromHour = activeFromHour;
+            Trigger.ActiveToHour = activeToHour;
+        }
     }
 
 }

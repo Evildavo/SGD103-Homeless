@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SoupKitchenEvent : EventAtLocation {
+public class CounsellingEvent : EventAtLocation {
     private float hoursSpent;
-
-    public float HungerSatietyRewardPerHour;
+    
     public float MoraleRewardPerHour;
 
     protected override void OnPlayerAttends()
@@ -16,14 +15,13 @@ public class SoupKitchenEvent : EventAtLocation {
     {
         if (hoursSpent > 0.7f)
         {
-            Main.MessageBox.ShowForTime("You feel enlivened after a good feed", 2.0f, gameObject);
+            Main.MessageBox.ShowForTime("You feel better for having a chat", 2.0f, gameObject);
         }
         Invoke("removeHighlighting", 2.0f);
     }
 
     void removeHighlighting()
     {
-        Main.PlayerState.HighlightHungerThirst = false;
         Main.PlayerState.HighlightMorale = false;
     }
 	
@@ -34,9 +32,7 @@ public class SoupKitchenEvent : EventAtLocation {
             hoursSpent += Main.GameTime.GameTimeDelta;
 
             // Give reward.
-            Main.PlayerState.HungerThirstSatiety += HungerSatietyRewardPerHour * Main.GameTime.GameTimeDelta;
             Main.PlayerState.GainMorale(MoraleRewardPerHour);
-            Main.PlayerState.HighlightHungerThirst = true;
             Main.PlayerState.HighlightMorale = true;
         }
 	}
