@@ -81,8 +81,8 @@ public class CoOpShelter : MonoBehaviour {
 
     public void AttendSoupKitchen()
     {
-        Debug.Log("Soup kitchen attended");
-        OpenMainMenu();
+        SoupKitchenEvent.Attend();
+        Main.Menu.Hide();
     }
 
     public void AttendCounselling()

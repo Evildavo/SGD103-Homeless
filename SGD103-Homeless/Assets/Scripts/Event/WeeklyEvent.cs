@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class WeeklyEvent : MonoBehaviour {
+public class WeeklyEvent : EventAtLocation {
 
     public Main Main;
     public GameTime.DayOfTheWeekEnum Day;
@@ -11,15 +11,18 @@ public class WeeklyEvent : MonoBehaviour {
 
     [ReadOnly]
     public bool IsOpen;
-
-    // Fades the screen out
-    public void Attend(string message)
+    
+    // Call from derived.
+    protected new void Start()
     {
-
+        base.Start();
     }
 
-    void Update()
+    // Call from derived.
+    protected new void Update()
     {
+        base.Update();
+
         // Determine if open today.
         IsOpen = false;
         if (Day == Main.GameTime.DayOfTheWeek)
