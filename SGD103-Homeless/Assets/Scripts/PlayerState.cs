@@ -232,6 +232,7 @@ public class PlayerState : MonoBehaviour {
         HealthTiredness = Mathf.Clamp(HealthTiredness, 0.0f, 1.0f);
         Morale = Mathf.Clamp(Morale, 0.0f, 1.0f);
         Inebriation = Mathf.Clamp(Inebriation, 0.0f, 1.0f);
+        Addiction = Mathf.Clamp(Addiction, 0.0f, 1.0f);
         CurrentClothingCleanliness = Mathf.Clamp(CurrentClothingCleanliness, 0.0f, 1.0f);
 
         // Highlight stats.
