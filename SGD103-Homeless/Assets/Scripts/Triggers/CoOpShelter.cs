@@ -125,7 +125,7 @@ public class CoOpShelter : MonoBehaviour {
         }
         else if (wasSoupKitchenOpen && SoupKitchenEvent && !SoupKitchenEvent.IsOpen)
         {
-            Main.MessageBox.ShowForTime("The soup kitchen has closed for today", 4.0f, gameObject);
+            Main.MessageBox.ShowQueued("The soup kitchen has closed for today", 4.0f, gameObject);
             wasSoupKitchenOpen = false;
             serviceClosed = true;
         }
@@ -137,7 +137,7 @@ public class CoOpShelter : MonoBehaviour {
         }
         else if (wasCounsellingOpen && CounsellingEvent && !CounsellingEvent.IsOpen)
         {
-            Main.MessageBox.ShowForTime("Counselling services have closed for today", 4.0f, gameObject);
+            Main.MessageBox.ShowQueued("Counselling services have closed for today", 4.0f, gameObject);
             wasCounsellingOpen = true;
             serviceClosed = true;
         }
@@ -149,7 +149,7 @@ public class CoOpShelter : MonoBehaviour {
         }
         else if (wasAddictionSupportOpen && AddictionSupportEvent && !AddictionSupportEvent.IsOpen)
         {
-            Main.MessageBox.ShowForTime("Addiction support therapy has closed for today", 4.0f, gameObject);
+            Main.MessageBox.ShowQueued("Addiction support therapy has closed for today", 4.0f, gameObject);
             wasAddictionSupportOpen = true;
             serviceClosed = true;
         }

@@ -36,10 +36,15 @@ public class EventAtLocation : MonoBehaviour {
 
         // Hide UI.
         Main.UI.Hide();
+
+        OnPlayerAttends();
     }
 
+    // Override to do something when the player attends the event.
+    protected virtual void OnPlayerAttends() { }
+
     // Override to do something when the event ends while the player was attending it.
-    protected virtual void OnEventFinished() { }
+    protected virtual void OnPlayerLeaves() { }
 
     // Call from derived.
     protected void Start () {
@@ -70,7 +75,7 @@ public class EventAtLocation : MonoBehaviour {
                 Main.ScreenFader.fadeIn = true;
 
                 Invoke("onFadeInComplete", FadeInFromBlackTime);
-                OnEventFinished();
+                OnPlayerLeaves();
             }
         }
         else
