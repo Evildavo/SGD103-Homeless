@@ -6,6 +6,7 @@ public class AlcoholItem : MultiUseItem
     public float ThirstSatietyBenefitPerUse;
     public float MoraleBenefitPerUse;
     public float InebriationIncreasePerUse;
+    public float AddictionIncreasePerUse;
 
     public override void OnPrimaryAction()
     {
@@ -16,6 +17,7 @@ public class AlcoholItem : MultiUseItem
         PlayerState.HungerThirstSatiety += ThirstSatietyBenefitPerUse;
         PlayerState.Morale += MoraleBenefitPerUse;
         PlayerState.Inebriation += InebriationIncreasePerUse;
+        PlayerState.Addiction += AddictionIncreasePerUse;
 
         // Show message depending on how inebriated the player is after drinking.
         if (PlayerState.Inebriation > 0.8f)

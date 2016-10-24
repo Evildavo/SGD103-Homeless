@@ -28,6 +28,8 @@ public class PlayerState : MonoBehaviour {
     [Range(0.0f, 1.0f)]
     public float Inebriation = 0.0f;
     [Range(0.0f, 1.0f)]
+    public float Addiction = 0.0f;
+    [Range(0.0f, 1.0f)]
     public float CurrentClothingCleanliness = 0.0f;
 
     [Header("Settings:")] 
