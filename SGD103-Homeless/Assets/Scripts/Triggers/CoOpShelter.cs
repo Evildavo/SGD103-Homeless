@@ -13,33 +13,6 @@ public class CoOpShelter : MonoBehaviour {
     public WeeklyEvent CounsellingEvent;
     public WeeklyEvent AddictionSupportEvent;
 
-    // An event that occurs on a weekly basis.
-    [System.Serializable]
-    public class WeeklyEvent
-    {
-        public Main Main;
-        public GameTime.DayOfTheWeekEnum Day;
-        [Header("Note: Does NOT support wrapping (e.g. 11pm to 2am).")]
-        public float FromHour;
-        public float ToHour;
-
-        // Returns true if the event is currently running.
-        public bool IsOpen()
-        {
-            // Determine if open today.
-            if (Day == Main.GameTime.DayOfTheWeek)
-            {
-                // Determine if open now.
-                if (Main.GameTime.TimeOfDayHours > FromHour &&
-                    Main.GameTime.TimeOfDayHours < ToHour)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
 	void Start () {
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
@@ -52,15 +25,15 @@ public class CoOpShelter : MonoBehaviour {
         options.Add(new Menu.Option(OpenCoOpShopMenu, "Co-op shop"));
         options.Add(new Menu.Option(ReadNoticeBoard, "Read notice board"));
         options.Add(new Menu.Option(RequestEmergencyAccomodation, "Request emergency accommodation"));
-        if (SoupKitchenEvent.IsOpen())
+        if (SoupKitchenEvent.IsOpen)
         {
             options.Add(new Menu.Option(AttendSoupKitchen, "Attend soup kitchen"));
         }
-        if (CounsellingEvent.IsOpen())
+        if (CounsellingEvent.IsOpen)
         {
             options.Add(new Menu.Option(AttendCounselling, "Attend counselling"));
         }
-        if (AddictionSupportEvent.IsOpen())
+        if (AddictionSupportEvent.IsOpen)
         {
             options.Add(new Menu.Option(AttendAddictionSupport, "Attend addiction support therapy"));
         }
@@ -134,37 +107,37 @@ public class CoOpShelter : MonoBehaviour {
         // Notify the user that a service has opened or closed.
         bool serviceOpened = false;
         bool serviceClosed = false;
-        if (!wasSoupKitchenOpen && SoupKitchenEvent.IsOpen())
+        if (!wasSoupKitchenOpen && SoupKitchenEvent.IsOpen)
         {
             Main.MessageBox.ShowForTime("The soup kitchen has opened for today", 4.0f, gameObject);
             wasSoupKitchenOpen = true;
             serviceOpened = true;
         }
-        else if (wasSoupKitchenOpen && !SoupKitchenEvent.IsOpen())
+        else if (wasSoupKitchenOpen && !SoupKitchenEvent.IsOpen)
         {
             Main.MessageBox.ShowForTime("The soup kitchen has closed for today", 4.0f, gameObject);
             wasSoupKitchenOpen = false;
             serviceClosed = true;
         }
-        if (!wasCounsellingOpen && CounsellingEvent.IsOpen())
+        if (!wasCounsellingOpen && CounsellingEvent.IsOpen)
         {
             Main.MessageBox.ShowForTime("Counselling services have opened for today", 4.0f, gameObject);
             wasCounsellingOpen = true;
             serviceOpened = true;
         }
-        else if (wasCounsellingOpen && !CounsellingEvent.IsOpen())
+        else if (wasCounsellingOpen && !CounsellingEvent.IsOpen)
         {
             Main.MessageBox.ShowForTime("Counselling services have closed for today", 4.0f, gameObject);
             wasCounsellingOpen = true;
             serviceClosed = true;
         }
-        if (!wasAddictionSupportOpen && AddictionSupportEvent.IsOpen())
+        if (!wasAddictionSupportOpen && AddictionSupportEvent.IsOpen)
         {
             Main.MessageBox.ShowForTime("Addiction support therapy has opened for today", 4.0f, gameObject);
             wasAddictionSupportOpen = true;
             serviceOpened = true;
         }
-        else if (wasAddictionSupportOpen && !AddictionSupportEvent.IsOpen())
+        else if (wasAddictionSupportOpen && !AddictionSupportEvent.IsOpen)
         {
             Main.MessageBox.ShowForTime("Addiction support therapy has closed for today", 4.0f, gameObject);
             wasAddictionSupportOpen = true;
