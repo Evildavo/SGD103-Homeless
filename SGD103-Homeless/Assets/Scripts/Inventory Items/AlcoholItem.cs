@@ -15,7 +15,7 @@ public class AlcoholItem : MultiUseItem
 
         // Increase stats.
         PlayerState.HungerThirstSatiety += ThirstSatietyBenefitPerUse;
-        PlayerState.Morale += MoraleBenefitPerUse;
+        PlayerState.GainMorale(MoraleBenefitPerUse, false);
         PlayerState.Inebriation += InebriationIncreasePerUse;
         PlayerState.Addiction += AddictionIncreasePerUse;
 

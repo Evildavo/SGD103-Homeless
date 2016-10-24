@@ -78,6 +78,7 @@ public class PlayerState : MonoBehaviour {
     public float MaxAddictionMoralePenaltyPerHour;
     public float SpawnObjectivesAboveAddictionLevel;
     public float ObjectiveSpawnIntervalAtMaxAddictionSeconds;
+    public float AddictionReducedPerMoraleGainedFactor;
 
     [Space(10.0f)]
     public bool IsAtWork = false;
@@ -104,6 +105,18 @@ public class PlayerState : MonoBehaviour {
             objective.Achieved = true;
         }
         alcoholObjectives.Clear();
+    }
+
+    // Gains the given amount of morale, also reducing addiction.
+    public void GainMorale(float amount, bool reduceAddiction = true)
+    {
+        Morale += amount;
+
+        // Only reduce addiction if we're gaining morale (morale isn't full).
+        if (reduceAddiction && Morale < 1.0f)
+        {
+            Addiction -= amount * AddictionReducedPerMoraleGainedFactor;
+        }
     }
 
     void Update () {
