@@ -453,7 +453,7 @@ public class JobLocation : MonoBehaviour
             numUpdateTicksDuringShift++;
 
             // Stop work at the end of shift.
-            if (GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, Job.ShiftToHour).shortest < GameTime.GameTimeDelta)
+            if (GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, Job.ShiftToHour).shortest <= GameTime.GameTimeDelta)
             {
                 stopWork();
             }

@@ -1,13 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SoupKitchenEvent : WeeklyEvent {
-
-    override public void Attend()
-    {
-        Debug.Log("Attending soup kitchen");
-    }
-
+public class SoupKitchenEvent : EventAtLocation {
+    
     new void Start () {
         base.Start();
 	}
