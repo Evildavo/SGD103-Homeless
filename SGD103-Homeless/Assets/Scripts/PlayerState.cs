@@ -59,7 +59,10 @@ public class PlayerState : MonoBehaviour {
     public float WorkHungerGainFactor;
     public float WorkHealthLossFactor;
     public float WorkMoraleLossFactor;
-    
+
+    [Space(10.0f)]
+    public float InebriationDecreasesPerHour;
+
     [Space(10.0f)]
     public bool IsAtWork = false;
 
@@ -141,6 +144,9 @@ public class PlayerState : MonoBehaviour {
                 (HealthTiredness - HealthGoodAtLevel) / (1.0f - HealthGoodAtLevel) *
                 MaxGoodHealthMoraleRewardPerHour * gameTimeDelta;
         }
+
+        // Reduce inebriation over time.
+        Inebriation -= InebriationDecreasesPerHour * gameTimeDelta;
 
         // Limit stats to range 0-1.
         if (Money < 0)
