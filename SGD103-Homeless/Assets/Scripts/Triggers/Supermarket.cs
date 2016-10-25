@@ -32,7 +32,7 @@ public class Supermarket : MonoBehaviour
         options.Add(new Menu.Option(OpenFoodMenu, "Buy food"));
         options.Add(new Menu.Option(OpenOutdoorItemMenu, "Buy outdoor equipment"));
         options.Add(new Menu.Option(OpenLiquorItemMenu, "Buy liquor"));
-        options.Add(new Menu.Option(OpenMedicineItemMenu, "Buy medicine"));
+        /*options.Add(new Menu.Option(OpenMedicineItemMenu, "Buy medicine"));*/
         if (JobLocation.IsJobAvailableToday)
         {
             options.Add(new Menu.Option(ApplyForJob, "Apply for job"));
