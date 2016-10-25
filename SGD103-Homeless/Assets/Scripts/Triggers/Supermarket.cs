@@ -16,16 +16,7 @@ public class Supermarket : MonoBehaviour
     public FoodItem BiscuitsPrefab;
     public FoodItem ChocolateBarPrefab;
     public SleepItem SleepingBagPrefab;
-
-    public float WaterCost;
-    public float BreadCost;
-    public float MandarinCost;
-    public float AppleCost;
-    public float PotatoChipsCost;
-    public float BiscuitsCost;
-    public float ChocolateBarCost;
-    public float SleepingBagCost;
-
+    public AlcoholItem AlcoholPrefab;
 
     void Start()
     {
@@ -39,6 +30,7 @@ public class Supermarket : MonoBehaviour
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(OpenFoodMenu, "Buy food"));
         options.Add(new Menu.Option(OpenOutdoorItemMenu, "Buy outdoor equipment"));
+        options.Add(new Menu.Option(OpenLiquorItemMenu, "Buy liquor"));
         if (JobLocation.IsJobAvailableToday)
         {
             options.Add(new Menu.Option(ApplyForJob, "Apply for job"));
@@ -64,19 +56,19 @@ public class Supermarket : MonoBehaviour
     {
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(
-            OnWaterSelected, "Water", WaterCost, Main.PlayerState.CanAfford(WaterCost)));
+            OnWaterSelected, "Water", WaterPrefab.ItemValue, Main.PlayerState.CanAfford(WaterPrefab.ItemValue)));
         options.Add(new Menu.Option(
-            OnBreadSelected, "Bread", BreadCost, Main.PlayerState.CanAfford(BreadCost)));
+            OnBreadSelected, "Bread", BreadPrefab.ItemValue, Main.PlayerState.CanAfford(BreadPrefab.ItemValue)));
         options.Add(new Menu.Option(
-            OnMandarinSelected, "Bag of Mandarins", MandarinCost, Main.PlayerState.CanAfford(MandarinCost)));
+            OnMandarinSelected, "Bag of Mandarins", MandarinPrefab.ItemValue, Main.PlayerState.CanAfford(MandarinPrefab.ItemValue)));
         options.Add(new Menu.Option(
-            OnAppleSelected, "Apple", AppleCost, Main.PlayerState.CanAfford(AppleCost)));
+            OnAppleSelected, "Apple", ApplePrefab.ItemValue, Main.PlayerState.CanAfford(ApplePrefab.ItemValue)));
         options.Add(new Menu.Option(
-            OnPotatoChipsSelected, "Potato Chips", PotatoChipsCost, Main.PlayerState.CanAfford(PotatoChipsCost)));
+            OnPotatoChipsSelected, "Potato Chips", PotatoChipsPrefab.ItemValue, Main.PlayerState.CanAfford(PotatoChipsPrefab.ItemValue)));
         options.Add(new Menu.Option(
-            OnBiscuitsSelected, "Biscuits", BiscuitsCost, Main.PlayerState.CanAfford(BiscuitsCost)));
+            OnBiscuitsSelected, "Biscuits", BiscuitsPrefab.ItemValue, Main.PlayerState.CanAfford(BiscuitsPrefab.ItemValue)));
         options.Add(new Menu.Option(
-            OnChocolateBarSelected, "Chocolate Bar", ChocolateBarCost, Main.PlayerState.CanAfford(ChocolateBarCost)));
+            OnChocolateBarSelected, "Chocolate Bar", ChocolateBarPrefab.ItemValue, Main.PlayerState.CanAfford(ChocolateBarPrefab.ItemValue)));
         options.Add(new Menu.Option(OnBackSelected, "Back"));
 
         Main.Menu.Show(options);
@@ -86,7 +78,17 @@ public class Supermarket : MonoBehaviour
     {
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(
-            OnBuySleepingBag, "Buy a \"Pillow-Time\"(tm) sleeping bag", SleepingBagCost, Main.PlayerState.CanAfford(SleepingBagCost)));
+            OnBuySleepingBag, "Buy a \"Pillow-Time\"(tm) sleeping bag", SleepingBagPrefab.ItemValue, Main.PlayerState.CanAfford(SleepingBagPrefab.ItemValue)));
+        options.Add(new Menu.Option(OnBackSelected, "Back"));
+
+        Main.Menu.Show(options);
+    }
+
+    public void OpenLiquorItemMenu()
+    {
+        List<Menu.Option> options = new List<Menu.Option>();
+        options.Add(new Menu.Option(
+            OnBuyAlcohol, "Buy nice wine", AlcoholPrefab.ItemValue, Main.PlayerState.CanAfford(AlcoholPrefab.ItemValue)));
         options.Add(new Menu.Option(OnBackSelected, "Back"));
 
         Main.Menu.Show(options);
@@ -101,7 +103,7 @@ public class Supermarket : MonoBehaviour
     {
         if (!Main.Inventory.IsInventoryFull)
         {
-            Main.PlayerState.Money -= WaterCost;
+            Main.PlayerState.Money -= WaterPrefab.ItemValue;
 
             // Add item.
             FoodItem item = Instantiate(WaterPrefab);
@@ -119,7 +121,7 @@ public class Supermarket : MonoBehaviour
     {
         if (!Main.Inventory.IsInventoryFull)
         {
-            Main.PlayerState.Money -= BreadCost;
+            Main.PlayerState.Money -= BreadPrefab.ItemValue;
 
             // Add item.
             FoodItem item = Instantiate(BreadPrefab);
@@ -137,7 +139,7 @@ public class Supermarket : MonoBehaviour
     {  
         if (!Main.Inventory.IsInventoryFull)
         {
-            Main.PlayerState.Money -= MandarinCost;
+            Main.PlayerState.Money -= MandarinPrefab.ItemValue;
 
             // Add item.
             FoodItem item = Instantiate(MandarinPrefab);
@@ -155,7 +157,7 @@ public class Supermarket : MonoBehaviour
     {
         if (!Main.Inventory.IsInventoryFull)
         {
-            Main.PlayerState.Money -= AppleCost;
+            Main.PlayerState.Money -= ApplePrefab.ItemValue;
 
             // Add item.
             FoodItem item = Instantiate(ApplePrefab);
@@ -173,7 +175,7 @@ public class Supermarket : MonoBehaviour
     {
         if (!Main.Inventory.IsInventoryFull)
         {
-            Main.PlayerState.Money -= PotatoChipsCost;
+            Main.PlayerState.Money -= PotatoChipsPrefab.ItemValue;
 
             // Add item.
             FoodItem item = Instantiate(PotatoChipsPrefab);
@@ -191,7 +193,7 @@ public class Supermarket : MonoBehaviour
     {
         if (!Main.Inventory.IsInventoryFull)
         {
-            Main.PlayerState.Money -= BiscuitsCost;
+            Main.PlayerState.Money -= BiscuitsPrefab.ItemValue;
 
             // Add item.
             FoodItem item = Instantiate(BiscuitsPrefab);
@@ -209,7 +211,7 @@ public class Supermarket : MonoBehaviour
     {
         if (!Main.Inventory.IsInventoryFull)
         {
-            Main.PlayerState.Money -= ChocolateBarCost;
+            Main.PlayerState.Money -= ChocolateBarPrefab.ItemValue;
 
             // Add item.
             FoodItem item = Instantiate(ChocolateBarPrefab);
@@ -227,7 +229,7 @@ public class Supermarket : MonoBehaviour
     {
         if (!Main.Inventory.IsInventoryFull)
         {
-            Main.PlayerState.Money -= SleepingBagCost;
+            Main.PlayerState.Money -= SleepingBagPrefab.ItemValue;
 
             // Add item.
             SleepItem item = Instantiate(SleepingBagPrefab);
@@ -239,6 +241,24 @@ public class Supermarket : MonoBehaviour
             Main.MessageBox.WarnInventoryFull(Main.Inventory);
         }
         OpenOutdoorItemMenu();
+    }
+
+    public void OnBuyAlcohol()
+    {
+        if (!Main.Inventory.IsInventoryFull)
+        {
+            Main.PlayerState.Money -= AlcoholPrefab.ItemValue;
+
+            // Add item.
+            AlcoholItem item = Instantiate(AlcoholPrefab);
+            item.Main = Main;
+            Main.Inventory.AddItem(item);
+        }
+        else
+        {
+            Main.MessageBox.WarnInventoryFull(Main.Inventory);
+        }
+        OpenLiquorItemMenu();
     }
 
     public void OnTrigger()
