@@ -5,17 +5,22 @@ using UnityStandardAssets.Characters.ThirdPerson;
 public class PlayerCharacter : Character
 {
     private float timeAtStartedVomiting;
+    private float timeAtStartedCoughing;
 
     public AudioClip VomitSound;
     public AudioClip StomachGrowlSound;
-    
+    public AudioClip CoughSound;
+
     public Color SubmissiveOptionColor = Color.white;
     public Color PridefulOptionColor = Color.white;
     public Color SelfishOptionColor = Color.white;
 
     public float VomitDurationSeconds;
+    public float CoughDurationSeconds;
     [ReadOnly]
     public bool IsVomiting = false;
+    [ReadOnly]
+    public bool IsCoughing = false;
 
     // Standard types of response.
     public enum ResponseType
@@ -104,6 +109,25 @@ public class PlayerCharacter : Character
         }
     }
 
+    // Makes the player character start to vomit.
+    public void Cough()
+    {
+        if (!IsCoughing)
+        {
+            IsCoughing = true;
+            timeAtStartedCoughing = Time.time;
+
+            // Restrict movement.
+            GetComponent<ThirdPersonCharacter>().CoughStart();
+
+            // Play vomit sound.
+            AudioSource audio = GetComponent<AudioSource>();
+            audio.clip = CoughSound;
+            audio.time = 0.0f;
+            audio.Play();
+        }
+    }
+
     public void StomachGrowl()
     {
         // Play stomach growl sound.
@@ -127,5 +151,17 @@ public class PlayerCharacter : Character
                 GetComponent<AudioSource>().Stop();
             }
         }
-	}
+
+        // Handle coughing.
+        if (IsCoughing)
+        {
+            // Stop after time.
+            if (Time.time - timeAtStartedCoughing > CoughDurationSeconds)
+            {
+                IsCoughing = false;
+                GetComponent<ThirdPersonCharacter>().CoughEnd();
+                GetComponent<AudioSource>().Stop();
+            }
+        }
+    }
 }

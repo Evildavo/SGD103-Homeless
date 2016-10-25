@@ -32,6 +32,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         float wonkeyWalkAngleRad = 0.0f;
         bool isVomiting = false;
         float walkSpeedFactor = 1.0f;
+        bool isCoughing = false;
 
 
         void Start()
@@ -60,7 +61,24 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             isVomiting = false;
             m_Crouching = false;
         }
-        
+
+
+
+        public void CoughStart()
+        {
+            isCoughing = true;
+            m_Crouching = true;
+            m_TurnAmount = 0.0f;
+            m_ForwardAmount = 0.0f;
+        }
+
+        public void CoughEnd()
+        {
+            isCoughing = false;
+            m_Crouching = false;
+        }
+
+
         public void SetWonkyWalkAngle(float radians)
         {
             wonkeyWalkAngleRad = radians;
@@ -74,7 +92,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
         public void Move(Vector3 move, bool crouch, bool jump)
 		{
-            if (!isVomiting)
+            if (!isVomiting && !isCoughing)
             {
                 
                 // convert the world relative moveInput vector into a local-relative

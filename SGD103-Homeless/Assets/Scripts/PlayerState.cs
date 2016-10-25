@@ -9,6 +9,8 @@ public class PlayerState : MonoBehaviour {
     List<Objective> alcoholObjectives = new List<Objective>();
     bool hasStomachGrowled = false;
     float timeAtLastStomachGrowl;
+    bool hasCoughed = false;
+    float timeAtLastCough;
 
     public Main Main;
 
@@ -91,7 +93,9 @@ public class PlayerState : MonoBehaviour {
     [Space(10.0f)]
     public float PoorHealthEffectsBelowLevel;
     public bool WalkSlowerWhenHealthIsPoor;
+    public bool CoughWhenHealthIsPoor;
     public float WalkSpeedFactorAtWorstHealth;
+    public float CoughIntervalAtWorstHealth;
 
     [Space(10.0f)]
     public float StomachGrowlBelowHungerSatiety;
@@ -272,6 +276,19 @@ public class PlayerState : MonoBehaviour {
             {
                 Main.PlayerCharacter.SetWalkSpeedFactor(
                     WalkSpeedFactorAtWorstHealth * unwellness + (1.0f - unwellness));
+            }
+
+            // Cough at regular intervals.
+            if (CoughWhenHealthIsPoor)
+            {
+                if (!hasCoughed || (unwellness != 0.0f &&
+                     Time.time - timeAtLastCough - Main.PlayerCharacter.CoughDurationSeconds >
+                     CoughIntervalAtWorstHealth / unwellness))
+                {
+                    hasCoughed = true;
+                    timeAtLastCough = Time.time;
+                    Main.PlayerCharacter.Cough();
+                }
             }
         }
         else
