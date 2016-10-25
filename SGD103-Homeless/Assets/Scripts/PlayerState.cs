@@ -11,6 +11,7 @@ public class PlayerState : MonoBehaviour {
     float timeAtLastStomachGrowl;
     bool hasCoughed = false;
     float timeAtLastCough;
+    float hoursSinceDepressionLastTreated;
 
     public Main Main;
 
@@ -39,6 +40,7 @@ public class PlayerState : MonoBehaviour {
     public float Addiction = 0.0f;
     [Range(0.0f, 1.0f)]
     public float CurrentClothingCleanliness = 1.0f;
+    public bool IsDepressionTreated = true;
 
     [Header("Settings:")] 
     public float HungerGainPerHour = 0.0f;        
@@ -108,6 +110,10 @@ public class PlayerState : MonoBehaviour {
     public float StomachGrowlIntervalWhenHungry;
 
     [Space(10.0f)]
+    public float DepressionMedsWearOffAfterHours = 26.0f;
+    public float UntreatedDepressionHealthPenaltyPerHour;
+
+    [Space(10.0f)]
     public bool IsAtWork = false;
 
     [Space(10.0f)]
@@ -144,6 +150,13 @@ public class PlayerState : MonoBehaviour {
         {
             Addiction -= amount * AddictionReducedPerMoraleGainedFactor;
         }
+    }
+
+    // Treats depression for today.
+    public void TreatDepressionToday()
+    {
+        IsDepressionTreated = true;
+        hoursSinceDepressionLastTreated = 0.0f;
     }
 
     void Update () {
@@ -320,6 +333,19 @@ public class PlayerState : MonoBehaviour {
                 timeAtLastStomachGrowl = Time.time;
                 Main.PlayerCharacter.StomachGrowl();
             }
+        }
+        
+        // Depression treatment wears off after some time.
+        hoursSinceDepressionLastTreated += Main.GameTime.GameTimeDelta;
+        if (hoursSinceDepressionLastTreated > DepressionMedsWearOffAfterHours)
+        {
+            IsDepressionTreated = false;
+        }
+
+        // Untreated depression affects morale.
+        if (!IsDepressionTreated)
+        {
+            Morale -= UntreatedDepressionHealthPenaltyPerHour * gameTimeDelta;
         }
 
         // Limit stats to range 0-1.
