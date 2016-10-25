@@ -89,6 +89,11 @@ public class PlayerState : MonoBehaviour {
     public float AddictionReducedPerMoraleGainedFactor = 1.0f;
 
     [Space(10.0f)]
+    public float PoorHealthEffectsBelowLevel;
+    public bool WalkSlowerWhenHealthIsPoor;
+    public float WalkSpeedFactorAtWorstHealth;
+
+    [Space(10.0f)]
     public float StomachGrowlBelowHungerSatiety;
     public float StomachGrowlIntervalWhenHungry;
 
@@ -228,7 +233,8 @@ public class PlayerState : MonoBehaviour {
             // Walk slower.
             if (WalkSlowerWhenIntoxicated)
             {
-                Main.PlayerCharacter.SetWalkSpeedFactor(WalkSpeedFactorAtMaxInebriation);
+                Main.PlayerCharacter.SetWalkSpeedFactor(
+                    WalkSpeedFactorAtMaxInebriation * intoxication + (1.0f - intoxication));
             }
         }
         else
@@ -254,6 +260,23 @@ public class PlayerState : MonoBehaviour {
                 
                 alcoholObjectives.Add(Main.ObjectiveList.NewObjective("Drink more alcohol"));
             }
+        }
+
+        // Handle poor health effects.
+        if (HealthTiredness < PoorHealthEffectsBelowLevel)
+        {
+            float unwellness = (PoorHealthEffectsBelowLevel - HealthTiredness) / PoorHealthEffectsBelowLevel;
+            
+            // Walk slower.
+            if (WalkSlowerWhenHealthIsPoor)
+            {
+                Main.PlayerCharacter.SetWalkSpeedFactor(
+                    WalkSpeedFactorAtWorstHealth * unwellness + (1.0f - unwellness));
+            }
+        }
+        else
+        {
+            Main.PlayerCharacter.SetWalkSpeedFactor(1.0f);
         }
 
         // Player character stomach growls at a regular interval when hungry.
