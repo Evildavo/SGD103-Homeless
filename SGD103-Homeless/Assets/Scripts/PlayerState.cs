@@ -98,6 +98,12 @@ public class PlayerState : MonoBehaviour {
     public float CoughIntervalAtWorstHealth;
 
     [Space(10.0f)]
+    public float PoorMoraleEffectsBelowLevel;
+    [Header("Walking slower is a symptom of depression in reality")]
+    public bool WalkSlowerWhenMoraleIsPoor;
+    public float WalkSpeedFactorAtLowestMorale;
+
+    [Space(10.0f)]
     public float StomachGrowlBelowHungerSatiety;
     public float StomachGrowlIntervalWhenHungry;
 
@@ -209,6 +215,7 @@ public class PlayerState : MonoBehaviour {
         Inebriation -= InebriationDecreasesPerHour * gameTimeDelta;
 
         // Handle alcohol effects.
+        float combinedWalkFactor = 1.0f;
         if (Inebriation >= AlcoholEffectsStartAtInebriation)
         {
             float intoxication = (Inebriation - AlcoholEffectsStartAtInebriation) / (1.0f - AlcoholEffectsStartAtInebriation);
@@ -237,14 +244,12 @@ public class PlayerState : MonoBehaviour {
             // Walk slower.
             if (WalkSlowerWhenIntoxicated)
             {
-                Main.PlayerCharacter.SetWalkSpeedFactor(
-                    WalkSpeedFactorAtMaxInebriation * intoxication + (1.0f - intoxication));
+                combinedWalkFactor *= WalkSpeedFactorAtMaxInebriation * intoxication + (1.0f - intoxication);
             }
         }
         else
         {
             Main.PlayerCharacter.SetWonkyWalkAngle(0.0f);
-            Main.PlayerCharacter.SetWalkSpeedFactor(1.0f);
         }
 
         // Addiction affects morale.
@@ -265,7 +270,7 @@ public class PlayerState : MonoBehaviour {
                 alcoholObjectives.Add(Main.ObjectiveList.NewObjective("Drink more alcohol"));
             }
         }
-
+        
         // Handle poor health effects.
         if (HealthTiredness < PoorHealthEffectsBelowLevel)
         {
@@ -274,8 +279,7 @@ public class PlayerState : MonoBehaviour {
             // Walk slower.
             if (WalkSlowerWhenHealthIsPoor)
             {
-                Main.PlayerCharacter.SetWalkSpeedFactor(
-                    WalkSpeedFactorAtWorstHealth * unwellness + (1.0f - unwellness));
+                combinedWalkFactor *= WalkSpeedFactorAtWorstHealth * unwellness + (1.0f - unwellness);
             }
 
             // Cough at regular intervals.
@@ -291,10 +295,21 @@ public class PlayerState : MonoBehaviour {
                 }
             }
         }
-        else
+
+        // Poor morale.
+        if (Morale < PoorMoraleEffectsBelowLevel)
         {
-            Main.PlayerCharacter.SetWalkSpeedFactor(1.0f);
+            float depression = (PoorMoraleEffectsBelowLevel - Morale) / PoorMoraleEffectsBelowLevel;
+
+            // Walk slower.
+            if (WalkSlowerWhenMoraleIsPoor)
+            {
+                combinedWalkFactor *= WalkSpeedFactorAtLowestMorale * depression + (1.0f - depression);
+            }
         }
+
+        // Apply combined walking factor.
+        Main.PlayerCharacter.SetWalkSpeedFactor(combinedWalkFactor);
 
         // Player character stomach growls at a regular interval when hungry.
         if (HungerThirstSatiety < StomachGrowlBelowHungerSatiety)
