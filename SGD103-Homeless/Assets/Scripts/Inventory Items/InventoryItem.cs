@@ -19,6 +19,12 @@ public class InventoryItem : MonoBehaviour
     [Header("set the Item reference in the Inventory Slot", order = 4)]
     public int InventoryIndex;
 
+    // Override to give a custom item value calculation.
+    public virtual float GetItemValue()
+    {
+        return ItemValue;
+    }
+
     // Override to do some action when the primary item action is performed.
     public virtual void OnPrimaryAction() {}
 

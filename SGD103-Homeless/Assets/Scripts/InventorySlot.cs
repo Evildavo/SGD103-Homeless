@@ -44,7 +44,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 var SellItemDescription = Main.SellItemDescription;
                 SellItemDescription.gameObject.SetActive(true);
                 SellItemDescription.ItemName.text = Item.ItemName;
-                SellItemDescription.ItemValue.text = "$" + Item.ItemValue.ToString("f2");
+                SellItemDescription.ItemValue.text = "$" + Item.GetItemValue().ToString("f2");
                 SellItemDescription.GetComponent<Image>().enabled = true;
 
                 // Move description text to the slot.

@@ -140,7 +140,7 @@ public class Greg : Character
             WatchItem item = Instantiate(WatchPrefab);
             item.Main = Main;
             item.ItemName = "Watch (tarnished)";
-            item.ItemValue = item.ItemValue * 0.75f;
+            item.ItemValue = item.GetItemValue() * 0.75f;
             item.Tarnished = true;
             Main.Inventory.AddItem(item);
 
@@ -158,7 +158,7 @@ public class Greg : Character
 
     void onPlayerSellingItem(InventoryItem item)
     {
-        float gregOffer = Mathf.Floor(item.ItemValue * SellingToGregValueFactor);
+        float gregOffer = Mathf.Floor(item.GetItemValue() * SellingToGregValueFactor);
 
         ConfirmationBox.OnChoiceMade onChoice = (bool yes) =>
         {
