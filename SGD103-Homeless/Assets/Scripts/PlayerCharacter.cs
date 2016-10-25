@@ -7,6 +7,7 @@ public class PlayerCharacter : Character
     private float timeAtStartedVomiting;
 
     public AudioClip VomitSound;
+    public AudioClip StomachGrowlSound;
     
     public Color SubmissiveOptionColor = Color.white;
     public Color PridefulOptionColor = Color.white;
@@ -101,6 +102,15 @@ public class PlayerCharacter : Character
             audio.time = 0.0f;
             audio.Play();
         }
+    }
+
+    public void StomachGrowl()
+    {
+        // Play stomach growl sound.
+        AudioSource audio = GetComponent<AudioSource>();
+        audio.clip = StomachGrowlSound;
+        audio.time = 0.0f;
+        audio.Play();
     }
 	
 	new void Update () {

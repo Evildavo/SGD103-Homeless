@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 
 public class PlayerState : MonoBehaviour {
-    private float timeAtLastVomit;
-    private bool hasVomited = false;
-    private float timeAtLastObjectiveSpawn;
-    private bool hasSpawnedObjective = false;
-    private List<Objective> alcoholObjectives = new List<Objective>();
+    float timeAtLastVomit;
+    bool hasVomited = false;
+    float timeAtLastObjectiveSpawn;
+    bool hasSpawnedObjective = false;
+    List<Objective> alcoholObjectives = new List<Objective>();
+    bool hasStomachGrowled = false;
+    float timeAtLastStomachGrowl;
 
     public Main Main;
 
@@ -34,7 +36,7 @@ public class PlayerState : MonoBehaviour {
     [Range(0.0f, 1.0f)]
     public float Addiction = 0.0f;
     [Range(0.0f, 1.0f)]
-    public float CurrentClothingCleanliness = 0.0f;
+    public float CurrentClothingCleanliness = 1.0f;
 
     [Header("Settings:")] 
     public float HungerGainPerHour = 0.0f;        
@@ -64,13 +66,13 @@ public class PlayerState : MonoBehaviour {
     public float MaxSleepingRoughHealthGainPerHour = 0.0f;
 
     [Space(10.0f)]
-    public float WorkHungerGainFactor;
-    public float WorkHealthLossFactor;
-    public float WorkMoraleLossFactor;
+    public float WorkHungerGainFactor = 1.0f;
+    public float WorkHealthLossFactor = 1.0f;
+    public float WorkMoraleLossFactor = 1.0f;
 
     [Space(10.0f)]
     public float InebriationDecreasesPerHour;
-    public float AlcoholEffectsStartAtInebriation;
+    public float AlcoholEffectsStartAtInebriation = 1.0f;
     [Header("Turns slightly while walking")]
     public bool WalkWonkeyWhenIntoxicated;
     public bool VomitWhenIntoxicated;
@@ -84,7 +86,11 @@ public class PlayerState : MonoBehaviour {
     public float MaxAddictionMoralePenaltyPerHour;
     public float SpawnObjectivesAboveAddictionLevel;
     public float ObjectiveSpawnIntervalAtMaxAddictionSeconds;
-    public float AddictionReducedPerMoraleGainedFactor;
+    public float AddictionReducedPerMoraleGainedFactor = 1.0f;
+
+    [Space(10.0f)]
+    public float StomachGrowlBelowHungerSatiety;
+    public float StomachGrowlIntervalWhenHungry;
 
     [Space(10.0f)]
     public bool IsAtWork = false;
@@ -247,6 +253,17 @@ public class PlayerState : MonoBehaviour {
                 timeAtLastObjectiveSpawn = Time.time;
                 
                 alcoholObjectives.Add(Main.ObjectiveList.NewObjective("Drink more alcohol"));
+            }
+        }
+
+        // Player character stomach growls at a regular interval when hungry.
+        if (HungerThirstSatiety < StomachGrowlBelowHungerSatiety)
+        {
+            if (!hasStomachGrowled || Time.time - timeAtLastStomachGrowl >= StomachGrowlIntervalWhenHungry)
+            {
+                hasStomachGrowled = true;
+                timeAtLastStomachGrowl = Time.time;
+                Main.PlayerCharacter.StomachGrowl();
             }
         }
 
