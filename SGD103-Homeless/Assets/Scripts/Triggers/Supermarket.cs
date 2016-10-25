@@ -17,6 +17,7 @@ public class Supermarket : MonoBehaviour
     public FoodItem ChocolateBarPrefab;
     public SleepItem SleepingBagPrefab;
     public AlcoholItem AlcoholPrefab;
+    public AntiDepressant AntiDepressantPrefab;
 
     void Start()
     {
@@ -31,6 +32,7 @@ public class Supermarket : MonoBehaviour
         options.Add(new Menu.Option(OpenFoodMenu, "Buy food"));
         options.Add(new Menu.Option(OpenOutdoorItemMenu, "Buy outdoor equipment"));
         options.Add(new Menu.Option(OpenLiquorItemMenu, "Buy liquor"));
+        options.Add(new Menu.Option(OpenMedicineItemMenu, "Buy medicine"));
         if (JobLocation.IsJobAvailableToday)
         {
             options.Add(new Menu.Option(ApplyForJob, "Apply for job"));
@@ -56,19 +58,19 @@ public class Supermarket : MonoBehaviour
     {
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(
-            OnWaterSelected, "Water", WaterPrefab.ItemValue, Main.PlayerState.CanAfford(WaterPrefab.ItemValue)));
+            OnWaterSelected, "Water", WaterPrefab.GetItemValue(), Main.PlayerState.CanAfford(WaterPrefab.GetItemValue())));
         options.Add(new Menu.Option(
-            OnBreadSelected, "Bread", BreadPrefab.ItemValue, Main.PlayerState.CanAfford(BreadPrefab.ItemValue)));
+            OnBreadSelected, "Bread", BreadPrefab.GetItemValue(), Main.PlayerState.CanAfford(BreadPrefab.GetItemValue())));
         options.Add(new Menu.Option(
-            OnMandarinSelected, "Bag of Mandarins", MandarinPrefab.ItemValue, Main.PlayerState.CanAfford(MandarinPrefab.ItemValue)));
+            OnMandarinSelected, "Bag of Mandarins", MandarinPrefab.GetItemValue(), Main.PlayerState.CanAfford(MandarinPrefab.GetItemValue())));
         options.Add(new Menu.Option(
-            OnAppleSelected, "Apple", ApplePrefab.ItemValue, Main.PlayerState.CanAfford(ApplePrefab.ItemValue)));
+            OnAppleSelected, "Apple", ApplePrefab.GetItemValue(), Main.PlayerState.CanAfford(ApplePrefab.GetItemValue())));
         options.Add(new Menu.Option(
-            OnPotatoChipsSelected, "Potato Chips", PotatoChipsPrefab.ItemValue, Main.PlayerState.CanAfford(PotatoChipsPrefab.ItemValue)));
+            OnPotatoChipsSelected, "Potato Chips", PotatoChipsPrefab.GetItemValue(), Main.PlayerState.CanAfford(PotatoChipsPrefab.GetItemValue())));
         options.Add(new Menu.Option(
-            OnBiscuitsSelected, "Biscuits", BiscuitsPrefab.ItemValue, Main.PlayerState.CanAfford(BiscuitsPrefab.ItemValue)));
+            OnBiscuitsSelected, "Biscuits", BiscuitsPrefab.GetItemValue(), Main.PlayerState.CanAfford(BiscuitsPrefab.GetItemValue())));
         options.Add(new Menu.Option(
-            OnChocolateBarSelected, "Chocolate Bar", ChocolateBarPrefab.ItemValue, Main.PlayerState.CanAfford(ChocolateBarPrefab.ItemValue)));
+            OnChocolateBarSelected, "Chocolate Bar", ChocolateBarPrefab.GetItemValue(), Main.PlayerState.CanAfford(ChocolateBarPrefab.GetItemValue())));
         options.Add(new Menu.Option(OnBackSelected, "Back"));
 
         Main.Menu.Show(options);
@@ -78,7 +80,7 @@ public class Supermarket : MonoBehaviour
     {
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(
-            OnBuySleepingBag, "Buy a \"Pillow-Time\"(tm) sleeping bag", SleepingBagPrefab.ItemValue, Main.PlayerState.CanAfford(SleepingBagPrefab.ItemValue)));
+            OnBuySleepingBag, "Buy a \"Pillow-Time\"(tm) sleeping bag", SleepingBagPrefab.GetItemValue(), Main.PlayerState.CanAfford(SleepingBagPrefab.GetItemValue())));
         options.Add(new Menu.Option(OnBackSelected, "Back"));
 
         Main.Menu.Show(options);
@@ -88,7 +90,17 @@ public class Supermarket : MonoBehaviour
     {
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(
-            OnBuyAlcohol, "Buy nice wine", AlcoholPrefab.ItemValue, Main.PlayerState.CanAfford(AlcoholPrefab.ItemValue)));
+            OnBuyAlcohol, "Buy nice wine", AlcoholPrefab.GetItemValue(), Main.PlayerState.CanAfford(AlcoholPrefab.GetItemValue())));
+        options.Add(new Menu.Option(OnBackSelected, "Back"));
+
+        Main.Menu.Show(options);
+    }
+
+    public void OpenMedicineItemMenu()
+    {
+        List<Menu.Option> options = new List<Menu.Option>();
+        options.Add(new Menu.Option(
+            OnBuyAntiDepressant, "Buy anti-depressant", AntiDepressantPrefab.GetItemValue(), Main.PlayerState.CanAfford(AntiDepressantPrefab.GetItemValue())));
         options.Add(new Menu.Option(OnBackSelected, "Back"));
 
         Main.Menu.Show(options);
@@ -103,7 +115,7 @@ public class Supermarket : MonoBehaviour
     {
         if (!Main.Inventory.IsInventoryFull)
         {
-            Main.PlayerState.Money -= WaterPrefab.ItemValue;
+            Main.PlayerState.Money -= WaterPrefab.GetItemValue();
 
             // Add item.
             FoodItem item = Instantiate(WaterPrefab);
@@ -121,7 +133,7 @@ public class Supermarket : MonoBehaviour
     {
         if (!Main.Inventory.IsInventoryFull)
         {
-            Main.PlayerState.Money -= BreadPrefab.ItemValue;
+            Main.PlayerState.Money -= BreadPrefab.GetItemValue();
 
             // Add item.
             FoodItem item = Instantiate(BreadPrefab);
@@ -139,7 +151,7 @@ public class Supermarket : MonoBehaviour
     {  
         if (!Main.Inventory.IsInventoryFull)
         {
-            Main.PlayerState.Money -= MandarinPrefab.ItemValue;
+            Main.PlayerState.Money -= MandarinPrefab.GetItemValue();
 
             // Add item.
             FoodItem item = Instantiate(MandarinPrefab);
@@ -157,7 +169,7 @@ public class Supermarket : MonoBehaviour
     {
         if (!Main.Inventory.IsInventoryFull)
         {
-            Main.PlayerState.Money -= ApplePrefab.ItemValue;
+            Main.PlayerState.Money -= ApplePrefab.GetItemValue();
 
             // Add item.
             FoodItem item = Instantiate(ApplePrefab);
@@ -175,7 +187,7 @@ public class Supermarket : MonoBehaviour
     {
         if (!Main.Inventory.IsInventoryFull)
         {
-            Main.PlayerState.Money -= PotatoChipsPrefab.ItemValue;
+            Main.PlayerState.Money -= PotatoChipsPrefab.GetItemValue();
 
             // Add item.
             FoodItem item = Instantiate(PotatoChipsPrefab);
@@ -193,7 +205,7 @@ public class Supermarket : MonoBehaviour
     {
         if (!Main.Inventory.IsInventoryFull)
         {
-            Main.PlayerState.Money -= BiscuitsPrefab.ItemValue;
+            Main.PlayerState.Money -= BiscuitsPrefab.GetItemValue();
 
             // Add item.
             FoodItem item = Instantiate(BiscuitsPrefab);
@@ -211,7 +223,7 @@ public class Supermarket : MonoBehaviour
     {
         if (!Main.Inventory.IsInventoryFull)
         {
-            Main.PlayerState.Money -= ChocolateBarPrefab.ItemValue;
+            Main.PlayerState.Money -= ChocolateBarPrefab.GetItemValue();
 
             // Add item.
             FoodItem item = Instantiate(ChocolateBarPrefab);
@@ -229,7 +241,7 @@ public class Supermarket : MonoBehaviour
     {
         if (!Main.Inventory.IsInventoryFull)
         {
-            Main.PlayerState.Money -= SleepingBagPrefab.ItemValue;
+            Main.PlayerState.Money -= SleepingBagPrefab.GetItemValue();
 
             // Add item.
             SleepItem item = Instantiate(SleepingBagPrefab);
@@ -247,7 +259,7 @@ public class Supermarket : MonoBehaviour
     {
         if (!Main.Inventory.IsInventoryFull)
         {
-            Main.PlayerState.Money -= AlcoholPrefab.ItemValue;
+            Main.PlayerState.Money -= AlcoholPrefab.GetItemValue();
 
             // Add item.
             AlcoholItem item = Instantiate(AlcoholPrefab);
@@ -259,6 +271,24 @@ public class Supermarket : MonoBehaviour
             Main.MessageBox.WarnInventoryFull(Main.Inventory);
         }
         OpenLiquorItemMenu();
+    }
+
+    public void OnBuyAntiDepressant()
+    {
+        if (!Main.Inventory.IsInventoryFull)
+        {
+            Main.PlayerState.Money -= AntiDepressantPrefab.GetItemValue();
+
+            // Add item.
+            AntiDepressant item = Instantiate(AntiDepressantPrefab);
+            item.Main = Main;
+            Main.Inventory.AddItem(item);
+        }
+        else
+        {
+            Main.MessageBox.WarnInventoryFull(Main.Inventory);
+        }
+        OpenMedicineItemMenu();
     }
 
     public void OnTrigger()
