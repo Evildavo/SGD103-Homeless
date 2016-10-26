@@ -6,14 +6,17 @@ public class EventAtLocation : MonoBehaviour {
 
     public Main Main;
 
+    public bool AvailableEveryDay = false;
     public GameTime.DayOfTheWeekEnum Day;
     [Header("Note: Does NOT support wrapping (e.g. 11pm to 2am).")]
-    public float FromHour;
-    public float ToHour;
-    public float FadeToBlackTime;
-    public float FadeInFromBlackTime;
+    public float FromHour = 0.0f;
+    public float ToHour = 24.0f;
+    public float FadeToBlackTime = 2.0f;
+    public float FadeInFromBlackTime = 2.0f;
     public string DuringAttendanceMessage = "Attending...";
-    public float AttendanceTimeScale;
+    public float AttendanceTimeScale = 1.0f;
+    [Header("Leave as zero to stay until the event closes.")]
+    public float DurationPerVisitHours = 0.0f;
 
     [Space(10)]
     public bool IsCurrentlyAttending = false;
@@ -92,12 +95,19 @@ public class EventAtLocation : MonoBehaviour {
             {
                 Leave();
             }
+
+            // Force the player to leave if they've stayed longer than the max time.
+            if (DurationPerVisitHours != 0 &&
+                GameTime.TimeOfDayHoursDelta(hourAtAttendance, GameTime.TimeOfDayHours).shortest > DurationPerVisitHours)
+            {
+                Leave();
+            }
         }
         else
         {
             // Determine if open today.
             IsOpen = false;
-            if (Day == GameTime.DayOfTheWeek)
+            if (Day == GameTime.DayOfTheWeek || AvailableEveryDay)
             {
                 // Determine if open now.
                 if (GameTime.TimeOfDayHours > FromHour &&
