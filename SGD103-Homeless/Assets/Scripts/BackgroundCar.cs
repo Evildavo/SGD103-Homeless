@@ -53,19 +53,25 @@ public class BackgroundCar : MonoBehaviour {
 
     void show()
     {
-        Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
-        for (var i = 1; i < renderers.Length; i++)
+        foreach (Renderer renderer in GetComponentsInChildren<Renderer>(true))
         {
-            renderers[i].enabled = true;
+            renderer.enabled = true;
+        }
+        foreach (Light light in GetComponentsInChildren<Light>(true))
+        {
+            light.enabled = true;
         }
     }
 
     void hide()
     {
-        Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
-        for (var i = 1; i < renderers.Length; i++)
+        foreach (Renderer renderer in GetComponentsInChildren<Renderer>(true))
         {
-            renderers[i].enabled = false;
+            renderer.enabled = false;
+        }
+        foreach (Light light in GetComponentsInChildren<Light>(true))
+        {
+            light.enabled = false;
         }
     }
 

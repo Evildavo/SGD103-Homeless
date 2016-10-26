@@ -3,9 +3,10 @@ using System.Collections;
 
 [ExecuteInEditMode]
 public class NightLight : MonoBehaviour {
-    public float switchDelay;
-    public bool isSwitching;
-    public float hourAtSwitch;
+    float switchDelay;
+    bool isSwitching;
+    float hourAtSwitch;
+    bool lit;
 
     public Main Main;
 
@@ -13,20 +14,28 @@ public class NightLight : MonoBehaviour {
     public float FromHour = 17.0f;
     public float ToHour = 5.0f;
     public float MaxRandomDelaySwitchingHours = 0.25f;
+    [Header("Searches for meshes with the lit material")]
+    public Material LitMaterial;
+    public Material UnlitMaterial;
 
     [ReadOnly]
     public bool IsInHour;
 
     void Start()
     {
-        // Disable initially.
-        GetComponent<Light>().enabled = false;
+        Light light = GetComponentInChildren<Light>();
+        if (light)
+        {
+            lit = GetComponentInChildren<Light>().enabled;
+        }
+        else
+        {
+            lit = false;
+        }
     }
 
     void Update()
     {
-        Light light = GetComponent<Light>();
-
         // Determine if we're within hour.
         var GameTime = Main.GameTime;
         if (FromHour < ToHour)
@@ -42,7 +51,7 @@ public class NightLight : MonoBehaviour {
 
         // Start switching lights on/off depending on the hour.
         if (!isSwitching && 
-            ((IsInHour && !light.enabled) || (!IsInHour && light.enabled)))
+            ((IsInHour && !lit) || (!IsInHour && lit)))
         {
             isSwitching = true;
             hourAtSwitch = GameTime.TimeOfDayHours;
@@ -50,11 +59,33 @@ public class NightLight : MonoBehaviour {
         }
 
         // When finished switching turn the light on/off.
-        if (isSwitching && 
+        if (isSwitching &&
             GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, hourAtSwitch).shortest >= switchDelay)
         {
-            light.enabled = !light.enabled;
             isSwitching = false;
+            lit = !lit;
+
+            // Switch the dynamic lights.
+            foreach (Light light in GetComponentsInChildren<Light>())
+            {
+                light.enabled = !light.enabled;
+            }
+
+            // Switch the material lights.
+            if (LitMaterial && UnlitMaterial)
+            {
+                foreach (Renderer renderer in GetComponentsInChildren<Renderer>())
+                {
+                    if (lit && renderer.sharedMaterial == UnlitMaterial)
+                    {
+                        renderer.sharedMaterial = LitMaterial;
+                    }
+                    else if (!lit && renderer.sharedMaterial == LitMaterial)
+                    {
+                        renderer.sharedMaterial = UnlitMaterial;
+                    }
+                }
+            }
         }
     }
 
