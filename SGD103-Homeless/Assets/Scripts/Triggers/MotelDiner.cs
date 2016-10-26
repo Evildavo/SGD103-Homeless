@@ -8,6 +8,9 @@ public class MotelDiner : MonoBehaviour
     public JobTrigger JobTrigger;
     public JobLocation JobLocation;
 
+    public float MealCost;
+    public float RoomCostPerNight;
+
     void Start()
     {
         Trigger.RegisterOnTriggerListener(OnTrigger);
@@ -18,6 +21,25 @@ public class MotelDiner : MonoBehaviour
     public void OpenMainMenu()
     {
         List<Menu.Option> options = new List<Menu.Option>();
+
+        // Sleep option.
+        options.Add(new Menu.Option(rentRoom, "Rent room for tonight", RoomCostPerNight, Main.PlayerState.CanAfford(RoomCostPerNight)));
+
+        // Meal options.
+        if (Main.GameTime.TimeOfDayHours < 11)
+        {
+            options.Add(new Menu.Option(buyFood, "Buy breakfast", MealCost, Main.PlayerState.CanAfford(MealCost)));
+        }
+        else if (Main.GameTime.TimeOfDayHours > 5)
+        {
+            options.Add(new Menu.Option(buyFood, "Buy dinner", MealCost, Main.PlayerState.CanAfford(MealCost)));
+        }
+        else
+        {
+            options.Add(new Menu.Option(buyFood, "Buy lunch", MealCost, Main.PlayerState.CanAfford(MealCost)));
+        }
+
+        // Job options.
         if (JobLocation.IsJobAvailableToday)
         {
             options.Add(new Menu.Option(ApplyForJob, "Apply for job"));
@@ -36,6 +58,16 @@ public class MotelDiner : MonoBehaviour
     {
         JobLocation.ApplyForJob();
         OpenMainMenu();
+    }
+
+    void rentRoom()
+    {
+        Debug.Log("Renting room");
+    }
+
+    void buyFood()
+    {
+        Debug.Log("Buy food");
     }
 
     void Reset()
