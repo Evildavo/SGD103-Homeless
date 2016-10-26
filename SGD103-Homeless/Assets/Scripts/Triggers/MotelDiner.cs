@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 public class MotelDiner : MonoBehaviour
 {
+    int dayLastRentedRoom;
+
     public Main Main;
     public Trigger Trigger;
     public JobTrigger JobTrigger;
@@ -11,6 +13,9 @@ public class MotelDiner : MonoBehaviour
 
     public float RoomCostPerNight;
     public float SleepQualityFactor = 1.0f;
+
+    [Space(10.0f)]
+    public bool RoomRented = false;
 
     void Start()
     {
@@ -24,8 +29,14 @@ public class MotelDiner : MonoBehaviour
         List<Menu.Option> options = new List<Menu.Option>();
 
         // Sleep option.
-        options.Add(new Menu.Option(rentRoom, "Rent room for tonight", RoomCostPerNight, Main.PlayerState.CanAfford(RoomCostPerNight)));
-        options.Add(new Menu.Option(sleepRoom, "Sleep in room"));
+        if (RoomRented)
+        {
+            options.Add(new Menu.Option(sleepRoom, "Sleep in room"));
+        }
+        else
+        {
+            options.Add(new Menu.Option(rentRoom, "Rent room for tonight", RoomCostPerNight, Main.PlayerState.CanAfford(RoomCostPerNight)));
+        }
 
         // Meal options.
         if (Main.GameTime.TimeOfDayHours < 11)
@@ -67,7 +78,16 @@ public class MotelDiner : MonoBehaviour
 
     void rentRoom()
     {
-        Debug.Log("Renting room");
+        if (!RoomRented ||
+            Main.GameTime.Day != dayLastRentedRoom)
+        {
+            // Pay cost.
+            Main.PlayerState.Money -= RoomCostPerNight;
+
+            RoomRented = true;
+            dayLastRentedRoom = Main.GameTime.Day;
+        }
+        OpenMainMenu();
     }
 
     void sleepRoom()
