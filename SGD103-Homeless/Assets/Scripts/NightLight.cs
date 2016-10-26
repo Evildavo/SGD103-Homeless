@@ -3,56 +3,59 @@ using System.Collections;
 
 [ExecuteInEditMode]
 public class NightLight : MonoBehaviour {
-    private bool switched = true;
-
-    public enum LightType
-    {
-        GENERIC,
-        STREET,
-        VEHICLE,
-        SKY
-    }
+    public float switchDelay;
+    public bool isSwitching;
+    public float hourAtSwitch;
 
     public Main Main;
 
-    public float MaxSwitchDelaySeconds;
-    public LightType Type = LightType.GENERIC;
+    [Header("Supports wrapping around (e.g. 11pm to 2am)")]
+    public float FromHour = 17.0f;
+    public float ToHour = 5.0f;
+    public float MaxRandomDelaySwitchingHours = 0.25f;
 
-    void Start ()
+    [ReadOnly]
+    public bool IsInHour;
+
+    void Start()
     {
-        if (Main.GameTime.IsNight)
+        // Disable initially.
+        GetComponent<Light>().enabled = false;
+    }
+
+    void Update()
+    {
+        Light light = GetComponent<Light>();
+
+        // Determine if we're within hour.
+        var GameTime = Main.GameTime;
+        if (FromHour < ToHour)
         {
-            GetComponent<Light>().enabled = true;
+            IsInHour = (GameTime.TimeOfDayHours >= FromHour && 
+                        GameTime.TimeOfDayHours <= ToHour);
         }
         else
         {
-            GetComponent<Light>().enabled = false;
+            IsInHour = (GameTime.TimeOfDayHours >= FromHour ||
+                        GameTime.TimeOfDayHours <= ToHour);
         }
-    }
-	
-	void Update () {
-        if (switched)
+
+        // Start switching lights on/off depending on the hour.
+        if (!isSwitching && 
+            ((IsInHour && !light.enabled) || (!IsInHour && light.enabled)))
         {
-            if (Main.GameTime.IsNight && GetComponent<Light>().enabled == false)
-            {
-                switched = false;
-                Invoke("EnableLight", Random.Range(0.0f, MaxSwitchDelaySeconds));
-            }
-            else if (!Main.GameTime.IsNight && GetComponent<Light>().enabled == true)
-            {
-                switched = false;
-                Invoke("DisableLight", Random.Range(0.0f, MaxSwitchDelaySeconds));
-            }
+            isSwitching = true;
+            hourAtSwitch = GameTime.TimeOfDayHours;
+            switchDelay = Random.Range(0.0f, MaxRandomDelaySwitchingHours);
         }
-	}
-    
-    void EnableLight() {
-        GetComponent<Light>().enabled = true;
-        switched = true;
+
+        // When finished switching turn the light on/off.
+        if (isSwitching && 
+            GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, hourAtSwitch).shortest >= switchDelay)
+        {
+            light.enabled = !light.enabled;
+            isSwitching = false;
+        }
     }
 
-    void DisableLight() {
-        GetComponent<Light>().enabled = false;
-        switched = true;
-    }
 }
