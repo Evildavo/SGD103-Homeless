@@ -10,6 +10,7 @@ public class MotelDiner : MonoBehaviour
     public EatAtDinerEvent EatAtDiner;
 
     public float RoomCostPerNight;
+    public float SleepQualityFactor = 1.0f;
 
     void Start()
     {
@@ -24,6 +25,7 @@ public class MotelDiner : MonoBehaviour
 
         // Sleep option.
         options.Add(new Menu.Option(rentRoom, "Rent room for tonight", RoomCostPerNight, Main.PlayerState.CanAfford(RoomCostPerNight)));
+        options.Add(new Menu.Option(sleepRoom, "Sleep in room"));
 
         // Meal options.
         if (Main.GameTime.TimeOfDayHours < 11)
@@ -66,6 +68,11 @@ public class MotelDiner : MonoBehaviour
     void rentRoom()
     {
         Debug.Log("Renting room");
+    }
+
+    void sleepRoom()
+    {
+        Main.SleepManager.Sleep(null, false, SleepQualityFactor);
     }
 
     void buyFood()

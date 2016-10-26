@@ -18,7 +18,11 @@ public class EatAtDinerEvent : EventAtLocation {
         Main.MessageBox.ShowForTime("You feel enlivened after a good feed", 2.0f, gameObject);
         Invoke("removeHighlighting", 2.0f);
 
-        GetComponentInParent<MotelDiner>().OpenMainMenu();
+        MotelDiner diner = GetComponentInParent<MotelDiner>();
+        if (diner && diner.Trigger.IsActivated)
+        {
+            GetComponentInParent<MotelDiner>().OpenMainMenu();
+        }
     }
 
     void removeHighlighting()

@@ -83,7 +83,9 @@ public class PlayerSleepManager : MonoBehaviour
 
     // Player goes to sleep at the current location.
     // The player won't sleep if the player hasn't waited long enough since last sleeping.
-    public void Sleep(SleepItem sleepItem = null)
+    // If not sleeping rough the sleep is considered good. 
+    // sleepQualityFactor can be used to adjust sleep quality.
+    public void Sleep(SleepItem sleepItem = null, bool sleepingRough = true, float sleepQualityFactor = 0.0f)
     {
         if (!IsAsleep)
         {
@@ -96,34 +98,46 @@ public class PlayerSleepManager : MonoBehaviour
                 hoursSinceLastSlept = 0.0f;
 
                 // Determine the base quality of our sleep.
-                sleepQualityAtSleep = SleepQualityHere;
-                switch (SleepQualityHere)
+                if (sleepingRough)
                 {
-                    case SleepQualityEnum.POOR:
-                        SleepQuality = PoorSleepQualityLevel;
-                        break;
-                    case SleepQualityEnum.OK:
-                        SleepQuality = OkSleepQualityLevel;
-                        break;
-                    case SleepQualityEnum.GOOD:
-                        SleepQuality = GoodSleepQualityLevel;
-                        break;
+                    sleepQualityAtSleep = SleepQualityHere;
+                    switch (SleepQualityHere)
+                    {
+                        case SleepQualityEnum.POOR:
+                            SleepQuality = PoorSleepQualityLevel * sleepQualityFactor;
+                            break;
+                        case SleepQualityEnum.OK:
+                            SleepQuality = OkSleepQualityLevel * sleepQualityFactor;
+                            break;
+                        case SleepQualityEnum.GOOD:
+                            SleepQuality = GoodSleepQualityLevel * sleepQualityFactor;
+                            break;
+                    }
                 }
-
-                // Get a bonus from the selected sleeping item.
-                if (sleepItem)
-                {
-                    usingItem = sleepItem;
-                    SleepQuality += sleepItem.ImprovesSleepQualityPercent;
-                }
-
-                // If no sleep item is available, use the best item the player has.
                 else
                 {
-                    usingItem = GetBestSleepItem();
-                    if (usingItem)
+                    sleepQualityAtSleep = SleepQualityEnum.GOOD;
+                    SleepQuality = sleepQualityFactor;
+                }
+
+                // Try to use sleep item if sleeping rough.
+                if (sleepingRough)
+                {
+                    // Get a bonus from the selected sleeping item.
+                    if (sleepItem)
                     {
-                        SleepQuality += usingItem.ImprovesSleepQualityPercent;
+                        usingItem = sleepItem;
+                        SleepQuality += sleepItem.ImprovesSleepQualityPercent;
+                    }
+
+                    // If no sleep item is available, use the best item the player has.
+                    else
+                    {
+                        usingItem = GetBestSleepItem();
+                        if (usingItem)
+                        {
+                            SleepQuality += usingItem.ImprovesSleepQualityPercent;
+                        }
                     }
                 }
 
