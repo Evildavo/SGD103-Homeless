@@ -54,6 +54,8 @@ public class PlayerSleepManager : MonoBehaviour
     public float CanBeWokenInPublicToHour = 22.0f;
     public float MinHoursWaitBetweenSleeps = 0.5f;
     [ReadOnly]
+    public bool SleepingRough = false;
+    [ReadOnly]
     public bool InPublic = false;
     [ReadOnly]
     public SleepQualityEnum SleepQualityHere;
@@ -97,6 +99,7 @@ public class PlayerSleepManager : MonoBehaviour
                 timeSinceLastHour = 0.0f;
                 hoursSinceLastSlept = 0.0f;
                 Main.UI.EnableModalMode();
+                SleepingRough = sleepingRough;
 
                 // Determine the base quality of our sleep.
                 if (sleepingRough)
@@ -234,7 +237,7 @@ public class PlayerSleepManager : MonoBehaviour
             if (timeSinceLastHour >= 1.0f)
             {
                 // Chance of being woken by police if in public.
-                if (InPublic && 
+                if (SleepingRough && InPublic && 
                     Main.GameTime.TimeOfDayHours > CanBeWokenInPublicFromHour &&
                     Main.GameTime.TimeOfDayHours < CanBeWokenInPublicToHour)
                 {
