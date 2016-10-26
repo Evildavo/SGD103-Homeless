@@ -52,6 +52,7 @@ public class Inventory : MonoBehaviour
         isHidden = false;
         Main.ItemDescription.gameObject.SetActive(false);
         Main.DiscardHint.gameObject.SetActive(false);
+        Main.HudButtons.OpenInventoryMode();
         foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
         {
             slot.Show();
