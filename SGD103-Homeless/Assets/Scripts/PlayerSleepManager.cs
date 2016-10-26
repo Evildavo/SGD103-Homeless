@@ -202,8 +202,16 @@ public class PlayerSleepManager : MonoBehaviour
                 break;
         }
     }
-	
-	void Update ()
+    
+    bool exitPressed()
+    {
+        return Input.GetButtonDown("Secondary") ||
+               Input.GetKeyDown("e") ||
+               Input.GetKeyDown("enter") ||
+               Input.GetKeyDown("return");
+    }
+
+    void Update ()
     {
         float gameTimeDelta = Main.GameTime.GameTimeDelta;
 
@@ -212,7 +220,7 @@ public class PlayerSleepManager : MonoBehaviour
         {
 
             // Wake up on key or mouse press.
-            if (Input.anyKeyDown)
+            if (exitPressed())
             {
                 LastWakeReason = WakeReason.USER_INTERRUPTED;
                 ShowWakeMessage();
