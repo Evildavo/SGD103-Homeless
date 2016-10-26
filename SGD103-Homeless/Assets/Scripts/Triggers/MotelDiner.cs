@@ -14,6 +14,7 @@ public class MotelDiner : MonoBehaviour
     public JobLocation JobLocation;
     public EatAtDinerEvent EatAtDiner;
 
+    public float LeaveRoomByHour = 8.0f;
     public float RoomCostPerNight;
     public float SleepQualityFactor = 1.0f;
 
@@ -36,7 +37,7 @@ public class MotelDiner : MonoBehaviour
         {
             options.Add(new Menu.Option(sleepRoom, "Sleep in room"));
         }
-        else
+        else if (Main.GameTime.TimeOfDayHours >= LeaveRoomByHour)
         {
             options.Add(new Menu.Option(rentRoom, "Rent room for tonight", RoomCostPerNight, Main.PlayerState.CanAfford(RoomCostPerNight)));
         }
@@ -150,6 +151,20 @@ public class MotelDiner : MonoBehaviour
         {
             hourAtLastUpdate = Time.time;
             OpenMainMenu();
+        }
+
+        // Must leave room by the hour rooms become available.
+        var GameTime = Main.GameTime;
+        if (GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, LeaveRoomByHour).shortest <= 
+            GameTime.GameTimeDelta)
+        {
+            RoomRented = false;
+
+            // Wake up if asleep.
+            if (Main.SleepManager.IsAsleep)
+            {
+                Main.SleepManager.Wake();
+            }
         }
 
         // Switch to the job trigger when it's time to start work.

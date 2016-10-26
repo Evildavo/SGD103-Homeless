@@ -172,6 +172,8 @@ public class PlayerSleepManager : MonoBehaviour
         // Fade in from black.
         Main.ScreenFader.fadeTime = FadeInFromBlackTime;
         Main.ScreenFader.fadeIn = true;
+
+        Main.MessageBox.ShowNext();
     }
 
     void OnFadeInComplete()
