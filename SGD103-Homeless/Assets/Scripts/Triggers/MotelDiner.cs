@@ -7,8 +7,8 @@ public class MotelDiner : MonoBehaviour
     public Trigger Trigger;
     public JobTrigger JobTrigger;
     public JobLocation JobLocation;
+    public EatAtDinerEvent EatAtDiner;
 
-    public float MealCost;
     public float RoomCostPerNight;
 
     void Start()
@@ -28,15 +28,18 @@ public class MotelDiner : MonoBehaviour
         // Meal options.
         if (Main.GameTime.TimeOfDayHours < 11)
         {
-            options.Add(new Menu.Option(buyFood, "Buy breakfast", MealCost, Main.PlayerState.CanAfford(MealCost)));
+            options.Add(new Menu.Option(buyFood, "Buy breakfast",
+                        EatAtDiner.MealCost, Main.PlayerState.CanAfford(EatAtDiner.MealCost)));
         }
-        else if (Main.GameTime.TimeOfDayHours > 5)
+        else if (Main.GameTime.TimeOfDayHours > 17)
         {
-            options.Add(new Menu.Option(buyFood, "Buy dinner", MealCost, Main.PlayerState.CanAfford(MealCost)));
+            options.Add(new Menu.Option(buyFood, "Buy dinner", 
+                        EatAtDiner.MealCost, Main.PlayerState.CanAfford(EatAtDiner.MealCost)));
         }
         else
         {
-            options.Add(new Menu.Option(buyFood, "Buy lunch", MealCost, Main.PlayerState.CanAfford(MealCost)));
+            options.Add(new Menu.Option(buyFood, "Buy lunch", 
+                        EatAtDiner.MealCost, Main.PlayerState.CanAfford(EatAtDiner.MealCost)));
         }
 
         // Job options.
@@ -67,7 +70,10 @@ public class MotelDiner : MonoBehaviour
 
     void buyFood()
     {
-        Debug.Log("Buy food");
+        // Pay cost.
+        Main.PlayerState.Money -= EatAtDiner.MealCost;
+
+        EatAtDiner.Attend();
     }
 
     void Reset()
