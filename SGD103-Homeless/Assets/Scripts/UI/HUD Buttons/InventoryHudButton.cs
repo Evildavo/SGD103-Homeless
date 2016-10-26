@@ -14,7 +14,7 @@ public class InventoryHudButton : MonoBehaviour {
         var HudButtonLabel = Main.HudButtons.HudButtonLabel;
         IsCursorOver = true;
         HudButtonLabel.gameObject.SetActive(true);
-        HudButtonLabel.GetComponentInChildren<Text>().text = "Open/Close Inventory";
+        HudButtonLabel.GetComponentInChildren<Text>().text = "Open/Close Inventory (i)";
         Vector3 position = HudButtonLabel.transform.position;
         position.x = transform.position.x;
         HudButtonLabel.transform.position = position;
