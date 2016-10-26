@@ -165,6 +165,24 @@ public class MotelDiner : MonoBehaviour
             {
                 Main.SleepManager.Wake();
             }
+
+            // Ask the player if they want to rent the room again.
+            if (Main.PlayerState.CanAfford(RoomCostPerNight))
+            {
+                ConfirmationBox.OnChoiceMade onChoice = (bool yes) =>
+                {
+                    if (yes)
+                    {
+                        rentRoom();
+                    }
+                };
+                Main.ConfirmationBox.Open(onChoice, 
+                    "Would you like to rent the room again for today?", "Yes", "No");
+            }
+            else
+            {
+                Main.MessageBox.ShowForTime("You no longer have access to the room", 3.0f, gameObject);
+            }
         }
 
         // Switch to the job trigger when it's time to start work.
