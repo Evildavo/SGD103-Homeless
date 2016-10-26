@@ -30,9 +30,10 @@ public class Sun : MonoBehaviour
             Quaternion.AngleAxis(sunYRotationDegrees, Vector3.up);
         transform.Rotate(new Vector3(0.0f, DeclinationAngleOffset, 0.0f));
 
-        // Update the environment slower to improve performance.
+        // Update the environment and reflection source slower to improve performance.
         if (Mathf.Abs(GameTime.TimeOfDayHours - lastTime) > EnvironmentUpdateIntervalGameHours)
         {
+            GetComponent<ReflectionProbe>().RenderProbe();
             DynamicGI.UpdateEnvironment();
             lastTime = GameTime.TimeOfDayHours;
         }
