@@ -116,6 +116,7 @@ public class Inventory : MonoBehaviour
     {
         isHidden = true;
         Main.ItemDescription.gameObject.SetActive(false);
+        Main.SellItemDescription.gameObject.SetActive(false);
         Main.DiscardHint.gameObject.SetActive(false);
         Main.HudButtons.OpenRegularMode();
         foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
