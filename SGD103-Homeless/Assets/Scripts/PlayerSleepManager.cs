@@ -174,8 +174,6 @@ public class PlayerSleepManager : MonoBehaviour
         // Fade in from black.
         Main.ScreenFader.fadeTime = FadeInFromBlackTime;
         Main.ScreenFader.fadeIn = true;
-
-        Main.MessageBox.ShowNext();
     }
 
     void OnFadeInComplete()
@@ -245,6 +243,7 @@ public class PlayerSleepManager : MonoBehaviour
                     {
                         LastWakeReason = WakeReason.WOKEN_BY_POLICE;
                         Main.MessageBox.ShowForTime("You're woken by a police-man saying \"You can't sleep here\"", 2.0f, gameObject);
+                        Debug.Log("Waking from police");
                         Wake();
                         return;
                     }                    
