@@ -21,6 +21,8 @@ public class PlayerCharacter : Character
     public bool IsVomiting = false;
     [ReadOnly]
     public bool IsCoughing = false;
+    [ReadOnly]
+    public bool MovementEnabled = true;
 
     // Standard types of response.
     public enum ResponseType
@@ -139,6 +141,8 @@ public class PlayerCharacter : Character
 	
 	new void Update () {
         base.Update();
+
+        GetComponent<ThirdPersonCharacter>().MovementEnabled = MovementEnabled;
 
         // Handle vomiting.
         if (IsVomiting)

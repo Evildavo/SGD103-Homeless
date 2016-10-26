@@ -315,6 +315,7 @@ public class JobLocation : MonoBehaviour
                 numUpdateTicksDuringShift = 0;
                 healthDuringShiftSum = 0.0f;
                 moraleDuringShiftSum = 0.0f;
+                Main.UI.EnableModalMode();
 
                 // Fade to black.
                 Main.ScreenFader.fadeTime = FadeToBlackTime;
@@ -613,6 +614,7 @@ public class JobLocation : MonoBehaviour
             Main.GameTime.TimeScale = Main.GameTime.NormalTimeScale;
             Main.MessageBox.Hide();
             JobTrigger.Reset(false);
+            Main.UI.DisableModalMode();
 
             // Show UI.
             Main.UI.Show();

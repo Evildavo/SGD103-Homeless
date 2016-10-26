@@ -96,6 +96,7 @@ public class PlayerSleepManager : MonoBehaviour
                 hoursSlept = 0.0f;
                 timeSinceLastHour = 0.0f;
                 hoursSinceLastSlept = 0.0f;
+                Main.UI.EnableModalMode();
 
                 // Determine the base quality of our sleep.
                 if (sleepingRough)
@@ -165,6 +166,7 @@ public class PlayerSleepManager : MonoBehaviour
     {
         IsAsleep = false;
         Main.GameTime.TimeScale = Main.GameTime.NormalTimeScale;
+        Main.UI.DisableModalMode();
 
         // Show UI.
         Main.UI.Show();

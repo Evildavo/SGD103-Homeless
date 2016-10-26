@@ -3,9 +3,10 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class UI : MonoBehaviour {
+    private bool inModalMode = false;
 
     public Main Main;
-
+    
     // Hides the game UI.
     public void Hide()
     {
@@ -24,6 +25,23 @@ public class UI : MonoBehaviour {
         Main.StatPanel.gameObject.SetActive(true);
         Main.MoneyPanel.gameObject.SetActive(true);
         Main.InteractPrompt.gameObject.SetActive(true);
+    }
+
+    public bool IsInModalMode()
+    {
+        return inModalMode;
+    }
+
+    public void EnableModalMode()
+    {
+        inModalMode = true;
+        Main.PlayerCharacter.MovementEnabled = false;
+    }
+
+    public void DisableModalMode()
+    {
+        inModalMode = false;
+        Main.PlayerCharacter.MovementEnabled = true;
     }
 
     void Start () {

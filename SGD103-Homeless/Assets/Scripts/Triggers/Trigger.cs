@@ -19,6 +19,7 @@ public class Trigger : MonoBehaviour
     public bool IsEnabled = true;
     public string TriggerName;
     public string InteractHintMessage;
+    public bool UseModalModeOnActivate = true;
     public bool CloseOnUserInput = true;
     public bool CloseOnLeaveTrigger = true;
     [Header("Leave blank to not show an interact message")]
@@ -96,6 +97,10 @@ public class Trigger : MonoBehaviour
         IsEnabled = enabled;
         IsActivated = false;
         Main.PlayerState.CurrentTrigger = null;
+        if (UseModalModeOnActivate)
+        {
+            Main.UI.DisableModalMode();
+        }
     }
 
     // Resets the trigger back to enabled after a cooloff time.
@@ -189,9 +194,14 @@ public class Trigger : MonoBehaviour
             ShowInteractionText();
             if (IsInActiveHour && Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
             {
+                // Activate the trigger.
                 IsEnabled = false;
                 IsActivated = true;
                 HideInteractionText();
+                if (UseModalModeOnActivate)
+                {
+                    Main.UI.EnableModalMode();
+                }
                 if (onTrigger != null)
                 {
                     Main.PlayerState.CurrentTrigger = this;

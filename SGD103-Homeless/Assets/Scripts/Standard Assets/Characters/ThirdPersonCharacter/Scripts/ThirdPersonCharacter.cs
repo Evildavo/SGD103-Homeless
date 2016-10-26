@@ -34,6 +34,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         float walkSpeedFactor = 1.0f;
         bool isCoughing = false;
 
+        public bool MovementEnabled = true;
+
 
         void Start()
 		{
@@ -92,44 +94,50 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
         public void Move(Vector3 move, bool crouch, bool jump)
 		{
-            if (!isVomiting && !isCoughing)
+            if (MovementEnabled)
             {
+                if (!isVomiting && !isCoughing)
+                {
+                    // convert the world relative moveInput vector into a local-relative
+                    // turn amount and forward amount required to head in the desired
+                    // direction.
+                    if (move.magnitude > 1f) move.Normalize();
+                    move = transform.InverseTransformDirection(move);
+                    CheckGroundStatus();
+                    move = Vector3.ProjectOnPlane(move, m_GroundNormal);
+                    m_TurnAmount = Mathf.Atan2(move.x, move.z);
+                    m_ForwardAmount = move.z * walkSpeedFactor;
+
+
+                    // Walk wonky.
+                    m_TurnAmount += wonkeyWalkAngleRad * move.magnitude * Time.deltaTime;
+
+
+                    ApplyExtraTurnRotation();
+
+                    // control and velocity handling is different when grounded and airborne:
+                    if (m_IsGrounded)
+                    {
+                        HandleGroundedMovement(crouch, jump);
+                    }
+                    else
+                    {
+                        HandleAirborneMovement();
+                    }
+
+                    ScaleCapsuleForCrouching(crouch);
+                    PreventStandingInLowHeadroom();
+                }
                 
-                // convert the world relative moveInput vector into a local-relative
-                // turn amount and forward amount required to head in the desired
-                // direction.
-                if (move.magnitude > 1f) move.Normalize();
-                move = transform.InverseTransformDirection(move);
-                CheckGroundStatus();
-                move = Vector3.ProjectOnPlane(move, m_GroundNormal);
-                m_TurnAmount = Mathf.Atan2(move.x, move.z);
-                m_ForwardAmount = move.z * walkSpeedFactor;
-
-
-                // Walk wonky.
-                m_TurnAmount += wonkeyWalkAngleRad * move.magnitude * Time.deltaTime;
-
-
-                ApplyExtraTurnRotation();
-
-                // control and velocity handling is different when grounded and airborne:
-                if (m_IsGrounded)
-                {
-                    HandleGroundedMovement(crouch, jump);
-                }
-                else
-                {
-                    HandleAirborneMovement();
-                }
-
-                ScaleCapsuleForCrouching(crouch);
-                PreventStandingInLowHeadroom();
-
+                // send input and other state parameters to the animator
+                UpdateAnimator(move);
             }
-
-
-            // send input and other state parameters to the animator
-            UpdateAnimator(move);
+            else
+            {
+                m_ForwardAmount = 0.0f;
+                m_TurnAmount = 0.0f;
+                UpdateAnimator(Vector3.zero);
+            }
         }
 
 
