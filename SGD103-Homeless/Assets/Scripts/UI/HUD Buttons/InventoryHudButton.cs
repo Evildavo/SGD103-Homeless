@@ -32,7 +32,7 @@ public class InventoryHudButton : MonoBehaviour {
         var Inventory = Main.Inventory;
         if (Inventory.InSellMode && Main.PlayerState.CurrentTrigger != null)
         {
-            // Close the trigger.
+            // Close the trigger and open the inventory.
             Main.PlayerState.CurrentTrigger.Close();
             Inventory.Show();
         }

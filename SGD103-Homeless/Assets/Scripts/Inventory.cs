@@ -90,7 +90,8 @@ public class Inventory : MonoBehaviour
         Main.ItemDescription.ItemName.text = "";
         Main.ItemDescription.ItemAction.text = "";
         Main.ItemDescription.GetComponent<Image>().enabled = false;
-        Main.ItemDescription.gameObject.SetActive(true);
+        Main.ItemDescription.gameObject.SetActive(false);
+        Main.SellItemDescription.gameObject.SetActive(false);
         Main.DiscardHint.gameObject.SetActive(false);
         Main.HudButtons.OpenInventoryMode();
         foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
