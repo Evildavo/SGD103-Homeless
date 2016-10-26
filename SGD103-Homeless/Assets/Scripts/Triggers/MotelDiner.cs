@@ -3,7 +3,10 @@ using System.Collections.Generic;
 
 public class MotelDiner : MonoBehaviour
 {
+    const float MENU_UPDATE_INTERVAL_HOURS = 0.5f;
     int dayLastRentedRoom;
+    float hourAtLastUpdate;
+    bool mainMenuOpen;
 
     public Main Main;
     public Trigger Trigger;
@@ -39,35 +42,43 @@ public class MotelDiner : MonoBehaviour
         }
 
         // Meal options.
-        if (Main.GameTime.TimeOfDayHours < 11)
+        if (EatAtDiner.IsOpen)
         {
-            options.Add(new Menu.Option(buyFood, "Buy breakfast",
-                        EatAtDiner.MealCost, Main.PlayerState.CanAfford(EatAtDiner.MealCost)));
-        }
-        else if (Main.GameTime.TimeOfDayHours > 17)
-        {
-            options.Add(new Menu.Option(buyFood, "Buy dinner", 
-                        EatAtDiner.MealCost, Main.PlayerState.CanAfford(EatAtDiner.MealCost)));
-        }
-        else
-        {
-            options.Add(new Menu.Option(buyFood, "Buy lunch", 
-                        EatAtDiner.MealCost, Main.PlayerState.CanAfford(EatAtDiner.MealCost)));
+            if (Main.GameTime.TimeOfDayHours < 11)
+            {
+                options.Add(new Menu.Option(buyFood, "Buy breakfast",
+                            EatAtDiner.MealCost, Main.PlayerState.CanAfford(EatAtDiner.MealCost)));
+            }
+            else if (Main.GameTime.TimeOfDayHours > 17)
+            {
+                options.Add(new Menu.Option(buyFood, "Buy dinner",
+                            EatAtDiner.MealCost, Main.PlayerState.CanAfford(EatAtDiner.MealCost)));
+            }
+            else
+            {
+                options.Add(new Menu.Option(buyFood, "Buy lunch",
+                            EatAtDiner.MealCost, Main.PlayerState.CanAfford(EatAtDiner.MealCost)));
+            }
         }
 
         // Job options.
-        if (JobLocation.IsJobAvailableToday)
+        if (EatAtDiner.IsOpen)
         {
-            options.Add(new Menu.Option(ApplyForJob, "Apply for job"));
+            if (JobLocation.IsJobAvailableToday)
+            {
+                options.Add(new Menu.Option(ApplyForJob, "Apply for job"));
+            }
+            if (JobLocation.PlayerHasJobHere)
+            {
+                // Note that this is a ghost option to inform the player, not to be a useable menu item.
+                string message = "Work (" + JobLocation.GetWorkTimeSummaryShort() + ")";
+                options.Add(new Menu.Option(null, message, 0, false));
+            }
         }
-        if (JobLocation.PlayerHasJobHere)
-        {
-            // Note that this is a ghost option to inform the player, not to be a useable menu item.
-            string message = "Work (" + JobLocation.GetWorkTimeSummaryShort() + ")";
-            options.Add(new Menu.Option(null, message, 0, false));
-        }
+
         options.Add(new Menu.Option(Reset, "Exit"));
         Main.Menu.Show(options);
+        mainMenuOpen = true;
     }
 
     public void ApplyForJob()
@@ -93,6 +104,7 @@ public class MotelDiner : MonoBehaviour
     void sleepRoom()
     {
         Main.SleepManager.Sleep(null, false, SleepQualityFactor);
+        mainMenuOpen = false;
     }
 
     void buyFood()
@@ -101,10 +113,12 @@ public class MotelDiner : MonoBehaviour
         Main.PlayerState.Money -= EatAtDiner.MealCost;
 
         EatAtDiner.Attend();
+        mainMenuOpen = false;
     }
 
     void Reset()
     {
+        mainMenuOpen = false;
         Main.Menu.Hide();
         Main.MessageBox.ShowNext();
         if (Trigger)
@@ -131,6 +145,13 @@ public class MotelDiner : MonoBehaviour
 
     public void Update()
     {
+        // Update the menu periodically.
+        if (mainMenuOpen && Time.time - hourAtLastUpdate > MENU_UPDATE_INTERVAL_HOURS)
+        {
+            hourAtLastUpdate = Time.time;
+            OpenMainMenu();
+        }
+
         // Switch to the job trigger when it's time to start work.
         if (JobLocation.CanWorkNow)
         {
