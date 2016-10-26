@@ -130,7 +130,10 @@ public class MotelDiner : MonoBehaviour
     
     public void OnTrigger()
     {
-        JobLocation.CheckForJob(true);
+        if (EatAtDiner.IsOpen)
+        {
+            JobLocation.CheckForJob(true);
+        }
         OpenMainMenu();
     }
     
