@@ -53,7 +53,14 @@ public class MessageBox : MonoBehaviour
 
     void showNext()
     {
-        displayMessage(messageQueue.Dequeue());
+        if (messageQueue.Count > 0)
+        {
+            displayMessage(messageQueue.Dequeue());
+        }
+        else
+        {
+            Hide();
+        }
     }
 
     // Show the message now.

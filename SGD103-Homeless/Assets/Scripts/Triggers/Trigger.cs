@@ -19,7 +19,7 @@ public class Trigger : MonoBehaviour
     public bool IsEnabled = true;
     public string TriggerName;
     public string InteractHintMessage;
-    public bool UseModalModeOnActivate = true;
+    public bool UseModalModeOnActivate = false;
     public bool CloseOnUserInput = true;
     public bool CloseOnLeaveTrigger = true;
     [Header("Leave blank to not show an interact message")]
