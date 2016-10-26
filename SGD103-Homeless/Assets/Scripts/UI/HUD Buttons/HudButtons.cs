@@ -40,6 +40,7 @@ public class HudButtons : MonoBehaviour {
         CloseInventoryHudButton.gameObject.SetActive(false);
         InventoryHudButton.gameObject.SetActive(true);
         SleepHudButton.gameObject.SetActive(true);
+        HudButtonLabel.gameObject.SetActive(false);
         if (WatchHudButton.Watch)
         {
             WatchHudButton.gameObject.SetActive(true);
