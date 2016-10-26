@@ -155,7 +155,8 @@ public class MotelDiner : MonoBehaviour
 
         // Must leave room by the hour rooms become available.
         var GameTime = Main.GameTime;
-        if (GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, LeaveRoomByHour).shortest <= 
+        if (RoomRented &&
+            GameTime.TimeOfDayHoursDelta(GameTime.TimeOfDayHours, LeaveRoomByHour).shortest <= 
             GameTime.GameTimeDelta)
         {
             RoomRented = false;
