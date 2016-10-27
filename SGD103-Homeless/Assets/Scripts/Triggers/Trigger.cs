@@ -20,6 +20,7 @@ public class Trigger : MonoBehaviour
     public string TriggerName;
     public string InteractHintMessage;
     public bool UseModalModeOnActivate = false;
+    public bool AccelerateTimeWhileTriggerActivated = false;
     public bool CloseOnUserInput = true;
     public bool CloseOnLeaveTrigger = true;
     [Header("Leave blank to not show an interact message")]
@@ -101,14 +102,17 @@ public class Trigger : MonoBehaviour
         {
             Main.UI.DisableModalMode();
         }
+        if (AccelerateTimeWhileTriggerActivated)
+        {
+            Main.GameTime.TimeScale = Main.GameTime.NormalTimeScale;
+        }
     }
 
     // Resets the trigger back to enabled after a cooloff time.
     public void ResetWithCooloff(float seconds = 1.0f)
     {
+        Reset(false);
         Invoke("reenableTrigger", seconds);
-        IsActivated = false;
-        Main.PlayerState.CurrentTrigger = null;
     }
 
     void reenableTrigger()
@@ -206,6 +210,10 @@ public class Trigger : MonoBehaviour
                 {
                     Main.PlayerState.CurrentTrigger = this;
                     onTrigger();
+                }
+                if (AccelerateTimeWhileTriggerActivated)
+                {
+                    Main.GameTime.TimeScale = Main.GameTime.AcceleratedTimeScale;
                 }
             }
         }
