@@ -23,7 +23,8 @@ public class ObjectiveList : MonoBehaviour {
         }
 
         // Create new objective.
-        Objective objective = Instantiate(ObjectivePrefab, transform, false) as Objective;
+        Objective objective = Instantiate(ObjectivePrefab) as Objective;
+        objective.transform.SetParent(transform, false);
         objective.ObjectiveList = this;
         objective.BasePosition = BasePosition;
         objective.ObjectiveName = name;    
