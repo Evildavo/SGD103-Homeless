@@ -53,9 +53,13 @@ public class BackgroundCar : MonoBehaviour {
 
     void show()
     {
+        Renderer parentRenderer = GetComponent<Renderer>();
         foreach (Renderer renderer in GetComponentsInChildren<Renderer>(true))
         {
-            renderer.enabled = true;
+            if (renderer != parentRenderer)
+            {
+                renderer.enabled = true;
+            }
         }
         foreach (Light light in GetComponentsInChildren<Light>(true))
         {
