@@ -5,6 +5,8 @@ using System.Collections;
 public class Sun : MonoBehaviour
 {
     private float lastTime;
+    private int renderID = -1;
+    private bool isRendering = false;
 
     public Main Main;
 
@@ -12,6 +14,19 @@ public class Sun : MonoBehaviour
     public float DeclinationAngleOffset = 30.0f;
     public Gradient ColourGradient;
     public Gradient IntensityGradient;
+
+    void UpdateEnvironment()
+    {
+        isRendering = true;
+        renderID = GetComponent<ReflectionProbe>().RenderProbe();
+        lastTime = Main.GameTime.TimeOfDayHours;
+    }
+
+    void Start()
+    {
+        DynamicGI.UpdateEnvironment();
+        UpdateEnvironment();
+    }
     
     void Update()
     {
@@ -30,12 +45,17 @@ public class Sun : MonoBehaviour
             Quaternion.AngleAxis(sunYRotationDegrees, Vector3.up);
         transform.Rotate(new Vector3(0.0f, DeclinationAngleOffset, 0.0f));
 
-        // Update the environment and reflection source slower to improve performance.
-        if (Mathf.Abs(GameTime.TimeOfDayHours - lastTime) > EnvironmentUpdateIntervalGameHours)
+        // Update the reflection probe as game time passes. 
+        if (!isRendering && Mathf.Abs(GameTime.TimeOfDayHours - lastTime) > EnvironmentUpdateIntervalGameHours)
         {
-            GetComponent<ReflectionProbe>().RenderProbe();
+            UpdateEnvironment();
+        }
+
+        // When finished rendering the probe update the global illumination.
+        if (isRendering && GetComponent<ReflectionProbe>().IsFinishedRendering(renderID))
+        {
             DynamicGI.UpdateEnvironment();
-            lastTime = GameTime.TimeOfDayHours;
+            isRendering = false;
         }
     }
 }
