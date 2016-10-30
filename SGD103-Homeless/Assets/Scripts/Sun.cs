@@ -8,17 +8,12 @@ public class Sun : MonoBehaviour
 
     public Main Main;
     
-    public float EnvironmentUpdateIntervalGameHours;
     public float DeclinationAngleOffset = 30.0f;
     public Gradient ColourGradient;
     public Gradient IntensityGradient;
-    
-    void Start()
-    {
-        DynamicGI.UpdateEnvironment();
-        lastTime = Main.GameTime.TimeOfDayHours;
-    }
-    
+    public Gradient SkyGradient;
+    public Gradient EquatorGradient;
+        
     void Update()
     {
         var GameTime = Main.GameTime;
@@ -35,12 +30,9 @@ public class Sun : MonoBehaviour
             Quaternion.AngleAxis(sunXRotationDegrees, Vector3.left) *
             Quaternion.AngleAxis(sunYRotationDegrees, Vector3.up);
         transform.Rotate(new Vector3(0.0f, DeclinationAngleOffset, 0.0f));
-        
-        // Update the reflection probe as game time passes. 
-        if (Mathf.Abs(GameTime.TimeOfDayHours - lastTime) > EnvironmentUpdateIntervalGameHours)
-        {
-            DynamicGI.UpdateEnvironment();
-            lastTime = Main.GameTime.TimeOfDayHours;
-        }
+
+        // Update the ambient sky lighting.
+        RenderSettings.ambientSkyColor = SkyGradient.Evaluate(GameTime.TimeOfDayHours / 24.0f);
+        RenderSettings.ambientEquatorColor = EquatorGradient.Evaluate(GameTime.TimeOfDayHours / 24.0f);
     }
 }
