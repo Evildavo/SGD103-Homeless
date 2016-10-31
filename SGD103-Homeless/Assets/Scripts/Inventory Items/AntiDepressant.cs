@@ -31,7 +31,12 @@ public class AntiDepressant : MultiUseItem
             Main.MessageBox.ShowForTime("Only take ONE per day", 2.0f, gameObject);
         }
     }
-    
+
+    new void Start()
+    {
+        base.Start();
+    }
+
     void Update()
     {
         UpdateItemDescription();        

@@ -47,6 +47,11 @@ public class AlcoholItem : MultiUseItem
         }
     }
 
+    new void Start()
+    {
+        base.Start();
+    }
+
     void Update()
     {
         UpdateItemDescription();

@@ -11,6 +11,11 @@ public class ResumeItem : MultiUseItem
         Main.MessageBox.ShowForTime("[Insert backstory here]", 2.0f, gameObject);
     }
 
+    new void Start()
+    {
+        base.Start();
+    }
+
     void Update()
     {
         UpdateItemDescription();

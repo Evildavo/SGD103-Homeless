@@ -35,7 +35,12 @@ public class FoodItem : MultiUseItem
             Main.Inventory.RemoveItem(this);
         }
     }
-    
+
+    new void Start()
+    {
+        base.Start();
+    }
+
     void Update()
     {
         UpdateItemDescription();
