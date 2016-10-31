@@ -16,6 +16,7 @@ public class Library : MonoBehaviour {
 
     public float MoraleGainedPerSecondReading = 0.05f;
     public float JobSearchTimeSeconds = 4.0f;
+    public float MoraleGainedForFindingJob;
 
     public List<string> Books;
 
@@ -57,16 +58,6 @@ public class Library : MonoBehaviour {
         options.Add(new Menu.Option(OnStopReading, "Stop reading"));
         return options;
     }
-
-    void jobSearch()
-    {
-        Main.MessageBox.Show("Searching for jobs...", gameObject);
-        Main.Menu.Hide();
-        Main.GameTime.TimeScale = Main.GameTime.AcceleratedTimeScale;
-        isJobSearching = true;
-        dayOfLastJobSearch = Main.GameTime.Day;
-        timeAtLastCheck = Time.time;
-    }
     
     public void OnJobSearch()
     {
@@ -87,6 +78,16 @@ public class Library : MonoBehaviour {
         {
             jobSearch();
         }
+    }
+    
+    void jobSearch()
+    {
+        Main.MessageBox.Show("Searching for jobs...", gameObject);
+        Main.Menu.Hide();
+        Main.GameTime.TimeScale = Main.GameTime.AcceleratedTimeScale;
+        isJobSearching = true;
+        dayOfLastJobSearch = Main.GameTime.Day;
+        timeAtLastCheck = Time.time;
     }
 
     public void OnReadBook()
@@ -160,6 +161,7 @@ public class Library : MonoBehaviour {
                     string message = "A job position is available today as: " + job.Job.Role + 
                                      "\nat " + job.Name + ". Resume updated.";
                     Main.MessageBox.Show(message, gameObject);
+                    Main.PlayerState.ChangeMorale(MoraleGainedForFindingJob);
 
                     jobAvailable = true;
                     Main.Menu.Show(getMainMenu());

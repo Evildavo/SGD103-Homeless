@@ -149,27 +149,31 @@ public class JobLocation : MonoBehaviour
         }
         else
         {
-            // Check if it's a new day (or we've never checked before).
-            if (Main.GameTime.Day != dayLastChecked || !hasChecked)
+            // Check if job is available.
+            if (!IsJobAvailableToday)
             {
-                // Randomly decide if a job is available today.
-                float value = Random.Range(0.0f, 1.0f);
-                if (value <= ChanceJobAvailablePerDay)
+                // Check if it's a new day (or we've never checked before).
+                if (Main.GameTime.Day != dayLastChecked || !hasChecked)
+                {
+                    // Randomly decide if a job is available today.
+                    float value = Random.Range(0.0f, 1.0f);
+                    if (value <= ChanceJobAvailablePerDay)
+                    {
+                        IsJobAvailableToday = true;
+                    }
+                    hasChecked = true;
+                    dayLastChecked = Main.GameTime.Day;
+                    ++daysChecked;
+                }
+
+                // Make job available as a one-time kindness to the player after so many tries.
+                const int DISABLED = -1;
+                if ((GuaranteedAvailableAfterDaysChecked != DISABLED &&
+                    daysChecked > GuaranteedAvailableAfterDaysChecked) || IsJobAvailableToday)
                 {
                     IsJobAvailableToday = true;
+                    GuaranteedAvailableAfterDaysChecked = DISABLED;
                 }
-                hasChecked = true;
-                dayLastChecked = Main.GameTime.Day;
-                ++daysChecked;
-            }
-
-            // Make job available as a one-time kindness to the player after so many tries.
-            const int DISABLED = -1;
-            if ((GuaranteedAvailableAfterDaysChecked != DISABLED &&
-                daysChecked > GuaranteedAvailableAfterDaysChecked) || IsJobAvailableToday)
-            {
-                IsJobAvailableToday = true;
-                GuaranteedAvailableAfterDaysChecked = DISABLED;
             }
 
             // Show message about the job if it's available.
