@@ -87,8 +87,8 @@ public class PlayerState : MonoBehaviour {
     [Space(10.0f)]
     public float WorkHungerGainFactor = 1.0f;
     public float WorkHealthLossFactor = 1.0f;
-    public float WorkMoraleLossFactor = 1.0f;    
     [Header("See Job Locations for morale gain settings.")]
+    public float WorkMoraleLossFactor = 1.0f;
 
     [Space(10.0f)]
     public float InebriationDecreasesPerHour;
@@ -249,11 +249,6 @@ public class PlayerState : MonoBehaviour {
             // Hunger and morale drop at a different rate while asleep.
             Nutrition -= HungerGainPerHour * SleepHungerGainFactor * gameTimeDelta;
             Morale -= MoraleLossPerHour * SleepMoraleLossFactor * gameTimeDelta;
-
-            // Gain health based on sleep quality.
-            float minHealthGain = MinSleepingRoughHealthGainPerHour;
-            float maxHealthGain = MaxSleepingRoughHealthGainPerHour;
-            ChangeHealthTiredness((minHealthGain + Main.SleepManager.SleepQuality * (maxHealthGain - minHealthGain)) * gameTimeDelta);
         }
         else if (IsAtWork)
         {

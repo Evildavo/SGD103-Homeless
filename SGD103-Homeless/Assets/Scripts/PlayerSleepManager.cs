@@ -33,7 +33,7 @@ public class PlayerSleepManager : MonoBehaviour
     [Space(-10, order=1)]
     [Header("of effect when they overlap (last overrides first).", order=2)]
     public Transform SleepZoneContainer;
-
+    
     public bool HideUIDuringSleep = true;
     public float FadeToBlackTime = 1.5f;
     public float FadeInFromBlackTime = 1.5f;
@@ -87,7 +87,6 @@ public class PlayerSleepManager : MonoBehaviour
     // The player won't sleep if the player hasn't waited long enough since last sleeping.
     // If not sleeping rough the sleep is considered good. 
     // sleepQualityFactor can be used to adjust sleep quality.
-    public void Sleep(SleepItem sleepItem = null, bool sleepingRough = true, float sleepQualityFactor = 0.0f)
     public void Sleep(SleepItem sleepItem = null, bool sleepingRough = true, float sleepQualityFactor = 1.0f)
     {
         if (!IsAsleep)
@@ -179,8 +178,12 @@ public class PlayerSleepManager : MonoBehaviour
         Main.ScreenFader.fadeTime = FadeInFromBlackTime;
         Main.ScreenFader.fadeIn = true;
 
-        // Highlight the stat change.
-        Main.PlayerState.HighlightHealthStatForTime(true, 5.0f);
+        // Gain health based on sleep quality.
+        float minHealthGain = Main.PlayerState.MinSleepingRoughHealthGainPerHour;
+        float maxHealthGain = Main.PlayerState.MaxSleepingRoughHealthGainPerHour;
+        Main.PlayerState.ChangeHealthTiredness(
+            (minHealthGain + Main.SleepManager.SleepQuality * (maxHealthGain - minHealthGain)) * 
+            hoursSlept);
     }
 
     void OnFadeInComplete()
