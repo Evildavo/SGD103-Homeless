@@ -88,6 +88,7 @@ public class PlayerSleepManager : MonoBehaviour
     // If not sleeping rough the sleep is considered good. 
     // sleepQualityFactor can be used to adjust sleep quality.
     public void Sleep(SleepItem sleepItem = null, bool sleepingRough = true, float sleepQualityFactor = 0.0f)
+    public void Sleep(SleepItem sleepItem = null, bool sleepingRough = true, float sleepQualityFactor = 1.0f)
     {
         if (!IsAsleep)
         {
