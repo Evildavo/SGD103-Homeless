@@ -142,7 +142,7 @@ public class Library : MonoBehaviour {
         // Increase morale while reading.
         if (isReading)
         {
-            Main.PlayerState.GainMorale(MoraleGainedPerSecondReading * Time.deltaTime);
+            Main.PlayerState.ChangeMorale(MoraleGainedPerSecondReading * Time.deltaTime);
         }
         
         // Search for jobs after a minimum amount of time.

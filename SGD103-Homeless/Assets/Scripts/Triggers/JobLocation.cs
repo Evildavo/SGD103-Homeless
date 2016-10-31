@@ -117,6 +117,9 @@ public class JobLocation : MonoBehaviour
     public float FadeToBlackTime = 2.0f;
     public float FadeInFromBlackTime = 2.0f;
     public float WorkTimeScale = 8000.0f;
+    public float MoraleGainedAtShiftEnd;
+    public float MoralePenaltyPerNoticeReceived;
+    public float MoralePenaltyForDismissal;
 
     public bool IsJobAvailableToday = false;
     public JobPositionProfile Job;
@@ -268,13 +271,14 @@ public class JobLocation : MonoBehaviour
     public void Dismiss(string reason)
     {
         PlayerHasJobHere = false;
-        
+        playerOnNoticeForReasons.Clear();
+
         // If we're at work, stop working.
         if (IsPlayerAtWork)
         {
             stopWork();
         }
-
+                
         // Show dismissed message and give final pay.
         string message = "You have been dismissed from employment. Reason: " + reason + ".";
         if (payDue > 0.0f)
@@ -285,6 +289,9 @@ public class JobLocation : MonoBehaviour
             hoursWorkedThisWeek = 0.0f;
         }
         Main.MessageBox.ShowQueued(message, 6.0f, gameObject);
+
+        // Receive morale penalty.
+        Main.PlayerState.ChangeMorale(-MoralePenaltyForDismissal);
     }
 
     void OnFadeOutComplete()
@@ -467,6 +474,8 @@ public class JobLocation : MonoBehaviour
 
     void onFadeInComplete()
     {
+        int numNoticesReceived = 0;
+
         // Calculate hours worked. 
         // No overpay is given for starting early, but no penalty is removed for starting very slightly late.
         float hoursWorked;
@@ -500,6 +509,7 @@ public class JobLocation : MonoBehaviour
             if (playerOnNoticeForReasons.Contains(NoticeReason.LATE_FOR_WORK))
             {
                 Dismiss("Repeatedly late for work");
+                return;
             }
 
             // Give a notice.
@@ -507,6 +517,7 @@ public class JobLocation : MonoBehaviour
             {
                 playerOnNoticeForReasons.Add(NoticeReason.LATE_FOR_WORK);
                 MessageBox.ShowQueued("Warning Notice: You started work late today.", 3.0f, gameObject, true);
+                numNoticesReceived++;
             }
         }
         else
@@ -523,6 +534,7 @@ public class JobLocation : MonoBehaviour
             if (playerOnNoticeForReasons.Contains(NoticeReason.POOR_HEALTH))
             {
                 Dismiss("Poor work performance");
+                return;
             }
 
             // Give a notice.
@@ -530,6 +542,7 @@ public class JobLocation : MonoBehaviour
             {
                 playerOnNoticeForReasons.Add(NoticeReason.POOR_HEALTH);
                 MessageBox.ShowQueued("Warning Notice: You performed poorly today.", 3.0f, gameObject, true);
+                numNoticesReceived++;
             }
         }
         else
@@ -546,6 +559,7 @@ public class JobLocation : MonoBehaviour
             if (playerOnNoticeForReasons.Contains(NoticeReason.POOR_MORALE))
             {
                 Dismiss("Bad attitude");
+                return;
             }
 
             // Give a notice.
@@ -553,6 +567,7 @@ public class JobLocation : MonoBehaviour
             {
                 playerOnNoticeForReasons.Add(NoticeReason.POOR_MORALE);
                 MessageBox.ShowQueued("Warning Notice: You had a bad attitude today.", 3.0f, gameObject, true);
+                numNoticesReceived++;
             }
         }
         else
@@ -568,6 +583,7 @@ public class JobLocation : MonoBehaviour
             if (playerOnNoticeForReasons.Contains(NoticeReason.UNCLEAN_CLOTHES))
             {
                 Dismiss("Unhygienic attire");
+                return;
             }
 
             // Give a notice.
@@ -575,6 +591,7 @@ public class JobLocation : MonoBehaviour
             {
                 playerOnNoticeForReasons.Add(NoticeReason.UNCLEAN_CLOTHES);
                 MessageBox.ShowQueued("Warning Notice: You wore unhygienic clothing today.", 3.0f, gameObject, true);
+                numNoticesReceived++;
             }
         }
         else
@@ -590,6 +607,7 @@ public class JobLocation : MonoBehaviour
             if (playerOnNoticeForReasons.Contains(NoticeReason.UNDER_INFLUENCE_OF_ALCOHOL))
             {
                 Dismiss("Found under the influence of alcohol");
+                return;
             }
 
             // Record a notice (hidden from the player).
@@ -603,6 +621,9 @@ public class JobLocation : MonoBehaviour
             // No longer on notice for this reason.
             playerOnNoticeForReasons.Remove(NoticeReason.UNDER_INFLUENCE_OF_ALCOHOL);
         }
+
+        // Give the player a morale boost for completing the shift, but penalise them for notices received.
+        Main.PlayerState.ChangeMorale(MoraleGainedAtShiftEnd - numNoticesReceived * MoralePenaltyPerNoticeReceived);
     }
 
     void stopWork()

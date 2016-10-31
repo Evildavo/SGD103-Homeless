@@ -33,7 +33,7 @@ public class AddictionSupportEvent : EventAtLocation {
             hoursSpent += Main.GameTime.GameTimeDelta;
 
             // Give reward.
-            Main.PlayerState.GainMorale(MoraleRewardPerHour);
+            Main.PlayerState.ChangeMorale(MoraleRewardPerHour);
             Main.PlayerState.Addiction -= AddictionDecreasedPerHour;
             Main.PlayerState.HighlightMorale = true;
         }

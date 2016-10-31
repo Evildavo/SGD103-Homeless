@@ -72,7 +72,8 @@ public class PlayerState : MonoBehaviour {
     [Space(10.0f)]
     public float WorkHungerGainFactor = 1.0f;
     public float WorkHealthLossFactor = 1.0f;
-    public float WorkMoraleLossFactor = 1.0f;
+    public float WorkMoraleLossFactor = 1.0f;    
+    [Header("See Job Locations for morale gain settings.")]
 
     [Space(10.0f)]
     public float InebriationDecreasesPerHour;
@@ -140,13 +141,15 @@ public class PlayerState : MonoBehaviour {
         alcoholObjectives.Clear();
     }
 
-    // Gains the given amount of morale, also reducing addiction.
-    public void GainMorale(float amount, bool reduceAddiction = true)
+    // Changes the morale by the given amount. 
+    // If it's a positive change, morale gained also optionally reduces addiction.
+    // If amount is negative, morale is lost.
+    public void ChangeMorale(float amount, bool reduceAddiction = true)
     {
         Morale += amount;
 
         // Only reduce addiction if we're gaining morale (morale isn't full).
-        if (reduceAddiction && Morale < 1.0f)
+        if (reduceAddiction && amount > 0.0f && Morale < 1.0f)
         {
             Addiction -= amount * AddictionReducedPerMoraleGainedFactor;
         }
@@ -175,7 +178,7 @@ public class PlayerState : MonoBehaviour {
         }
         else if (IsAtWork)
         {
-            // Hunger, health and morale drop at a different rate while at work.
+            // Hunger and health drop at a different rate while at work.
             HungerThirstSatiety -= HungerGainPerHour * WorkHungerGainFactor * gameTimeDelta;
             HealthTiredness -= HealthLossPerHour * WorkHealthLossFactor * gameTimeDelta;
             Morale -= MoraleLossPerHour * WorkMoraleLossFactor * gameTimeDelta;

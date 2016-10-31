@@ -32,7 +32,7 @@ public class CounsellingEvent : EventAtLocation {
             hoursSpent += Main.GameTime.GameTimeDelta;
 
             // Give reward.
-            Main.PlayerState.GainMorale(MoraleRewardPerHour);
+            Main.PlayerState.ChangeMorale(MoraleRewardPerHour);
             Main.PlayerState.HighlightMorale = true;
         }
 	}
