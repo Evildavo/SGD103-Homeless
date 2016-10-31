@@ -12,6 +12,7 @@ public class PlayerState : MonoBehaviour {
     bool hasCoughed = false;
     float timeAtLastCough;
     float hoursSinceDepressionLastTreated;
+    float moraleChangeRemaining;
 
     public Main Main;
 
@@ -115,6 +116,9 @@ public class PlayerState : MonoBehaviour {
     public float UntreatedDepressionHealthPenaltyPerHour;
 
     [Space(10.0f)]
+    public float StatTransitionSpeedPerHour = 1.0f;
+
+    [Space(10.0f)]
     public bool IsAtWork = false;
 
     [Space(10.0f)]
@@ -146,10 +150,10 @@ public class PlayerState : MonoBehaviour {
     // If amount is negative, morale is lost.
     public void ChangeMorale(float amount, bool reduceAddiction = true)
     {
-        Morale += amount;
+        moraleChangeRemaining += amount;
 
         // Only reduce addiction if we're gaining morale (morale isn't full).
-        if (reduceAddiction && amount > 0.0f && Morale < 1.0f)
+        if (reduceAddiction && amount > 0.0f && Morale + moraleChangeRemaining < 1.0f)
         {
             Addiction -= amount * AddictionReducedPerMoraleGainedFactor;
         }
@@ -163,8 +167,33 @@ public class PlayerState : MonoBehaviour {
     }
 
     void Update () {
-        float gameTimeDelta = 1.0f / 60.0f / 60.0f * Time.deltaTime * Main.GameTime.TimeScale;  
-        
+        float gameTimeDelta = 1.0f / 60.0f / 60.0f * Time.deltaTime * Main.GameTime.TimeScale;
+
+        if (Input.GetKeyDown("t")) // Test
+        {
+            ChangeMorale(0.2f);
+        } //
+        if (Input.GetKeyDown("y")) // Test
+        {
+            ChangeMorale(-0.2f);
+        } //
+
+        // Gradually apply morale changes.
+        if (moraleChangeRemaining > 0.0f)
+        {
+            float change = Mathf.Min(
+                moraleChangeRemaining, StatTransitionSpeedPerHour * gameTimeDelta);
+            Morale += change;
+            moraleChangeRemaining -= change;
+        }
+        else if (moraleChangeRemaining < 0.0f)
+        {
+            float change = Mathf.Min(
+                Mathf.Abs(moraleChangeRemaining), StatTransitionSpeedPerHour * gameTimeDelta);
+            Morale -= change;
+            moraleChangeRemaining += change;
+        }
+
         if (Main.SleepManager.IsAsleep)
         {
             // Hunger and morale drop at a different rate while asleep.
