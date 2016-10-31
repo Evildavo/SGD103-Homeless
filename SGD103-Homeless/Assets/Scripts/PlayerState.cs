@@ -14,6 +14,7 @@ public class PlayerState : MonoBehaviour {
     float hoursSinceDepressionLastTreated;
     float moraleChangeRemaining;
     float nutritionChangeRemaining;
+    float healthChangeRemaining;
 
     public Main Main;
 
@@ -141,7 +142,7 @@ public class PlayerState : MonoBehaviour {
         alcoholObjectives.Clear();
     }
 
-    // Changes the morale by the given amount. 
+    // Changes the morale level by the given amount. 
     // If it's a positive change, morale gained also optionally reduces addiction.
     // If amount is negative, morale is lost.
     public void ChangeMorale(float amount, bool reduceAddiction = true)
@@ -159,6 +160,12 @@ public class PlayerState : MonoBehaviour {
     public void ChangeNutrition(float amount)
     {
         nutritionChangeRemaining += amount;
+    }
+
+    // Changes the health level by the given amount. 
+    public void ChangeHealthTiredness(float amount)
+    {
+        healthChangeRemaining += amount;
     }
 
     // Treats depression for today.
@@ -180,7 +187,7 @@ public class PlayerState : MonoBehaviour {
             // Gain health based on sleep quality.
             float minHealthGain = MinSleepingRoughHealthGainPerHour;
             float maxHealthGain = MaxSleepingRoughHealthGainPerHour;
-            HealthTiredness += (minHealthGain + Main.SleepManager.SleepQuality * (maxHealthGain - minHealthGain)) * gameTimeDelta;
+            ChangeHealthTiredness((minHealthGain + Main.SleepManager.SleepQuality * (maxHealthGain - minHealthGain)) * gameTimeDelta);
         }
         else if (IsAtWork)
         {
@@ -378,11 +385,11 @@ public class PlayerState : MonoBehaviour {
         {
             stats.HungerThirstText.color = NormalTextColour;
         }
-        /*if (HighlightHealth)
+        if (healthChangeRemaining > 0.0f)
         {
             stats.HealthText.color = HighlightTextColour;
         }
-        else if (HealthTiredness <= HealthWarningThreshold)
+        else if (healthChangeRemaining < 0.0f || HealthTiredness <= HealthWarningThreshold)
         {
             stats.HealthText.color = WarningTextColour;
             if (BoldTextDuringWarning)
@@ -393,7 +400,7 @@ public class PlayerState : MonoBehaviour {
         else
         {
             stats.HealthText.color = NormalTextColour;
-        }*/
+        }
         if (moraleChangeRemaining > 0.0f)
         {
             stats.MoraleText.color = HighlightTextColour;
@@ -429,15 +436,6 @@ public class PlayerState : MonoBehaviour {
             stats.MoraleText.text = "Morale: " + (Morale * 100).ToString("f0") + "%";
         }
 
-        if (Input.GetKeyDown("t")) // Test
-        {
-            ChangeNutrition(0.2f);
-        } //
-        if (Input.GetKeyDown("y")) // Test
-        {
-            ChangeNutrition(-0.2f);
-        } //
-
         // Gradually apply morale changes.
         if (moraleChangeRemaining > 0.0f)
         {
@@ -468,6 +466,22 @@ public class PlayerState : MonoBehaviour {
                 Mathf.Abs(nutritionChangeRemaining), StatTransitionSpeedPerHour * gameTimeDelta);
             Nutrition -= change;
             nutritionChangeRemaining += change;
+        }
+        
+        // Gradually apply health changes.
+        if (healthChangeRemaining > 0.0f)
+        {
+            float change = Mathf.Min(
+                healthChangeRemaining, StatTransitionSpeedPerHour * gameTimeDelta);
+            HealthTiredness += change;
+            healthChangeRemaining -= change;
+        }
+        else if (healthChangeRemaining < 0.0f)
+        {
+            float change = Mathf.Min(
+                Mathf.Abs(healthChangeRemaining), StatTransitionSpeedPerHour * gameTimeDelta);
+            HealthTiredness -= change;
+            healthChangeRemaining += change;
         }
 
         // Limit stats to range 0-1.
