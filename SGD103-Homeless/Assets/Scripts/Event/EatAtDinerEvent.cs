@@ -4,11 +4,11 @@ using System.Collections;
 public class EatAtDinerEvent : EventAtLocation {
     
     public float MealCost;
-    public float HungerSatietyReward;
+    public float NutritionReward;
 
     protected override void OnPlayerLeaves()
     {
-        Main.PlayerState.ChangeNutrition(HungerSatietyReward);
+        Main.PlayerState.ChangeNutrition(NutritionReward);
 
         Main.MessageBox.ShowForTime("You feel enlivened after a good feed", 2.0f, gameObject);
 

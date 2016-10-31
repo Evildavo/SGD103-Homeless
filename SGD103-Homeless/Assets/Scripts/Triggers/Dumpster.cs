@@ -8,7 +8,8 @@ public class Dumpster : MonoBehaviour {
     public Trigger Trigger;
 
     public float ChanceOfFindingFoodPerSecond = 0.1f;
-    public float HungerSatietyBenefit;
+    [UnityEngine.Serialization.FormerlySerializedAs("HungerSatietyBenefit")]
+    public float NutritionBenefit;
     public float HealthDetriment;
 
     void Start()
@@ -36,7 +37,7 @@ public class Dumpster : MonoBehaviour {
                 {
                     if (yes)
                     {
-                        Main.PlayerState.ChangeNutrition(HungerSatietyBenefit);
+                        Main.PlayerState.ChangeNutrition(NutritionBenefit);
                         Main.PlayerState.ChangeHealthTiredness(-HealthDetriment);
                     }
                 };

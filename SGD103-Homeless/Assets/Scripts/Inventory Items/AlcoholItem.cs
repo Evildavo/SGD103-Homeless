@@ -3,7 +3,8 @@ using System.Collections;
 
 public class AlcoholItem : MultiUseItem
 {
-    public float ThirstSatietyBenefitPerUse;
+    [UnityEngine.Serialization.FormerlySerializedAs("ThirstSatietyBenefitPerUse")]
+    public float NutritionBenefitPerUse;
     public float MoraleBenefitPerUse;
     public float InebriationIncreasePerUse;
     public float AddictionIncreasePerUse;
@@ -14,7 +15,7 @@ public class AlcoholItem : MultiUseItem
         var MessageBox = Main.MessageBox;
 
         // Increase stats.
-        PlayerState.ChangeNutrition(ThirstSatietyBenefitPerUse);
+        PlayerState.ChangeNutrition(NutritionBenefitPerUse);
         PlayerState.ChangeMorale(MoraleBenefitPerUse, false);
         PlayerState.Inebriation += InebriationIncreasePerUse;
         PlayerState.Addiction += AddictionIncreasePerUse;

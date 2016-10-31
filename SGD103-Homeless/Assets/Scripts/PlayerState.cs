@@ -35,7 +35,7 @@ public class PlayerState : MonoBehaviour {
     public Color WarningTextColour = Color.red;
     public Color HighlightTextColour = Color.yellow;
     public bool BoldTextDuringWarning = true;
-    public float HungerWarningThreshold = 0.2f;
+    public float NutritionWarningThreshold = 0.2f;
     public float HealthWarningThreshold = 0.2f;
     public float MoraleWarningThreshold = 0.2f;
 
@@ -58,18 +58,18 @@ public class PlayerState : MonoBehaviour {
     public bool IsDepressionTreated = true;
 
     [Header("Settings:")] 
-    public float HungerGainPerHour = 0.0f;        
+    public float NutritionLossPerHour = 0.0f;        
     public float HealthLossPerHour = 0.0f;
     public float MoraleLossPerHour = 0.0f;
     
     [Space(10.0f)]
-    public float MaxHungerHealthPenaltyPerHour = 0.0f;
+    public float MaxNutritionHealthPenaltyPerHour = 0.0f;
     [Range(0.0f, 1.0f)]
-    public float HungerSatiatedAtLevel = 0.0f;
-    public float MaxSatietyHealthRewardPerHour = 0.0f;
+    public float NutritionOkAtLevel = 0.0f;
+    public float MaxNutritionHealthRewardPerHour = 0.0f;
 
-    [Header("Hunger goes down slower when satiated")]
-    public float MaxSatietyHungerRewardPerHour = 0.0f;
+    [Header("Nutrition goes down slower when in good condition")]
+    public float MaxNutritionRewardPerHour = 0.0f;
 
     [Space(10.0f)]
     public float MaxPoorHealthMoralePenaltyPerHour = 0.0f;
@@ -78,14 +78,14 @@ public class PlayerState : MonoBehaviour {
     public float MaxGoodHealthMoraleRewardPerHour = 0.0f;
 
     [Space(10.0f)]
-    public float SleepHungerGainFactor = 0.0f;
+    public float SleepNutritionGainFactor = 0.0f;
     public float SleepMoraleLossFactor = 0.0f;
     [Header("Not counting bonus from a sleeping bag")]
     public float MinSleepingRoughHealthGainPerHour = 0.0f;
     public float MaxSleepingRoughHealthGainPerHour = 0.0f;
 
     [Space(10.0f)]
-    public float WorkHungerGainFactor = 1.0f;
+    public float WorkNutritionGainFactor = 1.0f;
     public float WorkHealthLossFactor = 1.0f;
     [Header("See Job Locations for morale gain settings.")]
     public float WorkMoraleLossFactor = 1.0f;
@@ -99,7 +99,7 @@ public class PlayerState : MonoBehaviour {
     public bool WalkSlowerWhenIntoxicated;
     public float WonkyWalkAngleAtMaxInebriationDegrees;
     public float VomitIntervalAtMaxInebriationSeconds;
-    public float HungerSatietyLostPerVomit;
+    public float NutritionLostPerVomit;
     public float WalkSpeedFactorAtMaxInebriation = 1.0f;
 
     [Space(10.0f)]
@@ -122,7 +122,7 @@ public class PlayerState : MonoBehaviour {
     public float WalkSpeedFactorAtLowestMorale;
 
     [Space(10.0f)]
-    public float StomachGrowlBelowHungerSatiety;
+    public float StomachGrowlBelowNutrition;
     public float StomachGrowlIntervalWhenHungry;
 
     [Space(10.0f)]
@@ -246,45 +246,45 @@ public class PlayerState : MonoBehaviour {
 
         if (Main.SleepManager.IsAsleep)
         {
-            // Hunger and morale drop at a different rate while asleep.
-            Nutrition -= HungerGainPerHour * SleepHungerGainFactor * gameTimeDelta;
+            // Nutrition and morale drop at a different rate while asleep.
+            Nutrition -= NutritionLossPerHour * SleepNutritionGainFactor * gameTimeDelta;
             Morale -= MoraleLossPerHour * SleepMoraleLossFactor * gameTimeDelta;
         }
         else if (IsAtWork)
         {
-            // Hunger and health drop at a different rate while at work.
-            Nutrition -= HungerGainPerHour * WorkHungerGainFactor * gameTimeDelta;
+            // Nutrition and health drop at a different rate while at work.
+            Nutrition -= NutritionLossPerHour * WorkNutritionGainFactor * gameTimeDelta;
             HealthTiredness -= HealthLossPerHour * WorkHealthLossFactor * gameTimeDelta;
             Morale -= MoraleLossPerHour * WorkMoraleLossFactor * gameTimeDelta;
         }
         else
         {
             // Apply base changes.
-            Nutrition -= HungerGainPerHour * gameTimeDelta;
+            Nutrition -= NutritionLossPerHour * gameTimeDelta;
             HealthTiredness -= HealthLossPerHour * gameTimeDelta;
             Morale -= MoraleLossPerHour * gameTimeDelta;
         }
 
-        // Hunger goes down slower when satiated.
-        if (Nutrition > HungerSatiatedAtLevel)
+        // Nutrition goes down slower when satiated.
+        if (Nutrition > NutritionOkAtLevel)
         {
             Nutrition +=
-                (Nutrition - HungerSatiatedAtLevel) / (1.0f - HungerSatiatedAtLevel) *
-                MaxSatietyHungerRewardPerHour * gameTimeDelta;
+                (Nutrition - NutritionOkAtLevel) / (1.0f - NutritionOkAtLevel) *
+                MaxNutritionRewardPerHour * gameTimeDelta;
         }
 
-        // Hunger affects health.
-        if (Nutrition < HungerSatiatedAtLevel)
+        // Nutrition affects health.
+        if (Nutrition < NutritionOkAtLevel)
         {
             HealthTiredness -=
-                (HungerSatiatedAtLevel - Nutrition) / HungerSatiatedAtLevel *
-                MaxHungerHealthPenaltyPerHour * gameTimeDelta;
+                (NutritionOkAtLevel - Nutrition) / NutritionOkAtLevel *
+                MaxNutritionHealthPenaltyPerHour * gameTimeDelta;
         }
-        else if (Nutrition > HungerSatiatedAtLevel)
+        else if (Nutrition > NutritionOkAtLevel)
         {
             HealthTiredness +=
-                (Nutrition - HungerSatiatedAtLevel) / (1.0f - HungerSatiatedAtLevel) *
-                MaxSatietyHealthRewardPerHour * gameTimeDelta;
+                (Nutrition - NutritionOkAtLevel) / (1.0f - NutritionOkAtLevel) *
+                MaxNutritionHealthRewardPerHour * gameTimeDelta;
         }
 
         // Health affects morale.
@@ -326,7 +326,7 @@ public class PlayerState : MonoBehaviour {
                     hasVomited = true;
                     timeAtLastVomit = Time.time;
 
-                    ChangeNutrition(-HungerSatietyLostPerVomit);
+                    ChangeNutrition(-NutritionLostPerVomit);
                     Main.PlayerCharacter.Vomit();
                 }
             }
@@ -402,7 +402,7 @@ public class PlayerState : MonoBehaviour {
         Main.PlayerCharacter.SetWalkSpeedFactor(combinedWalkFactor);
 
         // Player character stomach growls at a regular interval when hungry.
-        if (Nutrition < StomachGrowlBelowHungerSatiety)
+        if (Nutrition < StomachGrowlBelowNutrition)
         {
             if (!hasStomachGrowled || Time.time - timeAtLastStomachGrowl >= StomachGrowlIntervalWhenHungry)
             {
@@ -427,27 +427,27 @@ public class PlayerState : MonoBehaviour {
 
         // Highlight stats.
         var stats = Main.StatPanel;
-        stats.HungerThirstText.fontStyle = FontStyle.Normal;
+        stats.NutritionText.fontStyle = FontStyle.Normal;
         stats.HealthText.fontStyle = FontStyle.Normal;
         stats.MoraleText.fontStyle = FontStyle.Normal;
         if (nutritionChangeRemaining > 0.0f || 
             (highlightNutritionPositive && Time.time - timeAtNutritionHighlight < highlightNutritionForSeconds))
         {
-            stats.HungerThirstText.color = HighlightTextColour;
+            stats.NutritionText.color = HighlightTextColour;
         }
         else if (nutritionChangeRemaining < 0.0f ||
             (highlightNutritionNegative && Time.time - timeAtNutritionHighlight < highlightNutritionForSeconds) ||
-            Nutrition <= HungerWarningThreshold)
+            Nutrition <= NutritionWarningThreshold)
         {
-            stats.HungerThirstText.color = WarningTextColour;
+            stats.NutritionText.color = WarningTextColour;
             if (BoldTextDuringWarning)
             {
-                stats.HungerThirstText.fontStyle = FontStyle.Bold;
+                stats.NutritionText.fontStyle = FontStyle.Bold;
             }
         }
         else
         {
-            stats.HungerThirstText.color = NormalTextColour;
+            stats.NutritionText.color = NormalTextColour;
         }
         if (healthChangeRemaining > 0.0f ||
             (highlightHealthPositive && Time.time - timeAtHealthHighlight < highlightHealthForSeconds))
@@ -486,24 +486,6 @@ public class PlayerState : MonoBehaviour {
         else
         {
             stats.MoraleText.color = NormalTextColour;
-        }
-
-        // Update stat texts.
-        if (Main.MoneyPanel.MoneyText)
-        {
-            Main.MoneyPanel.MoneyText.text = "$" + Money.ToString("F2");
-        }
-        if (stats.HungerThirstText)
-        {
-            stats.HungerThirstText.text = "Hunger/Thirst: " + (Nutrition * 100).ToString("f0") + "%";
-        }
-        if (stats.HealthText)
-        {
-            stats.HealthText.text = "Health/Tiredness: " + (HealthTiredness * 100).ToString("f0") + "%";
-        }
-        if (stats.MoraleText)
-        {
-            stats.MoraleText.text = "Morale: " + (Morale * 100).ToString("f0") + "%";
         }
 
         // Gradually apply morale changes.
@@ -565,5 +547,23 @@ public class PlayerState : MonoBehaviour {
         Inebriation = Mathf.Clamp(Inebriation, 0.0f, 1.0f);
         Addiction = Mathf.Clamp(Addiction, 0.0f, 1.0f);
         CurrentClothingCleanliness = Mathf.Clamp(CurrentClothingCleanliness, 0.0f, 1.0f);
+        
+        // Update stat texts.
+        if (Main.MoneyPanel.MoneyText)
+        {
+            Main.MoneyPanel.MoneyText.text = "$" + Money.ToString("F2");
+        }
+        if (stats.NutritionText)
+        {
+            stats.NutritionText.text = "Nutrition: " + (Nutrition * 100).ToString("f0") + "%";
+        }
+        if (stats.HealthText)
+        {
+            stats.HealthText.text = "Health/Tiredness: " + (HealthTiredness * 100).ToString("f0") + "%";
+        }
+        if (stats.MoraleText)
+        {
+            stats.MoraleText.text = "Morale: " + (Morale * 100).ToString("f0") + "%";
+        }
     }
 }

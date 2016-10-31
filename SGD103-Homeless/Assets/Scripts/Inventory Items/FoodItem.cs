@@ -4,7 +4,8 @@ using System.Collections;
 public class FoodItem : MultiUseItem
 {
 
-    public float HungerSatietyBenefitPerUse;
+    [UnityEngine.Serialization.FormerlySerializedAs("HungerSatietyBenefitPerUse")]
+    public float NutritionBenefitPerUse;
 
     public override void OnPrimaryAction()
     {
@@ -12,14 +13,14 @@ public class FoodItem : MultiUseItem
         var MessageBox = Main.MessageBox;
 
         // Increase stat.
-        PlayerState.ChangeNutrition(HungerSatietyBenefitPerUse);
+        PlayerState.ChangeNutrition(NutritionBenefitPerUse);
 
         // Show message depending on how full the player is after eating.
-        if (PlayerState.Nutrition + HungerSatietyBenefitPerUse > 0.6f)
+        if (PlayerState.Nutrition + NutritionBenefitPerUse > 0.6f)
         { 
             MessageBox.ShowForTime("You feel full", 2.0f, gameObject);
         }
-        else if (PlayerState.Nutrition + HungerSatietyBenefitPerUse > 0.4f)
+        else if (PlayerState.Nutrition + NutritionBenefitPerUse > 0.4f)
         {
             MessageBox.ShowForTime("You needed that", 2.0f, gameObject);
         }

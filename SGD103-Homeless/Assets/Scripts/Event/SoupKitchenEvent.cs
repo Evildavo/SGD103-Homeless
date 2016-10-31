@@ -3,8 +3,8 @@ using System.Collections;
 
 public class SoupKitchenEvent : EventAtLocation {
     private float hoursSpent;
-
-    public float HungerSatietyRewardPerHour;
+    
+    public float NutritionRewardPerHour;
     public float MoraleRewardPerHour;
 
     protected override void OnPlayerAttends()
@@ -27,7 +27,7 @@ public class SoupKitchenEvent : EventAtLocation {
             hoursSpent += Main.GameTime.GameTimeDelta;
 
             // Give reward.
-            Main.PlayerState.ChangeNutrition(HungerSatietyRewardPerHour * Main.GameTime.GameTimeDelta);
+            Main.PlayerState.ChangeNutrition(NutritionRewardPerHour * Main.GameTime.GameTimeDelta);
             Main.PlayerState.ChangeMorale(MoraleRewardPerHour);
         }
 	}
