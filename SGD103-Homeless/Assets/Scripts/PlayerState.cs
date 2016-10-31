@@ -15,6 +15,18 @@ public class PlayerState : MonoBehaviour {
     float moraleChangeRemaining;
     float nutritionChangeRemaining;
     float healthChangeRemaining;
+    float highlightMoraleForSeconds;
+    float highlightNutritionForSeconds;
+    float highlightHealthForSeconds;
+    bool highlightMoralePositive;
+    bool highlightMoraleNegative;
+    bool highlightNutritionPositive;
+    bool highlightNutritionNegative;
+    bool highlightHealthPositive;
+    bool highlightHealthNegative;
+    float timeAtMoraleHighlight;
+    float timeAtNutritionHighlight;
+    float timeAtHealthHighlight;
 
     public Main Main;
 
@@ -166,6 +178,60 @@ public class PlayerState : MonoBehaviour {
     public void ChangeHealthTiredness(float amount)
     {
         healthChangeRemaining += amount;
+    }
+    
+    // Temporarily highlights the morale stat for the given time.
+    // Use true for positive to indicate a positive effect on the stat.
+    public void HighlightMoraleStatForTime(bool positive, float seconds)
+    {
+        if (positive)
+        {
+            highlightMoralePositive = true;
+            highlightMoraleNegative = false;
+        }
+        else
+        {
+            highlightMoralePositive = false;
+            highlightMoraleNegative = true;
+        }
+        highlightMoraleForSeconds = seconds;
+        timeAtMoraleHighlight = Time.time;
+    }
+
+    // Temporarily highlights the nutrition stat for the given time.
+    // Use true for positive to indicate a positive effect on the stat.
+    public void HighlightNutritionStatForTime(bool positive, float seconds)
+    {
+        if (positive)
+        {
+            highlightNutritionPositive = true;
+            highlightNutritionNegative = false;
+        }
+        else
+        {
+            highlightNutritionPositive = false;
+            highlightNutritionNegative = true;
+        }
+        highlightNutritionForSeconds = seconds;
+        timeAtNutritionHighlight = Time.time;
+    }
+
+    // Temporarily highlights the health stat for the given time.
+    // Use true for positive to indicate a positive effect on the stat.
+    public void HighlightHealthStatForTime(bool positive, float seconds)
+    {
+        if (positive)
+        {
+            highlightHealthPositive = true;
+            highlightHealthNegative = false;
+        }
+        else
+        {
+            highlightHealthPositive = false;
+            highlightHealthNegative = true;
+        }
+        highlightHealthForSeconds = seconds;
+        timeAtHealthHighlight = Time.time;
     }
 
     // Treats depression for today.
@@ -369,11 +435,14 @@ public class PlayerState : MonoBehaviour {
         stats.HungerThirstText.fontStyle = FontStyle.Normal;
         stats.HealthText.fontStyle = FontStyle.Normal;
         stats.MoraleText.fontStyle = FontStyle.Normal;
-        if (nutritionChangeRemaining > 0.0f)
+        if (nutritionChangeRemaining > 0.0f || 
+            (highlightNutritionPositive && Time.time - timeAtNutritionHighlight < highlightNutritionForSeconds))
         {
             stats.HungerThirstText.color = HighlightTextColour;
         }
-        else if (nutritionChangeRemaining < 0.0f || Nutrition <= HungerWarningThreshold)
+        else if (nutritionChangeRemaining < 0.0f ||
+            (highlightNutritionNegative && Time.time - timeAtNutritionHighlight < highlightNutritionForSeconds) ||
+            Nutrition <= HungerWarningThreshold)
         {
             stats.HungerThirstText.color = WarningTextColour;
             if (BoldTextDuringWarning)
@@ -385,11 +454,14 @@ public class PlayerState : MonoBehaviour {
         {
             stats.HungerThirstText.color = NormalTextColour;
         }
-        if (healthChangeRemaining > 0.0f)
+        if (healthChangeRemaining > 0.0f ||
+            (highlightHealthPositive && Time.time - timeAtHealthHighlight < highlightHealthForSeconds))
         {
             stats.HealthText.color = HighlightTextColour;
         }
-        else if (healthChangeRemaining < 0.0f || HealthTiredness <= HealthWarningThreshold)
+        else if (healthChangeRemaining < 0.0f || 
+            (highlightHealthNegative && Time.time - timeAtHealthHighlight < highlightHealthForSeconds) ||
+            HealthTiredness <= HealthWarningThreshold)
         {
             stats.HealthText.color = WarningTextColour;
             if (BoldTextDuringWarning)
@@ -401,11 +473,14 @@ public class PlayerState : MonoBehaviour {
         {
             stats.HealthText.color = NormalTextColour;
         }
-        if (moraleChangeRemaining > 0.0f)
+        if (moraleChangeRemaining > 0.0f ||
+            (highlightMoralePositive && Time.time - timeAtMoraleHighlight < highlightMoraleForSeconds))
         {
             stats.MoraleText.color = HighlightTextColour;
         }
-        else if (moraleChangeRemaining < 0.0f || Morale <= MoraleWarningThreshold)
+        else if (moraleChangeRemaining < 0.0f || 
+            (highlightMoraleNegative && Time.time - timeAtMoraleHighlight < highlightMoraleForSeconds) ||
+            Morale <= MoraleWarningThreshold)
         {
             stats.MoraleText.color = WarningTextColour;
             if (BoldTextDuringWarning)

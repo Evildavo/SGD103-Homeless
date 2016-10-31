@@ -177,6 +177,9 @@ public class PlayerSleepManager : MonoBehaviour
         // Fade in from black.
         Main.ScreenFader.fadeTime = FadeInFromBlackTime;
         Main.ScreenFader.fadeIn = true;
+
+        // Highlight the stat change.
+        Main.PlayerState.HighlightHealthStatForTime(true, 5.0f);
     }
 
     void OnFadeInComplete()
