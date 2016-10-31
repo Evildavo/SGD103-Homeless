@@ -12,14 +12,14 @@ public class FoodItem : MultiUseItem
         var MessageBox = Main.MessageBox;
 
         // Increase stat.
-        PlayerState.HungerThirstSatiety += HungerSatietyBenefitPerUse;
+        PlayerState.ChangeNutrition(HungerSatietyBenefitPerUse);
 
         // Show message depending on how full the player is after eating.
-        if (PlayerState.HungerThirstSatiety > 0.6f)
+        if (PlayerState.Nutrition + HungerSatietyBenefitPerUse > 0.6f)
         { 
             MessageBox.ShowForTime("You feel full", 2.0f, gameObject);
         }
-        else if (PlayerState.HungerThirstSatiety > 0.4f)
+        else if (PlayerState.Nutrition + HungerSatietyBenefitPerUse > 0.4f)
         {
             MessageBox.ShowForTime("You needed that", 2.0f, gameObject);
         }

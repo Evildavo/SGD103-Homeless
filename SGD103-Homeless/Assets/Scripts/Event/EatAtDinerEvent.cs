@@ -8,7 +8,7 @@ public class EatAtDinerEvent : EventAtLocation {
 
     protected override void OnPlayerLeaves()
     {
-        Main.PlayerState.HungerThirstSatiety += HungerSatietyReward;
+        Main.PlayerState.ChangeNutrition(HungerSatietyReward);
 
         Main.MessageBox.ShowForTime("You feel enlivened after a good feed", 2.0f, gameObject);
 

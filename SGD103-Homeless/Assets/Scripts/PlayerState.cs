@@ -13,6 +13,7 @@ public class PlayerState : MonoBehaviour {
     float timeAtLastCough;
     float hoursSinceDepressionLastTreated;
     float moraleChangeRemaining;
+    float nutritionChangeRemaining;
 
     public Main Main;
 
@@ -28,7 +29,7 @@ public class PlayerState : MonoBehaviour {
     [Header("Stats:")]
     public float Money = 0;
     [Range(0.0f, 1.0f)]
-    public float HungerThirstSatiety = 1.0f;
+    public float Nutrition = 1.0f;
     [Range(0.0f, 1.0f)]
     public float HealthTiredness = 1.0f;
     [Range(0.0f, 1.0f)]
@@ -154,6 +155,12 @@ public class PlayerState : MonoBehaviour {
         }
     }
 
+    // Changes the nutrition level by the given amount. 
+    public void ChangeNutrition(float amount)
+    {
+        nutritionChangeRemaining += amount;
+    }
+
     // Treats depression for today.
     public void TreatDepressionToday()
     {
@@ -167,7 +174,7 @@ public class PlayerState : MonoBehaviour {
         if (Main.SleepManager.IsAsleep)
         {
             // Hunger and morale drop at a different rate while asleep.
-            HungerThirstSatiety -= HungerGainPerHour * SleepHungerGainFactor * gameTimeDelta;
+            Nutrition -= HungerGainPerHour * SleepHungerGainFactor * gameTimeDelta;
             Morale -= MoraleLossPerHour * SleepMoraleLossFactor * gameTimeDelta;
 
             // Gain health based on sleep quality.
@@ -178,37 +185,37 @@ public class PlayerState : MonoBehaviour {
         else if (IsAtWork)
         {
             // Hunger and health drop at a different rate while at work.
-            HungerThirstSatiety -= HungerGainPerHour * WorkHungerGainFactor * gameTimeDelta;
+            Nutrition -= HungerGainPerHour * WorkHungerGainFactor * gameTimeDelta;
             HealthTiredness -= HealthLossPerHour * WorkHealthLossFactor * gameTimeDelta;
             Morale -= MoraleLossPerHour * WorkMoraleLossFactor * gameTimeDelta;
         }
         else
         {
             // Apply base changes.
-            HungerThirstSatiety -= HungerGainPerHour * gameTimeDelta;
+            Nutrition -= HungerGainPerHour * gameTimeDelta;
             HealthTiredness -= HealthLossPerHour * gameTimeDelta;
             Morale -= MoraleLossPerHour * gameTimeDelta;
         }
 
         // Hunger goes down slower when satiated.
-        if (HungerThirstSatiety > HungerSatiatedAtLevel)
+        if (Nutrition > HungerSatiatedAtLevel)
         {
-            HungerThirstSatiety +=
-                (HungerThirstSatiety - HungerSatiatedAtLevel) / (1.0f - HungerSatiatedAtLevel) *
+            Nutrition +=
+                (Nutrition - HungerSatiatedAtLevel) / (1.0f - HungerSatiatedAtLevel) *
                 MaxSatietyHungerRewardPerHour * gameTimeDelta;
         }
 
         // Hunger affects health.
-        if (HungerThirstSatiety < HungerSatiatedAtLevel)
+        if (Nutrition < HungerSatiatedAtLevel)
         {
             HealthTiredness -=
-                (HungerSatiatedAtLevel - HungerThirstSatiety) / HungerSatiatedAtLevel *
+                (HungerSatiatedAtLevel - Nutrition) / HungerSatiatedAtLevel *
                 MaxHungerHealthPenaltyPerHour * gameTimeDelta;
         }
-        else if (HungerThirstSatiety > HungerSatiatedAtLevel)
+        else if (Nutrition > HungerSatiatedAtLevel)
         {
             HealthTiredness +=
-                (HungerThirstSatiety - HungerSatiatedAtLevel) / (1.0f - HungerSatiatedAtLevel) *
+                (Nutrition - HungerSatiatedAtLevel) / (1.0f - HungerSatiatedAtLevel) *
                 MaxSatietyHealthRewardPerHour * gameTimeDelta;
         }
 
@@ -251,7 +258,7 @@ public class PlayerState : MonoBehaviour {
                     hasVomited = true;
                     timeAtLastVomit = Time.time;
 
-                    HungerThirstSatiety -= HungerSatietyLostPerVomit;
+                    ChangeNutrition(-HungerSatietyLostPerVomit);
                     Main.PlayerCharacter.Vomit();
                 }
             }
@@ -327,7 +334,7 @@ public class PlayerState : MonoBehaviour {
         Main.PlayerCharacter.SetWalkSpeedFactor(combinedWalkFactor);
 
         // Player character stomach growls at a regular interval when hungry.
-        if (HungerThirstSatiety < StomachGrowlBelowHungerSatiety)
+        if (Nutrition < StomachGrowlBelowHungerSatiety)
         {
             if (!hasStomachGrowled || Time.time - timeAtLastStomachGrowl >= StomachGrowlIntervalWhenHungry)
             {
@@ -350,28 +357,16 @@ public class PlayerState : MonoBehaviour {
             Morale -= UntreatedDepressionHealthPenaltyPerHour * gameTimeDelta;
         }
 
-        // Limit stats to range 0-1.
-        if (Money < 0)
-        {
-            Money = 0;
-        }
-        HungerThirstSatiety = Mathf.Clamp(HungerThirstSatiety, 0.0f, 1.0f);
-        HealthTiredness = Mathf.Clamp(HealthTiredness, 0.0f, 1.0f);
-        Morale = Mathf.Clamp(Morale, 0.0f, 1.0f);
-        Inebriation = Mathf.Clamp(Inebriation, 0.0f, 1.0f);
-        Addiction = Mathf.Clamp(Addiction, 0.0f, 1.0f);
-        CurrentClothingCleanliness = Mathf.Clamp(CurrentClothingCleanliness, 0.0f, 1.0f);
-
         // Highlight stats.
         var stats = Main.StatPanel;
         stats.HungerThirstText.fontStyle = FontStyle.Normal;
         stats.HealthText.fontStyle = FontStyle.Normal;
         stats.MoraleText.fontStyle = FontStyle.Normal;
-        /*if (HighlightHungerThirst)
+        if (nutritionChangeRemaining > 0.0f)
         {
             stats.HungerThirstText.color = HighlightTextColour;
         }
-        else if (HungerThirstSatiety <= HungerWarningThreshold)
+        else if (nutritionChangeRemaining < 0.0f || Nutrition <= HungerWarningThreshold)
         {
             stats.HungerThirstText.color = WarningTextColour;
             if (BoldTextDuringWarning)
@@ -382,7 +377,7 @@ public class PlayerState : MonoBehaviour {
         else
         {
             stats.HungerThirstText.color = NormalTextColour;
-        }*/
+        }
         /*if (HighlightHealth)
         {
             stats.HealthText.color = HighlightTextColour;
@@ -416,13 +411,31 @@ public class PlayerState : MonoBehaviour {
             stats.MoraleText.color = NormalTextColour;
         }
 
+        // Update stat texts.
+        if (Main.MoneyPanel.MoneyText)
+        {
+            Main.MoneyPanel.MoneyText.text = "$" + Money.ToString("F2");
+        }
+        if (stats.HungerThirstText)
+        {
+            stats.HungerThirstText.text = "Hunger/Thirst: " + (Nutrition * 100).ToString("f0") + "%";
+        }
+        if (stats.HealthText)
+        {
+            stats.HealthText.text = "Health/Tiredness: " + (HealthTiredness * 100).ToString("f0") + "%";
+        }
+        if (stats.MoraleText)
+        {
+            stats.MoraleText.text = "Morale: " + (Morale * 100).ToString("f0") + "%";
+        }
+
         if (Input.GetKeyDown("t")) // Test
         {
-            ChangeMorale(0.2f);
+            ChangeNutrition(0.2f);
         } //
         if (Input.GetKeyDown("y")) // Test
         {
-            ChangeMorale(-0.2f);
+            ChangeNutrition(-0.2f);
         } //
 
         // Gradually apply morale changes.
@@ -441,22 +454,32 @@ public class PlayerState : MonoBehaviour {
             moraleChangeRemaining += change;
         }
 
-        // Update stat texts.
-        if (Main.MoneyPanel.MoneyText)
+        // Gradually apply nutrition changes.
+        if (nutritionChangeRemaining > 0.0f)
         {
-            Main.MoneyPanel.MoneyText.text = "$" + Money.ToString("F2");
+            float change = Mathf.Min(
+                nutritionChangeRemaining, StatTransitionSpeedPerHour * gameTimeDelta);
+            Nutrition += change;
+            nutritionChangeRemaining -= change;
         }
-        if (stats.HungerThirstText)
+        else if (nutritionChangeRemaining < 0.0f)
         {
-            stats.HungerThirstText.text = "Hunger/Thirst: " + (HungerThirstSatiety * 100).ToString("f0") + "%";
+            float change = Mathf.Min(
+                Mathf.Abs(nutritionChangeRemaining), StatTransitionSpeedPerHour * gameTimeDelta);
+            Nutrition -= change;
+            nutritionChangeRemaining += change;
         }
-        if (stats.HealthText)
+
+        // Limit stats to range 0-1.
+        if (Money < 0)
         {
-            stats.HealthText.text = "Health/Tiredness: " + (HealthTiredness * 100).ToString("f0") + "%";
+            Money = 0;
         }
-        if (stats.MoraleText)
-        {
-            stats.MoraleText.text = "Morale: " + (Morale * 100).ToString("f0") + "%";
-        }
+        Nutrition = Mathf.Clamp(Nutrition, 0.0f, 1.0f);
+        HealthTiredness = Mathf.Clamp(HealthTiredness, 0.0f, 1.0f);
+        Morale = Mathf.Clamp(Morale, 0.0f, 1.0f);
+        Inebriation = Mathf.Clamp(Inebriation, 0.0f, 1.0f);
+        Addiction = Mathf.Clamp(Addiction, 0.0f, 1.0f);
+        CurrentClothingCleanliness = Mathf.Clamp(CurrentClothingCleanliness, 0.0f, 1.0f);
     }
 }

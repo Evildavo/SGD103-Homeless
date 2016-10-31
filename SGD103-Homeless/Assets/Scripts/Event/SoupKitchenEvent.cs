@@ -27,7 +27,7 @@ public class SoupKitchenEvent : EventAtLocation {
             hoursSpent += Main.GameTime.GameTimeDelta;
 
             // Give reward.
-            Main.PlayerState.HungerThirstSatiety += HungerSatietyRewardPerHour * Main.GameTime.GameTimeDelta;
+            Main.PlayerState.ChangeNutrition(HungerSatietyRewardPerHour * Main.GameTime.GameTimeDelta);
             Main.PlayerState.ChangeMorale(MoraleRewardPerHour);
         }
 	}

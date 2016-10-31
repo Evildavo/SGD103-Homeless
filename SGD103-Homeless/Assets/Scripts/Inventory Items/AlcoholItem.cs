@@ -14,7 +14,7 @@ public class AlcoholItem : MultiUseItem
         var MessageBox = Main.MessageBox;
 
         // Increase stats.
-        PlayerState.HungerThirstSatiety += ThirstSatietyBenefitPerUse;
+        PlayerState.ChangeNutrition(ThirstSatietyBenefitPerUse);
         PlayerState.ChangeMorale(MoraleBenefitPerUse, false);
         PlayerState.Inebriation += InebriationIncreasePerUse;
         PlayerState.Addiction += AddictionIncreasePerUse;

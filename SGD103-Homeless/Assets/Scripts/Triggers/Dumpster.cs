@@ -36,7 +36,7 @@ public class Dumpster : MonoBehaviour {
                 {
                     if (yes)
                     {
-                        Main.PlayerState.HungerThirstSatiety += HungerSatietyBenefit;
+                        Main.PlayerState.ChangeNutrition(HungerSatietyBenefit);
                         Main.PlayerState.HealthTiredness -= HealthDetriment;
                     }
                 };
