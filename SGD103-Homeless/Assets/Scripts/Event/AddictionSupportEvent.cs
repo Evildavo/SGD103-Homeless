@@ -18,14 +18,8 @@ public class AddictionSupportEvent : EventAtLocation {
         {
             Main.MessageBox.ShowForTime("You feel better talking about the issue", 2.0f, gameObject);
         }
-        Invoke("removeHighlighting", 2.0f);
     }
-
-    void removeHighlighting()
-    {
-        Main.PlayerState.HighlightMorale = false;
-    }
-	
+    
 	new void Update () {
         base.Update();
         if (IsCurrentlyAttending)
@@ -35,7 +29,6 @@ public class AddictionSupportEvent : EventAtLocation {
             // Give reward.
             Main.PlayerState.ChangeMorale(MoraleRewardPerHour);
             Main.PlayerState.Addiction -= AddictionDecreasedPerHour;
-            Main.PlayerState.HighlightMorale = true;
         }
 	}
 }

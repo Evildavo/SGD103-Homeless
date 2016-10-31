@@ -18,15 +18,8 @@ public class SoupKitchenEvent : EventAtLocation {
         {
             Main.MessageBox.ShowForTime("You feel enlivened after a good feed", 2.0f, gameObject);
         }
-        Invoke("removeHighlighting", 2.0f);
     }
 
-    void removeHighlighting()
-    {
-        Main.PlayerState.HighlightHungerThirst = false;
-        Main.PlayerState.HighlightMorale = false;
-    }
-	
 	new void Update () {
         base.Update();
         if (IsCurrentlyAttending)
@@ -36,8 +29,6 @@ public class SoupKitchenEvent : EventAtLocation {
             // Give reward.
             Main.PlayerState.HungerThirstSatiety += HungerSatietyRewardPerHour * Main.GameTime.GameTimeDelta;
             Main.PlayerState.ChangeMorale(MoraleRewardPerHour);
-            Main.PlayerState.HighlightHungerThirst = true;
-            Main.PlayerState.HighlightMorale = true;
         }
 	}
 }

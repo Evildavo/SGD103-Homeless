@@ -31,7 +31,6 @@ public class Library : MonoBehaviour {
     {
         isReading = false;
         hasWarnedAboutClosing = false;
-        Main.PlayerState.HighlightMorale = false;
         Main.Menu.Hide();
         Main.MessageBox.ShowNext();
         Main.GameTime.TimeScale = Main.GameTime.NormalTimeScale;
@@ -97,7 +96,6 @@ public class Library : MonoBehaviour {
 
         Main.MessageBox.Show("You are reading \"" + Books[random] + "\"", gameObject);
         Main.Menu.Show(getReadingMenu());
-        Main.PlayerState.HighlightMorale = true;
         Main.GameTime.TimeScale = Main.GameTime.AcceleratedTimeScale;
         isReading = true;
     }
@@ -106,7 +104,6 @@ public class Library : MonoBehaviour {
     {
         Main.Menu.Show(getMainMenu());
         Main.MessageBox.ShowNext();
-        Main.PlayerState.HighlightMorale = false;
         Main.GameTime.TimeScale = Main.GameTime.NormalTimeScale;
         isReading = false;
     }

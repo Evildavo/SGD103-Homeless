@@ -17,12 +17,6 @@ public class CounsellingEvent : EventAtLocation {
         {
             Main.MessageBox.ShowForTime("You feel better for having a chat", 2.0f, gameObject);
         }
-        Invoke("removeHighlighting", 2.0f);
-    }
-
-    void removeHighlighting()
-    {
-        Main.PlayerState.HighlightMorale = false;
     }
 	
 	new void Update () {
@@ -33,7 +27,6 @@ public class CounsellingEvent : EventAtLocation {
 
             // Give reward.
             Main.PlayerState.ChangeMorale(MoraleRewardPerHour);
-            Main.PlayerState.HighlightMorale = true;
         }
 	}
 }

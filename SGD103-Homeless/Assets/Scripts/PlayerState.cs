@@ -124,11 +124,6 @@ public class PlayerState : MonoBehaviour {
     [Space(10.0f)]
     public Trigger CurrentTrigger;
 
-    [Space(10.0f)]
-    public bool HighlightHungerThirst = false;
-    public bool HighlightHealth = false;
-    public bool HighlightMorale = false;
-
     // Returns true if the player can currently afford the given price.
     public bool CanAfford(float price)
     {
@@ -168,31 +163,6 @@ public class PlayerState : MonoBehaviour {
 
     void Update () {
         float gameTimeDelta = 1.0f / 60.0f / 60.0f * Time.deltaTime * Main.GameTime.TimeScale;
-
-        if (Input.GetKeyDown("t")) // Test
-        {
-            ChangeMorale(0.2f);
-        } //
-        if (Input.GetKeyDown("y")) // Test
-        {
-            ChangeMorale(-0.2f);
-        } //
-
-        // Gradually apply morale changes.
-        if (moraleChangeRemaining > 0.0f)
-        {
-            float change = Mathf.Min(
-                moraleChangeRemaining, StatTransitionSpeedPerHour * gameTimeDelta);
-            Morale += change;
-            moraleChangeRemaining -= change;
-        }
-        else if (moraleChangeRemaining < 0.0f)
-        {
-            float change = Mathf.Min(
-                Mathf.Abs(moraleChangeRemaining), StatTransitionSpeedPerHour * gameTimeDelta);
-            Morale -= change;
-            moraleChangeRemaining += change;
-        }
 
         if (Main.SleepManager.IsAsleep)
         {
@@ -397,7 +367,7 @@ public class PlayerState : MonoBehaviour {
         stats.HungerThirstText.fontStyle = FontStyle.Normal;
         stats.HealthText.fontStyle = FontStyle.Normal;
         stats.MoraleText.fontStyle = FontStyle.Normal;
-        if (HighlightHungerThirst)
+        /*if (HighlightHungerThirst)
         {
             stats.HungerThirstText.color = HighlightTextColour;
         }
@@ -412,8 +382,8 @@ public class PlayerState : MonoBehaviour {
         else
         {
             stats.HungerThirstText.color = NormalTextColour;
-        }
-        if (HighlightHealth)
+        }*/
+        /*if (HighlightHealth)
         {
             stats.HealthText.color = HighlightTextColour;
         }
@@ -428,12 +398,12 @@ public class PlayerState : MonoBehaviour {
         else
         {
             stats.HealthText.color = NormalTextColour;
-        }
-        if (HighlightMorale)
+        }*/
+        if (moraleChangeRemaining > 0.0f)
         {
             stats.MoraleText.color = HighlightTextColour;
         }
-        else if (Morale <= MoraleWarningThreshold)
+        else if (moraleChangeRemaining < 0.0f || Morale <= MoraleWarningThreshold)
         {
             stats.MoraleText.color = WarningTextColour;
             if (BoldTextDuringWarning)
@@ -444,6 +414,31 @@ public class PlayerState : MonoBehaviour {
         else
         {
             stats.MoraleText.color = NormalTextColour;
+        }
+
+        if (Input.GetKeyDown("t")) // Test
+        {
+            ChangeMorale(0.2f);
+        } //
+        if (Input.GetKeyDown("y")) // Test
+        {
+            ChangeMorale(-0.2f);
+        } //
+
+        // Gradually apply morale changes.
+        if (moraleChangeRemaining > 0.0f)
+        {
+            float change = Mathf.Min(
+                moraleChangeRemaining, StatTransitionSpeedPerHour * gameTimeDelta);
+            Morale += change;
+            moraleChangeRemaining -= change;
+        }
+        else if (moraleChangeRemaining < 0.0f)
+        {
+            float change = Mathf.Min(
+                Mathf.Abs(moraleChangeRemaining), StatTransitionSpeedPerHour * gameTimeDelta);
+            Morale -= change;
+            moraleChangeRemaining += change;
         }
 
         // Update stat texts.
