@@ -422,7 +422,7 @@ public class PlayerState : MonoBehaviour {
         // Untreated depression affects morale.
         if (!IsDepressionTreated)
         {
-            Morale -= UntreatedDepressionHealthPenaltyPerHour * gameTimeDelta;
+            ChangeMorale(-UntreatedDepressionHealthPenaltyPerHour * gameTimeDelta);
         }
 
         // Highlight stats.

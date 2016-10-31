@@ -15,6 +15,7 @@ public class AntiDepressant : MultiUseItem
             hasTaken = true;
             dayLastTaken = Main.GameTime.Day;
             Main.PlayerState.TreatDepressionToday();
+            Main.PlayerState.HighlightMoraleStatForTime(true, 1.5f);
 
             // Consume item.
             NumUses -= 1;
