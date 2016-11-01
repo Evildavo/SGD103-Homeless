@@ -34,7 +34,7 @@ public class Library : MonoBehaviour {
         hasWarnedAboutClosing = false;
         Main.Menu.Hide();
         Main.MessageBox.ShowNext();
-        Main.GameTime.TimeScale = Main.GameTime.NormalTimeScale;
+        Main.GameTime.ResetToNormalTime();
         if (Trigger)
         {
             Trigger.Reset();
@@ -84,7 +84,7 @@ public class Library : MonoBehaviour {
     {
         Main.MessageBox.Show("Searching for jobs...", gameObject);
         Main.Menu.Hide();
-        Main.GameTime.TimeScale = Main.GameTime.AcceleratedTimeScale;
+        Main.GameTime.AccelerateTime();
         isJobSearching = true;
         dayOfLastJobSearch = Main.GameTime.Day;
         timeAtLastCheck = Time.time;
@@ -97,7 +97,7 @@ public class Library : MonoBehaviour {
 
         Main.MessageBox.Show("You are reading \"" + Books[random] + "\"", gameObject);
         Main.Menu.Show(getReadingMenu());
-        Main.GameTime.TimeScale = Main.GameTime.AcceleratedTimeScale;
+        Main.GameTime.AccelerateTime();
         isReading = true;
     }
     
@@ -105,7 +105,7 @@ public class Library : MonoBehaviour {
     {
         Main.Menu.Show(getMainMenu());
         Main.MessageBox.ShowNext();
-        Main.GameTime.TimeScale = Main.GameTime.NormalTimeScale;
+        Main.GameTime.ResetToNormalTime();
         isReading = false;
     }
 
@@ -170,7 +170,7 @@ public class Library : MonoBehaviour {
             }
 
             // Stop searching.
-            Main.GameTime.TimeScale = Main.GameTime.NormalTimeScale;
+            Main.GameTime.ResetToNormalTime();
             isJobSearching = false;
             jobSearchedToday = true;
 

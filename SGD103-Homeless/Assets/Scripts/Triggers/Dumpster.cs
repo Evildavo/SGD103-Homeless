@@ -22,7 +22,7 @@ public class Dumpster : MonoBehaviour {
     public void OnTrigger()
     {
         timeAtLastCheck = Time.time;
-        Main.GameTime.TimeScale = Main.GameTime.AcceleratedTimeScale;
+        Main.GameTime.AccelerateTime();
     }
 
     public void OnTriggerUpdate()
@@ -42,7 +42,7 @@ public class Dumpster : MonoBehaviour {
                     }
                 };
                 Main.ConfirmationBox.Open(onChoiceMade, "You found food. Eat it?", "Yes", "No");
-                Main.GameTime.TimeScale = Main.GameTime.NormalTimeScale;
+                Main.GameTime.ResetToNormalTime();
                 Trigger.Reset(false);
                 // TODO: Reset later.
             }
@@ -52,7 +52,7 @@ public class Dumpster : MonoBehaviour {
 
     public void Reset()
     {
-        Main.GameTime.TimeScale = Main.GameTime.NormalTimeScale;
+        Main.GameTime.ResetToNormalTime();
         Main.ConfirmationBox.Close();
         Trigger.Reset();
     }

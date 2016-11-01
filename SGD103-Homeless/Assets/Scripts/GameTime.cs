@@ -4,6 +4,7 @@ using System.Collections;
 public class GameTime : MonoBehaviour
 {
     float timeOwed;
+    float acceleratedTimeSpeed;
 
     public enum DayOfTheWeekEnum
     {
@@ -19,8 +20,15 @@ public class GameTime : MonoBehaviour
 
     [Header("Time scales")]
     public float NormalTimeScale = 100.0f;
+    [Header("Default speed of time while doing an on-going action like reading")]
     public float AcceleratedTimeScale = 400.0f;
+    [Header("Speed time skips forward after doing a one-time action that costs time")]
+    public float TimeSkipSpeed = 1000.0f;
+    [ReadOnly]
     public float TimeScale = 100.0f;
+    [ReadOnly]
+    public bool IsTimeSkipping;
+    public bool IsTimeAccelerated;
 
     [Header("Date and time")]
     public int Day = 1;
@@ -176,10 +184,30 @@ public class GameTime : MonoBehaviour
         return GetTimeAsString(TimeOfDayHours);
     }
 
-    // Spends the given amount of time, causing an accelerated jump in game-time.
+    // Spends the given amount of time, causing an accelerated skip in game-time.
     public void SpendTime(float hours)
     {
         timeOwed += hours;
+        IsTimeSkipping = true;
+    }
+
+    // Sets the time acceleration speed. 
+    public void AccelerateTime(float speed)
+    {
+        acceleratedTimeSpeed = speed;
+        IsTimeAccelerated = true;
+    }
+
+    // Sets the time acceleration scale to the default accelerated time speed. 
+    public void AccelerateTime()
+    {
+        AccelerateTime(AcceleratedTimeScale);
+    }
+
+    // Resets time acceleration to normal (doesn't stop acceleration from time-skips though).
+    public void ResetToNormalTime()
+    {
+        IsTimeAccelerated = false;
     }
 
     void Start ()
@@ -192,16 +220,30 @@ public class GameTime : MonoBehaviour
 	
 	void Update ()
     {
-        // Increase time scale while time spent is owed.
+        // Increase time scale if time accelerated and/or while skipping time.
         if (timeOwed != 0.0f)
         {
-            TimeScale = AcceleratedTimeScale;
+            if (!IsTimeAccelerated)
+            {
+                TimeScale = TimeSkipSpeed;
+            }
+            else
+            {
+                TimeScale = acceleratedTimeSpeed + TimeSkipSpeed;
+            }
         }
         else
         {
-            TimeScale = NormalTimeScale;
+            if (!IsTimeAccelerated)
+            {
+                TimeScale = NormalTimeScale;
+            }
+            else
+            {
+                TimeScale = acceleratedTimeSpeed;
+            }
         }
-
+        
         // Calculate game time delta.
         GameTimeDelta = Time.deltaTime / 60.0f / 60.0f * TimeScale;
         
@@ -215,6 +257,7 @@ public class GameTime : MonoBehaviour
             // Apply last bit of time owed to game time.
             GameTimeDelta = timeOwed;
             timeOwed = 0.0f;
+            IsTimeSkipping = false;
         }
 
         // Increment game-time.

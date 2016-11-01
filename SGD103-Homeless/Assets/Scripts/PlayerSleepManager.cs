@@ -168,7 +168,7 @@ public class PlayerSleepManager : MonoBehaviour
     public void Wake()
     {
         IsAsleep = false;
-        Main.GameTime.TimeScale = Main.GameTime.NormalTimeScale;
+        Main.GameTime.ResetToNormalTime();
         Main.UI.DisableModalMode();
 
         // Show UI.

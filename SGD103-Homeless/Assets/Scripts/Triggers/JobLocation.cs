@@ -636,7 +636,7 @@ public class JobLocation : MonoBehaviour
         {
             IsPlayerAtWork = false;
             Main.PlayerState.IsAtWork = false;
-            Main.GameTime.TimeScale = Main.GameTime.NormalTimeScale;
+            Main.GameTime.ResetToNormalTime();
             Main.MessageBox.Hide();
             JobTrigger.Reset(false);
             Main.UI.DisableModalMode();

@@ -47,7 +47,7 @@ public class EventAtLocation : MonoBehaviour {
     public void Leave()
     {
         IsCurrentlyAttending = false;
-        Main.GameTime.TimeScale = Main.GameTime.NormalTimeScale;
+        Main.GameTime.ResetToNormalTime();
         Main.MessageBox.Hide();
 
         // Show UI.
