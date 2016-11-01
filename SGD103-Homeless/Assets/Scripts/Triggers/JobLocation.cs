@@ -117,6 +117,8 @@ public class JobLocation : MonoBehaviour
     public float FadeInFromBlackTime = 2.0f;
     public float WorkTimeScale = 8000.0f;
     public float MoraleGainedAtShiftEnd;
+    public float MoraleRewardForSuccessfulApplication;
+    public float MoralePenaltyForRejectedApplication;
     public float MoralePenaltyPerNoticeReceived;
     public float MoralePenaltyForDismissal;
     public float TimeCostToApplyForJob;
@@ -192,6 +194,7 @@ public class JobLocation : MonoBehaviour
     void RejectApplication(string reason)
     {
         Main.MessageBox.Show("Application rejected. " + reason, gameObject);
+        Main.PlayerState.ChangeMorale(-MoralePenaltyForRejectedApplication);
     }
 
     // Applies for the job that's available.
@@ -275,6 +278,7 @@ public class JobLocation : MonoBehaviour
                 PlayerHasJobHere = true;
                 workWeekStarted = false;
                 jobStartsAfter = Main.GameTime.DayOfTheWeek;
+                Main.PlayerState.ChangeMorale(MoraleRewardForSuccessfulApplication);
             }
             else
             {
