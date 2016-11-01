@@ -133,10 +133,10 @@ public class JobLocation : MonoBehaviour
     // Returns a short summary of the work days and times.
     public string GetWorkTimeSummaryShort()
     {
-        return Main.GameTime.DayOfTheWeekAsShortString(Job.WorkFromDay) + " to " +
-               Main.GameTime.DayOfTheWeekAsShortString(Job.WorkToDay) + ", " +
-               Main.GameTime.GetTimeAsString(Job.ShiftFromHour) + " - " +
-               Main.GameTime.GetTimeAsString(Job.ShiftToHour);
+        return GameTime.DayOfTheWeekAsShortString(Job.WorkFromDay) + " to " +
+               GameTime.DayOfTheWeekAsShortString(Job.WorkToDay) + ", " +
+               GameTime.GetTimeAsString(Job.ShiftFromHour) + " - " +
+               GameTime.GetTimeAsString(Job.ShiftToHour);
     }
 
     // Checks for a job and optionally displays a message if one is available.
@@ -251,10 +251,10 @@ public class JobLocation : MonoBehaviour
             if (success)
             {
                 string message = "Congratulations! From tomorrow you work " +
-                                 Main.GameTime.DayOfTheWeekAsShortString(Job.WorkFromDay) + " to " +
-                                 Main.GameTime.DayOfTheWeekAsShortString(Job.WorkToDay) + " from " +
-                                 Main.GameTime.GetTimeAsString(Job.ShiftFromHour) + " to " +
-                                 Main.GameTime.GetTimeAsString(Job.ShiftToHour) + ". Don't be late!";
+                                 GameTime.DayOfTheWeekAsShortString(Job.WorkFromDay) + " to " +
+                                 GameTime.DayOfTheWeekAsShortString(Job.WorkToDay) + " from " +
+                                 GameTime.GetTimeAsString(Job.ShiftFromHour) + " to " +
+                                 GameTime.GetTimeAsString(Job.ShiftToHour) + ". Don't be late!";
 
                 Main.MessageBox.Show(message, gameObject);
                 PlayerHasJobHere = true;
@@ -485,7 +485,7 @@ public class JobLocation : MonoBehaviour
         float hoursWorked;
         if (playerStartedLate)
         {
-            hoursWorked = Main.GameTime.TimeOfDayHoursDelta(timeAtShiftStart, Job.ShiftToHour).forward;
+            hoursWorked = GameTime.TimeOfDayHoursDelta(timeAtShiftStart, Job.ShiftToHour).forward;
         }
         else
         {
@@ -502,8 +502,8 @@ public class JobLocation : MonoBehaviour
         string message = "Work day complete. You worked " +
                             System.Math.Round(hoursWorked, 2).ToString() + " hours and earned $" +
                             pay.ToString("f2") + " (to be payed on " +
-                            Main.GameTime.DayOfTheWeekAsShortString(Job.PayDay) + " at " +
-                            Main.GameTime.GetTimeAsString(Job.PayTime) + ")";
+                            GameTime.DayOfTheWeekAsShortString(Job.PayDay) + " at " +
+                            GameTime.GetTimeAsString(Job.PayTime) + ")";
         MessageBox.ShowForTime(message, 5.0f, gameObject);
 
         // Handle warning notices for lateness to work.

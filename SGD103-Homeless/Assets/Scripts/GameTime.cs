@@ -41,10 +41,10 @@ public class GameTime : MonoBehaviour
         // The shortest of either forward or backward.
         public float shortest;
     }
-    
+        
     // Returns the number of hours between time-of-day hours a and b.
     // As the 24 hour clock is a loop there are two possible answers, going either forward or backward.
-    public Delta TimeOfDayHoursDelta(float a, float b)
+    public static Delta TimeOfDayHoursDelta(float a, float b)
     {
         Delta delta;
 
@@ -82,7 +82,7 @@ public class GameTime : MonoBehaviour
     }
 
     // Returns the day of the week that follows the given day.
-    public DayOfTheWeekEnum NextDayAfter(DayOfTheWeekEnum day)
+    public static DayOfTheWeekEnum NextDayAfter(DayOfTheWeekEnum day)
     {
         if (day == DayOfTheWeekEnum.SUNDAY)
         {
@@ -95,7 +95,7 @@ public class GameTime : MonoBehaviour
     }
 
     // Returns the given day of the week as a short string.
-    public string DayOfTheWeekAsShortString(DayOfTheWeekEnum dotw)
+    public static string DayOfTheWeekAsShortString(DayOfTheWeekEnum dotw)
     {
         switch (dotw)
         {
@@ -118,7 +118,7 @@ public class GameTime : MonoBehaviour
     }
 
     // Returns the given day of the week as a string.
-    public string DayOfTheWeekAsString(DayOfTheWeekEnum dotw)
+    public static string DayOfTheWeekAsString(DayOfTheWeekEnum dotw)
     {
         switch (dotw)
         {
@@ -141,7 +141,7 @@ public class GameTime : MonoBehaviour
     }
 
     // Returns the given time as a string in the format "11:34 pm".
-    public string GetTimeAsString(float time)
+    public static string GetTimeAsString(float time)
     {
         int hour = (int)time;
         string amPmLabel;
@@ -174,6 +174,20 @@ public class GameTime : MonoBehaviour
         return GetTimeAsString(TimeOfDayHours);
     }
 
+    // Spends the given amount of time, causing an accelerated jump in game-time.
+    public void SpendTime(float hours)
+    {
+        Debug.Log("Spent: " + hours);
+        
+        TimeOfDayHours += hours;
+        if (TimeOfDayHours >= 24.0f)
+        {
+            TimeOfDayHours = TimeOfDayHours - 24.0f;
+            Day++;
+            DayOfTheWeek = NextDayAfter(DayOfTheWeek);
+        }
+    }
+
     void Start ()
     {
         if (StartWithNormalTimeScale)
@@ -191,7 +205,7 @@ public class GameTime : MonoBehaviour
         TimeOfDayHours += GameTimeDelta;
         if (TimeOfDayHours >= 24.0f)
         {
-            TimeOfDayHours = 0.0f;
+            TimeOfDayHours = TimeOfDayHours - 24.0f;
             Day++;
             DayOfTheWeek = NextDayAfter(DayOfTheWeek);
         }
