@@ -121,14 +121,15 @@ public class JobLocation : MonoBehaviour
     public float MoralePenaltyForDismissal;
     public float TimeCostToApplyForJob;
 
-    public bool IsJobAvailableToday = false;
+    public bool IsJobAvailableToday;
     public JobPositionProfile Job;
 
-    public bool PlayerHasJobHere = false;
-    public bool IsPlayerAtWork = false;
+    public bool PlayerHasJobHere;
+    public bool IsPlayerAtWork;
+    public bool PlayerWasDismissedHere;
     public int LastDayWorked;
     [ReadOnly]
-    public bool CanWorkNow = false;
+    public bool CanWorkNow;
 
     // Returns a short summary of the work days and times.
     public string GetWorkTimeSummaryShort()
@@ -143,7 +144,8 @@ public class JobLocation : MonoBehaviour
     public void CheckForJob(bool showMessage = false)
     {
         // Make sure we don't already have this job.
-        if (PlayerHasJobHere)
+        // Also, don't re-hire when the player was dismissed.
+        if (PlayerHasJobHere || PlayerWasDismissedHere)
         {
             IsJobAvailableToday = false;
         }
@@ -287,6 +289,7 @@ public class JobLocation : MonoBehaviour
     // Fires the player immediately with the given reason as explanation.
     public void Dismiss(string reason)
     {
+        PlayerWasDismissedHere = true;
         PlayerHasJobHere = false;
         playerOnNoticeForReasons.Clear();
 
