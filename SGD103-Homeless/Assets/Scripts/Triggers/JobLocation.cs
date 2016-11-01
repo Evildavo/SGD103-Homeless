@@ -38,8 +38,7 @@ public class JobLocation : MonoBehaviour
         public float MinHealthNeededToQualify;
         public float MinMoraleNeededToQualify;
         public float MinClothesCleanlinessToQualify;
-        public float ChanceOfSuccessWithoutResume;
-        public float ChanceOfSuccessWithResume;
+        public float ChanceOfSuccessFactor = 1.0f;
         public GameTime.DayOfTheWeekEnum WorkFromDay;
         public GameTime.DayOfTheWeekEnum WorkToDay;
         [Header("Note: Supports wrapping over (e.g. 11pm to 2am)")]
@@ -198,11 +197,12 @@ public class JobLocation : MonoBehaviour
     {
         // Apply time cost.
         Main.GameTime.SpendTime(TimeCostToApplyForJob);
-
+        
         // Check the basic criteria for acceptance.
         bool healthOk = false;
         bool moraleOk = false;
         bool clothesOk = false;
+        bool resumeOk = false;
         if (Main.PlayerState.HealthTiredness >= Job.MinHealthNeededToQualify)
         {
             healthOk = true;
@@ -227,17 +227,30 @@ public class JobLocation : MonoBehaviour
         {
             RejectApplication("You should take better care of your appearance");
         }
+        if (ResumePrefab && Main.Inventory.HasItem(ResumePrefab))
+        {
+            resumeOk = true;
+        }
+        else
+        {
+            RejectApplication("You should work on your resume");
+        }
 
         // After the basic criteria there's a chance of success. Having a resume guarantees this step.
-        if (healthOk && moraleOk && clothesOk)
+        if (healthOk && moraleOk && clothesOk && resumeOk)
         {
+            // Determine if we're successful. Health and morale affect the chance.
             bool success = false;
-            float value = Random.Range(0.0f, 1.0f);
+            {
+                var PlayerState = Main.PlayerState;
+                float baseChanceSuccess = (PlayerState.HealthTiredness + PlayerState.Morale) / 2.0f;
+                float value = Random.Range(0.0f, 1.0f);
+                success = (value <= baseChanceSuccess * Job.ChanceOfSuccessFactor);
+            }
+
+            // Consume resume item.
             if (ResumePrefab && Main.Inventory.HasItem(ResumePrefab))
             {
-                success = (value <= Job.ChanceOfSuccessWithResume);
-
-                // Use up an inventory item.
                 ResumeItem resume = Main.Inventory.ItemContainer.GetComponentInChildren<ResumeItem>();
                 resume.NumUses -= 1;
                 if (resume.NumUses == 0)
@@ -245,10 +258,6 @@ public class JobLocation : MonoBehaviour
                     Main.Inventory.RemoveItem(resume);
                 }
                 Main.Inventory.ShowPreview();
-            }
-            else
-            {
-                success = (value <= Job.ChanceOfSuccessWithoutResume);
             }
 
             // Report final decision.
