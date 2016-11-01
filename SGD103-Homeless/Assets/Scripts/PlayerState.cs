@@ -488,18 +488,25 @@ public class PlayerState : MonoBehaviour {
             stats.MoraleText.color = NormalTextColour;
         }
 
+        // Stats change slower during a time-jump so that the jump isn't so obvious. 
+        float statTransitionSpeed = StatTransitionSpeedPerHour;
+        if (Main.GameTime.IsTimeSkipping)
+        {
+            statTransitionSpeed = statTransitionSpeed / Main.GameTime.TimeSkipSpeed * Main.GameTime.NormalTimeScale;
+        }
+
         // Gradually apply morale changes.
         if (moraleChangeRemaining > 0.0f)
         {
             float change = Mathf.Min(
-                moraleChangeRemaining, StatTransitionSpeedPerHour * gameTimeDelta);
+                moraleChangeRemaining, statTransitionSpeed * gameTimeDelta);
             Morale += change;
             moraleChangeRemaining -= change;
         }
         else if (moraleChangeRemaining < 0.0f)
         {
             float change = Mathf.Min(
-                Mathf.Abs(moraleChangeRemaining), StatTransitionSpeedPerHour * gameTimeDelta);
+                Mathf.Abs(moraleChangeRemaining), statTransitionSpeed * gameTimeDelta);
             Morale -= change;
             moraleChangeRemaining += change;
         }
@@ -508,14 +515,14 @@ public class PlayerState : MonoBehaviour {
         if (nutritionChangeRemaining > 0.0f)
         {
             float change = Mathf.Min(
-                nutritionChangeRemaining, StatTransitionSpeedPerHour * gameTimeDelta);
+                nutritionChangeRemaining, statTransitionSpeed * gameTimeDelta);
             Nutrition += change;
             nutritionChangeRemaining -= change;
         }
         else if (nutritionChangeRemaining < 0.0f)
         {
             float change = Mathf.Min(
-                Mathf.Abs(nutritionChangeRemaining), StatTransitionSpeedPerHour * gameTimeDelta);
+                Mathf.Abs(nutritionChangeRemaining), statTransitionSpeed * gameTimeDelta);
             Nutrition -= change;
             nutritionChangeRemaining += change;
         }
@@ -524,14 +531,14 @@ public class PlayerState : MonoBehaviour {
         if (healthChangeRemaining > 0.0f)
         {
             float change = Mathf.Min(
-                healthChangeRemaining, StatTransitionSpeedPerHour * gameTimeDelta);
+                healthChangeRemaining, statTransitionSpeed * gameTimeDelta);
             HealthTiredness += change;
             healthChangeRemaining -= change;
         }
         else if (healthChangeRemaining < 0.0f)
         {
             float change = Mathf.Min(
-                Mathf.Abs(healthChangeRemaining), StatTransitionSpeedPerHour * gameTimeDelta);
+                Mathf.Abs(healthChangeRemaining), statTransitionSpeed * gameTimeDelta);
             HealthTiredness -= change;
             healthChangeRemaining += change;
         }

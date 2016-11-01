@@ -28,6 +28,7 @@ public class GameTime : MonoBehaviour
     public float TimeScale = 100.0f;
     [ReadOnly]
     public bool IsTimeSkipping;
+    [ReadOnly]
     public bool IsTimeAccelerated;
 
     [Header("Date and time")]
