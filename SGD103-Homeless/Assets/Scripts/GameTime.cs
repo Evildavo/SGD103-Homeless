@@ -3,6 +3,8 @@ using System.Collections;
 
 public class GameTime : MonoBehaviour
 {
+    float timeOwed;
+
     public enum DayOfTheWeekEnum
     {
         NONE,
@@ -177,15 +179,7 @@ public class GameTime : MonoBehaviour
     // Spends the given amount of time, causing an accelerated jump in game-time.
     public void SpendTime(float hours)
     {
-        Debug.Log("Spent: " + hours);
-        
-        TimeOfDayHours += hours;
-        if (TimeOfDayHours >= 24.0f)
-        {
-            TimeOfDayHours = TimeOfDayHours - 24.0f;
-            Day++;
-            DayOfTheWeek = NextDayAfter(DayOfTheWeek);
-        }
+        timeOwed += hours;
     }
 
     void Start ()
@@ -198,8 +192,30 @@ public class GameTime : MonoBehaviour
 	
 	void Update ()
     {
+        // Increase time scale while time spent is owed.
+        if (timeOwed != 0.0f)
+        {
+            TimeScale = AcceleratedTimeScale;
+        }
+        else
+        {
+            TimeScale = NormalTimeScale;
+        }
+
         // Calculate game time delta.
         GameTimeDelta = Time.deltaTime / 60.0f / 60.0f * TimeScale;
+        
+        // Decrement time owed.
+        if (timeOwed >= GameTimeDelta)
+        {
+            timeOwed -= GameTimeDelta;
+        }
+        else if (timeOwed != 0.0f)
+        {
+            // Apply last bit of time owed to game time.
+            GameTimeDelta = timeOwed;
+            timeOwed = 0.0f;
+        }
 
         // Increment game-time.
         TimeOfDayHours += GameTimeDelta;
