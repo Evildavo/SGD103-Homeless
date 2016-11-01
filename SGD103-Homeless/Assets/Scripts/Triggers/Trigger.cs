@@ -43,7 +43,8 @@ public class Trigger : MonoBehaviour
         return Input.GetButtonDown("Secondary") ||
                Input.GetKeyDown("e") ||
                Input.GetKeyDown("enter") ||
-               Input.GetKeyDown("return");
+               Input.GetKeyDown("return") ||
+               Input.GetKeyDown("space");
     }
 
     // Register the function to call when the player activates the trigger.
