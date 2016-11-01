@@ -8,12 +8,14 @@ public class CoOpShelter : MonoBehaviour {
     private bool wasAddictionSupportOpen = false;
     private float activeFromHour;
     private float activeToHour;
-
+    
     public Main Main;
     public Trigger Trigger;
     public EventAtLocation SoupKitchenEvent;
     public EventAtLocation CounsellingEvent;
     public EventAtLocation AddictionSupportEvent;
+
+    public float TimeCostToReadNotice;
 
 	void Start ()
     {
@@ -29,9 +31,9 @@ public class CoOpShelter : MonoBehaviour {
     public void OpenMainMenu()
     {
         List<Menu.Option> options = new List<Menu.Option>();
-        options.Add(new Menu.Option(OpenCoOpShopMenu, "Co-op shop"));
+        /*options.Add(new Menu.Option(OpenCoOpShopMenu, "Co-op shop"));*/
         options.Add(new Menu.Option(ReadNoticeBoard, "Read notice board"));
-        options.Add(new Menu.Option(RequestEmergencyAccomodation, "Request emergency accommodation"));
+        /*options.Add(new Menu.Option(RequestEmergencyAccomodation, "Request emergency accommodation"));*/
         if (SoupKitchenEvent && SoupKitchenEvent.IsOpen)
         {
             options.Add(new Menu.Option(AttendSoupKitchen, "Attend soup kitchen"));
@@ -63,6 +65,10 @@ public class CoOpShelter : MonoBehaviour {
     public void ReadNoticeBoard()
     {
         var GameTime = Main.GameTime;
+
+        // Apply time cost.
+        GameTime.SpendTime(TimeCostToReadNotice);
+
         string message = "";
         if (SoupKitchenEvent)
         {

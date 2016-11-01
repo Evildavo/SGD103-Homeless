@@ -120,6 +120,7 @@ public class JobLocation : MonoBehaviour
     public float MoraleGainedAtShiftEnd;
     public float MoralePenaltyPerNoticeReceived;
     public float MoralePenaltyForDismissal;
+    public float TimeCostToApplyForJob;
 
     public bool IsJobAvailableToday = false;
     public JobPositionProfile Job;
@@ -195,6 +196,9 @@ public class JobLocation : MonoBehaviour
     // Applies for the job that's available.
     public void ApplyForJob()
     {
+        // Apply time cost.
+        Main.GameTime.SpendTime(TimeCostToApplyForJob);
+
         // Check the basic criteria for acceptance.
         bool healthOk = false;
         bool moraleOk = false;
@@ -303,7 +307,7 @@ public class JobLocation : MonoBehaviour
         if (IsPlayerAtWork)
         {
             Main.MessageBox.Show("Working...", gameObject);
-            Main.GameTime.TimeScale = WorkTimeScale;
+            Main.GameTime.AccelerateTime(WorkTimeScale);
         }
     }
 

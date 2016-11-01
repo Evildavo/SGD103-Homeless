@@ -15,6 +15,8 @@ public class Greg : Character
     public float DrugsCost;
     public float AlcoholCost;
     public float WatchBuyBackCost;
+    public float TimeCostForBuyingItem;
+    public float TimeCostForSellingItem;
 
     void Start()
     {
@@ -113,6 +115,9 @@ public class Greg : Character
 
             // Remove money.
             Main.PlayerState.Money -= AlcoholCost;
+            
+            // Apply time cost.
+            Main.GameTime.SpendTime(TimeCostForBuyingItem);
 
             // Add item.
             AlcoholItem item = Instantiate(AlcoholPrefab);
@@ -135,6 +140,9 @@ public class Greg : Character
 
             // Remove money.
             Main.PlayerState.Money -= WatchBuyBackCost;
+
+            // Apply time cost.
+            Main.GameTime.SpendTime(TimeCostForBuyingItem);
 
             // Add item.
             WatchItem item = Instantiate(WatchPrefab);
@@ -172,6 +180,9 @@ public class Greg : Character
 
                 // Player sold the item to Greg.
                 Main.PlayerState.Money += gregOffer;
+
+                // Apply time cost.
+                Main.GameTime.SpendTime(TimeCostForSellingItem);
 
                 Main.Inventory.RemoveItem(item);
                 showBuySellMenu();

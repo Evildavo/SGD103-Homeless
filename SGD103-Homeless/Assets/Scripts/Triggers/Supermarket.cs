@@ -19,6 +19,8 @@ public class Supermarket : MonoBehaviour
     public AlcoholItem AlcoholPrefab;
     public AntiDepressant AntiDepressantPrefab;
 
+    public float TimeCostToPurchaseItem;
+
     void Start()
     {
         Trigger.RegisterOnTriggerListener(OnTrigger);
@@ -116,6 +118,7 @@ public class Supermarket : MonoBehaviour
         if (!Main.Inventory.IsInventoryFull)
         {
             Main.PlayerState.Money -= WaterPrefab.GetItemValue();
+            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
 
             // Add item.
             FoodItem item = Instantiate(WaterPrefab);
@@ -134,6 +137,7 @@ public class Supermarket : MonoBehaviour
         if (!Main.Inventory.IsInventoryFull)
         {
             Main.PlayerState.Money -= BreadPrefab.GetItemValue();
+            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
 
             // Add item.
             FoodItem item = Instantiate(BreadPrefab);
@@ -152,6 +156,7 @@ public class Supermarket : MonoBehaviour
         if (!Main.Inventory.IsInventoryFull)
         {
             Main.PlayerState.Money -= MandarinPrefab.GetItemValue();
+            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
 
             // Add item.
             FoodItem item = Instantiate(MandarinPrefab);
@@ -170,6 +175,7 @@ public class Supermarket : MonoBehaviour
         if (!Main.Inventory.IsInventoryFull)
         {
             Main.PlayerState.Money -= ApplePrefab.GetItemValue();
+            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
 
             // Add item.
             FoodItem item = Instantiate(ApplePrefab);
@@ -188,6 +194,7 @@ public class Supermarket : MonoBehaviour
         if (!Main.Inventory.IsInventoryFull)
         {
             Main.PlayerState.Money -= PotatoChipsPrefab.GetItemValue();
+            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
 
             // Add item.
             FoodItem item = Instantiate(PotatoChipsPrefab);
@@ -206,6 +213,7 @@ public class Supermarket : MonoBehaviour
         if (!Main.Inventory.IsInventoryFull)
         {
             Main.PlayerState.Money -= BiscuitsPrefab.GetItemValue();
+            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
 
             // Add item.
             FoodItem item = Instantiate(BiscuitsPrefab);
@@ -224,6 +232,7 @@ public class Supermarket : MonoBehaviour
         if (!Main.Inventory.IsInventoryFull)
         {
             Main.PlayerState.Money -= ChocolateBarPrefab.GetItemValue();
+            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
 
             // Add item.
             FoodItem item = Instantiate(ChocolateBarPrefab);
@@ -242,6 +251,7 @@ public class Supermarket : MonoBehaviour
         if (!Main.Inventory.IsInventoryFull)
         {
             Main.PlayerState.Money -= SleepingBagPrefab.GetItemValue();
+            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
 
             // Add item.
             SleepItem item = Instantiate(SleepingBagPrefab);
@@ -260,6 +270,7 @@ public class Supermarket : MonoBehaviour
         if (!Main.Inventory.IsInventoryFull)
         {
             Main.PlayerState.Money -= AlcoholPrefab.GetItemValue();
+            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
 
             // Add item.
             AlcoholItem item = Instantiate(AlcoholPrefab);
@@ -278,6 +289,7 @@ public class Supermarket : MonoBehaviour
         if (!Main.Inventory.IsInventoryFull)
         {
             Main.PlayerState.Money -= AntiDepressantPrefab.GetItemValue();
+            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
 
             // Add item.
             AntiDepressant item = Instantiate(AntiDepressantPrefab);

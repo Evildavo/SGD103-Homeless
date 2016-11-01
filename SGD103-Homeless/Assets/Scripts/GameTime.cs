@@ -36,7 +36,6 @@ public class GameTime : MonoBehaviour
     [Range(0.0f, 24.0f)]
     public float TimeOfDayHours = 0.0f;
     public float SunriseAtHour = 6.0f;
-    public bool StartWithNormalTimeScale = true;
     [ReadOnly]
     public bool IsNight = false;
     [ReadOnly]
@@ -187,8 +186,11 @@ public class GameTime : MonoBehaviour
     // Spends the given amount of time, causing an accelerated skip in game-time.
     public void SpendTime(float hours)
     {
-        timeOwed += hours;
-        IsTimeSkipping = true;
+        if (hours > 0.0f)
+        {
+            timeOwed += hours;
+            IsTimeSkipping = true;
+        }
     }
 
     // Sets the time acceleration speed. 
@@ -209,15 +211,7 @@ public class GameTime : MonoBehaviour
     {
         IsTimeAccelerated = false;
     }
-
-    void Start ()
-    {
-        if (StartWithNormalTimeScale)
-        {
-            TimeScale = NormalTimeScale;
-        }
-	}
-	
+    	
 	void Update ()
     {
         // Increase time scale if time accelerated and/or while skipping time.

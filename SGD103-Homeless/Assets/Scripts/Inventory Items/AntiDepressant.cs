@@ -5,6 +5,8 @@ public class AntiDepressant : MultiUseItem
 {
     bool hasTaken = false;
     int dayLastTaken;
+
+    public float TimeCostPerUse;
     
     public override void OnPrimaryAction()
     {
@@ -16,6 +18,9 @@ public class AntiDepressant : MultiUseItem
             dayLastTaken = Main.GameTime.Day;
             Main.PlayerState.TreatDepressionToday();
             Main.PlayerState.HighlightMoraleStatForTime(true, 1.5f);
+            
+            // Apply time cost.
+            Main.GameTime.SpendTime(TimeCostPerUse);
 
             // Consume item.
             NumUses -= 1;

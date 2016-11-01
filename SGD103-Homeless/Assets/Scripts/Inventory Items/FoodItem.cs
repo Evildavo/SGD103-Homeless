@@ -6,6 +6,7 @@ public class FoodItem : MultiUseItem
 
     [UnityEngine.Serialization.FormerlySerializedAs("HungerSatietyBenefitPerUse")]
     public float NutritionBenefitPerUse;
+    public float TimeCostPerUse;
 
     public override void OnPrimaryAction()
     {
@@ -14,6 +15,9 @@ public class FoodItem : MultiUseItem
 
         // Increase stat.
         PlayerState.ChangeNutrition(NutritionBenefitPerUse);
+
+        // Apply time cost.
+        Main.GameTime.SpendTime(TimeCostPerUse);
 
         // Show message depending on how full the player is after eating.
         if (PlayerState.Nutrition + NutritionBenefitPerUse > 0.6f)

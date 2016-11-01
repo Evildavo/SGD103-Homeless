@@ -128,7 +128,7 @@ public class EventAtLocation : MonoBehaviour {
             {
                 Main.MessageBox.Show(DuringAttendanceMessage, gameObject);
             }
-            Main.GameTime.TimeScale = AttendanceTimeScale;
+            Main.GameTime.AccelerateTime(AttendanceTimeScale);
         }
     }
 

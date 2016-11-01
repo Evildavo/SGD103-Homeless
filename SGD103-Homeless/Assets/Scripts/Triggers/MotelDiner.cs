@@ -17,6 +17,7 @@ public class MotelDiner : MonoBehaviour
     public float LeaveRoomByHour = 8.0f;
     public float RoomCostPerNight;
     public float SleepQualityFactor = 1.0f;
+    public float TimeCostToRentRoom;
 
     [Space(10.0f)]
     public bool RoomRented = false;
@@ -95,6 +96,9 @@ public class MotelDiner : MonoBehaviour
         {
             // Pay cost.
             Main.PlayerState.Money -= RoomCostPerNight;
+
+            // Apply time cost.
+            Main.GameTime.SpendTime(TimeCostToRentRoom);
 
             RoomRented = true;
             dayLastRentedRoom = Main.GameTime.Day;

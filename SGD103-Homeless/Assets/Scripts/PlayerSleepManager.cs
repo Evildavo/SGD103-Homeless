@@ -191,7 +191,7 @@ public class PlayerSleepManager : MonoBehaviour
         if (IsAsleep)
         {
             Main.MessageBox.Show("Zzzz...", gameObject);
-            Main.GameTime.TimeScale = SleepTimeScale;
+            Main.GameTime.AccelerateTime(SleepTimeScale);
         }
     }
 

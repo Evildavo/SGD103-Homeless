@@ -8,6 +8,7 @@ public class AlcoholItem : MultiUseItem
     public float MoraleBenefitPerUse;
     public float InebriationIncreasePerUse;
     public float AddictionIncreasePerUse;
+    public float TimeCostPerUse;
 
     public override void OnPrimaryAction()
     {
@@ -19,6 +20,9 @@ public class AlcoholItem : MultiUseItem
         PlayerState.ChangeMorale(MoraleBenefitPerUse, false);
         PlayerState.Inebriation += InebriationIncreasePerUse;
         PlayerState.Addiction += AddictionIncreasePerUse;
+        
+        // Apply time cost.
+        Main.GameTime.SpendTime(TimeCostPerUse);
 
         PlayerState.CompleteDrinkAlcoholObjective();
 
