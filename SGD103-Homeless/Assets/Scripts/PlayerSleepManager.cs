@@ -216,7 +216,8 @@ public class PlayerSleepManager : MonoBehaviour
         return Input.GetButtonDown("Secondary") ||
                Input.GetKeyDown("e") ||
                Input.GetKeyDown("enter") ||
-               Input.GetKeyDown("return");
+               Input.GetKeyDown("return") ||
+               Input.GetKeyDown("space");
     }
 
     void Update ()

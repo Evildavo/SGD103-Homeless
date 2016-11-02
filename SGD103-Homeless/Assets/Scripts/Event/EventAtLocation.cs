@@ -66,7 +66,8 @@ public class EventAtLocation : MonoBehaviour {
         return Input.GetButtonDown("Secondary") ||
                Input.GetKeyDown("e") ||
                Input.GetKeyDown("enter") ||
-               Input.GetKeyDown("return");
+               Input.GetKeyDown("return") ||
+               Input.GetKeyDown("space");
     }
 
     // Override to do something when the player attends the event.
