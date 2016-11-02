@@ -29,8 +29,8 @@ public class FoodItem : MultiUseItem
     public float ChanceMouldyHealthPenalty = 0.3f;
     public float ChanceRancidHealthPenalty = 0.8f;
     public float StaleHealthPenalty = 0.0f;
-    public float MouldyHealthPenalty = 0.15f;
-    public float RancidHealthPenalty = 0.35f;
+    public float MouldyHealthPenalty = 0.1f;
+    public float RancidHealthPenalty = 0.25f;
     public float StaleNutritionFactor = 0.65f;
     public float MouldyNutritionFactor = 0.4f;
     public float RancidNutritionFactor = 0.2f;
@@ -47,18 +47,21 @@ public class FoodItem : MultiUseItem
         {
             madeSick = true;
             Main.PlayerCharacter.Vomit();
+            Main.PlayerState.ChangeHealthTiredness(-StaleHealthPenalty);
         }
         else if (ExpirationCategory == ExpirationCategoryEnum.MOULDY &&
             Random.Range(0.0f, 1.0f) < ChanceMouldyHealthPenalty)
         {
             madeSick = true;
             Main.PlayerCharacter.Vomit();
+            Main.PlayerState.ChangeHealthTiredness(-MouldyHealthPenalty);
         }
         else if (ExpirationCategory == ExpirationCategoryEnum.RANCID &&
             Random.Range(0.0f, 1.0f) < ChanceRancidHealthPenalty)
         {
             madeSick = true;
             Main.PlayerCharacter.Vomit();
+            Main.PlayerState.ChangeHealthTiredness(-RancidHealthPenalty);
         }
         else
         {
@@ -112,7 +115,7 @@ public class FoodItem : MultiUseItem
             Main.Inventory.RemoveItem(this);
         }
     }
-
+    
     new void Start()
     {
         base.Start();
