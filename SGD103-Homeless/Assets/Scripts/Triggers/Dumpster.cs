@@ -45,7 +45,7 @@ public class Dumpster : MonoBehaviour {
 
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
-        Trigger.RegisterOnCloseRequested(Reset);
+        Trigger.RegisterOnCloseRequested(OnExit);
 
         // Sort the item probabilities.
         ChanceItemsFound.Sort((a, b) => a.Chance.CompareTo(b.Chance));
@@ -156,6 +156,12 @@ public class Dumpster : MonoBehaviour {
                 Reset();
             }
         }
+    }
+
+    public void OnExit()
+    {
+        Main.MessageBox.ShowNext();
+        Reset();
     }
 
     public void Reset()
