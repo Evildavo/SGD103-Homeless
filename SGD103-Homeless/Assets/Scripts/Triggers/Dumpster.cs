@@ -27,13 +27,20 @@ public class Dumpster : MonoBehaviour {
     public float ChanceDecreaseWhenItemFound;
     public float MaxTimeToExpiryFound;
     public float MaxTimeAfterExpiryFound;
+    [Header("Expiry bias decreases the chance food will be expired by the given percent")]
+    public float InitialExpiryBias;
+    public float MaxExpiryBias = 1.0f;
+    public float ExpiryBiasDecreasePerHour;
 
     [ReadOnly]
     public float CurrentChance;
+    [ReadOnly]
+    public float CurrentExpiryBias;
 
     void Start()
     {
         CurrentChance = InitialChanceSomethingFound;
+        CurrentExpiryBias = InitialExpiryBias;
 
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
@@ -169,13 +176,24 @@ public class Dumpster : MonoBehaviour {
             }
         }
 
-        // At good times to search maximise the chance of finding an item.
+        // Decrease the expiry bias over game-time. 
+        if (CurrentExpiryBias > 0.0f)
+        {
+            CurrentExpiryBias -= ExpiryBiasDecreasePerHour * Main.GameTime.GameTimeDelta;
+            if (CurrentExpiryBias < 0.0f)
+            {
+                CurrentExpiryBias = 0.0f;
+            }
+        }
+
+        // At good times to search maximise the chance of finding an item and its expiry time.
         foreach (float hour in BestTimesToSearch)
         {
             if (GameTime.TimeOfDayHoursDelta(Main.GameTime.TimeOfDayHours, hour).shortest <= 
                 Main.GameTime.GameTimeDelta)
             {
                 CurrentChance = MaxChanceSomethingFound;
+                CurrentExpiryBias = MaxExpiryBias;
                 break;
             }
         }
@@ -184,9 +202,8 @@ public class Dumpster : MonoBehaviour {
     // Generates a random food expiry biased based on the current chance of finding an item.
     float makeFoodExpiry()
     {
-        //float bias = 1.0f; CurrentChance;
-        return Random.Range(-MaxTimeAfterExpiryFound,// * (1.0f - bias), 
-                            MaxTimeToExpiryFound);// * bias);
+        return Random.Range(-MaxTimeAfterExpiryFound * (1.0f - CurrentExpiryBias), 
+                            MaxTimeToExpiryFound);
     }
 
 }
