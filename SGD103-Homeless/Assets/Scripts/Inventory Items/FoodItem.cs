@@ -18,7 +18,6 @@ public class FoodItem : MultiUseItem
     [UnityEngine.Serialization.FormerlySerializedAs("HungerSatietyBenefitPerUse")]
     public float NutritionBenefitPerUse;
     public float TimeCostPerUse;
-    public float HoursToExpiry = 168.0f;
     
     [Header("Expiration settings.")]
     public float HoursAfterExpiryBeforeMouldy = 6.0f;
@@ -42,6 +41,8 @@ public class FoodItem : MultiUseItem
     public Color StaleIconColour = Color.white;
     public Color MouldyIconColour = Color.white;
     public Color RancidIconColour = Color.white;
+    [ReadOnly]
+    public float HoursToExpiry = 168.0f;
     [ReadOnly]
     public ExpirationCategoryEnum ExpirationCategory;
 
