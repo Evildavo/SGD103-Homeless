@@ -17,6 +17,7 @@ public class Dumpster : MonoBehaviour {
     public Main Main;
     public Trigger Trigger;
 
+    public float MoralePenaltyForSearch;
     public float SearchTimeHours;
     public float InitialChanceSomethingFound;
     public float MinChanceSomethingFound;
@@ -68,6 +69,9 @@ public class Dumpster : MonoBehaviour {
         hourAtLastSearch = Main.GameTime.TimeOfDayHours;
         Main.GameTime.AccelerateTime();
         Main.MessageBox.Show("Searching for food...", gameObject);
+
+        // Apply a morale penalty for searching the garbage.
+        Main.PlayerState.ChangeMorale(-MoralePenaltyForSearch);
     }
 
     public void OnTriggerUpdate()
