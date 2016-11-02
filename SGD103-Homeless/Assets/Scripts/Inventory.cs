@@ -187,49 +187,52 @@ public class Inventory : MonoBehaviour
             callback(item);
         }        
     }
-    
+
     // Removes the item and moves other items to fill the gaps.
     // Warning: Currently also destroys the object.
     public void RemoveItem(InventoryItem item)
     {
-        InventorySlot[] inventorySlots = SlotContainer.GetComponentsInChildren<InventorySlot>(true);
-        InventorySlot slot = inventorySlots[item.InventoryIndex];
-
-        // Move items down to fill the slot.
-        for (var i = item.InventoryIndex; i < inventorySlots.Length; i++)
+        if (HasItem(item))
         {
-            if (i == inventorySlots.Length - 1)
+            InventorySlot[] inventorySlots = SlotContainer.GetComponentsInChildren<InventorySlot>(true);
+            InventorySlot slot = inventorySlots[item.InventoryIndex];
+
+            // Move items down to fill the slot.
+            for (var i = item.InventoryIndex; i < inventorySlots.Length; i++)
             {
-                inventorySlots[i].Item = null;
-            }
-            else
-            {
-                InventoryItem itemAbove = inventorySlots[i + 1].Item;
-                if (itemAbove)
-                {
-                    itemAbove.InventoryIndex = i;
-                    itemAbove.transform.position = inventorySlots[i].transform.position;
-                    inventorySlots[i].Item = itemAbove;
-                }
-                else
+                if (i == inventorySlots.Length - 1)
                 {
                     inventorySlots[i].Item = null;
                 }
+                else
+                {
+                    InventoryItem itemAbove = inventorySlots[i + 1].Item;
+                    if (itemAbove)
+                    {
+                        itemAbove.InventoryIndex = i;
+                        itemAbove.transform.position = inventorySlots[i].transform.position;
+                        inventorySlots[i].Item = itemAbove;
+                    }
+                    else
+                    {
+                        inventorySlots[i].Item = null;
+                    }
+                }
             }
-        }
-        
-        // Destroy the object.
-        Destroy(item.gameObject);
 
-        // Update the description for the slot now under the cursor.
-        if (slot.Item)
-        {
-            slot.OnPointerEnter(null);
-        }
-        else
-        {
-            Main.ItemDescription.gameObject.SetActive(false);
-            Main.DiscardHint.gameObject.SetActive(false);
+            // Destroy the object.
+            Destroy(item.gameObject);
+
+            // Update the description for the slot now under the cursor.
+            if (slot.Item)
+            {
+                slot.OnPointerEnter(null);
+            }
+            else
+            {
+                Main.ItemDescription.gameObject.SetActive(false);
+                Main.DiscardHint.gameObject.SetActive(false);
+            }
         }
     }
 

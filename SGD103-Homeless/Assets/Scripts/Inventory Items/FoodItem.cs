@@ -123,7 +123,7 @@ public class FoodItem : MultiUseItem
         NumUses -= 1;
         if (NumUses == 0)
         {
-            Main.Inventory.RemoveItem(this);
+            //Main.Inventory.RemoveItem(this);
         }
     }
 

@@ -58,75 +58,72 @@ public class Dumpster : MonoBehaviour {
         {
             Main.GameTime.ResetToNormalTime();
             isPlayerSearching = false;
-
-            Debug.Log("Stopping search");
+            
 
             // Determine if we found food
             if (Random.Range(0.0f, 1.0f) < BaseChanceSomethingFound && ChanceItemsFound.Count > 0)
             {
-                Debug.Log("Found something");
-
                 // Determine what we found.
-                InventoryItem itemFound = null;
+                FoodItem itemFound = null;
                 float value = Random.Range(0.0f, 1.0f);
                 float accumulatedChance = 0.0f;
                 foreach (ItemProbability itemProbability in ChanceItemsFound)
                 {
-                    Debug.Log(itemProbability.Item.ItemName + ": " + value + "/" + itemProbability.Chance + accumulatedChance);
                     if (value < itemProbability.Chance + accumulatedChance)
                     {
-                        itemFound = itemProbability.Item;
-                        Debug.Log(name + ": " + "Found a " + itemFound);
-                        Main.MessageBox.ShowForTime(
-                            "You found a " + itemProbability.Item.ItemName, 3.0f, gameObject);
+                        // We found an item. Add it to the inventory.
+                        itemFound = itemProbability.Item as FoodItem;
+                        if (itemFound && !Main.Inventory.IsInventoryFull)
+                        {
+                            // Add item.
+                            FoodItem item = Instantiate(itemFound);
+                            item.Main = Main;
+                            Main.Inventory.AddItem(item);
+
+                            // Show message that we found the item.
+                            Main.MessageBox.ShowForTime(
+                                "You found a " + itemFound.ItemName, 3.0f, gameObject);
+                        }
+                        else
+                        {
+                            // If the inventory is full ask the player if they want to eat the food immediately.
+                            ConfirmationBox.OnChoiceMade onChoiceMade = (bool yes) =>
+                            {
+                                if (yes)
+                                {
+                                    // Instantiate the item then eat it.
+                                    FoodItem item = Instantiate(itemFound);
+                                    item.Main = Main;
+                                    item.OnPrimaryAction();
+                                    Destroy(item);
+                                }
+                            };
+                            Main.ConfirmationBox.Open(onChoiceMade, 
+                                "You found a " + itemFound.ItemName + itemFound.MakeSubDescription() + 
+                                ". Eat it?", "Yes", "No");
+                            Main.MessageBox.ShowNext();
+                        }
                         break;
                     }
                     accumulatedChance += itemProbability.Chance;
                 }
-
                 if (itemFound == null)
                 {
-                    Debug.Log("Warning, didn't find anything");
+                    Debug.LogWarning("Warning, failed to select the item found at a dumpster.");
                 }
             }
             else
             {
-                Debug.Log("Didn't find anything");
                 Main.MessageBox.ShowForTime("You didn't find anything", 3.0f, gameObject);
             }
             Reset();
         }
-
-
-        /*
-        // Every second, randomly decide if we've found food.
-        if (Time.time - timeAtLastCheck > 1.0f)
-        {
-            float value = Random.Range(0.0f, 1.0f);
-            if (value <= ChanceOfFindingFoodPerSecond)
-            {
-                ConfirmationBox.OnChoiceMade onChoiceMade = (bool yes) =>
-                {
-                    if (yes)
-                    {
-                        Main.PlayerState.ChangeNutrition(NutritionBenefit);
-                        Main.PlayerState.ChangeHealthTiredness(-HealthDetriment);
-                    }
-                };
-                Main.ConfirmationBox.Open(onChoiceMade, "You found food. Eat it?", "Yes", "No");
-                Main.GameTime.ResetToNormalTime();
-                Trigger.Reset(false);
-                // TODO: Reset later.
-            }
-            timeAtLastCheck = Time.time;
-        }*/
     }
 
     public void Reset()
     {
         isPlayerSearching = false;
         Main.GameTime.ResetToNormalTime();
-        //Main.ConfirmationBox.Close();
         Trigger.Reset();
     }
     

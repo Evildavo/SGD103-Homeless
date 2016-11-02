@@ -34,7 +34,7 @@ public class MultiUseItem : InventoryItem {
     // Call from derived.
     protected void Start()
     {
-        if (PluralName == "")
+        if (NumUses > 1 && PluralName == "")
         {
             Debug.LogError("You forgot to give the item \"" + ItemName + "\" a plural name. Defaulting to item name.");
             PluralName = ItemName;
