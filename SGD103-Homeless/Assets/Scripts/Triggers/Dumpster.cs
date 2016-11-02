@@ -17,12 +17,21 @@ public class Dumpster : MonoBehaviour {
     public Trigger Trigger;
 
     public float SearchTimeHours;
-    public float BaseChanceSomethingFound;
+    public float MinChanceSomethingFound;
+    public float MaxChanceSomethingFound;
     [Header("Note: Chances are automatically normalized (so that they add to 1).")]
     public List<ItemProbability> ChanceItemsFound;
+    public float[] BestTimesToSearch;
+    public float ChanceDecreasePerHour;
+    public float ChanceDecreaseWhenItemFound;
+
+    [ReadOnly]
+    public float CurrentChance;
 
     void Start()
     {
+        CurrentChance = MinChanceSomethingFound;
+
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
         Trigger.RegisterOnCloseRequested(Reset);
@@ -61,7 +70,7 @@ public class Dumpster : MonoBehaviour {
             
 
             // Determine if we found food
-            if (Random.Range(0.0f, 1.0f) < BaseChanceSomethingFound && ChanceItemsFound.Count > 0)
+            if (Random.Range(0.0f, 1.0f) < CurrentChance && ChanceItemsFound.Count > 0)
             {
                 // Determine what we found.
                 FoodItem itemFound = null;
@@ -73,37 +82,47 @@ public class Dumpster : MonoBehaviour {
                     {
                         // We found an item. Add it to the inventory.
                         itemFound = itemProbability.Item as FoodItem;
-                        if (itemFound && !Main.Inventory.IsInventoryFull)
+                        if (itemFound)
                         {
-                            // Add item.
-                            FoodItem item = Instantiate(itemFound);
-                            item.Main = Main;
-                            Main.Inventory.AddItem(item);
-
-                            // Show message that we found the item.
-                            Main.MessageBox.ShowForTime(
-                                "You found a " + itemFound.ItemName, 3.0f, gameObject);
-                            Reset();
-                        }
-                        else
-                        {
-                            // If the inventory is full ask the player if they want to eat the food immediately.
-                            ConfirmationBox.OnChoiceMade onChoiceMade = (bool yes) =>
+                            if (!Main.Inventory.IsInventoryFull)
                             {
-                                if (yes)
+                                // Add item.
+                                FoodItem item = Instantiate(itemFound);
+                                item.Main = Main;
+                                Main.Inventory.AddItem(item);
+
+                                // Show message that we found the item.
+                                Main.MessageBox.ShowForTime(
+                                    "You found a " + itemFound.ItemName, 3.0f, gameObject);
+                                Reset();
+                            }
+                            else
+                            {
+                                // If the inventory is full ask the player if they want to eat the food immediately.
+                                ConfirmationBox.OnChoiceMade onChoiceMade = (bool yes) =>
                                 {
+                                    if (yes)
+                                    {
                                     // Instantiate the item then eat it.
                                     FoodItem item = Instantiate(itemFound);
-                                    item.Main = Main;
-                                    item.OnPrimaryAction();
-                                    Destroy(item);
-                                }
-                                Reset();
-                            };
-                            Main.ConfirmationBox.Open(onChoiceMade, 
-                                "You found a " + itemFound.ItemName + itemFound.MakeSubDescription() + 
-                                ". Eat it?", "Yes", "No");
-                            Main.MessageBox.Hide();
+                                        item.Main = Main;
+                                        item.OnPrimaryAction();
+                                        Destroy(item);
+                                    }
+                                    Reset();
+                                };
+                                Main.ConfirmationBox.Open(onChoiceMade,
+                                    "You found a " + itemFound.ItemName + itemFound.MakeSubDescription() +
+                                    ". Eat it?", "Yes", "No");
+                                Main.MessageBox.Hide();
+                            }
+
+                            // Decrease the chance of finding an item again.
+                            CurrentChance -= ChanceDecreaseWhenItemFound;
+                            if (CurrentChance < MinChanceSomethingFound)
+                            {
+                                CurrentChance = MinChanceSomethingFound;
+                            }
                         }
                         break;
                     }
@@ -128,6 +147,30 @@ public class Dumpster : MonoBehaviour {
         isPlayerSearching = false;
         Main.GameTime.ResetToNormalTime();
         Trigger.ResetWithCooloff();
+    }
+
+    void Update()
+    {
+        // Decrease the chance of an item being found over game-time.
+        if (CurrentChance > MinChanceSomethingFound)
+        {
+            CurrentChance -= ChanceDecreasePerHour * Main.GameTime.GameTimeDelta;
+            if (CurrentChance < MinChanceSomethingFound)
+            {
+                CurrentChance = MinChanceSomethingFound;
+            }
+        }
+
+        // At good times to search maximise the chance of finding an item.
+        foreach (float hour in BestTimesToSearch)
+        {
+            if (GameTime.TimeOfDayHoursDelta(Main.GameTime.TimeOfDayHours, hour).shortest <= 
+                Main.GameTime.GameTimeDelta)
+            {
+                CurrentChance = MaxChanceSomethingFound;
+                break;
+            }
+        }
     }
     
 }
