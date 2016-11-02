@@ -10,7 +10,8 @@ public class Dumpster : MonoBehaviour {
     public class ItemProbability
     {
         public float Chance;
-        public InventoryItem Item;
+        [UnityEngine.Serialization.FormerlySerializedAs("Item")]
+        public InventoryItem ItemPrefab;
     }
 
     public Main Main;
@@ -90,7 +91,7 @@ public class Dumpster : MonoBehaviour {
                     if (value < itemProbability.Chance + accumulatedChance)
                     {
                         // We found an item. Add it to the inventory.
-                        itemFound = itemProbability.Item as FoodItem;
+                        itemFound = itemProbability.ItemPrefab as FoodItem;
                         if (itemFound)
                         {
                             if (!Main.Inventory.IsInventoryFull)
