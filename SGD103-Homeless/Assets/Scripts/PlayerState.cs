@@ -99,7 +99,6 @@ public class PlayerState : MonoBehaviour {
     public bool WalkSlowerWhenIntoxicated;
     public float WonkyWalkAngleAtMaxInebriationDegrees;
     public float VomitIntervalAtMaxInebriationSeconds;
-    public float NutritionLostPerVomit;
     public float WalkSpeedFactorAtMaxInebriation = 1.0f;
 
     [Space(10.0f)]
@@ -326,7 +325,6 @@ public class PlayerState : MonoBehaviour {
                     hasVomited = true;
                     timeAtLastVomit = Time.time;
 
-                    ChangeNutrition(-NutritionLostPerVomit);
                     Main.PlayerCharacter.Vomit();
                 }
             }

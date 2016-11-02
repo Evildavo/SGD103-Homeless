@@ -21,12 +21,12 @@ public class MultiUseItem : InventoryItem {
         {
             if (NumUses == 1)
             {
-                Main.ItemDescription.ItemName.text = ItemName;
+                Main.ItemDescription.ItemName.text = ItemName + MakeSubDescription();
             }
             else
             {
                 Main.ItemDescription.ItemName.text =
-                    NumUses.ToString() + " " + PluralName;
+                    NumUses.ToString() + " " + PluralName + MakeSubDescription();
             }
         }
     }

@@ -18,6 +18,20 @@ public class InventoryItem : MonoBehaviour
     [Space(-10, order = 3)]
     [Header("set the Item reference in the Inventory Slot", order = 4)]
     public int InventoryIndex;
+    public string SubDescription = "";
+
+    // Puts the sub-description in brackets.
+    public string MakeSubDescription()
+    {
+        if (SubDescription != "")
+        {
+            return " (" + SubDescription + ")";
+        }
+        else
+        {
+            return "";
+        }
+    }
 
     // Override to give a custom item value calculation.
     public virtual float GetItemValue()

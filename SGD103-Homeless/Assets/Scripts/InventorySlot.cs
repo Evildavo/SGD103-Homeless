@@ -43,7 +43,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 // Update text.
                 var SellItemDescription = Main.SellItemDescription;
                 SellItemDescription.gameObject.SetActive(true);
-                SellItemDescription.ItemName.text = Item.ItemName;
+                SellItemDescription.ItemName.text = Item.ItemName + Item.MakeSubDescription();
                 if (Item.CanBeSold)
                 {
                     SellItemDescription.ItemValue.text = "$" + Item.GetItemValue().ToString("f2");
@@ -64,7 +64,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 // Update text.
                 var ItemDescription = Main.ItemDescription;
                 ItemDescription.gameObject.SetActive(true);
-                ItemDescription.ItemName.text = Item.ItemName;
+                ItemDescription.ItemName.text = Item.ItemName + Item.MakeSubDescription();
                 ItemDescription.ItemAction.text = Item.PrimaryActionDescription;
                 ItemDescription.GetComponent<Image>().enabled = true;
 

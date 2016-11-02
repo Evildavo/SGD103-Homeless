@@ -16,6 +16,7 @@ public class PlayerCharacter : Character
     public Color SelfishOptionColor = Color.white;
 
     public float VomitDurationSeconds;
+    public float NutritionLostPerVomit;
     public float CoughDurationSeconds;
     [ReadOnly]
     public bool IsVomiting = false;
@@ -95,6 +96,9 @@ public class PlayerCharacter : Character
     // Makes the player character start to vomit.
     public void Vomit()
     {
+        // Apply nutrition penalty for vomiting.
+        Main.PlayerState.ChangeNutrition(-NutritionLostPerVomit);
+        
         if (!IsVomiting)
         {
             IsVomiting = true;
