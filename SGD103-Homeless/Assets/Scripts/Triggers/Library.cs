@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class Library : MonoBehaviour {
     private bool isReading;
     private bool isJobSearching;
-    private float timeAtLastCheck;
+    private float hourAtLastCheck;
     private bool hasWarnedAboutClosing = false;
     private bool jobSearchedToday = false;
     private int dayOfLastJobSearch;
@@ -14,8 +14,8 @@ public class Library : MonoBehaviour {
     public ResumeItem ResumeItem;
     public List<JobLocation> JobLocations;
 
-    public float MoraleGainedPerSecondReading = 0.05f;
-    public float JobSearchTimeSeconds = 4.0f;
+    public float MoraleGainedPerHourReading = 0.05f;
+    public float JobSearchTimeHours = 1.0f;
     public float MoraleGainedForFindingJob;
 
     public List<string> Books;
@@ -87,7 +87,7 @@ public class Library : MonoBehaviour {
         Main.GameTime.AccelerateTime();
         isJobSearching = true;
         dayOfLastJobSearch = Main.GameTime.Day;
-        timeAtLastCheck = Time.time;
+        hourAtLastCheck = Main.GameTime.TimeOfDayHours;
     }
 
     public void OnReadBook()
@@ -140,11 +140,11 @@ public class Library : MonoBehaviour {
         // Increase morale while reading.
         if (isReading)
         {
-            Main.PlayerState.ChangeMorale(MoraleGainedPerSecondReading * Time.deltaTime);
+            Main.PlayerState.ChangeMorale(MoraleGainedPerHourReading * Main.GameTime.GameTimeDelta);
         }
         
         // Search for jobs after a minimum amount of time.
-        if (isJobSearching && Time.time - timeAtLastCheck > JobSearchTimeSeconds)
+        if (isJobSearching && Main.GameTime.TimeOfDayHours - hourAtLastCheck > JobSearchTimeHours)
         {
             // Randomise the job list.
             List<JobLocation> randomJobList = new List<JobLocation>(JobLocations);
