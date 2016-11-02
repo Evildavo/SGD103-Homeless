@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class FoodItem : MultiUseItem
 {
+    Color baseIconColour;
+
     // The category of being expired.
     public enum ExpirationCategoryEnum
     {
@@ -37,6 +40,10 @@ public class FoodItem : MultiUseItem
     public Color StaleTextColour = Color.white;
     public Color MouldyTextColour = Color.white;
     public Color RancidTextColour = Color.white;
+    [Header("These colours are multiplied with the base colour of the object")]
+    public Color StaleIconColour = Color.white;
+    public Color MouldyIconColour = Color.white;
+    public Color RancidIconColour = Color.white;
 
     public override void OnPrimaryAction()
     {
@@ -152,6 +159,7 @@ public class FoodItem : MultiUseItem
     protected new void Start()
     {
         base.Start();
+        baseIconColour = GetComponent<Image>().color;
     }
 
     // Call from derived.
@@ -166,6 +174,7 @@ public class FoodItem : MultiUseItem
             {
                 ExpirationCategory = ExpirationCategoryEnum.NOT;
                 SubDescription = "";
+                GetComponent<Image>().color = baseIconColour;
             }
         }
         else if (HoursToExpiry > -HoursAfterExpiryBeforeMouldy)
@@ -174,6 +183,7 @@ public class FoodItem : MultiUseItem
             {
                 ExpirationCategory = ExpirationCategoryEnum.STALE;
                 SubDescription = StaleDescription;
+                GetComponent<Image>().color = baseIconColour * StaleIconColour;
             }
         }
         else if (HoursToExpiry > -HoursAfterExpiryBeforeRancid)
@@ -182,6 +192,7 @@ public class FoodItem : MultiUseItem
             {
                 ExpirationCategory = ExpirationCategoryEnum.MOULDY;
                 SubDescription = MouldyDescription;
+                GetComponent<Image>().color = baseIconColour * MouldyIconColour;
             }
         }
         else
@@ -190,6 +201,7 @@ public class FoodItem : MultiUseItem
             {
                 ExpirationCategory = ExpirationCategoryEnum.RANCID;
                 SubDescription = RancidDescription;
+                GetComponent<Image>().color = baseIconColour * RancidIconColour;
             }
         }
     }
