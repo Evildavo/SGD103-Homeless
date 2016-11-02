@@ -127,7 +127,6 @@ public class Dumpster : MonoBehaviour {
     {
         isPlayerSearching = false;
         Main.GameTime.ResetToNormalTime();
-        Main.MessageBox.ShowNext();
         Trigger.ResetWithCooloff();
     }
     
