@@ -83,6 +83,7 @@ public class Dumpster : MonoBehaviour {
                             // Show message that we found the item.
                             Main.MessageBox.ShowForTime(
                                 "You found a " + itemFound.ItemName, 3.0f, gameObject);
+                            Reset();
                         }
                         else
                         {
@@ -97,11 +98,12 @@ public class Dumpster : MonoBehaviour {
                                     item.OnPrimaryAction();
                                     Destroy(item);
                                 }
+                                Reset();
                             };
                             Main.ConfirmationBox.Open(onChoiceMade, 
                                 "You found a " + itemFound.ItemName + itemFound.MakeSubDescription() + 
                                 ". Eat it?", "Yes", "No");
-                            Main.MessageBox.ShowNext();
+                            Main.MessageBox.Hide();
                         }
                         break;
                     }
@@ -110,13 +112,14 @@ public class Dumpster : MonoBehaviour {
                 if (itemFound == null)
                 {
                     Debug.LogWarning("Warning, failed to select the item found at a dumpster.");
+                    Reset();
                 }
             }
             else
             {
                 Main.MessageBox.ShowForTime("You didn't find anything", 3.0f, gameObject);
+                Reset();
             }
-            Reset();
         }
     }
 
@@ -124,7 +127,8 @@ public class Dumpster : MonoBehaviour {
     {
         isPlayerSearching = false;
         Main.GameTime.ResetToNormalTime();
-        Trigger.Reset();
+        Main.MessageBox.ShowNext();
+        Trigger.ResetWithCooloff();
     }
     
 }
