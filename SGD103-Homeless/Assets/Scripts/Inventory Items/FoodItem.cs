@@ -34,6 +34,9 @@ public class FoodItem : MultiUseItem
     public float StaleNutritionFactor = 0.65f;
     public float MouldyNutritionFactor = 0.4f;
     public float RancidNutritionFactor = 0.2f;
+    public Color StaleTextColour = Color.white;
+    public Color MouldyTextColour = Color.white;
+    public Color RancidTextColour = Color.white;
 
     public override void OnPrimaryAction()
     {
@@ -115,13 +118,44 @@ public class FoodItem : MultiUseItem
             Main.Inventory.RemoveItem(this);
         }
     }
-    
-    new void Start()
+
+    // Call from derived.
+    public override void OnCursorEnter()
+    {
+        base.OnCursorEnter();
+        if (ExpirationCategory == ExpirationCategoryEnum.NOT)
+        {
+            Main.ItemDescription.ItemName.color = Color.white;
+        }
+        else if (ExpirationCategory == ExpirationCategoryEnum.STALE)
+        {
+            Main.ItemDescription.ItemName.color = StaleTextColour;
+        }
+        else if (ExpirationCategory == ExpirationCategoryEnum.MOULDY)
+        {
+            Main.ItemDescription.ItemName.color = MouldyTextColour;
+        }
+        else if (ExpirationCategory == ExpirationCategoryEnum.RANCID)
+        {
+            Main.ItemDescription.ItemName.color = RancidTextColour;
+        }
+    }
+
+    // Call from derived.
+    public override void OnCursorExit()
+    {
+        base.OnCursorExit();
+        Main.ItemDescription.ItemName.color = Color.white;
+    }
+
+    // Call from derived.
+    protected new void Start()
     {
         base.Start();
     }
 
-    void Update()
+    // Call from derived.
+    protected void Update()
     {
         UpdateItemDescription();
 
