@@ -17,6 +17,7 @@ public class Dumpster : MonoBehaviour {
     public Trigger Trigger;
 
     public float SearchTimeHours;
+    public float InitialChanceSomethingFound;
     public float MinChanceSomethingFound;
     public float MaxChanceSomethingFound;
     [Header("Note: Chances are automatically normalized (so that they add to 1).")]
@@ -24,13 +25,15 @@ public class Dumpster : MonoBehaviour {
     public float[] BestTimesToSearch;
     public float ChanceDecreasePerHour;
     public float ChanceDecreaseWhenItemFound;
+    public float MaxTimeToExpiryFound;
+    public float MaxTimeAfterExpiryFound;
 
     [ReadOnly]
     public float CurrentChance;
 
     void Start()
     {
-        CurrentChance = MinChanceSomethingFound;
+        CurrentChance = InitialChanceSomethingFound;
 
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
@@ -68,7 +71,6 @@ public class Dumpster : MonoBehaviour {
             Main.GameTime.ResetToNormalTime();
             isPlayerSearching = false;
             
-
             // Determine if we found food
             if (Random.Range(0.0f, 1.0f) < CurrentChance && ChanceItemsFound.Count > 0)
             {
@@ -89,30 +91,36 @@ public class Dumpster : MonoBehaviour {
                                 // Add item.
                                 FoodItem item = Instantiate(itemFound);
                                 item.Main = Main;
+                                item.UpdateFoodExpiryCategory(makeFoodExpiry());
                                 Main.Inventory.AddItem(item);
 
                                 // Show message that we found the item.
                                 Main.MessageBox.ShowForTime(
-                                    "You found a " + itemFound.ItemName, 3.0f, gameObject);
+                                    "You found a " + item.ItemName + item.MakeSubDescription(), 
+                                    3.0f, gameObject);
                                 Reset();
                             }
                             else
                             {
+                                // Instantiate the item.
+                                FoodItem item = Instantiate(itemFound);
+                                item.Main = Main;
+                                item.UpdateFoodExpiryCategory(makeFoodExpiry());
+
                                 // If the inventory is full ask the player if they want to eat the food immediately.
                                 ConfirmationBox.OnChoiceMade onChoiceMade = (bool yes) =>
                                 {
                                     if (yes)
                                     {
-                                    // Instantiate the item then eat it.
-                                    FoodItem item = Instantiate(itemFound);
-                                        item.Main = Main;
+                                        // Eat the item.
                                         item.OnPrimaryAction();
                                         Destroy(item);
                                     }
                                     Reset();
                                 };
+
                                 Main.ConfirmationBox.Open(onChoiceMade,
-                                    "You found a " + itemFound.ItemName + itemFound.MakeSubDescription() +
+                                    "You found a " + item.ItemName + item.MakeSubDescription() +
                                     ". Eat it?", "Yes", "No");
                                 Main.MessageBox.Hide();
                             }
@@ -173,4 +181,12 @@ public class Dumpster : MonoBehaviour {
         }
     }
     
+    // Generates a random food expiry biased based on the current chance of finding an item.
+    float makeFoodExpiry()
+    {
+        //float bias = 1.0f; CurrentChance;
+        return Random.Range(-MaxTimeAfterExpiryFound,// * (1.0f - bias), 
+                            MaxTimeToExpiryFound);// * bias);
+    }
+
 }

@@ -14,11 +14,11 @@ public class FoodItem : MultiUseItem
         MOULDY,
         RANCID
     }
-    
+
     [UnityEngine.Serialization.FormerlySerializedAs("HungerSatietyBenefitPerUse")]
     public float NutritionBenefitPerUse;
     public float TimeCostPerUse;
-    
+
     [Header("Expiration settings.")]
     public float HoursAfterExpiryBeforeMouldy = 6.0f;
     public float HoursAfterExpiryBeforeRancid = 24.0f;
@@ -45,6 +45,31 @@ public class FoodItem : MultiUseItem
     public float HoursToExpiry = 168.0f;
     [ReadOnly]
     public ExpirationCategoryEnum ExpirationCategory;
+    
+    public void UpdateFoodExpiryCategory(float hoursToExpiry)
+    {
+        HoursToExpiry = hoursToExpiry;
+        if (hoursToExpiry >= 0.0f)
+        {
+            SubDescription = "";
+            ExpirationCategory = ExpirationCategoryEnum.NOT;
+        }
+        else if (hoursToExpiry > -HoursAfterExpiryBeforeMouldy)
+        {
+            SubDescription = StaleDescription;
+            ExpirationCategory = ExpirationCategoryEnum.STALE;
+        }
+        else if (hoursToExpiry > -HoursAfterExpiryBeforeRancid)
+        {
+            SubDescription = MouldyDescription;
+            ExpirationCategory = ExpirationCategoryEnum.MOULDY;
+        }
+        else
+        {
+            SubDescription = RancidDescription;
+            ExpirationCategory = ExpirationCategoryEnum.RANCID;
+        }
+    }
 
     public override void OnPrimaryAction()
     {
@@ -171,13 +196,11 @@ public class FoodItem : MultiUseItem
         // Increment expiry.
         HoursToExpiry -= Main.GameTime.GameTimeDelta;
 
-        // Update expiration category.
+        // Update expiration category colour.
         if (HoursToExpiry >= 0.0f)
         {
             if (ExpirationCategory != ExpirationCategoryEnum.NOT)
             {
-                ExpirationCategory = ExpirationCategoryEnum.NOT;
-                SubDescription = "";
                 GetComponent<Image>().color = baseIconColour;
             }
         }
@@ -185,8 +208,6 @@ public class FoodItem : MultiUseItem
         {
             if (ExpirationCategory != ExpirationCategoryEnum.STALE)
             {
-                ExpirationCategory = ExpirationCategoryEnum.STALE;
-                SubDescription = StaleDescription;
                 GetComponent<Image>().color = baseIconColour * StaleIconColour;
             }
         }
@@ -194,8 +215,6 @@ public class FoodItem : MultiUseItem
         {
             if (ExpirationCategory != ExpirationCategoryEnum.MOULDY)
             {
-                ExpirationCategory = ExpirationCategoryEnum.MOULDY;
-                SubDescription = MouldyDescription;
                 GetComponent<Image>().color = baseIconColour * MouldyIconColour;
             }
         }
@@ -203,11 +222,12 @@ public class FoodItem : MultiUseItem
         {
             if (ExpirationCategory != ExpirationCategoryEnum.RANCID)
             {
-                ExpirationCategory = ExpirationCategoryEnum.RANCID;
-                SubDescription = RancidDescription;
                 GetComponent<Image>().color = baseIconColour * RancidIconColour;
             }
         }
+
+        // Update expiration category.
+        UpdateFoodExpiryCategory(HoursToExpiry);
     }
 
 }
