@@ -86,6 +86,7 @@ public class Begging : MonoBehaviour
     {
         WriteYourSign.Show();
         Main.PlayerState.CurrentBeggingSpot = this;
+        Main.MessageBox.Hide();
     }
 
     public void OnTriggerUpdate()
