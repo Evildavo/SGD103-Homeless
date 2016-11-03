@@ -108,6 +108,10 @@ public class Begging : MonoBehaviour
                 if (Random.Range(0.0f, 1.0f) < ChanceMoneyGainedAtCheck)
                 {
                     float moneyEarned = Random.Range(MinAmountGained, MaxAmountGained);
+
+                    // Round to the nearest 5 cents.
+                    moneyEarned = Mathf.Round(moneyEarned * 20.0f) / 20.0f;
+
                     totalMoneyEarned += moneyEarned;
 
                     // Play random coin sound.
