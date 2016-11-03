@@ -14,17 +14,30 @@ public class Hostel : MonoBehaviour {
 
     public float ApplyingTimeHours;
     public float TimeCostForCheckingHousingApplication;
+    public float ChanceApplicationSuccessful;
+    public float MoraleRewardForSuccess;
+    public float SleepQualityFactor;
+
+    [Space(10.0f)]
+    public bool PlayerHasRoom;
 
     public void OpenMainMenu()
     {
         List<Menu.Option> options = new List<Menu.Option>();
-        if (!hasFinishedApplying)
+        if (!PlayerHasRoom)
         {
-            options.Add(new Menu.Option(ApplyForHousing, "Apply for housing"));
+            if (!hasFinishedApplying)
+            {
+                options.Add(new Menu.Option(ApplyForHousing, "Apply for housing"));
+            }
+            else if (hasFinishedApplying)
+            {
+                options.Add(new Menu.Option(CheckHousingApplicationSelected, "Check housing application", 0.0f, !hasCheckedToday));
+            }
         }
-        else if (hasFinishedApplying)
+        else
         {
-            options.Add(new Menu.Option(CheckHousingApplicationSelected, "Check housing application", 0.0f, !hasCheckedToday));
+            options.Add(new Menu.Option(SleepInRoom, "Sleep in room"));
         }
         options.Add(new Menu.Option(OnExit, "Exit"));
 
@@ -35,14 +48,31 @@ public class Hostel : MonoBehaviour {
     {
         Main.GameTime.SpendTime(TimeCostForCheckingHousingApplication);
         CheckHousingApplication();
-        reset();
     }
 
     public void CheckHousingApplication()
     {
         hasCheckedToday = true;
         dayLastChecked = Main.GameTime.Day;
-        Main.MessageBox.ShowForTime("Nothing is available today. Check back again tomorrow.", 5.0f, gameObject);
+
+        // Check if the application is successful.
+        if (Random.Range(0.0f, 1.0f) < ChanceApplicationSuccessful)
+        {
+            PlayerHasRoom = true;
+            Main.PlayerState.ChangeMorale(MoraleRewardForSuccess);
+            Main.MessageBox.ShowForTime("Application successful. You can sleep here from now on.", 5.0f, gameObject);
+            OpenMainMenu();
+        }
+        else
+        {
+            Main.MessageBox.ShowForTime("Nothing is available today. Check back again tomorrow.", 5.0f, gameObject);
+            reset();
+        }
+    }
+
+    public void SleepInRoom()
+    {
+        Main.SleepManager.Sleep(null, false, SleepQualityFactor);
     }
 
     public void ApplyForHousing()
