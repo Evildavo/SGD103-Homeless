@@ -15,13 +15,18 @@ public class Begging : MonoBehaviour
 
     public float MoraleLostPerHourBegging;
     public float CheckIntervalHours;
-    public float ChanceMoneyGainedAtCheck;
+    [UnityEngine.Serialization.FormerlySerializedAs("ChanceMoneyGainedAtCheck")]
+    public float BestChanceMoneyGainedAtCheck;
     public float MinAmountGained;
     public float MaxAmountGained;
     public float DisplayMoneyGainedMessageForSeconds;
+    public float[] PeakHours;
+    public float TimeFromPeakHourBeforeChanceIsZero = 1.0f;
 
     [Space(10.0f)]
     public bool IsBegging;
+    [ReadOnly]
+    public float chanceMoneyGainedAtCheck;
 
     public void StartBegging()
     {
@@ -104,8 +109,11 @@ public class Begging : MonoBehaviour
                 hasChecked = true;
                 hourAtLastCheck = Main.GameTime.TimeOfDayHours;
 
+                // Determine the chance based on peak hours.
+                chanceMoneyGainedAtCheck = determineChance();
+
                 // Check if we got any money.
-                if (Random.Range(0.0f, 1.0f) < ChanceMoneyGainedAtCheck)
+                if (Random.Range(0.0f, 1.0f) < chanceMoneyGainedAtCheck)
                 {
                     float moneyEarned = Random.Range(MinAmountGained, MaxAmountGained);
 
@@ -140,6 +148,25 @@ public class Begging : MonoBehaviour
                 reset();
             }
         }
+    }
+
+    float determineChance()
+    {
+        // Find the distance to the closest peak hour to the present.
+        float nearestDistance = float.MaxValue;
+        for (int i = 0; i < PeakHours.Length; i++)
+        {
+            float delta = GameTime.TimeOfDayHoursDelta(Main.GameTime.TimeOfDayHours, PeakHours[i]).shortest;
+            if (delta < nearestDistance)
+            {
+                nearestDistance = delta;
+            }
+        }
+        
+        // Money gained is based on the distance to the closest peak hour.
+        return Mathf.Max(
+            BestChanceMoneyGainedAtCheck * 
+            (1.0f - nearestDistance / TimeFromPeakHourBeforeChanceIsZero), 0.0f);
     }
 
 }
