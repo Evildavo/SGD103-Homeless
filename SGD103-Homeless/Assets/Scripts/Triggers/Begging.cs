@@ -22,6 +22,7 @@ public class Begging : MonoBehaviour
     public float DisplayMoneyGainedMessageForSeconds;
     public float[] PeakHours;
     public float TimeFromPeakHourBeforeChanceIsZero = 1.0f;
+    public bool BeggingAcceleratesTime = true;
 
     [Space(10.0f)]
     public bool IsBegging;
@@ -32,7 +33,10 @@ public class Begging : MonoBehaviour
     {
         IsBegging = true;
         totalMoneyEarned = 0.0f;
-        Main.GameTime.AccelerateTime();
+        if (BeggingAcceleratesTime)
+        {
+            Main.GameTime.AccelerateTime();
+        }
         showBeggingMessage();
         openBeggingMenu();
     }

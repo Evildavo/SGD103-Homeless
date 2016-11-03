@@ -4,20 +4,16 @@ using System.Collections.Generic;
 
 public class Supermarket : MonoBehaviour
 {
+    InventoryItem itemSelected;
+
     public Main Main;
     public Trigger Trigger;
     public JobTrigger JobTrigger;
     public JobLocation JobLocation;
-    public FoodItem WaterPrefab;
-    public FoodItem BreadPrefab;
-    public FoodItem MandarinPrefab;
-    public FoodItem ApplePrefab;
-    public FoodItem PotatoChipsPrefab;
-    public FoodItem BiscuitsPrefab;
-    public FoodItem ChocolateBarPrefab;
-    public SleepItem SleepingBagPrefab;
-    public AlcoholItem AlcoholPrefab;
-    public AntiDepressant AntiDepressantPrefab;
+    public List<InventoryItem> FoodMenuPrefabItems;
+    public List<InventoryItem> EquipmentMenuPrefabItems;
+    public List<InventoryItem> LiquorMenuPrefabItems;
+    public List<InventoryItem> MedicineMenuPrefabItems;
 
     public float TimeCostToPurchaseItem;
 
@@ -56,25 +52,35 @@ public class Supermarket : MonoBehaviour
         OpenMainMenu();
     }
 
+    void purchaseItemSelected()
+    {
+        if (!Main.Inventory.IsInventoryFull)
+        {
+            Main.PlayerState.Money -= WaterPrefab.GetItemValue();
+            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
+
+            // Add item.
+            FoodItem item = Instantiate(WaterPrefab);
+            item.Main = Main;
+            Main.Inventory.AddItem(item);
+        }
+        else
+        {
+            Main.MessageBox.WarnInventoryFull(Main.Inventory);
+        }
+        OpenFoodMenu();
+    }
+
     public void OpenFoodMenu()
     {
         List<Menu.Option> options = new List<Menu.Option>();
-        options.Add(new Menu.Option(
-            OnWaterSelected, "Water", WaterPrefab.GetItemValue(), Main.PlayerState.CanAfford(WaterPrefab.GetItemValue())));
-        options.Add(new Menu.Option(
-            OnBreadSelected, "Bread", BreadPrefab.GetItemValue(), Main.PlayerState.CanAfford(BreadPrefab.GetItemValue())));
-        options.Add(new Menu.Option(
-            OnMandarinSelected, "Bag of Mandarins", MandarinPrefab.GetItemValue(), Main.PlayerState.CanAfford(MandarinPrefab.GetItemValue())));
-        options.Add(new Menu.Option(
-            OnAppleSelected, "Apple", ApplePrefab.GetItemValue(), Main.PlayerState.CanAfford(ApplePrefab.GetItemValue())));
-        options.Add(new Menu.Option(
-            OnPotatoChipsSelected, "Potato Chips", PotatoChipsPrefab.GetItemValue(), Main.PlayerState.CanAfford(PotatoChipsPrefab.GetItemValue())));
-        options.Add(new Menu.Option(
-            OnBiscuitsSelected, "Biscuits", BiscuitsPrefab.GetItemValue(), Main.PlayerState.CanAfford(BiscuitsPrefab.GetItemValue())));
-        options.Add(new Menu.Option(
-            OnChocolateBarSelected, "Chocolate Bar", ChocolateBarPrefab.GetItemValue(), Main.PlayerState.CanAfford(ChocolateBarPrefab.GetItemValue())));
+        foreach (InventoryItem item in FoodMenuPrefabItems)
+        {
+            itemSelected = item;
+            options.Add(new Menu.Option(
+                purchaseItemSelected, item.ItemName, item.ItemValue, Main.PlayerState.CanAfford(item.ItemValue)));
+        }
         options.Add(new Menu.Option(OnBackSelected, "Back"));
-
         Main.Menu.Show(options);
     }
 
@@ -115,21 +121,6 @@ public class Supermarket : MonoBehaviour
     
     public void OnWaterSelected()
     {
-        if (!Main.Inventory.IsInventoryFull)
-        {
-            Main.PlayerState.Money -= WaterPrefab.GetItemValue();
-            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
-
-            // Add item.
-            FoodItem item = Instantiate(WaterPrefab);
-            item.Main = Main;
-            Main.Inventory.AddItem(item);
-        }
-        else
-        {
-            Main.MessageBox.WarnInventoryFull(Main.Inventory);
-        }
-        OpenFoodMenu();
     }
 
     public void OnBreadSelected()
