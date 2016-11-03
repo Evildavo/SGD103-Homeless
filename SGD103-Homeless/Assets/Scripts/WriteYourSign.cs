@@ -8,6 +8,10 @@ public class WriteYourSign : MonoBehaviour
     private Vector2 lastPoint = new Vector2();
     private bool hasLastPoint = false;
     private Color[] PenTipPixels;
+    private CardboardSign CardboardSign;
+    private Begging begging;
+
+    public Main Main;
 
     public int CanvasWidthPixels = 256;
     public int CanvasHeightPixels = 128;
@@ -17,7 +21,6 @@ public class WriteYourSign : MonoBehaviour
     public Texture2D PenTipTexture;
     [ReadOnly]
     public Texture2D CanvasTexture;
-    public CardboardSign CardboardSign;
 
     public void Show()
     {
@@ -54,8 +57,22 @@ public class WriteYourSign : MonoBehaviour
         }
     }
 
+    public void BegButtonSelected()
+    {
+        if (begging)
+        {
+            begging.StartBegging();
+        }
+    }
+
 	void Start ()
     {
+        // Get the cardboard sign.
+        CardboardSign = FindObjectOfType<CardboardSign>();
+
+        // Get the begging spot.
+        begging = Main.PlayerState.CurrentBeggingSpot;
+
         // Create and assign the texture.
         CanvasTexture = new Texture2D(CanvasWidthPixels, CanvasHeightPixels, TextureFormat.ARGB32, false);
         RawImage rawImage = GetComponentInChildren<RawImage>();

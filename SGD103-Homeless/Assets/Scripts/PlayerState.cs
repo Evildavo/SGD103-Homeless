@@ -136,6 +136,7 @@ public class PlayerState : MonoBehaviour {
 
     [Space(10.0f)]
     public Trigger CurrentTrigger;
+    public Begging CurrentBeggingSpot;
 
     // Returns true if the player can currently afford the given price.
     public bool CanAfford(float price)
