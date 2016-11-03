@@ -7,6 +7,7 @@ public class InventoryItem : MonoBehaviour
     public Main Main;
 
     public string ItemName;
+    public string PurchaseItemName;
     public string PrimaryActionDescription;
     [Header("Used in calculation when selling the item")]
     public float ItemValue;

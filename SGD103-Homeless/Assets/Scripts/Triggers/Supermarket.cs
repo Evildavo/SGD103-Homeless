@@ -4,14 +4,23 @@ using System.Collections.Generic;
 
 public class Supermarket : MonoBehaviour
 {
-    InventoryItem itemSelected;
+    MenuEnum menu;
 
+    enum MenuEnum
+    {
+        MAIN,
+        FOOD,
+        OUTDOOR_EQUIPMENT,
+        LIQUOR,
+        MEDICINE
+    }
+    
     public Main Main;
     public Trigger Trigger;
     public JobTrigger JobTrigger;
     public JobLocation JobLocation;
     public List<InventoryItem> FoodMenuPrefabItems;
-    public List<InventoryItem> EquipmentMenuPrefabItems;
+    public List<InventoryItem> OutdoorEquipmentMenuPrefabItems;
     public List<InventoryItem> LiquorMenuPrefabItems;
     public List<InventoryItem> MedicineMenuPrefabItems;
 
@@ -26,11 +35,24 @@ public class Supermarket : MonoBehaviour
 
     public void OpenMainMenu()
     {
+        menu = MenuEnum.MAIN;
         List<Menu.Option> options = new List<Menu.Option>();
-        options.Add(new Menu.Option(OpenFoodMenu, "Buy food"));
-        options.Add(new Menu.Option(OpenOutdoorItemMenu, "Buy outdoor equipment"));
-        options.Add(new Menu.Option(OpenLiquorItemMenu, "Buy liquor"));
-        /*options.Add(new Menu.Option(OpenMedicineItemMenu, "Buy medicine"));*/
+        if (FoodMenuPrefabItems.Count > 0)
+        {
+            options.Add(new Menu.Option(OpenFoodMenu, "Buy food"));
+        }
+        if (OutdoorEquipmentMenuPrefabItems.Count > 0)
+        {
+            options.Add(new Menu.Option(OpenOutdoorItemMenu, "Buy outdoor equipment"));
+        }
+        if (LiquorMenuPrefabItems.Count > 0)
+        {
+            options.Add(new Menu.Option(OpenLiquorItemMenu, "Buy liquor"));
+        }
+        if (MedicineMenuPrefabItems.Count > 0)
+        {
+            options.Add(new Menu.Option(OpenMedicineItemMenu, "Buy medicine"));
+        }
         if (JobLocation.IsJobAvailableToday)
         {
             options.Add(new Menu.Option(ApplyForJob, "Apply for job"));
@@ -51,66 +73,62 @@ public class Supermarket : MonoBehaviour
         JobLocation.ApplyForJob();
         OpenMainMenu();
     }
-
-    void purchaseItemSelected()
+    
+    // Adds the given purchase items to the given menu.
+    void AddMenuOptions(List<InventoryItem> items, List<Menu.Option> options)
     {
-        if (!Main.Inventory.IsInventoryFull)
+        for (int i = 0; i < items.Count; i++)
         {
-            Main.PlayerState.Money -= WaterPrefab.GetItemValue();
-            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
+            InventoryItem item = items[i];
 
-            // Add item.
-            FoodItem item = Instantiate(WaterPrefab);
-            item.Main = Main;
-            Main.Inventory.AddItem(item);
+            // Use the purchase item name if available.
+            string name = item.PurchaseItemName;
+            if (name == "")
+            {
+                name = item.ItemName;
+            }
+            
+            // Add the option. Uses a closure to hold the item selected parameter.
+            options.Add(new Menu.Option(
+                () => purchaseItemSelected(item), 
+                name, item.GetItemValue(),
+                Main.PlayerState.CanAfford(item.GetItemValue())));
         }
-        else
-        {
-            Main.MessageBox.WarnInventoryFull(Main.Inventory);
-        }
-        OpenFoodMenu();
     }
 
     public void OpenFoodMenu()
     {
+        menu = MenuEnum.FOOD;
         List<Menu.Option> options = new List<Menu.Option>();
-        foreach (InventoryItem item in FoodMenuPrefabItems)
-        {
-            itemSelected = item;
-            options.Add(new Menu.Option(
-                purchaseItemSelected, item.ItemName, item.ItemValue, Main.PlayerState.CanAfford(item.ItemValue)));
-        }
+        AddMenuOptions(FoodMenuPrefabItems, options);
         options.Add(new Menu.Option(OnBackSelected, "Back"));
         Main.Menu.Show(options);
     }
 
     public void OpenOutdoorItemMenu()
     {
+        menu = MenuEnum.OUTDOOR_EQUIPMENT;
         List<Menu.Option> options = new List<Menu.Option>();
-        options.Add(new Menu.Option(
-            OnBuySleepingBag, "Buy a \"Pillow-Time\"(tm) sleeping bag", SleepingBagPrefab.GetItemValue(), Main.PlayerState.CanAfford(SleepingBagPrefab.GetItemValue())));
+        AddMenuOptions(OutdoorEquipmentMenuPrefabItems, options);
         options.Add(new Menu.Option(OnBackSelected, "Back"));
-
         Main.Menu.Show(options);
     }
 
     public void OpenLiquorItemMenu()
     {
+        menu = MenuEnum.LIQUOR;
         List<Menu.Option> options = new List<Menu.Option>();
-        options.Add(new Menu.Option(
-            OnBuyAlcohol, "Buy nice wine", AlcoholPrefab.GetItemValue(), Main.PlayerState.CanAfford(AlcoholPrefab.GetItemValue())));
+        AddMenuOptions(LiquorMenuPrefabItems, options);
         options.Add(new Menu.Option(OnBackSelected, "Back"));
-
         Main.Menu.Show(options);
     }
 
     public void OpenMedicineItemMenu()
     {
+        menu = MenuEnum.MEDICINE;
         List<Menu.Option> options = new List<Menu.Option>();
-        options.Add(new Menu.Option(
-            OnBuyAntiDepressant, "Buy anti-depressant", AntiDepressantPrefab.GetItemValue(), Main.PlayerState.CanAfford(AntiDepressantPrefab.GetItemValue())));
+        AddMenuOptions(MedicineMenuPrefabItems, options);
         options.Add(new Menu.Option(OnBackSelected, "Back"));
-
         Main.Menu.Show(options);
     }
 
@@ -118,186 +136,52 @@ public class Supermarket : MonoBehaviour
     {
         OpenMainMenu();
     }
-    
-    public void OnWaterSelected()
-    {
-    }
-
-    public void OnBreadSelected()
-    {
-        if (!Main.Inventory.IsInventoryFull)
-        {
-            Main.PlayerState.Money -= BreadPrefab.GetItemValue();
-            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
-
-            // Add item.
-            FoodItem item = Instantiate(BreadPrefab);
-            item.Main = Main;
-            Main.Inventory.AddItem(item);
-        }
-        else
-        {
-            Main.MessageBox.WarnInventoryFull(Main.Inventory);
-        }
-        OpenFoodMenu(); 
-    }
-
-    public void OnMandarinSelected()
-    {  
-        if (!Main.Inventory.IsInventoryFull)
-        {
-            Main.PlayerState.Money -= MandarinPrefab.GetItemValue();
-            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
-
-            // Add item.
-            FoodItem item = Instantiate(MandarinPrefab);
-            item.Main = Main;
-            Main.Inventory.AddItem(item);
-        }
-        else
-        {
-            Main.MessageBox.WarnInventoryFull(Main.Inventory);
-        }
-        OpenFoodMenu();
-    }
-
-    public void OnAppleSelected()
-    {
-        if (!Main.Inventory.IsInventoryFull)
-        {
-            Main.PlayerState.Money -= ApplePrefab.GetItemValue();
-            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
-
-            // Add item.
-            FoodItem item = Instantiate(ApplePrefab);
-            item.Main = Main;
-            Main.Inventory.AddItem(item);
-        }
-        else
-        {
-            Main.MessageBox.WarnInventoryFull(Main.Inventory);
-        }
-        OpenFoodMenu();
-    }
-
-    public void OnPotatoChipsSelected()
-    {
-        if (!Main.Inventory.IsInventoryFull)
-        {
-            Main.PlayerState.Money -= PotatoChipsPrefab.GetItemValue();
-            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
-
-            // Add item.
-            FoodItem item = Instantiate(PotatoChipsPrefab);
-            item.Main = Main;
-            Main.Inventory.AddItem(item);
-        }
-        else
-        {
-            Main.MessageBox.WarnInventoryFull(Main.Inventory);
-        }
-        OpenFoodMenu();
-    }
-
-    public void OnBiscuitsSelected()
-    {
-        if (!Main.Inventory.IsInventoryFull)
-        {
-            Main.PlayerState.Money -= BiscuitsPrefab.GetItemValue();
-            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
-
-            // Add item.
-            FoodItem item = Instantiate(BiscuitsPrefab);
-            item.Main = Main;
-            Main.Inventory.AddItem(item);
-        }
-        else
-        {
-            Main.MessageBox.WarnInventoryFull(Main.Inventory);
-        }
-        OpenFoodMenu();
-    }
-
-    public void OnChocolateBarSelected()
-    {
-        if (!Main.Inventory.IsInventoryFull)
-        {
-            Main.PlayerState.Money -= ChocolateBarPrefab.GetItemValue();
-            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
-
-            // Add item.
-            FoodItem item = Instantiate(ChocolateBarPrefab);
-            item.Main = Main;
-            Main.Inventory.AddItem(item);
-        }
-        else
-        {
-            Main.MessageBox.WarnInventoryFull(Main.Inventory);
-        }
-        OpenFoodMenu();
-    }
-
-    public void OnBuySleepingBag()
-    {
-        if (!Main.Inventory.IsInventoryFull)
-        {
-            Main.PlayerState.Money -= SleepingBagPrefab.GetItemValue();
-            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
-
-            // Add item.
-            SleepItem item = Instantiate(SleepingBagPrefab);
-            item.Main = Main;
-            Main.Inventory.AddItem(item);
-        }
-        else
-        {
-            Main.MessageBox.WarnInventoryFull(Main.Inventory);
-        }
-        OpenOutdoorItemMenu();
-    }
-
-    public void OnBuyAlcohol()
-    {
-        if (!Main.Inventory.IsInventoryFull)
-        {
-            Main.PlayerState.Money -= AlcoholPrefab.GetItemValue();
-            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
-
-            // Add item.
-            AlcoholItem item = Instantiate(AlcoholPrefab);
-            item.Main = Main;
-            Main.Inventory.AddItem(item);
-        }
-        else
-        {
-            Main.MessageBox.WarnInventoryFull(Main.Inventory);
-        }
-        OpenLiquorItemMenu();
-    }
-
-    public void OnBuyAntiDepressant()
-    {
-        if (!Main.Inventory.IsInventoryFull)
-        {
-            Main.PlayerState.Money -= AntiDepressantPrefab.GetItemValue();
-            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
-
-            // Add item.
-            AntiDepressant item = Instantiate(AntiDepressantPrefab);
-            item.Main = Main;
-            Main.Inventory.AddItem(item);
-        }
-        else
-        {
-            Main.MessageBox.WarnInventoryFull(Main.Inventory);
-        }
-        OpenMedicineItemMenu();
-    }
 
     public void OnTrigger()
     {
         JobLocation.CheckForJob(true);
         OpenMainMenu();
+    }
+
+    void purchaseItemSelected(InventoryItem itemSelected)
+    {
+        if (!Main.Inventory.IsInventoryFull)
+        {
+            Main.PlayerState.Money -= itemSelected.GetItemValue();
+            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
+
+            // Add item.
+            InventoryItem item = Instantiate(itemSelected);
+            item.Main = Main;
+            Main.Inventory.AddItem(item);
+        }
+        else
+        {
+            Main.MessageBox.WarnInventoryFull(Main.Inventory);
+        }
+        updateMenu();
+    }
+
+    void updateMenu()
+    {
+        switch (menu)
+        {
+            case MenuEnum.MAIN:
+                OpenMainMenu();
+                break;
+            case MenuEnum.FOOD:
+                OpenFoodMenu();
+                break;
+            case MenuEnum.OUTDOOR_EQUIPMENT:
+                OpenOutdoorItemMenu();
+                break;
+            case MenuEnum.LIQUOR:
+                OpenLiquorItemMenu();
+                break;
+            case MenuEnum.MEDICINE:
+                OpenMedicineItemMenu();
+                break;
+        }
     }
 
     void Reset()
