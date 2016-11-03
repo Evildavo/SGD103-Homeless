@@ -11,6 +11,7 @@ public class Begging : MonoBehaviour
     public Main Main;
     public Trigger Trigger;
     public WriteYourSign WriteYourSign;
+    public AudioClip[] CoinClips;
 
     public float MoraleLostPerHourBegging;
     public float CheckIntervalHours;
@@ -109,8 +110,10 @@ public class Begging : MonoBehaviour
                     float moneyEarned = Random.Range(MinAmountGained, MaxAmountGained);
                     totalMoneyEarned += moneyEarned;
 
-                    // Play audio here.
-                    // TODO.
+                    // Play random coin sound.
+                    var audio = GetComponent<AudioSource>();
+                    audio.clip = CoinClips[Random.Range(0, CoinClips.Length)];
+                    audio.Play();
 
                     // Display message that money was gained.
                     Main.MessageBox.SetMessage("Money gained");
