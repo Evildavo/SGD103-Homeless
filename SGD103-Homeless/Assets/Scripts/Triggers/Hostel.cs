@@ -8,7 +8,9 @@ public class Hostel : MonoBehaviour {
     bool isApplying;
     bool hasCheckedToday;
     bool hasFinishedApplying;
-    
+    bool inBusinessHours;
+    bool menuIsOpen;
+
     public Main Main;
     public Trigger Trigger;
 
@@ -17,27 +19,37 @@ public class Hostel : MonoBehaviour {
     public float ChanceApplicationSuccessful;
     public float MoraleRewardForSuccess;
     public float SleepQualityFactor;
+    [Range(0.0f, 24.0f)]
+    public float CanCheckOrApplyFromHour = 0.0f;
+    [Range(0.0f, 24.0f)]
+    public float CanCheckOrApplyToHour = 24.0f;
 
     [Space(10.0f)]
     public bool PlayerHasRoom;
 
     public void OpenMainMenu()
     {
+        menuIsOpen = true;
         List<Menu.Option> options = new List<Menu.Option>();
         if (!PlayerHasRoom)
         {
-            if (!hasFinishedApplying)
+            if (!inBusinessHours)
             {
-                options.Add(new Menu.Option(ApplyForHousing, "Apply for housing"));
+                options.Add(new Menu.Option(ApplyForHousing, "The hostel is closed", 0.0f, false));
+            }
+            else if (!hasFinishedApplying)
+            {
+                options.Add(new Menu.Option(ApplyForHousing, "Apply for housing", 0.0f));
             }
             else if (hasFinishedApplying)
             {
-                options.Add(new Menu.Option(CheckHousingApplicationSelected, "Check housing application", 0.0f, !hasCheckedToday));
+                options.Add(new Menu.Option(CheckHousingApplicationSelected, 
+                    "Check housing application", 0.0f, !hasCheckedToday));
             }
         }
         else
         {
-            options.Add(new Menu.Option(SleepInRoom, "Sleep in room"));
+            options.Add(new Menu.Option(SleepInRoom, "Sleep in room", 0.0f));
         }
         options.Add(new Menu.Option(OnExit, "Exit"));
 
@@ -73,6 +85,8 @@ public class Hostel : MonoBehaviour {
     public void SleepInRoom()
     {
         Main.SleepManager.Sleep(null, false, SleepQualityFactor);
+        menuIsOpen = false;
+        reset();
     }
 
     public void ApplyForHousing()
@@ -103,6 +117,28 @@ public class Hostel : MonoBehaviour {
         if (hasFinishedApplying && hasCheckedToday && Main.GameTime.Day != dayLastChecked)
         {
             hasCheckedToday = false;
+        }
+
+        // Determine if open today.
+        if (Main.GameTime.TimeOfDayHours > CanCheckOrApplyFromHour &&
+            Main.GameTime.TimeOfDayHours < CanCheckOrApplyToHour)
+        {
+            if (!inBusinessHours)
+            {
+                inBusinessHours = true;
+                if (menuIsOpen)
+                {
+                    OpenMainMenu();
+                }
+            }
+        }
+        else if (inBusinessHours)
+        {
+            inBusinessHours = false;
+            if (menuIsOpen)
+            {
+                OpenMainMenu();
+            }
         }
     }
 	
@@ -135,6 +171,7 @@ public class Hostel : MonoBehaviour {
     {
         Main.Menu.Hide();
         Trigger.Reset();
+        menuIsOpen = false;
     }
 
 }
