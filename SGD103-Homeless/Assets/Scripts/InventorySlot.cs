@@ -88,6 +88,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         isOver = true;
         if (Item && Main.ItemDescription)
         {
+            Main.ItemDescription.Source = Item.gameObject;
             updateItemDescription();
             Item.OnCursorEnter();
         }
@@ -112,6 +113,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (Item)
         {
             Item.OnCursorExit();
+            Main.ItemDescription.Source = null;
         }
     }
 

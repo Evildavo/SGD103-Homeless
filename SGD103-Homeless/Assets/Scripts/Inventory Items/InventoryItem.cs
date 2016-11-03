@@ -56,18 +56,7 @@ public class InventoryItem : MonoBehaviour
     }
 
     // Override to do something when the user moves the mouse over the item in the inventory.
-    // Call from derived.
-    public virtual void OnCursorEnter()
-    {
-        if (Main.ItemDescription)
-        {
-            Main.ItemDescription.Source = gameObject;
-        }
-        else
-        {
-            Main.ItemDescription.Source = null;
-        }
-    }
+    public virtual void OnCursorEnter() { }
 
     // Override to do something when the user moves the mouse away from the item in the inventory.
     public virtual void OnCursorExit() {}

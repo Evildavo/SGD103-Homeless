@@ -155,7 +155,6 @@ public class FoodItem : MultiUseItem
     // Call from derived.
     public override void OnCursorEnter()
     {
-        base.OnCursorEnter();
         if (ExpirationCategory == ExpirationCategoryEnum.NOT)
         {
             Main.ItemDescription.ItemName.color = Color.white;
