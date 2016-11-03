@@ -11,6 +11,7 @@ public class Supermarket : MonoBehaviour
         MAIN,
         FOOD,
         OUTDOOR_EQUIPMENT,
+        CLOTHING,
         LIQUOR,
         MEDICINE
     }
@@ -21,6 +22,7 @@ public class Supermarket : MonoBehaviour
     public JobLocation JobLocation;
     public List<InventoryItem> FoodMenuPrefabItems;
     public List<InventoryItem> OutdoorEquipmentMenuPrefabItems;
+    public List<InventoryItem> ClothingMenuPrefabItems;
     public List<InventoryItem> LiquorMenuPrefabItems;
     public List<InventoryItem> MedicineMenuPrefabItems;
 
@@ -44,6 +46,10 @@ public class Supermarket : MonoBehaviour
         if (OutdoorEquipmentMenuPrefabItems.Count > 0)
         {
             options.Add(new Menu.Option(OpenOutdoorItemMenu, "Buy outdoor equipment"));
+        }
+        if (ClothingMenuPrefabItems.Count > 0)
+        {
+            options.Add(new Menu.Option(OpenClothingItemMenu, "Buy clothing"));
         }
         if (LiquorMenuPrefabItems.Count > 0)
         {
@@ -114,6 +120,15 @@ public class Supermarket : MonoBehaviour
         Main.Menu.Show(options);
     }
 
+    public void OpenClothingItemMenu()
+    {
+        menu = MenuEnum.CLOTHING;
+        List<Menu.Option> options = new List<Menu.Option>();
+        AddMenuOptions(ClothingMenuPrefabItems, options);
+        options.Add(new Menu.Option(OnBackSelected, "Back"));
+        Main.Menu.Show(options);
+    }
+
     public void OpenLiquorItemMenu()
     {
         menu = MenuEnum.LIQUOR;
@@ -174,6 +189,9 @@ public class Supermarket : MonoBehaviour
                 break;
             case MenuEnum.OUTDOOR_EQUIPMENT:
                 OpenOutdoorItemMenu();
+                break;
+            case MenuEnum.CLOTHING:
+                OpenClothingItemMenu();
                 break;
             case MenuEnum.LIQUOR:
                 OpenLiquorItemMenu();
