@@ -35,7 +35,7 @@ public class Hostel : MonoBehaviour {
         {
             if (!inBusinessHours)
             {
-                options.Add(new Menu.Option(ApplyForHousing, "The hostel is closed", 0.0f, false));
+                options.Add(new Menu.Option(ApplyForHousing, "The hostel office is closed", 0.0f, false));
             }
             else if (!hasFinishedApplying)
             {
