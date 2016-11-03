@@ -44,33 +44,41 @@ public class Menu : MonoBehaviour
     {
         gameObject.SetActive(true);
         MenuOption[] menuOptions = GetComponentsInChildren<MenuOption>(true);
-
-        // Disable all menu options at first.
-        foreach (MenuOption menuOption in menuOptions)
+        
+        // Set up menu options.
+        if (options.Count <= menuOptions.Length)
         {
-            menuOption.gameObject.SetActive(false);
+            // Disable all menu options at first.
+            foreach (MenuOption menuOption in menuOptions)
+            {
+                menuOption.gameObject.SetActive(false);
+            }
+
+            // Set and enable options one by one.
+            int i = 0;
+            foreach (Option option in options)
+            {
+                menuOptions[i].OptionInfo = option;
+                menuOptions[i].OptionText.text = option.Name;
+
+                // Format as price if value is not zero.
+                if (option.Value != 0.0f)
+                {
+                    menuOptions[i].ValueText.text = "$" + option.Value.ToString("F2");
+                }
+                else
+                {
+                    menuOptions[i].ValueText.text = "";
+                }
+
+                // Enable option object.
+                menuOptions[i].gameObject.SetActive(true);
+                i++;
+            }
         }
-
-        // Set and enable options one by one.
-        int i = 0;
-        foreach (Option option in options)
+        else
         {
-            menuOptions[i].OptionInfo = option;
-            menuOptions[i].OptionText.text = option.Name;
-
-            // Format as price if value is not zero.
-            if (option.Value != 0.0f)
-            {
-                menuOptions[i].ValueText.text = "$" + option.Value.ToString("F2");
-            }
-            else
-            {
-                menuOptions[i].ValueText.text = "";
-            }
-
-            // Enable option object.
-            menuOptions[i].gameObject.SetActive(true);
-            i++;
+            Debug.LogError("Warning: There are no more menu slots left.");
         }
     }
 
