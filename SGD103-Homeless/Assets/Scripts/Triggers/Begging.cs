@@ -3,9 +3,10 @@ using System.Collections.Generic;
 
 public class Begging : MonoBehaviour
 {
-    float totalMoneyFound;
+    float totalMoneyEarned;
     bool hasChecked;
     float hourAtLastCheck;
+    float timeAtMoneyLastGained;
 
     public Main Main;
     public Trigger Trigger;
@@ -16,17 +17,23 @@ public class Begging : MonoBehaviour
     public float ChanceMoneyGainedAtCheck;
     public float MinAmountGained;
     public float MaxAmountGained;
-    
+    public float DisplayMoneyGainedMessageForSeconds;
+
     [Space(10.0f)]
     public bool IsBegging;
 
     public void StartBegging()
     {
         IsBegging = true;
-        totalMoneyFound = 0.0f;
+        totalMoneyEarned = 0.0f;
         Main.GameTime.AccelerateTime();
-        Main.MessageBox.Show("Begging... ", gameObject);
+        showBeggingMessage();
         openBeggingMenu();
+    }
+
+    void showBeggingMessage()
+    {
+        Main.MessageBox.Show("Begging... ", gameObject);
     }
     
     // Gets the menu for while we're begging.
@@ -47,16 +54,16 @@ public class Begging : MonoBehaviour
         }
 
         // Gain the money and report to the player.
-        Main.PlayerState.Money += totalMoneyFound;
-        if (totalMoneyFound > 0.0f)
+        Main.PlayerState.Money += totalMoneyEarned;
+        if (totalMoneyEarned > 0.0f)
         {
-            Main.MessageBox.ShowForTime("You earned $" + totalMoneyFound.ToString("f2"), 4.0f, gameObject);
+            Main.MessageBox.ShowForTime("You earned $" + totalMoneyEarned.ToString("f2"), 4.0f, gameObject);
         }
         else
         {
             Main.MessageBox.ShowForTime("You didn't get any money", 4.0f, gameObject);
         }
-        totalMoneyFound = 0.0f;
+        totalMoneyEarned = 0.0f;
     }
 
     void Start()
@@ -98,12 +105,23 @@ public class Begging : MonoBehaviour
                 // Check if we got any money.
                 if (Random.Range(0.0f, 1.0f) < ChanceMoneyGainedAtCheck)
                 {
-                    float moneyFound = Random.Range(MinAmountGained, MaxAmountGained);
-                    totalMoneyFound += moneyFound;
+                    float moneyEarned = Random.Range(MinAmountGained, MaxAmountGained);
+                    totalMoneyEarned += moneyEarned;
 
                     // Play audio here.
                     // TODO.
+
+                    // Display message that money was gained.
+                    Main.MessageBox.SetMessage("Money gained");
+                    timeAtMoneyLastGained = Main.GameTime.TimeOfDayHours;
                 }
+            }
+
+            // After money is gained change back to the regular searching message.
+            if (GameTime.TimeOfDayHoursDelta(timeAtMoneyLastGained, Main.GameTime.TimeOfDayHours).forward > 
+                DisplayMoneyGainedMessageForSeconds)
+            {
+                showBeggingMessage();
             }
         }
         else
