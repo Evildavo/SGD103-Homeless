@@ -4,9 +4,12 @@ using System.Collections.Generic;
 public class PlayerState : MonoBehaviour {
     float timeAtLastVomit;
     bool hasVomited = false;
-    float timeAtLastObjectiveSpawn;
-    bool hasSpawnedObjective = false;
+    float timeAtLastAlcoholObjectiveSpawn;
+    bool hasSpawnedAlcoholObjective = false;
     List<Objective> alcoholObjectives = new List<Objective>();
+    float timeAtLastCleanlinessObjectiveSpawn;
+    bool hasSpawnedCleanlinessObjective = false;
+    List<Objective> cleanlinessObjectives = new List<Objective>();
     bool hasStomachGrowled = false;
     float timeAtLastStomachGrowl;
     bool hasCoughed = false;
@@ -130,6 +133,8 @@ public class PlayerState : MonoBehaviour {
 
     [Space(10.0f)]
     public float ClothesDirtiedPerHourWorn;
+    public float UncleanlinessEffectsBelowLevel;
+    public float ObjectiveSpawnIntervalAtMaxUncleanlinessSeconds;
 
     [Space(10.0f)]
     public float StatTransitionSpeedPerHour = 1.0f;
@@ -156,6 +161,16 @@ public class PlayerState : MonoBehaviour {
             objective.Achieved = true;
         }
         alcoholObjectives.Clear();
+    }
+
+    // Completes all cleanliness objectives.
+    public void CompleteCleanlinessObjective()
+    {
+        foreach (Objective objective in cleanlinessObjectives)
+        {
+            objective.Achieved = true;
+        }
+        cleanlinessObjectives.Clear();
     }
 
     // Changes the morale level by the given amount. 
@@ -354,16 +369,33 @@ public class PlayerState : MonoBehaviour {
         {
             float addictionLevel = (Addiction - SpawnObjectivesAboveAddictionLevel) / (1.0f - SpawnObjectivesAboveAddictionLevel);
 
-            if (!hasSpawnedObjective || (addictionLevel != 0.0f &&
-                Time.time - timeAtLastObjectiveSpawn > ObjectiveSpawnIntervalAtMaxAddictionSeconds / addictionLevel))
+            if (!hasSpawnedAlcoholObjective || (addictionLevel != 0.0f &&
+                Time.time - timeAtLastAlcoholObjectiveSpawn > ObjectiveSpawnIntervalAtMaxAddictionSeconds / addictionLevel))
             {
-                hasSpawnedObjective = true;
-                timeAtLastObjectiveSpawn = Time.time;
+                hasSpawnedAlcoholObjective = true;
+                timeAtLastAlcoholObjectiveSpawn = Time.time;
                 
                 alcoholObjectives.Add(Main.ObjectiveList.NewObjective("Drink more alcohol"));
             }
         }
-        
+
+        // Handle uncleanliness.
+        if (CurrentClothingCleanliness < UncleanlinessEffectsBelowLevel)
+        {
+            float dirtinessLevel = 
+                (UncleanlinessEffectsBelowLevel - CurrentClothingCleanliness) / UncleanlinessEffectsBelowLevel;
+
+            // Spawn cleanliness objectives sometimes while clothes are dirty.
+            if (!hasSpawnedCleanlinessObjective || (dirtinessLevel != 0.0f && 
+                Time.time - timeAtLastCleanlinessObjectiveSpawn > ObjectiveSpawnIntervalAtMaxUncleanlinessSeconds / dirtinessLevel))
+            {
+                hasSpawnedCleanlinessObjective = true;
+                timeAtLastCleanlinessObjectiveSpawn = Time.time;
+
+                cleanlinessObjectives.Add(Main.ObjectiveList.NewObjective("Change into clean clothes"));
+            }
+        }
+
         // Handle poor health effects.
         if (HealthTiredness < PoorHealthEffectsBelowLevel)
         {

@@ -6,7 +6,8 @@ public class ClothingItem : InventoryItem
 {
     public float Cleanliness = 1.0f;
     Color baseIconColour = Color.white;
-    
+
+    public float TimeCostToChange;
     public float DisplayAsDirtyBelow;
     public float DisplayAsFilthyBelow;
     public Color DirtyTextColour = Color.white;
@@ -18,6 +19,12 @@ public class ClothingItem : InventoryItem
     // Call from derived.
     public override void OnPrimaryAction()
     {
+        // Complete the cleanliness objective.
+        Main.PlayerState.CompleteCleanlinessObjective();
+
+        // Apply the time cost.
+        Main.GameTime.SpendTime(TimeCostToChange);
+
         // Swap the selected clothes with what the player was wearing.
         if (Main.PlayerState.CurrentClothing)
         {
