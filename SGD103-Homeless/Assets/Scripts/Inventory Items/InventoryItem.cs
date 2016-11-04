@@ -19,6 +19,9 @@ public class InventoryItem : MonoBehaviour
     [Space(-10, order = 3)]
     [Header("set the Item reference in the Inventory Slot", order = 4)]
     public int InventoryIndex;
+
+    [Space(10.0f)]
+    [ReadOnly]
     public string SubDescription = "";
 
     // Puts the sub-description in brackets.
