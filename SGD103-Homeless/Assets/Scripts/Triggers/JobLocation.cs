@@ -307,7 +307,8 @@ public class JobLocation : MonoBehaviour
         }
                 
         // Show dismissed message and give final pay.
-        string message = "You have been dismissed from employment. Reason: " + reason + ".";
+        string message = "You have been dismissed from " + Name +
+                         ". Reason: " + reason + ".";
         if (payDue > 0.0f)
         {
             message += "Your pay comes to $" + payDue.ToString("f2");
