@@ -189,7 +189,6 @@ public class FoodItem : MultiUseItem
     // Call from derived.
     public override void OnCursorExit()
     {
-        base.OnCursorExit();
         Main.ItemDescription.ItemName.color = Color.white;
     }
 
