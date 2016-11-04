@@ -2,13 +2,23 @@
 using System.Collections.Generic;
 
 public class CoOpShelter : MonoBehaviour {
-    private bool inMainMenu = false;
-    private bool wasSoupKitchenOpen = false;
-    private bool wasCounsellingOpen = false;
-    private bool wasAddictionSupportOpen = false;
-    private float activeFromHour;
-    private float activeToHour;
-    
+    bool inMainMenu = false;
+    bool wasSoupKitchenOpen = false;
+    bool wasCounsellingOpen = false;
+    bool wasAddictionSupportOpen = false;
+    float activeFromHour;
+    float activeToHour;
+    MenuEnum menu;
+
+    enum MenuEnum
+    {
+        MAIN,
+        CO_OP,
+        FOOD,
+        OUTDOOR_EQUIPMENT,
+        CLOTHING
+    }
+
     public Main Main;
     public Trigger Trigger;
     public EventAtLocation SoupKitchenEvent;
@@ -16,8 +26,14 @@ public class CoOpShelter : MonoBehaviour {
     public EventAtLocation AddictionSupportEvent;
 
     public float TimeCostToReadNotice;
+    public List<InventoryItem> CoOpMenuPrefabItems;
+    [Header("Optionally use these sub-menus if there are too many items")]
+    public List<InventoryItem> FoodMenuPrefabItems;
+    public List<InventoryItem> OutdoorEquipmentMenuPrefabItems;
+    public List<InventoryItem> ClothingMenuPrefabItems;
+    public float TimeCostToPurchaseItem;
 
-	void Start ()
+    void Start ()
     {
         activeFromHour = Trigger.ActiveFromHour;
         activeToHour = Trigger.ActiveToHour;
@@ -30,8 +46,9 @@ public class CoOpShelter : MonoBehaviour {
 
     public void OpenMainMenu()
     {
+        menu = MenuEnum.MAIN;
         List<Menu.Option> options = new List<Menu.Option>();
-        /*options.Add(new Menu.Option(OpenCoOpShopMenu, "Co-op shop"));*/
+        options.Add(new Menu.Option(OpenCoOpShopMenu, "Co-op shop"));
         options.Add(new Menu.Option(ReadNoticeBoard, "Read notice board"));
         /*options.Add(new Menu.Option(RequestEmergencyAccomodation, "Request emergency accommodation"));*/
         if (SoupKitchenEvent && SoupKitchenEvent.IsOpen)
@@ -54,12 +71,75 @@ public class CoOpShelter : MonoBehaviour {
 
     public void OpenCoOpShopMenu()
     {
+        menu = MenuEnum.CO_OP;
         Main.MessageBox.ShowNext();
         List<Menu.Option> options = new List<Menu.Option>();
-        options.Add(new Menu.Option(OpenMainMenu, "Exit"));
+        AddMenuOptions(CoOpMenuPrefabItems, options);
+        if (FoodMenuPrefabItems.Count > 0)
+        {
+            options.Add(new Menu.Option(OpenFoodMenu, "Buy food"));
+        }
+        if (OutdoorEquipmentMenuPrefabItems.Count > 0)
+        {
+            options.Add(new Menu.Option(OpenOutdoorItemMenu, "Buy outdoor equipment"));
+        }
+        if (ClothingMenuPrefabItems.Count > 0)
+        {
+            options.Add(new Menu.Option(OpenClothingItemMenu, "Buy clothing"));
+        }
+        options.Add(new Menu.Option(OpenMainMenu, "Back"));
 
         Main.Menu.Show(options);
         inMainMenu = false;
+    }
+
+    // Adds the given purchase items to the given menu.
+    void AddMenuOptions(List<InventoryItem> items, List<Menu.Option> options)
+    {
+        for (int i = 0; i < items.Count; i++)
+        {
+            InventoryItem item = items[i];
+
+            // Use the purchase item name if available.
+            string name = item.PurchaseItemName;
+            if (name == "")
+            {
+                name = item.ItemName;
+            }
+
+            // Add the option. Uses a closure to hold the item selected parameter.
+            options.Add(new Menu.Option(
+                () => purchaseItemSelected(item),
+                name, item.GetItemValue(),
+                Main.PlayerState.CanAfford(item.GetItemValue())));
+        }
+    }
+    
+    public void OpenFoodMenu()
+    {
+        menu = MenuEnum.FOOD;
+        List<Menu.Option> options = new List<Menu.Option>();
+        AddMenuOptions(FoodMenuPrefabItems, options);
+        options.Add(new Menu.Option(OpenCoOpShopMenu, "Back"));
+        Main.Menu.Show(options);
+    }
+
+    public void OpenOutdoorItemMenu()
+    {
+        menu = MenuEnum.OUTDOOR_EQUIPMENT;
+        List<Menu.Option> options = new List<Menu.Option>();
+        AddMenuOptions(OutdoorEquipmentMenuPrefabItems, options);
+        options.Add(new Menu.Option(OpenCoOpShopMenu, "Back"));
+        Main.Menu.Show(options);
+    }
+
+    public void OpenClothingItemMenu()
+    {
+        menu = MenuEnum.CLOTHING;
+        List<Menu.Option> options = new List<Menu.Option>();
+        AddMenuOptions(ClothingMenuPrefabItems, options);
+        options.Add(new Menu.Option(OpenCoOpShopMenu, "Back"));
+        Main.Menu.Show(options);
     }
 
     public void ReadNoticeBoard()
@@ -190,13 +270,54 @@ public class CoOpShelter : MonoBehaviour {
         }
     }
 
+    void updateMenu()
+    {
+        switch (menu)
+        {
+            case MenuEnum.MAIN:
+                OpenMainMenu();
+                break;
+            case MenuEnum.CO_OP:
+                OpenCoOpShopMenu();
+                break;
+            case MenuEnum.FOOD:
+                OpenFoodMenu();
+                break;
+            case MenuEnum.OUTDOOR_EQUIPMENT:
+                OpenOutdoorItemMenu();
+                break;
+            case MenuEnum.CLOTHING:
+                OpenClothingItemMenu();
+                break;
+        }
+    }
+
     void reset()
     {
         Main.Menu.Hide();
         Main.MessageBox.ShowNext();
         Trigger.Reset();
     }
-    
+
+    void purchaseItemSelected(InventoryItem itemSelected)
+    {
+        if (!Main.Inventory.IsInventoryFull)
+        {
+            Main.PlayerState.Money -= itemSelected.GetItemValue();
+            Main.GameTime.SpendTime(TimeCostToPurchaseItem);
+
+            // Add item.
+            InventoryItem item = Instantiate(itemSelected);
+            item.Main = Main;
+            Main.Inventory.AddItem(item);
+        }
+        else
+        {
+            Main.MessageBox.WarnInventoryFull(Main.Inventory);
+        }
+        updateMenu();
+    }
+
     void Update()
     {
         // Set closing hours differently when an event is on.
