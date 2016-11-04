@@ -34,6 +34,12 @@ public class SleepHudButton : MonoBehaviour
 
     public void OnClick()
     {
+        // Close any triggers that are open.
+        if (Main.PlayerState.CurrentTrigger)
+        {
+            Main.PlayerState.CurrentTrigger.Close();
+        }
+
         Main.SleepManager.Sleep();
     }
 
