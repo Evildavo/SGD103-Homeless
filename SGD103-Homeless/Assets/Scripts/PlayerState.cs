@@ -134,8 +134,10 @@ public class PlayerState : MonoBehaviour {
     [Space(10.0f)]
     public float ClothesDirtiedPerHourWorn;
     public float UncleanlinessEffectsBelowLevel;
+    public float MaxUncleanlinessMoralePenaltyPerHour;
+    public float MaxUncleanlinessHealthPenaltyPerHour;
     public float ObjectiveSpawnIntervalAtMaxUncleanlinessSeconds;
-
+    
     [Space(10.0f)]
     public float StatTransitionSpeedPerHour = 1.0f;
 
@@ -379,11 +381,15 @@ public class PlayerState : MonoBehaviour {
             }
         }
 
-        // Handle uncleanliness.
+        // Handle uncleanliness effects.
         if (CurrentClothingCleanliness < UncleanlinessEffectsBelowLevel)
         {
             float dirtinessLevel = 
                 (UncleanlinessEffectsBelowLevel - CurrentClothingCleanliness) / UncleanlinessEffectsBelowLevel;
+
+            // Apply morale and health penalty.
+            Morale -= dirtinessLevel * MaxUncleanlinessMoralePenaltyPerHour * gameTimeDelta;
+            HealthTiredness -= dirtinessLevel * MaxUncleanlinessHealthPenaltyPerHour * gameTimeDelta;
 
             // Spawn cleanliness objectives sometimes while clothes are dirty.
             if (!hasSpawnedCleanlinessObjective || (dirtinessLevel != 0.0f && 
