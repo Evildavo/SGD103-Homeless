@@ -20,6 +20,8 @@ public class FoodItem : MultiUseItem
     public float TimeCostPerUse;
 
     [Header("Expiration settings.")]
+    public float RandomExpiryFromHours = 138.0f;
+    public float RandomExpiryToHours = 168.0f;
     public float HoursAfterExpiryBeforeMouldy = 6.0f;
     public float HoursAfterExpiryBeforeRancid = 24.0f;
     public string StaleDescription = "stale";
@@ -42,7 +44,7 @@ public class FoodItem : MultiUseItem
     public Color MouldyIconColour = Color.white;
     public Color RancidIconColour = Color.white;
     [ReadOnly]
-    public float HoursToExpiry = 168.0f;
+    public float HoursToExpiry;
     [ReadOnly]
     public ExpirationCategoryEnum ExpirationCategory;
     
@@ -185,6 +187,9 @@ public class FoodItem : MultiUseItem
     {
         base.Start();
         baseIconColour = GetComponent<Image>().color;
+
+        // Figure out the initial expiry date.
+        HoursToExpiry = Random.Range(RandomExpiryFromHours, RandomExpiryToHours);
     }
 
     // Call from derived.
