@@ -25,6 +25,7 @@ public class Begging : MonoBehaviour
     public bool BeggingAcceleratesTime = true;
     public bool OverrideAcceleratedTimeSpeed = false;
     public float AcceleratedTimeSpeed = 1.0f;
+    public bool ReportMoneyGainedDuringActivity = true;
 
     [Space(10.0f)]
     public bool IsBegging;
@@ -144,14 +145,20 @@ public class Begging : MonoBehaviour
                     audio.Play();
 
                     // Display message that money was gained.
-                    Main.MessageBox.SetMessage("Money gained");
-                    timeAtMoneyLastGained = Main.GameTime.TimeOfDayHours;
+                    if (ReportMoneyGainedDuringActivity)
+                    {
+                        Main.MessageBox.SetMessage("$" + moneyEarned.ToString("f2") + " gained");
+                    }
+                    else
+                    {
+                        Main.MessageBox.SetMessage("Money gained");
+                    }
+                    timeAtMoneyLastGained = Time.time;
                 }
             }
 
             // After money is gained change back to the regular searching message.
-            if (GameTime.TimeOfDayHoursDelta(timeAtMoneyLastGained, Main.GameTime.TimeOfDayHours).forward > 
-                DisplayMoneyGainedMessageForSeconds)
+            if (Time.time - timeAtMoneyLastGained > DisplayMoneyGainedMessageForSeconds)
             {
                 showBeggingMessage();
             }
