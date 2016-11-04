@@ -4,6 +4,9 @@ using System.Collections.Generic;
 public class Dumpster : MonoBehaviour {
     float hourAtLastSearch;
     bool isPlayerSearching;
+    float chanceLostFromItemsFound;
+    public float randomExpiryFrom;
+    public float randomExpiryTo;
 
     // Represents the chance that a particular item is found.
     [System.Serializable]
@@ -19,30 +22,57 @@ public class Dumpster : MonoBehaviour {
 
     public float MoralePenaltyForSearch;
     public float SearchTimeHours;
-    public float InitialChanceSomethingFound;
-    public float MinChanceSomethingFound;
-    public float MaxChanceSomethingFound;
+    [UnityEngine.Serialization.FormerlySerializedAs("BestTimesToSearch")]
+    public float[] GoodHoursToSearchFrom;
+    public float BestChanceSomethingFound;
+    public float WorstChanceSomethingFound;
+    public float TimeFromGoodHourBeforeChanceIsWorst;
+    public float TimeFromGoodHourBeforeExpiryIsWorst;
+    public float ChanceDecreaseWhenItemFound;
     [Header("Note: Chances are automatically normalized (so that they add to 1).")]
     public List<ItemProbability> ChanceItemsFound;
-    public float[] BestTimesToSearch;
-    public float ChanceDecreasePerHour;
-    public float ChanceDecreaseWhenItemFound;
-    public float MaxTimeToExpiryFound;
-    public float MaxTimeAfterExpiryFound;
-    [Header("Expiry bias decreases the chance food will be expired by the given percent")]
-    public float InitialExpiryBias;
-    public float MaxExpiryBias = 1.0f;
-    public float ExpiryBiasDecreasePerHour;
+    public float WorstExpiryFrom;
+    public float WorstExpiryTo;
+    public float BestExpiryFrom;
+    public float BestExpiryTo;
 
+    [Space(10.0f)]
     [ReadOnly]
     public float CurrentChance;
     [ReadOnly]
     public float CurrentExpiryBias;
 
+    void updateChance()
+    {
+        // Find the distance to the most recent good hour to search from.
+        float nearestDistance = float.MaxValue;
+        for (int i = 0; i < GoodHoursToSearchFrom.Length; i++)
+        {
+            float delta = GameTime.TimeOfDayHoursDelta(Main.GameTime.TimeOfDayHours,
+                                                       GoodHoursToSearchFrom[i]).backward;
+            if (delta < nearestDistance)
+            {
+                nearestDistance = delta;
+            }
+        }
+
+        // Calculate chance based on the distance to the most recent good hour to search.
+        CurrentChance = Mathf.Max(
+            WorstChanceSomethingFound +
+            (BestChanceSomethingFound - WorstChanceSomethingFound) *
+            (1.0f - nearestDistance / TimeFromGoodHourBeforeChanceIsWorst) -
+            chanceLostFromItemsFound,
+            WorstChanceSomethingFound);
+
+        // Calculate expiry factor based on the distance to the most recent good hour to search.
+        CurrentExpiryBias = Mathf.Max(
+            1.0f - nearestDistance / TimeFromGoodHourBeforeExpiryIsWorst,
+            0.0f);
+    }
+
     void Start()
     {
-        CurrentChance = InitialChanceSomethingFound;
-        CurrentExpiryBias = InitialExpiryBias;
+        updateChance();
 
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnTriggerUpdateListener(OnTriggerUpdate);
@@ -77,12 +107,12 @@ public class Dumpster : MonoBehaviour {
     public void OnTriggerUpdate()
     {
         // Stop searching after some time.
-        if (isPlayerSearching && 
+        if (isPlayerSearching &&
             GameTime.TimeOfDayHoursDelta(hourAtLastSearch, Main.GameTime.TimeOfDayHours).forward > SearchTimeHours)
         {
             Main.GameTime.ResetToNormalTime();
             isPlayerSearching = false;
-            
+
             // Determine if we found food
             if (Random.Range(0.0f, 1.0f) < CurrentChance && ChanceItemsFound.Count > 0)
             {
@@ -103,12 +133,15 @@ public class Dumpster : MonoBehaviour {
                                 // Add item.
                                 FoodItem item = Instantiate(itemFound);
                                 item.Main = Main;
-                                item.UpdateFoodExpiryCategory(makeFoodExpiry());
+                                item.RandomiseInitialExpiry = false;
+                                item.UpdateBaseColour();
+                                updateExpiryRandomRange();
+                                item.RandomiseExpiry(randomExpiryFrom, randomExpiryTo);
                                 Main.Inventory.AddItem(item);
 
                                 // Show message that we found the item.
                                 Main.MessageBox.ShowForTime(
-                                    "You found a " + item.ItemName + item.MakeSubDescription(), 
+                                    "You found a " + item.ItemName + item.MakeSubDescription(),
                                     null, gameObject);
                                 Reset();
                             }
@@ -117,7 +150,10 @@ public class Dumpster : MonoBehaviour {
                                 // Instantiate the item.
                                 FoodItem item = Instantiate(itemFound);
                                 item.Main = Main;
-                                item.UpdateFoodExpiryCategory(makeFoodExpiry());
+                                item.RandomiseInitialExpiry = false;
+                                item.UpdateBaseColour();
+                                updateExpiryRandomRange();
+                                item.RandomiseExpiry(randomExpiryFrom, randomExpiryTo);
 
                                 // If the inventory is full ask the player if they want to eat the food immediately.
                                 ConfirmationBox.OnChoiceMade onChoiceMade = (bool yes) =>
@@ -138,11 +174,7 @@ public class Dumpster : MonoBehaviour {
                             }
 
                             // Decrease the chance of finding an item again.
-                            CurrentChance -= ChanceDecreaseWhenItemFound;
-                            if (CurrentChance < MinChanceSomethingFound)
-                            {
-                                CurrentChance = MinChanceSomethingFound;
-                            }
+                            chanceLostFromItemsFound += ChanceDecreaseWhenItemFound;
                         }
                         break;
                     }
@@ -175,46 +207,27 @@ public class Dumpster : MonoBehaviour {
         Trigger.ResetWithCooloff();
     }
 
+    void updateExpiryRandomRange()
+    {
+        randomExpiryFrom = WorstExpiryFrom * (1.0f - CurrentExpiryBias) + BestExpiryFrom * CurrentExpiryBias;
+        randomExpiryTo = WorstExpiryTo * (1.0f - CurrentExpiryBias) + BestExpiryTo * CurrentExpiryBias;
+    }
+
     void Update()
     {
-        // Decrease the chance of an item being found over game-time.
-        if (CurrentChance > MinChanceSomethingFound)
-        {
-            CurrentChance -= ChanceDecreasePerHour * Main.GameTime.GameTimeDelta;
-            if (CurrentChance < MinChanceSomethingFound)
-            {
-                CurrentChance = MinChanceSomethingFound;
-            }
-        }
-
-        // Decrease the expiry bias over game-time. 
-        if (CurrentExpiryBias > 0.0f)
-        {
-            CurrentExpiryBias -= ExpiryBiasDecreasePerHour * Main.GameTime.GameTimeDelta;
-            if (CurrentExpiryBias < 0.0f)
-            {
-                CurrentExpiryBias = 0.0f;
-            }
-        }
-
-        // At good times to search maximise the chance of finding an item and its expiry time.
-        foreach (float hour in BestTimesToSearch)
+        // At good times to search maximise reset the chance decrease from finding items.
+        foreach (float hour in GoodHoursToSearchFrom)
         {
             if (GameTime.TimeOfDayHoursDelta(Main.GameTime.TimeOfDayHours, hour).shortest <= 
                 Main.GameTime.GameTimeDelta)
             {
-                CurrentChance = MaxChanceSomethingFound;
-                CurrentExpiryBias = MaxExpiryBias;
+                chanceLostFromItemsFound = 0.0f;
                 break;
             }
         }
-    }
-    
-    // Generates a random food expiry biased based on the current chance of finding an item.
-    float makeFoodExpiry()
-    {
-        return Random.Range(-MaxTimeAfterExpiryFound * (1.0f - CurrentExpiryBias), 
-                            MaxTimeToExpiryFound);
+
+        // Update chance an item is found and the expiry factor.
+        updateChance();
     }
 
 }

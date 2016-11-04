@@ -31,7 +31,9 @@ public class FoodExpiryTestTrigger : MonoBehaviour {
         {
             FoodItem item = Instantiate(FoodPrefab);
             item.Main = Main;
+            item.RandomiseInitialExpiry = false;
             item.HoursToExpiry = 24.0f;
+            item.UpdateBaseColour();
             Main.Inventory.AddItem(item);
         }
         else
@@ -47,7 +49,9 @@ public class FoodExpiryTestTrigger : MonoBehaviour {
         {
             FoodItem item = Instantiate(FoodPrefab);
             item.Main = Main;
+            item.RandomiseInitialExpiry = false;
             item.HoursToExpiry = -2.0f;
+            item.UpdateBaseColour();
             Main.Inventory.AddItem(item);
         }
         else
@@ -63,7 +67,9 @@ public class FoodExpiryTestTrigger : MonoBehaviour {
         {
             FoodItem item = Instantiate(FoodPrefab);
             item.Main = Main;
+            item.RandomiseInitialExpiry = false;
             item.HoursToExpiry = -12.0f;
+            item.UpdateBaseColour();
             Main.Inventory.AddItem(item);
         }
         else
@@ -79,7 +85,9 @@ public class FoodExpiryTestTrigger : MonoBehaviour {
         {
             FoodItem item = Instantiate(FoodPrefab);
             item.Main = Main;
+            item.RandomiseInitialExpiry = false;
             item.HoursToExpiry = -36.0f;
+            item.UpdateBaseColour();
             Main.Inventory.AddItem(item);
         }
         else

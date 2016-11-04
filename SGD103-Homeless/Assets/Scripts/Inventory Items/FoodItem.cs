@@ -4,7 +4,7 @@ using System.Collections;
 
 public class FoodItem : MultiUseItem
 {
-    Color baseIconColour;
+    Color baseIconColour = Color.white;
 
     // The category of being expired.
     public enum ExpirationCategoryEnum
@@ -20,8 +20,10 @@ public class FoodItem : MultiUseItem
     public float TimeCostPerUse;
 
     [Header("Expiration settings.")]
-    public float RandomExpiryFromHours = 138.0f;
-    public float RandomExpiryToHours = 168.0f;
+    public float HoursToExpiry;
+    public bool RandomiseInitialExpiry = true;
+    public float NormallyLastsFromHours = 138.0f;
+    public float NormallyLastsToHours = 168.0f;
     public float HoursAfterExpiryBeforeMouldy = 6.0f;
     public float HoursAfterExpiryBeforeRancid = 24.0f;
     public string StaleDescription = "stale";
@@ -44,31 +46,40 @@ public class FoodItem : MultiUseItem
     public Color MouldyIconColour = Color.white;
     public Color RancidIconColour = Color.white;
     [ReadOnly]
-    public float HoursToExpiry;
-    [ReadOnly]
     public ExpirationCategoryEnum ExpirationCategory;
-    
+
+    // Randomly generates an expiry time in the given range.
+    // Negative numbers are considered past expiry.
+    public void RandomiseExpiry(float fromHour, float toHour)
+    {
+        UpdateFoodExpiryCategory(Random.Range(fromHour, toHour));
+    }
+
     public void UpdateFoodExpiryCategory(float hoursToExpiry)
     {
         HoursToExpiry = hoursToExpiry;
         if (hoursToExpiry >= 0.0f)
         {
             SubDescription = "";
+            GetComponent<Image>().color = baseIconColour;
             ExpirationCategory = ExpirationCategoryEnum.NOT;
         }
         else if (hoursToExpiry > -HoursAfterExpiryBeforeMouldy)
         {
             SubDescription = StaleDescription;
+            GetComponent<Image>().color = baseIconColour * StaleIconColour;
             ExpirationCategory = ExpirationCategoryEnum.STALE;
         }
         else if (hoursToExpiry > -HoursAfterExpiryBeforeRancid)
         {
             SubDescription = MouldyDescription;
+            GetComponent<Image>().color = baseIconColour * MouldyIconColour;
             ExpirationCategory = ExpirationCategoryEnum.MOULDY;
         }
         else
         {
             SubDescription = RancidDescription;
+            GetComponent<Image>().color = baseIconColour * RancidIconColour;
             ExpirationCategory = ExpirationCategoryEnum.RANCID;
         }
     }
@@ -182,14 +193,20 @@ public class FoodItem : MultiUseItem
         Main.ItemDescription.ItemName.color = Color.white;
     }
 
+    public void UpdateBaseColour()
+    {
+        baseIconColour = GetComponent<Image>().color;
+    }
+
     // Call from derived.
     protected new void Start()
     {
         base.Start();
-        baseIconColour = GetComponent<Image>().color;
-
-        // Figure out the initial expiry date.
-        HoursToExpiry = Random.Range(RandomExpiryFromHours, RandomExpiryToHours);
+        UpdateBaseColour();
+        if (RandomiseInitialExpiry)
+        {
+            RandomiseExpiry(NormallyLastsFromHours, NormallyLastsToHours);
+        }
     }
 
     // Call from derived.
@@ -199,36 +216,6 @@ public class FoodItem : MultiUseItem
 
         // Increment expiry.
         HoursToExpiry -= Main.GameTime.GameTimeDelta;
-
-        // Update expiration category colour.
-        if (HoursToExpiry >= 0.0f)
-        {
-            if (ExpirationCategory != ExpirationCategoryEnum.NOT)
-            {
-                GetComponent<Image>().color = baseIconColour;
-            }
-        }
-        else if (HoursToExpiry > -HoursAfterExpiryBeforeMouldy)
-        {
-            if (ExpirationCategory != ExpirationCategoryEnum.STALE)
-            {
-                GetComponent<Image>().color = baseIconColour * StaleIconColour;
-            }
-        }
-        else if (HoursToExpiry > -HoursAfterExpiryBeforeRancid)
-        {
-            if (ExpirationCategory != ExpirationCategoryEnum.MOULDY)
-            {
-                GetComponent<Image>().color = baseIconColour * MouldyIconColour;
-            }
-        }
-        else
-        {
-            if (ExpirationCategory != ExpirationCategoryEnum.RANCID)
-            {
-                GetComponent<Image>().color = baseIconColour * RancidIconColour;
-            }
-        }
 
         // Update expiration category.
         UpdateFoodExpiryCategory(HoursToExpiry);
