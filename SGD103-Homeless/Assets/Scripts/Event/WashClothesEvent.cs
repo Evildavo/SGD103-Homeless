@@ -47,5 +47,11 @@ public class WashClothesEvent : EventAtLocation
 
     new void Update () {
         base.Update();
+
+        // Make sure modal mode stays on.
+        if (IsCurrentlyAttending)
+        {
+            Main.UI.EnableModalMode();
+        }
 	}
 }
