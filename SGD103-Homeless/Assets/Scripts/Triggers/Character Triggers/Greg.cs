@@ -49,7 +49,7 @@ public class Greg : Character
         {
             Speak("Sure can. What are you after?");
             AddCaptionChangeCue(2.0f, "Drugs perhaps?");
-            showBuySellMenu();
+            showMainMenu();
         }
         else if (response == PlayerCharacter.ResponseType.PRIDEFUL)
         {
@@ -60,7 +60,7 @@ public class Greg : Character
         {
             Speak("Hey, there's no need for that sort of attitude.");
             AddCaptionChangeCue(2.0f, "You look like you could use some drugs.");
-            showBuySellMenu();
+            showMainMenu();
         }
         else
         {
@@ -83,20 +83,33 @@ public class Greg : Character
         Main.Inventory.ExitSellMode();
     }
 
-    void showBuySellMenu()
+    void showMainMenu()
     {
-        Main.Inventory.EnterSellMode(onPlayerSellingItem);
-
         List<Menu.Option> options = new List<Menu.Option>();
-        options.Add(new Menu.Option(onBuyDrugsSelected, "Drugs", DrugsCost, Main.PlayerState.CanAfford(DrugsCost)));
-        options.Add(new Menu.Option(onBuyAlcoholSelected, "Cheap Alcohol", AlcoholCost, Main.PlayerState.CanAfford(AlcoholCost)));
+        options.Add(new Menu.Option(showSellMenu, "Sell item"));
+        options.Add(new Menu.Option(onBuyDrugsSelected, "Buy Drugs", DrugsCost, Main.PlayerState.CanAfford(DrugsCost)));
+        options.Add(new Menu.Option(onBuyAlcoholSelected, "Buy Cheap Alcohol", AlcoholCost, Main.PlayerState.CanAfford(AlcoholCost)));
         if (playerSoldWatch)
         {
             options.Add(new Menu.Option(onBuyWatchSelected, "Buy Watch", WatchBuyBackCost, Main.PlayerState.CanAfford(WatchBuyBackCost)));
         }
         options.Add(new Menu.Option(Reset, "Exit"));
-
         Main.Menu.Show(options);
+    }
+
+    void showSellMenu()
+    {
+        Main.Inventory.EnterSellMode(onPlayerSellingItem);
+
+        List<Menu.Option> options = new List<Menu.Option>();
+        options.Add(new Menu.Option(onExitSellMenu, "Back"));
+        Main.Menu.Show(options);
+    }
+
+    void onExitSellMenu()
+    {
+        Main.Inventory.ExitSellMode();
+        showMainMenu();
     }
 
     void onBuyDrugsSelected()
@@ -104,7 +117,7 @@ public class Greg : Character
         Main.MessageBox.ShowForTime("I just can't do that", null);
         //PlayerCharacter.Speak("I just can't do that");
         SonPhotoItem.ShowPhoto();
-        showBuySellMenu();
+        showMainMenu();
     }
 
     void onBuyAlcoholSelected()
@@ -128,7 +141,7 @@ public class Greg : Character
         {
             Main.MessageBox.WarnInventoryFull(Main.Inventory);
         }
-        showBuySellMenu();
+        showMainMenu();
     }
 
     void onBuyWatchSelected()
@@ -161,7 +174,7 @@ public class Greg : Character
         {
             Main.MessageBox.WarnInventoryFull(Main.Inventory);
         }
-        showBuySellMenu();
+        showMainMenu();
     }
 
     void onPlayerSellingItem(InventoryItem item)
@@ -185,7 +198,7 @@ public class Greg : Character
                 Main.GameTime.SpendTime(TimeCostForSellingItem);
 
                 Main.Inventory.RemoveItem(item);
-                showBuySellMenu();
+                showSellMenu();
             }
         };
         Main.ConfirmationBox.Open(onChoice, 
