@@ -43,7 +43,9 @@ public class JobLocation : MonoBehaviour
         public GameTime.DayOfTheWeekEnum WorkFromDay;
         public GameTime.DayOfTheWeekEnum WorkToDay;
         [Header("Note: Supports wrapping over (e.g. 11pm to 2am)")]
+        [Range(0.0f, 24.0f)]
         public float ShiftFromHour;
+        [Range(0.0f, 24.0f)]
         public float ShiftToHour;
         public GameTime.DayOfTheWeekEnum PayDay;
         public float PayTime;
