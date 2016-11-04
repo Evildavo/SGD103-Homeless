@@ -13,6 +13,7 @@ public class Hostel : MonoBehaviour {
 
     public Main Main;
     public Trigger Trigger;
+    public WashClothesEvent WashClothesEvent;
 
     public float ApplyingTimeHours;
     public float TimeCostForCheckingHousingApplication;
@@ -49,7 +50,8 @@ public class Hostel : MonoBehaviour {
         }
         else
         {
-            options.Add(new Menu.Option(SleepInRoom, "Sleep in room", 0.0f));
+            options.Add(new Menu.Option(SleepInRoom, "Sleep in room"));
+            options.Add(new Menu.Option(WashClothes, "Wash clothes"));
         }
         options.Add(new Menu.Option(OnExit, "Exit"));
 
@@ -87,6 +89,12 @@ public class Hostel : MonoBehaviour {
         Main.SleepManager.Sleep(null, false, SleepQualityFactor);
         menuIsOpen = false;
         reset();
+    }
+
+    public void WashClothes()
+    {
+        WashClothesEvent.Attend();
+        menuIsOpen = false;
     }
 
     public void ApplyForHousing()

@@ -13,6 +13,7 @@ public class MotelDiner : MonoBehaviour
     public JobTrigger JobTrigger;
     public JobLocation JobLocation;
     public EatAtDinerEvent EatAtDiner;
+    public WashClothesEvent WashClothesEvent;
 
     public float LeaveRoomByHour = 8.0f;
     public float RoomCostPerNight;
@@ -37,6 +38,7 @@ public class MotelDiner : MonoBehaviour
         if (RoomRented)
         {
             options.Add(new Menu.Option(sleepRoom, "Sleep in room"));
+            options.Add(new Menu.Option(WashClothes, "Wash clothes"));
         }
         else if (Main.GameTime.TimeOfDayHours >= LeaveRoomByHour)
         {
@@ -87,6 +89,12 @@ public class MotelDiner : MonoBehaviour
     {
         JobLocation.ApplyForJob();
         OpenMainMenu();
+    }
+
+    public void WashClothes()
+    {
+        WashClothesEvent.Attend();
+        mainMenuOpen = false;
     }
 
     void rentRoom()

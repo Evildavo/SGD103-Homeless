@@ -17,6 +17,7 @@ public class EventAtLocation : MonoBehaviour {
     public float AttendanceTimeScale = 1.0f;
     [Header("Leave as zero to stay until the event closes.")]
     public float DurationPerVisitHours = 0.0f;
+    public bool CanPlayerInterrupt = true;
 
     [Space(10)]
     public bool IsCurrentlyAttending = false;
@@ -37,7 +38,7 @@ public class EventAtLocation : MonoBehaviour {
         Main.ScreenFader.fadeIn = false;
         Invoke("OnFadeOutComplete", FadeToBlackTime);
 
-        // Hide UI.
+        // Hide UI and activate modal mode.
         Main.UI.Hide();
 
         OnPlayerAttends();
@@ -50,7 +51,7 @@ public class EventAtLocation : MonoBehaviour {
         Main.GameTime.ResetToNormalTime();
         Main.MessageBox.Hide();
 
-        // Show UI.
+        // Show UI and disable modal mode.
         Main.UI.Show();
 
         // Fade in from black.
@@ -63,11 +64,12 @@ public class EventAtLocation : MonoBehaviour {
 
     public bool ExitPressed()
     {
-        return Input.GetButtonDown("Secondary") ||
-               Input.GetKeyDown("e") ||
-               Input.GetKeyDown("enter") ||
-               Input.GetKeyDown("return") ||
-               Input.GetKeyDown("space");
+        return CanPlayerInterrupt &&
+               (Input.GetButtonDown("Secondary") ||
+                Input.GetKeyDown("e") ||
+                Input.GetKeyDown("enter") ||
+                Input.GetKeyDown("return") ||
+                Input.GetKeyDown("space"));
     }
 
     // Override to do something when the player attends the event.
