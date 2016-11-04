@@ -26,9 +26,6 @@ public class ClothingItem : InventoryItem
         Main.Inventory.RemoveItem(this, false);
         transform.SetParent(Main.PlayerState.transform);
         Main.PlayerState.CurrentClothing = this;
-
-        // Update cleanliness.
-        //...
     }
     
     // Call from derived.
@@ -77,6 +74,9 @@ public class ClothingItem : InventoryItem
             {
                 Cleanliness = 0.0f;
             }
+
+            // Update cleanliness in player state.
+            Main.PlayerState.CurrentClothingCleanliness = Cleanliness;
         }
         
         // Update the icon colour and text depending on filthiness.
