@@ -56,7 +56,7 @@ public class PlayerState : MonoBehaviour {
     [Range(0.0f, 1.0f)]
     public float CurrentClothingCleanliness = 1.0f;
     public bool IsDepressionTreated = true;
-
+    
     [Header("Settings:")] 
     public float NutritionLossPerHour = 0.0f;        
     public float HealthLossPerHour = 0.0f;
@@ -137,7 +137,8 @@ public class PlayerState : MonoBehaviour {
     [Space(10.0f)]
     public Trigger CurrentTrigger;
     public Begging CurrentBeggingSpot;
-
+    public ClothingItem CurrentClothing;
+    
     // Returns true if the player can currently afford the given price.
     public bool CanAfford(float price)
     {

@@ -189,8 +189,7 @@ public class Inventory : MonoBehaviour
     }
 
     // Removes the item and moves other items to fill the gaps.
-    // Warning: Currently also destroys the object.
-    public void RemoveItem(InventoryItem item)
+    public void RemoveItem(InventoryItem item, bool alsoDestroy = true)
     {
         if (HasItem(item))
         {
@@ -221,7 +220,10 @@ public class Inventory : MonoBehaviour
             }
 
             // Destroy the object.
-            Destroy(item.gameObject);
+            if (alsoDestroy)
+            {
+                Destroy(item.gameObject);
+            }
 
             // Update the description for the slot now under the cursor.
             if (slot.Item)
