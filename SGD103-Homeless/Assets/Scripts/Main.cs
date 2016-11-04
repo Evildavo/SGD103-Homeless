@@ -23,5 +23,6 @@ public class Main : MonoBehaviour {
     public PlayerCharacter PlayerCharacter;
     public PlayerState PlayerState;
     public PlayerSleepManager SleepManager;
+    public Transform ZoneContainer;
 
 }

@@ -137,7 +137,8 @@ public class PlayerState : MonoBehaviour {
     public float MaxUncleanlinessMoralePenaltyPerHour;
     public float MaxUncleanlinessHealthPenaltyPerHour;
     public float ObjectiveSpawnIntervalAtMaxUncleanlinessSeconds;
-    
+    public float ChanceOfBeingWokenChangingInPublic = 1.0f;
+
     [Space(10.0f)]
     public float StatTransitionSpeedPerHour = 1.0f;
 
