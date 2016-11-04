@@ -8,7 +8,7 @@ public class ResumeItem : MultiUseItem
 
     public override void OnPrimaryAction()
     {
-        Main.MessageBox.ShowForTime("[Insert backstory here]", 2.0f, gameObject);
+        Main.MessageBox.ShowForTime("[Insert backstory here]", null, gameObject);
     }
 
     new void Start()

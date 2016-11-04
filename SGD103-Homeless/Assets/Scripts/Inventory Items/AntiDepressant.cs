@@ -33,7 +33,7 @@ public class AntiDepressant : MultiUseItem
         // Warn to only take once per day.
         else
         {
-            Main.MessageBox.ShowForTime("Only take ONE per day", 2.0f, gameObject);
+            Main.MessageBox.ShowForTime("Only take ONE per day", null, gameObject);
         }
     }
 

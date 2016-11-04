@@ -10,7 +10,7 @@ public class EatAtDinerEvent : EventAtLocation {
     {
         Main.PlayerState.ChangeNutrition(NutritionReward);
 
-        Main.MessageBox.ShowForTime("You feel enlivened after a good feed", 2.0f, gameObject);
+        Main.MessageBox.ShowForTime("You feel enlivened after a good feed", null, gameObject);
 
         MotelDiner diner = GetComponentInParent<MotelDiner>();
         if (diner && diner.Trigger.IsActivated)

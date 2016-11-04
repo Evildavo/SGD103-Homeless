@@ -212,37 +212,37 @@ public class CoOpShelter : MonoBehaviour {
         bool serviceClosed = false;
         if (!wasSoupKitchenOpen && SoupKitchenEvent && SoupKitchenEvent.IsOpen)
         {
-            Main.MessageBox.ShowForTime("The soup kitchen has opened for today", 4.0f, gameObject);
+            Main.MessageBox.ShowForTime("The soup kitchen has opened for today", null, gameObject);
             wasSoupKitchenOpen = true;
             serviceOpened = true;
         }
         else if (wasSoupKitchenOpen && SoupKitchenEvent && !SoupKitchenEvent.IsOpen)
         {
-            Main.MessageBox.ShowQueued("The soup kitchen has closed for today", 4.0f, gameObject);
+            Main.MessageBox.ShowQueued("The soup kitchen has closed for today", null, gameObject);
             wasSoupKitchenOpen = false;
             serviceClosed = true;
         }
         if (!wasCounsellingOpen && CounsellingEvent && CounsellingEvent.IsOpen)
         {
-            Main.MessageBox.ShowForTime("Counselling services have opened for today", 4.0f, gameObject);
+            Main.MessageBox.ShowForTime("Counselling services have opened for today", null, gameObject);
             wasCounsellingOpen = true;
             serviceOpened = true;
         }
         else if (wasCounsellingOpen && CounsellingEvent && !CounsellingEvent.IsOpen)
         {
-            Main.MessageBox.ShowQueued("Counselling services have closed for today", 4.0f, gameObject);
+            Main.MessageBox.ShowQueued("Counselling services have closed for today", null, gameObject);
             wasCounsellingOpen = false;
             serviceClosed = true;
         }
         if (!wasAddictionSupportOpen && AddictionSupportEvent && AddictionSupportEvent.IsOpen)
         {
-            Main.MessageBox.ShowForTime("Addiction support therapy has opened for tonight", 4.0f, gameObject);
+            Main.MessageBox.ShowForTime("Addiction support therapy has opened for tonight", null, gameObject);
             wasAddictionSupportOpen = true;
             serviceOpened = true;
         }
         else if (wasAddictionSupportOpen && AddictionSupportEvent && !AddictionSupportEvent.IsOpen)
         {
-            Main.MessageBox.ShowQueued("Addiction support therapy has closed for tonight", 4.0f, gameObject);
+            Main.MessageBox.ShowQueued("Addiction support therapy has closed for tonight", null, gameObject);
             wasAddictionSupportOpen = false;
             serviceClosed = true;
         }

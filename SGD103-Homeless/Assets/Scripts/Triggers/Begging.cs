@@ -67,11 +67,11 @@ public class Begging : MonoBehaviour
         Main.PlayerState.Money += totalMoneyEarned;
         if (totalMoneyEarned > 0.0f)
         {
-            Main.MessageBox.ShowForTime("You earned $" + totalMoneyEarned.ToString("f2"), 4.0f, gameObject);
+            Main.MessageBox.ShowForTime("You earned $" + totalMoneyEarned.ToString("f2"), null, gameObject);
         }
         else
         {
-            Main.MessageBox.ShowForTime("You didn't get any money", 4.0f, gameObject);
+            Main.MessageBox.ShowForTime("You didn't get any money", null, gameObject);
         }
         totalMoneyEarned = 0.0f;
     }

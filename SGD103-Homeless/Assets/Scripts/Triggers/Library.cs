@@ -122,7 +122,7 @@ public class Library : MonoBehaviour {
         if (!Trigger.IsInActiveHour)
         {
             Reset();
-            Main.MessageBox.ShowQueued("Library has closed.", 2.0f, gameObject);
+            Main.MessageBox.ShowQueued("Library has closed.", null, gameObject);
         }
 
         // Show warning when the library is about to close.
@@ -132,7 +132,7 @@ public class Library : MonoBehaviour {
             if (!hasWarnedAboutClosing &&
                 Mathf.Abs(Main.GameTime.TimeOfDayHours - Trigger.ActiveToHour) <= CLOSE_WARNING_GAME_HOURS)
             {
-                Main.MessageBox.ShowForTime("Library will be closing in 1 hour", 2.0f, gameObject, true);
+                Main.MessageBox.ShowForTime("Library will be closing in 1 hour", null, gameObject, true);
                 hasWarnedAboutClosing = true;
             }
         }
@@ -177,7 +177,7 @@ public class Library : MonoBehaviour {
             // Report no jobs found.
             if (!jobAvailable)
             {
-                Main.MessageBox.ShowForTime("You didn't find any jobs today.", 2.0f, gameObject);
+                Main.MessageBox.ShowForTime("You didn't find any jobs today.", null, gameObject);
                 Main.Menu.Show(getMainMenu());
             }
 

@@ -16,7 +16,7 @@ public class SoupKitchenEvent : EventAtLocation {
     {
         if (hoursSpent > 0.7f)
         {
-            Main.MessageBox.ShowForTime("You feel enlivened after a good feed", 2.0f, gameObject);
+            Main.MessageBox.ShowForTime("You feel enlivened after a good feed", null, gameObject);
         }
     }
 

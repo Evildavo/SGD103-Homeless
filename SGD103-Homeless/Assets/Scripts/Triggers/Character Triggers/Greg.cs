@@ -101,7 +101,7 @@ public class Greg : Character
 
     void onBuyDrugsSelected()
     {
-        Main.MessageBox.ShowForTime("I just can't do that", 2.0f);
+        Main.MessageBox.ShowForTime("I just can't do that", null);
         //PlayerCharacter.Speak("I just can't do that");
         SonPhotoItem.ShowPhoto();
         showBuySellMenu();

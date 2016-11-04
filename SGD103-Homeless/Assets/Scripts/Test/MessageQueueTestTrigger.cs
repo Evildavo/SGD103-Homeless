@@ -52,39 +52,39 @@ public class MessageQueueTestTrigger : MonoBehaviour
 
     void onRegularMessageSelected()
     {
-        Main.MessageBox.ShowForTime("Test alert message", 2.0f, gameObject);
+        Main.MessageBox.ShowForTime("Test alert message", null, gameObject);
         showingSustainedMessage = false;
         showMainMenu();
     }
 
     void onWarningMessageSelected()
     {
-        Main.MessageBox.ShowForTime("Test warning message", 2.0f, gameObject, true);
+        Main.MessageBox.ShowForTime("Test warning message", null, gameObject, true);
         showingSustainedMessage = false;
         showMainMenu();
     }
 
     void onQueuedMessage1Selected()
     {
-        Main.MessageBox.ShowQueued("Test queued message 1", 2.0f, gameObject);
+        Main.MessageBox.ShowQueued("Test queued message 1", null, gameObject);
         showMainMenu();
     }
 
     void onQueuedMessage2Selected()
     {
-        Main.MessageBox.ShowQueued("Test queued message 2", 4.0f, gameObject);
+        Main.MessageBox.ShowQueued("Test queued message 2", null, gameObject);
         showMainMenu();
     }
 
     void onQueuedMessage3Selected()
     {
-        Main.MessageBox.ShowQueued("Test queued message 3", 2.0f, gameObject, true);
+        Main.MessageBox.ShowQueued("Test queued message 3", null, gameObject, true);
         showMainMenu();
     }
 
     void onNotificationMessageSelected()
     {
-        Main.MessageBox.ShowForTime("Test notification message", 2.0f, gameObject);
+        Main.MessageBox.ShowForTime("Test notification message", null, gameObject);
         showingSustainedMessage = false;
         showMainMenu();
     }

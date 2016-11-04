@@ -218,7 +218,7 @@ public class Supermarket : MonoBehaviour
         if (JobLocation.CanWorkNow)
         {
             Reset();
-            Main.MessageBox.ShowForTime("Work is about to start.", 2.0f, gameObject);
+            Main.MessageBox.ShowForTime("Work is about to start.", null, gameObject);
         }
     }
 

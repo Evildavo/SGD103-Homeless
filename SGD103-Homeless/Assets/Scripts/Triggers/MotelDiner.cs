@@ -147,7 +147,7 @@ public class MotelDiner : MonoBehaviour
         if (JobLocation.CanWorkNow)
         {
             Reset();
-            Main.MessageBox.ShowForTime("Work is about to start.", 2.0f, gameObject);
+            Main.MessageBox.ShowForTime("Work is about to start.", null, gameObject);
         }
     }
 
@@ -189,7 +189,7 @@ public class MotelDiner : MonoBehaviour
             }
             else
             {
-                Main.MessageBox.ShowForTime("You no longer have access to the room", 3.0f, gameObject);
+                Main.MessageBox.ShowForTime("You no longer have access to the room", null, gameObject);
             }
         }
 

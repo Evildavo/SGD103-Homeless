@@ -31,11 +31,25 @@ public class MessageBox : MonoBehaviour
     public Image WarningSymbolLeft;
     public Image WarningSymbolRight;
 
+    [Header("Settings for calculating message display time")]
+    public float SecondsPerTextCharacter = 0.08f;
+    public float MinimumCalculatedMessageTime = 1.2f;
+    [Header("Gap between queued messages being shown")]
+    public float QueuedMessageDelaySeconds = 0.15f;
+
+    [Space(10.0f)]
     public bool IsWarning = false;
     [ReadOnly]
     public GameObject Source;
-    [Header("A gap between queued messages being shown")]
-    public float QueuedMessageDelaySeconds = 0.15f;
+    
+    // Returns an appropriate number seconds to show the message based on the text.
+    float calculateMessageLength(string text)
+    {
+        // Calculate from text.
+        float length = text.Length * SecondsPerTextCharacter;
+        length = Mathf.Max(length, MinimumCalculatedMessageTime);
+        return length;
+    }
 
     void updateWarning()
     {
@@ -79,7 +93,7 @@ public class MessageBox : MonoBehaviour
     // Give a reference to the inventory to open a preview of the inventory.
     public void WarnInventoryFull(Inventory inventory = null)
     {
-        ShowForTime("You don't have room in your inventory", 2.0f, null, true);
+        ShowForTime("You don't have room in your inventory", null, null, true);
         if (inventory)
         {
             inventory.ShowPreview();
@@ -96,9 +110,10 @@ public class MessageBox : MonoBehaviour
     }
 
     // Shows the message box for a number of seconds before closing, interrupting any currently shown message.
+    // If seconds is null then the duration is calculated automatically based on the message text.
     // @remark Generally used to respond to a player's action (e.g. "You feel full" after eating an item),
     // or for an urgent alerts that can't be waited for.
-    public void ShowForTime(string message, float seconds, 
+    public void ShowForTime(string message, float? seconds = null, 
                             GameObject source = null, 
                             bool isWarning = false,
                             Color? textColour = null)
@@ -110,16 +125,37 @@ public class MessageBox : MonoBehaviour
         else
         {
             MainText.color = Color.white;
+        }       
+
+        float duration;
+        if (seconds.HasValue)
+        {
+            duration = seconds.Value;
         }
-        displayMessage(new Message(message, seconds, source, isWarning));
+        else
+        {
+            duration = calculateMessageLength(message);
+        }
+        displayMessage(new Message(message, duration, source, isWarning));
     }
 
     // Adds the message to the message queue, to be showed after any currently shown messages are finished.
     // @remark Generally used to notify the player of something (e.g. "The library will close shortly").
-    public void ShowQueued(string message, float seconds, GameObject source = null, bool isWarning = false)
+    public void ShowQueued(string message, float? seconds = null, 
+                           GameObject source = null, bool isWarning = false)
     {
+        float duration;
+        if (seconds.HasValue)
+        {
+            duration = seconds.Value;
+        }
+        else
+        {
+            duration = calculateMessageLength(message);
+        }
+
         // Add message to queue.
-        messageQueue.Enqueue(new Message(message, seconds, source, isWarning));
+        messageQueue.Enqueue(new Message(message, duration, source, isWarning));
 
         // Display the first message if none is displayed.
         if (!IsDisplayed() && messageQueue.Count > 0)

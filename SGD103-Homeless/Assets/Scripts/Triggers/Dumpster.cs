@@ -109,7 +109,7 @@ public class Dumpster : MonoBehaviour {
                                 // Show message that we found the item.
                                 Main.MessageBox.ShowForTime(
                                     "You found a " + item.ItemName + item.MakeSubDescription(), 
-                                    3.0f, gameObject);
+                                    null, gameObject);
                                 Reset();
                             }
                             else
@@ -156,7 +156,7 @@ public class Dumpster : MonoBehaviour {
             }
             else
             {
-                Main.MessageBox.ShowForTime("You didn't find anything", 3.0f, gameObject);
+                Main.MessageBox.ShowForTime("You didn't find anything", null, gameObject);
                 Reset();
             }
         }

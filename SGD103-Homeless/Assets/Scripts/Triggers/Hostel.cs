@@ -72,12 +72,12 @@ public class Hostel : MonoBehaviour {
         {
             PlayerHasRoom = true;
             Main.PlayerState.ChangeMorale(MoraleRewardForSuccess);
-            Main.MessageBox.ShowForTime("Application successful. You can sleep here from now on.", 5.0f, gameObject);
+            Main.MessageBox.ShowForTime("Application successful. You can sleep here from now on.", null, gameObject);
             OpenMainMenu();
         }
         else
         {
-            Main.MessageBox.ShowForTime("Nothing is available today. Check back again tomorrow.", 5.0f, gameObject);
+            Main.MessageBox.ShowForTime("Nothing is available today. Check back again tomorrow.", null, gameObject);
             reset();
         }
     }

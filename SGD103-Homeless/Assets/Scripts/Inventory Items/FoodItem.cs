@@ -130,20 +130,20 @@ public class FoodItem : MultiUseItem
         {
             if (PlayerState.Nutrition + NutritionBenefitPerUse > 0.6f)
             {
-                MessageBox.ShowForTime("You feel full", 2.0f, gameObject);
+                MessageBox.ShowForTime("You feel full", null, gameObject);
             }
             else if (PlayerState.Nutrition + NutritionBenefitPerUse > 0.4f)
             {
-                MessageBox.ShowForTime("You needed that", 2.0f, gameObject);
+                MessageBox.ShowForTime("You needed that", null, gameObject);
             }
             else
             {
-                MessageBox.ShowForTime("You're still hungry", 2.0f, gameObject);
+                MessageBox.ShowForTime("You're still hungry", null, gameObject);
             }
         }
         else
         {
-            MessageBox.ShowForTime("That food made you feel sick", 3.0f, gameObject);
+            MessageBox.ShowForTime("That food made you feel sick", null, gameObject);
         }
 
         // Consume item.

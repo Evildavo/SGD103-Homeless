@@ -312,7 +312,7 @@ public class JobLocation : MonoBehaviour
             payDue = 0.0f;
             hoursWorkedThisWeek = 0.0f;
         }
-        Main.MessageBox.ShowQueued(message, 6.0f, gameObject);
+        Main.MessageBox.ShowQueued(message, null, gameObject);
 
         // Receive morale penalty.
         Main.PlayerState.ChangeMorale(-MoralePenaltyForDismissal);
@@ -474,7 +474,7 @@ public class JobLocation : MonoBehaviour
             Main.PlayerState.Money += payDue;
             payDue = 0.0f;
             hoursWorkedThisWeek = 0.0f;
-            Main.MessageBox.ShowQueued(message, 7.0f, gameObject);
+            Main.MessageBox.ShowQueued(message, null, gameObject);
         }
 
         if (IsPlayerAtWork)
@@ -524,7 +524,7 @@ public class JobLocation : MonoBehaviour
                             pay.ToString("f2") + " (to be payed on " +
                             GameTime.DayOfTheWeekAsShortString(Job.PayDay) + " at " +
                             GameTime.GetTimeAsString(Job.PayTime) + ")";
-        MessageBox.ShowForTime(message, 5.0f, gameObject);
+        MessageBox.ShowForTime(message, null, gameObject);
 
         // Handle warning notices for lateness to work.
         if (playerStartedLate)
@@ -540,7 +540,7 @@ public class JobLocation : MonoBehaviour
             else
             {
                 playerOnNoticeForReasons.Add(NoticeReason.LATE_FOR_WORK);
-                MessageBox.ShowQueued("Warning Notice: You started work late today.", 3.0f, gameObject, true);
+                MessageBox.ShowQueued("Warning Notice: You started work late today.", null, gameObject, true);
                 numNoticesReceived++;
             }
         }
@@ -565,7 +565,7 @@ public class JobLocation : MonoBehaviour
             else
             {
                 playerOnNoticeForReasons.Add(NoticeReason.POOR_HEALTH);
-                MessageBox.ShowQueued("Warning Notice: You performed poorly today.", 3.0f, gameObject, true);
+                MessageBox.ShowQueued("Warning Notice: You performed poorly today.", null, gameObject, true);
                 numNoticesReceived++;
             }
         }
@@ -590,7 +590,7 @@ public class JobLocation : MonoBehaviour
             else
             {
                 playerOnNoticeForReasons.Add(NoticeReason.POOR_MORALE);
-                MessageBox.ShowQueued("Warning Notice: You had a bad attitude today.", 3.0f, gameObject, true);
+                MessageBox.ShowQueued("Warning Notice: You had a bad attitude today.", null, gameObject, true);
                 numNoticesReceived++;
             }
         }
@@ -614,7 +614,7 @@ public class JobLocation : MonoBehaviour
             else
             {
                 playerOnNoticeForReasons.Add(NoticeReason.UNCLEAN_CLOTHES);
-                MessageBox.ShowQueued("Warning Notice: You wore unhygienic clothing today.", 3.0f, gameObject, true);
+                MessageBox.ShowQueued("Warning Notice: You wore unhygienic clothing today.", null, gameObject, true);
                 numNoticesReceived++;
             }
         }

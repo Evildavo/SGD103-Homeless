@@ -15,7 +15,7 @@ public class CounsellingEvent : EventAtLocation {
     {
         if (hoursSpent > 0.7f)
         {
-            Main.MessageBox.ShowForTime("You feel better for having a chat", 2.0f, gameObject);
+            Main.MessageBox.ShowForTime("You feel better for having a chat", null, gameObject);
         }
     }
 	

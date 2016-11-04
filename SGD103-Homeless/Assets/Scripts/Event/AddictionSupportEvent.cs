@@ -16,7 +16,7 @@ public class AddictionSupportEvent : EventAtLocation {
     {
         if (hoursSpent > 0.7f && Main.PlayerState.Addiction > 0.2f)
         {
-            Main.MessageBox.ShowForTime("You feel better talking about the issue", 2.0f, gameObject);
+            Main.MessageBox.ShowForTime("You feel better talking about the issue", null, gameObject);
         }
     }
     

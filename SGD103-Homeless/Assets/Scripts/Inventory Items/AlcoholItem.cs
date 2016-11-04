@@ -29,19 +29,19 @@ public class AlcoholItem : MultiUseItem
         // Show message depending on how inebriated the player is after drinking.
         if (PlayerState.Inebriation > 0.8f)
         {
-            MessageBox.ShowForTime("You feel very good", 2.0f, gameObject);
+            MessageBox.ShowForTime("You feel very good", null, gameObject);
         }
         else if (PlayerState.Inebriation > 0.6f)
         {
-            MessageBox.ShowForTime("You feel pretty good", 2.0f, gameObject);
+            MessageBox.ShowForTime("You feel pretty good", null, gameObject);
         }
         else if (PlayerState.Inebriation > 0.4f)
         {
-            MessageBox.ShowForTime("You feel a little tipsy", 2.0f, gameObject);
+            MessageBox.ShowForTime("You feel a little tipsy", null, gameObject);
         }
         else
         {
-            MessageBox.ShowForTime("You feel a bit better", 2.0f, gameObject);
+            MessageBox.ShowForTime("You feel a bit better", null, gameObject);
         }
 
         // Consume item.

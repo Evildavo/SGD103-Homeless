@@ -28,7 +28,7 @@ public class SonPhotoItem : InventoryItem
     // Don't allow sale.
     public override void OnSellRequested()
     {
-        Main.MessageBox.ShowForTime("You can't sell this", 2.0f, gameObject);
+        Main.MessageBox.ShowForTime("You can't sell this", null, gameObject);
     }
 
     public override void OnPrimaryAction()

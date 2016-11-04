@@ -70,14 +70,14 @@ public class MenuTriggerTest : MonoBehaviour
 
     public void OnOptionASelected()
     {
-        Main.MessageBox.ShowForTime("Hello", 3, gameObject);
+        Main.MessageBox.ShowForTime("Hello", null, gameObject);
         Main.Menu.Hide();
         Trigger.Reset();
     }
 
     public void OnOptionBSelected()
     {
-        Main.MessageBox.ShowForTime("Cool", 3, gameObject);
+        Main.MessageBox.ShowForTime("Cool", null, gameObject);
         Main.Menu.Hide();
         Trigger.Reset();
     }

@@ -160,7 +160,7 @@ public class PlayerSleepManager : MonoBehaviour
             }
             else
             {
-                Main.MessageBox.ShowForTime("You feel too awake to sleep right now", 2.0f, gameObject);
+                Main.MessageBox.ShowForTime("You feel too awake to sleep right now", null, gameObject);
             }  
         }
     }
@@ -200,13 +200,13 @@ public class PlayerSleepManager : MonoBehaviour
         switch (sleepQualityAtSleep)
         {
             case SleepQualityEnum.POOR:
-                Main.MessageBox.ShowForTime("You awake feeling sore after an unpleasant sleep", 2.0f, gameObject);
+                Main.MessageBox.ShowForTime("You awake feeling sore after an unpleasant sleep", null, gameObject);
                 break;
             case SleepQualityEnum.OK:
-                Main.MessageBox.ShowForTime("You awake feeling sore but refreshed", 2.0f, gameObject);
+                Main.MessageBox.ShowForTime("You awake feeling sore but refreshed", null, gameObject);
                 break;
             case SleepQualityEnum.GOOD:
-                Main.MessageBox.ShowForTime("You awake feeling refreshed", 2.0f, gameObject);
+                Main.MessageBox.ShowForTime("You awake feeling refreshed", null, gameObject);
                 break;
         }
     }
@@ -253,7 +253,7 @@ public class PlayerSleepManager : MonoBehaviour
                     if (value <= ChanceOfBeingWokenInPublicPerHour)
                     {
                         LastWakeReason = WakeReason.WOKEN_BY_POLICE;
-                        Main.MessageBox.ShowForTime("You're woken by a police-man saying \"You can't sleep here\"", 2.0f, gameObject);
+                        Main.MessageBox.ShowForTime("You're woken by a police-man saying \"You can't sleep here\"", null, gameObject);
                         Wake();
                         return;
                     }                    
