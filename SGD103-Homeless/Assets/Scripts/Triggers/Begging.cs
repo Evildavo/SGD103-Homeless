@@ -85,7 +85,10 @@ public class Begging : MonoBehaviour
 
     void reset()
     {
-        stopBegging();
+        if (IsBegging)
+        {
+            stopBegging();
+        }
         WriteYourSign.Hide();
         Main.Menu.Hide();
         Trigger.Reset();
