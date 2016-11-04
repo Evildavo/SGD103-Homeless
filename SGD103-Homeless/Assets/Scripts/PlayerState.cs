@@ -129,6 +129,9 @@ public class PlayerState : MonoBehaviour {
     public float UntreatedDepressionHealthPenaltyPerHour;
 
     [Space(10.0f)]
+    public float ClothesDirtiedPerHourWorn;
+
+    [Space(10.0f)]
     public float StatTransitionSpeedPerHour = 1.0f;
 
     [Space(10.0f)]
