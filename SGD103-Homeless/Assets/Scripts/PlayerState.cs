@@ -157,7 +157,7 @@ public class PlayerState : MonoBehaviour {
     }
     
     // Completes all drink alcohol objectives.
-    public void CompleteDrinkAlcoholObjective()
+    public void CompleteDrinkAlcoholObjectives()
     {
         foreach (Objective objective in alcoholObjectives)
         {
@@ -167,7 +167,7 @@ public class PlayerState : MonoBehaviour {
     }
 
     // Completes all cleanliness objectives.
-    public void CompleteCleanlinessObjective()
+    public void CompleteCleanlinessObjectives()
     {
         foreach (Objective objective in cleanlinessObjectives)
         {

@@ -24,7 +24,7 @@ public class AlcoholItem : MultiUseItem
         // Apply time cost.
         Main.GameTime.SpendTime(TimeCostPerUse);
 
-        PlayerState.CompleteDrinkAlcoholObjective();
+        PlayerState.CompleteDrinkAlcoholObjectives();
 
         // Show message depending on how inebriated the player is after drinking.
         if (PlayerState.Inebriation > 0.8f)

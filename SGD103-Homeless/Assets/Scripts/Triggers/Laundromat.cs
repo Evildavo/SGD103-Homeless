@@ -48,6 +48,9 @@ public class Laundromat : MonoBehaviour
         if (IncludeClothesPlayerIsWearing && Main.PlayerState.CurrentClothing)
         {
             Main.PlayerState.CurrentClothing.Cleanliness = 1.0f;
+
+            // Fulfill cleanliness objective.
+            Main.PlayerState.CompleteCleanlinessObjectives();
         }
 
         // Wash all clothes in the player inventory.

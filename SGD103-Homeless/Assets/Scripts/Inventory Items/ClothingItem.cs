@@ -22,7 +22,7 @@ public class ClothingItem : InventoryItem
     public override void OnPrimaryAction()
     {
         // Complete the cleanliness objective.
-        Main.PlayerState.CompleteCleanlinessObjective();
+        Main.PlayerState.CompleteCleanlinessObjectives();
 
         // Fade to black.
         Main.ScreenFader.fadeTime = FadeToBlackTime;
