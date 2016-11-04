@@ -38,6 +38,7 @@ public class JobLocation : MonoBehaviour
         public float MinHealthNeededToQualify;
         public float MinMoraleNeededToQualify;
         public float MinClothesCleanlinessToQualify;
+        public bool NeedResumeToQualify = true;
         public float ChanceOfSuccessFactor = 1.0f;
         public GameTime.DayOfTheWeekEnum WorkFromDay;
         public GameTime.DayOfTheWeekEnum WorkToDay;
@@ -232,7 +233,7 @@ public class JobLocation : MonoBehaviour
         {
             RejectApplication("You should take better care of your appearance");
         }
-        if (ResumePrefab && Main.Inventory.HasItem(ResumePrefab))
+        if (!Job.NeedResumeToQualify || (ResumePrefab && Main.Inventory.HasItem(ResumePrefab)))
         {
             resumeOk = true;
         }
