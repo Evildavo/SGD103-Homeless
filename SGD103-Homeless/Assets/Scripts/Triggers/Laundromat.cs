@@ -8,8 +8,9 @@ public class Laundromat : MonoBehaviour
 
     public float CostToUse;
     public float TimeCostToUse;
-    public float FadeToBlackTime = 2.0f;
-    public float FadeInFromBlackTime = 2.0f;
+    public float FadeToBlackTime = 1.0f;
+    public float HoldOnBlackTime = 1.0f;
+    public float FadeInFromBlackTime = 1.0f;
     public bool IncludeClothesPlayerIsWearing = true;
 
     public void OpenMainMenu()
@@ -43,7 +44,13 @@ public class Laundromat : MonoBehaviour
     {
         // Apply time cost.
         Main.GameTime.SpendTime(TimeCostToUse);
-        
+
+        // Hold for a period of time.
+        Invoke("OnFadeInStart", HoldOnBlackTime);
+    }
+
+    void OnFadeInStart()
+    {
         // Wash what the player is wearing.
         if (IncludeClothesPlayerIsWearing && Main.PlayerState.CurrentClothing)
         {
@@ -70,7 +77,7 @@ public class Laundromat : MonoBehaviour
         // Show UI and exit modal mode.
         Main.UI.Show();
         Main.UI.DisableModalMode();
-        
+
         // Fade in from black.
         Main.ScreenFader.fadeTime = FadeInFromBlackTime;
         Main.ScreenFader.fadeIn = true;
