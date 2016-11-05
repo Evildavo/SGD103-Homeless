@@ -123,7 +123,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
 
                 // Walk wonky.
-                m_TurnAmount += wonkeyWalkAngleRad * move.magnitude * Time.deltaTime;
+                m_TurnAmount += wonkeyWalkAngleRad * move.magnitude * Time.deltaTime;         
 
 
                 ApplyExtraTurnRotation();

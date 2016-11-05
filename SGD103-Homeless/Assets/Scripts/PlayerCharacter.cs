@@ -83,6 +83,11 @@ public class PlayerCharacter : Character
         Main.Menu.Show(options);
     }
 
+    public void Turn(float angleDegrees)
+    {
+        transform.Rotate(new Vector3(0.0f, angleDegrees, 0.0f));
+    }
+
     public void SetWonkyWalkAngle(float angle)
     {
         GetComponent<ThirdPersonCharacter>().SetWonkyWalkAngle(angle * Mathf.Deg2Rad);
