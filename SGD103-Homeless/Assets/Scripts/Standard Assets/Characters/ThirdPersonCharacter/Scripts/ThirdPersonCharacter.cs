@@ -96,6 +96,18 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
         public void Move(Vector3 move, bool crouch, bool jump)
 		{
+
+            jump = false;
+            if (isVomiting || isCoughing)
+            {
+                crouch = true;
+            }
+            else
+            {
+                crouch = false;
+            }
+
+
             if (MovementEnabled)
             {
 
@@ -143,7 +155,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
 		void ScaleCapsuleForCrouching(bool crouch)
 		{
-			if (m_IsGrounded && crouch)
+            if (m_IsGrounded && crouch)
 			{
 				if (m_Crouching) return;
 				m_Capsule.height = m_Capsule.height / 2f;
@@ -161,7 +173,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 				}
 				m_Capsule.height = m_CapsuleHeight;
 				m_Capsule.center = m_CapsuleCenter;
-				//m_Crouching = false;
+				m_Crouching = false;
 			}
 		}
 
@@ -185,10 +197,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 			// update the animator parameters
 			m_Animator.SetFloat("Forward", m_ForwardAmount, 0.1f, Time.deltaTime);
 			m_Animator.SetFloat("Turn", m_TurnAmount, 0.1f, Time.deltaTime);
-            if (isVomiting || isCoughing)
-            {
-                m_Animator.SetBool("Crouch", m_Crouching);
-            }
+            m_Animator.SetBool("Crouch", m_Crouching);
 			m_Animator.SetBool("OnGround", m_IsGrounded);
 			if (!m_IsGrounded)
 			{
