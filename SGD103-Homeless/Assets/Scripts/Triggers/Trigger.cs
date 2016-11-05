@@ -192,7 +192,8 @@ public class Trigger : MonoBehaviour
         if (!IsActivated && IsEnabled && IsPlayerInsideTriggerZone)
         {
             ShowInteractionText();
-            if (IsInActiveHour && Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return"))
+            if (IsInActiveHour && 
+                (Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return")))
             {
                 // Activate the trigger.
                 IsEnabled = false;
