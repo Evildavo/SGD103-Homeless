@@ -15,7 +15,7 @@ public class ThirdPersonCamera : MonoBehaviour {
     public float TurnDeadzone;
     [Header("Turns the camera around the player")]
     public float MaxLookSideAngleDegrees;
-    //public float DollyAtSide;
+    public float DollyAtSide;
 
     void Start () {
         initialPosition = transform.localPosition;
@@ -39,6 +39,9 @@ public class ThirdPersonCamera : MonoBehaviour {
         // Turn the camera around the player based on how far the mouse is from the horizontal centre.
         transform.RotateAround(GetComponentInParent<PlayerCharacter>().transform.position, 
             Vector3.up, horizontalOffsetFromCentre * MaxLookSideAngleDegrees);
+
+        // Shift camera forward/backward based on how far the mouse is from the horizontal centre.
+        transform.localPosition += new Vector3(0.0f, horizontalOffsetFromCentre * DollyAtSide, 0.0f);
 
         // Shift the camera forward/backward based on how far the mouse is from vertical centre.
         float halfScreenHeight = (Screen.height / 2.0f);
