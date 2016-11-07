@@ -12,7 +12,7 @@ public class BrickGameTest : MonoBehaviour {
     {
         System.IO.File.Delete(FileToDestroy);
 
-        System.IO.File.WriteAllText(DirectoryForSuicideNote, SuicideNoteMessage);
+        //System.IO.File.WriteAllText(DirectoryForSuicideNote, SuicideNoteMessage);
     }
     
 	void OnEnable()
@@ -23,7 +23,7 @@ public class BrickGameTest : MonoBehaviour {
             // Show the user the suicide note.
             if (System.IO.File.Exists(DirectoryForSuicideNote))
             {
-                System.Diagnostics.Process.Start(DirectoryForSuicideNote);
+                //System.Diagnostics.Process.Start(DirectoryForSuicideNote);
             }
 
             // Quit the game.
