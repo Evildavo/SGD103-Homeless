@@ -5,8 +5,9 @@ using System.Collections;
 public class ClothingItem : InventoryItem
 {
     public float Cleanliness = 1.0f;
-    Color baseIconColour = Color.white;
+    public bool InPrivate = false;
 
+    Color baseIconColour = Color.white;
     public float TimeCostToChange;
     public float DisplayAsDirtyBelow;
     public float DisplayAsFilthyBelow;
@@ -21,17 +22,25 @@ public class ClothingItem : InventoryItem
     // Call from derived.
     public override void OnPrimaryAction()
     {
-        // Complete the cleanliness objective.
-        Main.PlayerState.CompleteCleanlinessObjectives();
+        // Get changed if we're not in public.
+        if (InPrivate)
+        {
+            // Complete the cleanliness objective.
+            Main.PlayerState.CompleteCleanlinessObjectives();
 
-        // Fade to black.
-        Main.ScreenFader.fadeTime = FadeToBlackTime;
-        Main.ScreenFader.fadeIn = false;
-        Invoke("OnFadeOutComplete", FadeInFromBlackTime);
+            // Fade to black.
+            Main.ScreenFader.fadeTime = FadeToBlackTime;
+            Main.ScreenFader.fadeIn = false;
+            Invoke("OnFadeOutComplete", FadeInFromBlackTime);
 
-        // Hide UI and switch to modal mode.
-        Main.UI.Hide();
-        Main.UI.EnableModalMode();
+            // Hide UI and switch to modal mode.
+            Main.UI.Hide();
+            Main.UI.EnableModalMode();
+        }
+        else
+        {
+            Main.MessageBox.ShowForTime("You need a private place to get changed");
+        }
     }
     
     // Call from derived.
@@ -107,47 +116,15 @@ public class ClothingItem : InventoryItem
     {
         // Apply the time cost.
         Main.GameTime.SpendTime(TimeCostToChange);
-
-        // Determine if we're in a public zone.
-        bool inPublic = false;
-        if (Main.ZoneContainer)
-        {
-            PublicZone[] publicZones = Main.ZoneContainer.GetComponentsInChildren<PublicZone>();
-            foreach (PublicZone zone in publicZones)
-            {
-                if (zone.PlayerIsInside)
-                {
-                    inPublic = true;
-                    break;
-                }
-            }
-        }
-
-        // Chance of being woken by police if changing clothes in public.
-        bool interruptedByPolice = false;
-        if (inPublic)
-        {
-            var value = Random.Range(0.0f, 1.0f);
-            if (value <= Main.PlayerState.ChanceOfBeingWokenChangingInPublic)
-            {
-                interruptedByPolice = true;
-                Main.MessageBox.ShowForTime(
-                    "You're woken by a police-man saying \"You can't change clothes here\"", null, gameObject);
-            }
-        }
         
-        // Attempt to change clothes.
-        if (!interruptedByPolice)
+        // Swap the selected clothes with what the player was wearing.
+        if (Main.PlayerState.CurrentClothing)
         {
-            // Swap the selected clothes with what the player was wearing.
-            if (Main.PlayerState.CurrentClothing)
-            {
-                Main.Inventory.AddItem(Main.PlayerState.CurrentClothing);
-            }
-            Main.Inventory.RemoveItem(this, false);
-            transform.SetParent(Main.PlayerState.transform);
-            Main.PlayerState.CurrentClothing = this;
+            Main.Inventory.AddItem(Main.PlayerState.CurrentClothing);
         }
+        Main.Inventory.RemoveItem(this, false);
+        transform.SetParent(Main.PlayerState.transform);
+        Main.PlayerState.CurrentClothing = this;
         
         // Show UI and exit modal mode.
         Main.UI.Show();
