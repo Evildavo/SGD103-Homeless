@@ -24,6 +24,7 @@ public class CoOpShelter : MonoBehaviour {
     public Main Main;
     public Trigger Trigger;
     public EventAtLocation SoupKitchenEvent;
+    public WashClothesEvent WashClothesEvent;
     public EventAtLocation CounsellingEvent;
     public EventAtLocation AddictionSupportEvent;
 
@@ -57,6 +58,7 @@ public class CoOpShelter : MonoBehaviour {
         if (SoupKitchenEvent && SoupKitchenEvent.IsOpen)
         {
             options.Add(new Menu.Option(AttendSoupKitchen, "Attend soup kitchen"));
+            options.Add(new Menu.Option(WashClothesEvent.Attend, "Wash clothes for free"));
         }
         if (CounsellingEvent && CounsellingEvent.IsOpen)
         {
@@ -240,7 +242,7 @@ public class CoOpShelter : MonoBehaviour {
         bool serviceClosed = false;
         if (!wasSoupKitchenOpen && SoupKitchenEvent && SoupKitchenEvent.IsOpen)
         {
-            Main.MessageBox.ShowForTime("The soup kitchen has opened for today", null, gameObject);
+            Main.MessageBox.ShowForTime("The soup kitchen and free laundry washing has opened for today", null, gameObject);
             wasSoupKitchenOpen = true;
             serviceOpened = true;
         }

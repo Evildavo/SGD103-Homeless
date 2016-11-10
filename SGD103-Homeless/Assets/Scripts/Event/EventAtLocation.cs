@@ -2,14 +2,16 @@
 using System.Collections;
 
 public class EventAtLocation : MonoBehaviour {
-    private float hourAtAttendance;
+    float hourAtAttendance;
 
     public Main Main;
 
     public bool AvailableEveryDay = false;
     public GameTime.DayOfTheWeekEnum Day;
     [Header("Note: Does NOT support wrapping (e.g. 11pm to 2am).")]
+    [Range(0.0f, 24.0f)]
     public float FromHour = 0.0f;
+    [Range(0.0f, 24.0f)]
     public float ToHour = 24.0f;
     public float FadeToBlackTime = 2.0f;
     public float FadeInFromBlackTime = 2.0f;
