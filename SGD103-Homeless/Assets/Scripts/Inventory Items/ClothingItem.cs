@@ -119,9 +119,9 @@ public class ClothingItem : InventoryItem
         // Swap the selected clothes with what the player was wearing.
         Main.Inventory.RemoveItem(this, false);
         transform.SetParent(Main.PlayerState.transform);
-        transform.rotation = Quaternion.identity;
         if (Main.PlayerState.CurrentClothing)
         {
+            Main.PlayerState.CurrentClothing.transform.rotation = Quaternion.identity;
             Main.Inventory.AddItem(Main.PlayerState.CurrentClothing);
         }
         Main.PlayerState.CurrentClothing = this;
