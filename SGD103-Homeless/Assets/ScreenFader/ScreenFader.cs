@@ -5,9 +5,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ScreenFader : MonoBehaviour
 {
+    public Main Main;
+
     public bool fadeIn = true;
     public float fadeTime = 2.0f;
     public Color fadeColor = new Color(0.0f, 0.0f, 0.0f, 1.0f);
@@ -37,6 +40,17 @@ public class ScreenFader : MonoBehaviour
                 yield return new WaitForEndOfFrame();
                 elapsedTime += Time.deltaTime;
                 color.a = Mathf.Clamp01(elapsedTime / fadeTime);
+
+                // Change splash screen colour.
+                if (Main.Splash.gameObject.activeInHierarchy)
+                {
+                    Color splashColour = Main.Splash.GetComponent<Image>().color;
+                    splashColour.r = 1.0f - color.a;
+                    splashColour.g = 1.0f - color.a;
+                    splashColour.b = 1.0f - color.a;
+                    Main.Splash.GetComponent<Image>().color = splashColour;
+                }
+
                 fadeMaterial.color = color;
             }
         }
@@ -54,6 +68,17 @@ public class ScreenFader : MonoBehaviour
                 yield return new WaitForEndOfFrame();
                 elapsedTime += Time.deltaTime;
                 color.a = 1.0f - Mathf.Clamp01(elapsedTime / fadeTime);
+
+                // Change splash screen colour.
+                if (Main.Splash.gameObject.activeInHierarchy)
+                {
+                    Color splashColour = Main.Splash.GetComponent<Image>().color;
+                    splashColour.r = 1.0f - color.a;
+                    splashColour.g = 1.0f - color.a;
+                    splashColour.b = 1.0f - color.a;
+                    Main.Splash.GetComponent<Image>().color = splashColour;
+                }
+
                 fadeMaterial.color = color;
             }
         }
