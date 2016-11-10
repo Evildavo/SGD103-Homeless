@@ -219,7 +219,6 @@ public class Hostel : MonoBehaviour {
     void OnExit()
     {
         reset();
-        Main.MessageBox.ShowNext();
     }
 
     void reset()
@@ -231,6 +230,7 @@ public class Hostel : MonoBehaviour {
         var audio = GetComponent<AudioSource>();
         audio.Stop();
 
+        Main.MessageBox.ShowNext();
         Main.Menu.Hide();
         Main.Inventory.Hide();
         Trigger.Reset();
