@@ -9,6 +9,7 @@ public class PlayerSleepManager : MonoBehaviour
     private float hoursSinceLastSlept;
     private bool hasSlept = false;
     private SleepItem usingItem;
+    private System.Action onAwake;
 
     public enum WakeReason
     {
@@ -87,8 +88,11 @@ public class PlayerSleepManager : MonoBehaviour
     // The player won't sleep if the player hasn't waited long enough since last sleeping.
     // If not sleeping rough the sleep is considered good. 
     // sleepQualityFactor can be used to adjust sleep quality.
-    public void Sleep(SleepItem sleepItem = null, bool sleepingRough = true, float sleepQualityFactor = 1.0f)
+    public void Sleep(SleepItem sleepItem = null, bool sleepingRough = true, float sleepQualityFactor = 1.0f,
+                      System.Action onAwakeCallback = null)
     {
+        onAwake = onAwakeCallback;
+
         if (!IsAsleep)
         {
             if (!hasSlept || hoursSinceLastSlept >= MinHoursWaitBetweenSleeps)
@@ -184,6 +188,8 @@ public class PlayerSleepManager : MonoBehaviour
         Main.PlayerState.ChangeHealthTiredness(
             (minHealthGain + Main.SleepManager.SleepQuality * (maxHealthGain - minHealthGain)) * 
             hoursSlept);
+
+        onAwake();
     }
 
     void OnFadeInComplete()

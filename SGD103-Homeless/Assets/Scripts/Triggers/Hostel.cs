@@ -127,9 +127,9 @@ public class Hostel : MonoBehaviour {
 
     public void SleepInRoom()
     {
-        Main.SleepManager.Sleep(null, false, SleepQualityFactor);
+        Main.SleepManager.Sleep(null, false, SleepQualityFactor, onAwake);
         menuIsOpen = false;
-        reset();
+        Main.Menu.Hide();
     }
 
     public void WashClothes()
@@ -151,6 +151,11 @@ public class Hostel : MonoBehaviour {
             Main.GameTime.AccelerateTime();
             Main.MessageBox.Show("Applying for housing...", gameObject);
         }
+    }
+
+    void onAwake()
+    {
+        OpenRoomMenu();
     }
 
     void Start ()
