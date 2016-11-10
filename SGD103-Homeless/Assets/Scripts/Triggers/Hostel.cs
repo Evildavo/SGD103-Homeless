@@ -49,19 +49,27 @@ public class Hostel : MonoBehaviour {
             audio.Play();
         }
 
+        // Applying for room options.
         List<Menu.Option> options = new List<Menu.Option>();
-        if (!inBusinessHours)
+        if (!PlayerHasRoom)
         {
-            options.Add(new Menu.Option(ApplyForHousing, "The hostel office is closed", 0.0f, false));
+            if (!inBusinessHours)
+            {
+                options.Add(new Menu.Option(ApplyForHousing, "The hostel office is closed", 0.0f, false));
+            }
+            else if (!hasFinishedApplying)
+            {
+                options.Add(new Menu.Option(ApplyForHousing, "Apply for housing", 0.0f));
+            }
+            else if (hasFinishedApplying)
+            {
+                options.Add(new Menu.Option(CheckHousingApplicationSelected,
+                    "Check housing application", 0.0f, !hasCheckedToday));
+            }
         }
-        else if (!hasFinishedApplying)
+        else
         {
-            options.Add(new Menu.Option(ApplyForHousing, "Apply for housing", 0.0f));
-        }
-        else if (hasFinishedApplying)
-        {
-            options.Add(new Menu.Option(CheckHousingApplicationSelected, 
-                "Check housing application", 0.0f, !hasCheckedToday));
+            options.Add(new Menu.Option(OpenRoomMenu, "Go to room"));
         }
         options.Add(new Menu.Option(OnExit, "Exit"));
 
