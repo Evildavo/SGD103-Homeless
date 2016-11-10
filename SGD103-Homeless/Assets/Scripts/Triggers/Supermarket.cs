@@ -26,6 +26,8 @@ public class Supermarket : MonoBehaviour
     public List<InventoryItem> ClothingMenuPrefabItems;
     public List<InventoryItem> LiquorMenuPrefabItems;
     public List<InventoryItem> MedicineMenuPrefabItems;
+    public AudioClip Ambience;
+    public Sprite Splash;
 
     public float TimeCostToPurchaseItem;
 
@@ -174,6 +176,16 @@ public class Supermarket : MonoBehaviour
 
     public void OnTrigger()
     {
+        // Show splash screen.
+        Main.Splash.Show(Splash);
+
+        // Play ambience audio.
+        var audio = GetComponent<AudioSource>();
+        audio.clip = Ambience;
+        audio.time = 0.0f;
+        audio.loop = true;
+        audio.Play();
+
         JobLocation.CheckForJob(true);
         OpenMainMenu();
     }
@@ -224,6 +236,13 @@ public class Supermarket : MonoBehaviour
 
     void Reset()
     {
+        // Hide splash screen.
+        Main.Splash.Hide();
+
+        // Stop the ambience.
+        var audio = GetComponent<AudioSource>();
+        audio.Stop();
+
         Main.Menu.Hide();
         Main.MessageBox.ShowNext();
         if (Trigger)
