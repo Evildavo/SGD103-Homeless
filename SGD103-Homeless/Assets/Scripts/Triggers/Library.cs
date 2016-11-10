@@ -13,6 +13,8 @@ public class Library : MonoBehaviour {
     public Trigger Trigger;
     public ResumeItem ResumeItem;
     public List<JobLocation> JobLocations;
+    public AudioClip Ambience;
+    public Sprite Splash;
 
     public float MoraleGainedPerHourReading = 0.05f;
     public float JobSearchTimeHours = 1.0f;
@@ -32,6 +34,13 @@ public class Library : MonoBehaviour {
     {
         isReading = false;
         hasWarnedAboutClosing = false;
+
+        // Hide splash screen.
+        Main.Splash.Hide();
+
+        // Stop the ambience.
+        var audio = GetComponent<AudioSource>();
+        audio.Stop();
         Main.Menu.Hide();
         Main.MessageBox.ShowNext();
         Main.GameTime.ResetToNormalTime();
@@ -44,7 +53,20 @@ public class Library : MonoBehaviour {
     // Creates and returns a new main menu.
     List<Menu.Option> getMainMenu()
     {
-        List<Menu.Option> options = new List<Menu.Option>();
+        // Show splash screen.
+        Main.Splash.Show(Splash);
+
+        // Play ambience audio.
+        var audio = GetComponent<AudioSource>();
+        if (audio.clip != Ambience)
+        {
+            audio.clip = Ambience;
+            audio.time = 0.0f;
+            audio.loop = true;
+            audio.Play();
+        }
+
+            List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(OnJobSearch, "Job search", 0, !jobSearchedToday));
         options.Add(new Menu.Option(OnReadBook, "Read book"));
         options.Add(new Menu.Option(Reset, "Exit"));
