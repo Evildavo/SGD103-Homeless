@@ -47,13 +47,27 @@ public class Hostel : MonoBehaviour {
                 options.Add(new Menu.Option(CheckHousingApplicationSelected, 
                     "Check housing application", 0.0f, !hasCheckedToday));
             }
+            options.Add(new Menu.Option(OnExit, "Exit"));
+
+            Main.Menu.Show(options);
         }
         else
         {
-            options.Add(new Menu.Option(SleepInRoom, "Sleep in room"));
-            options.Add(new Menu.Option(WashClothes, "Wash clothes"));
+            OpenRoomMenu();
         }
+    }
+
+    public void OpenRoomMenu()
+    {
+        menuIsOpen = true;
+        List<Menu.Option> options = new List<Menu.Option>();
+        options.Add(new Menu.Option(SleepInRoom, "Sleep"));
+        options.Add(new Menu.Option(WashClothes, "Wash clothes"));
         options.Add(new Menu.Option(OnExit, "Exit"));
+        
+        // Allow player to use their inventory.
+        Main.PlayerState.IsInPrivate = true;
+        Main.Inventory.Show();
 
         Main.Menu.Show(options);
     }
@@ -178,6 +192,7 @@ public class Hostel : MonoBehaviour {
     void reset()
     {
         Main.Menu.Hide();
+        Main.Inventory.Hide();
         Trigger.Reset();
         menuIsOpen = false;
     }

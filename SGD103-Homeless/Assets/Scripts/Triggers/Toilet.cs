@@ -23,8 +23,10 @@ public class Toilet : MonoBehaviour
 
     void OnTrigger()
     {
+        // Allow player to use their inventory.
         Main.PlayerState.IsInPrivate = true;
         OpenMainMenu();
+
         Main.Inventory.Show();
     }
 
