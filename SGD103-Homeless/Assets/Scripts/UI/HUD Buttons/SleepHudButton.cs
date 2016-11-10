@@ -12,6 +12,7 @@ public class SleepHudButton : MonoBehaviour
     public Color PoorSleepLabelColour = Color.white;
     public Color OkSleepLabelColour = Color.white;
     public Color GoodSleepLabelColour = Color.white;
+    public Color DisabledIconColour = Color.grey;
     
     public void OnPointerEnter()
     {
@@ -34,13 +35,10 @@ public class SleepHudButton : MonoBehaviour
 
     public void OnClick()
     {
-        // Close any triggers that are open.
-        if (Main.PlayerState.CurrentTrigger)
+        if (!Main.PlayerState.CurrentTrigger)
         {
-            Main.PlayerState.CurrentTrigger.Close();
+            Main.SleepManager.Sleep();
         }
-
-        Main.SleepManager.Sleep();
     }
 
     public void Update()
@@ -50,6 +48,16 @@ public class SleepHudButton : MonoBehaviour
             gameObject.SetActive(false);
         }
 
+        // Grey out the option when the player is in a trigger.
+        if (Main.PlayerState.CurrentTrigger)
+        {
+            GetComponent<Image>().color = DisabledIconColour;
+        }
+        else
+        {
+            GetComponent<Image>().color = Color.white;
+        }
+        
         // Update the button label based on expected quality of sleep here.
         if (isMouseOver)
         {
@@ -75,7 +83,7 @@ public class SleepHudButton : MonoBehaviour
                         break;
                 }
             }
-            
+
             SleepItem sleepItem = Main.SleepManager.GetBestSleepItem();
             if (sleepItem)
             {
