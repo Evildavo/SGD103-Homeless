@@ -123,6 +123,7 @@ public class ClothingItem : InventoryItem
         }
         Main.Inventory.RemoveItem(this, false);
         transform.SetParent(Main.PlayerState.transform);
+        transform.rotation = Quaternion.identity;
         Main.PlayerState.CurrentClothing = this;
 
         // Show UI and exit modal mode.
