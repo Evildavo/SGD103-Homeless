@@ -8,6 +8,7 @@ public class Splash : MonoBehaviour {
     {
         gameObject.SetActive(true);
         GetComponent<Image>().sprite = image;
+        GetComponent<Image>().color = Color.white;
     }
 
     public void Hide()

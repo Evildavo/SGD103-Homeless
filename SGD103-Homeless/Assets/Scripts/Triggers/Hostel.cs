@@ -10,6 +10,7 @@ public class Hostel : MonoBehaviour {
     bool hasFinishedApplying;
     bool inBusinessHours;
     bool menuIsOpen;
+    bool roomMenuOpen;
 
     public Main Main;
     public Trigger Trigger;
@@ -31,9 +32,20 @@ public class Hostel : MonoBehaviour {
 
     [Space(10.0f)]
     public bool PlayerHasRoom;
+    
+    public bool ExitPressed()
+    {
+        return Input.GetButtonDown("Secondary") ||
+               Input.GetKeyDown("e") ||
+               Input.GetKeyDown("enter") ||
+               Input.GetKeyDown("return") ||
+               Input.GetKeyDown("space");
+    }
 
     public void OpenMainMenu()
     {
+        roomMenuOpen = false;
+
         Main.PlayerState.IsInPrivate = false;
         menuIsOpen = true;
         // Show splash screen.
@@ -78,6 +90,8 @@ public class Hostel : MonoBehaviour {
 
     public void OpenRoomMenu()
     {
+        roomMenuOpen = true;
+
         // Show splash screen.
         Main.Splash.Show(SplashRoom);
 
@@ -226,6 +240,13 @@ public class Hostel : MonoBehaviour {
             hasFinishedApplying = true;
 
             CheckHousingApplication();
+        }
+
+        // Handle exit pressed.
+        if (ExitPressed())
+        {
+            isApplying = false;
+            reset();
         }
     }
 
