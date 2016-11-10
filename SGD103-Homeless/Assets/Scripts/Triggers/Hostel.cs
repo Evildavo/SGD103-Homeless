@@ -122,7 +122,7 @@ public class Hostel : MonoBehaviour {
         else
         {
             Main.MessageBox.ShowForTime("Nothing is available today. Check back again tomorrow.", null, gameObject);
-            reset();
+            OpenMainMenu();
         }
     }
 
@@ -207,7 +207,6 @@ public class Hostel : MonoBehaviour {
             hasFinishedApplying = true;
 
             CheckHousingApplication();
-            reset();
         }
     }
 
