@@ -47,6 +47,26 @@ public class Trigger : MonoBehaviour
                Input.GetKeyDown("space");
     }
 
+    // Activates the trigger (if we're within active hours).
+    public void ActivateTrigger()
+    {
+        if (IsInActiveHour)
+        {
+            IsEnabled = false;
+            IsActivated = true;
+            HideInteractionText();
+            if (UseModalModeOnActivate)
+            {
+                Main.UI.EnableModalMode();
+            }
+            if (onTrigger != null)
+            {
+                Main.PlayerState.CurrentTrigger = this;
+                onTrigger();
+            }
+        }
+    }
+
     // Register the function to call when the player activates the trigger.
     public void RegisterOnTriggerListener(TriggerListener function)
     {
@@ -195,19 +215,7 @@ public class Trigger : MonoBehaviour
             if (IsInActiveHour && 
                 (Input.GetKeyDown("e") || Input.GetKeyDown("enter") || Input.GetKeyDown("return")))
             {
-                // Activate the trigger.
-                IsEnabled = false;
-                IsActivated = true;
-                HideInteractionText();
-                if (UseModalModeOnActivate)
-                {
-                    Main.UI.EnableModalMode();
-                }
-                if (onTrigger != null)
-                {
-                    Main.PlayerState.CurrentTrigger = this;
-                    onTrigger();
-                }
+                ActivateTrigger();
             }
         }
         else if (IsActivated)

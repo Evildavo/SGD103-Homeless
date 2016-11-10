@@ -5,7 +5,6 @@ using System.Collections;
 public class ClothingItem : InventoryItem
 {
     public float Cleanliness = 1.0f;
-    public bool InPrivate = false;
 
     Color baseIconColour = Color.white;
     public float TimeCostToChange;
@@ -23,7 +22,7 @@ public class ClothingItem : InventoryItem
     public override void OnPrimaryAction()
     {
         // Get changed if we're not in public.
-        if (InPrivate)
+        if (Main.PlayerState.IsInPrivate)
         {
             // Complete the cleanliness objective.
             Main.PlayerState.CompleteCleanlinessObjectives();
@@ -125,10 +124,14 @@ public class ClothingItem : InventoryItem
         Main.Inventory.RemoveItem(this, false);
         transform.SetParent(Main.PlayerState.transform);
         Main.PlayerState.CurrentClothing = this;
-        
+
         // Show UI and exit modal mode.
         Main.UI.Show();
         Main.UI.DisableModalMode();
+        Main.PlayerState.CurrentTrigger.ActivateTrigger();
+        if (Main.PlayerState.CurrentTrigger)
+        {
+        }
         
         // Fade in from black.
         Main.ScreenFader.fadeTime = FadeInFromBlackTime;

@@ -144,6 +144,7 @@ public class PlayerState : MonoBehaviour {
 
     [Space(10.0f)]
     public bool IsAtWork = false;
+    public bool IsInPrivate = false;
 
     [Space(10.0f)]
     public Trigger CurrentTrigger;
