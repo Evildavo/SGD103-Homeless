@@ -180,12 +180,15 @@ public class Inventory : MonoBehaviour
             }
             i++;
         }
+        
+        // Update inventory full status.
+        checkInventoryFull();
 
         // Notify listeners.
         foreach (OnItemAdded callback in onItemAddedCallbacks)
         {
             callback(item);
-        }        
+        }
     }
 
     // Removes the item and moves other items to fill the gaps.
@@ -235,6 +238,21 @@ public class Inventory : MonoBehaviour
                 Main.ItemDescription.gameObject.SetActive(false);
                 Main.DiscardHint.gameObject.SetActive(false);
             }
+
+            // Update inventory full status.
+            checkInventoryFull();
+        }
+    }
+
+    void checkInventoryFull()
+    {
+        IsInventoryFull = true;
+        foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
+        {
+            if (!slot.Item)
+            {
+                IsInventoryFull = false;
+            }
         }
     }
 
@@ -277,14 +295,7 @@ public class Inventory : MonoBehaviour
         }
 
         // Check if inventory is full.
-        IsInventoryFull = true;
-        foreach (InventorySlot slot in SlotContainer.GetComponentsInChildren<InventorySlot>(true))
-        {
-            if (!slot.Item)
-            {
-                IsInventoryFull = false;
-            }
-        }
+        checkInventoryFull();
 
         // Handle sell mode.
         if (InSellMode)
