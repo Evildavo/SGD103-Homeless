@@ -15,6 +15,7 @@ public class MotelDiner : MonoBehaviour
     public JobLocation JobLocation;
     public EatAtDinerEvent EatAtDiner;
     public WashClothesEvent WashClothesEvent;
+    public AudioClip FlushSound;
 
     public float LeaveRoomByHour = 8.0f;
     public float RoomCostPerNight;
@@ -51,6 +52,9 @@ public class MotelDiner : MonoBehaviour
             {
                 options.Add(new Menu.Option(OpenRoomMenu, "Go to room"));
             }
+
+            // Go to toilet option.
+            options.Add(new Menu.Option(OpenToiletMenu, "Go to toilet"));
         
             // Meal options.
             if (Main.GameTime.TimeOfDayHours < 11)
@@ -97,7 +101,7 @@ public class MotelDiner : MonoBehaviour
     {
         Main.UI.ReturnTo = OpenRoomMenu;
         Main.MessageBox.ShowNext();
-
+        
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(sleepInRoom, "Sleep"));
         options.Add(new Menu.Option(WashClothes, "Wash clothes"));
@@ -116,6 +120,33 @@ public class MotelDiner : MonoBehaviour
 
         Main.Menu.Show(options);
         mainMenuOpen = false;
+    }
+
+    public void OpenToiletMenu()
+    {
+        Main.UI.ReturnTo = OpenToiletMenu;
+        Main.MessageBox.ShowNext();
+
+        List<Menu.Option> options = new List<Menu.Option>();
+        options.Add(new Menu.Option(onExitToilet, "Back"));
+
+        // Allow player to use their inventory.
+        Main.PlayerState.IsInPrivate = true;
+        Main.Inventory.Show();
+
+        Main.Menu.Show(options);
+        mainMenuOpen = false;
+    }
+
+    void onExitToilet()
+    {
+        // Play toilet flush sound.
+        var audio = GetComponent<AudioSource>();
+        audio.clip = FlushSound;
+        audio.time = 0.0f;
+        audio.Play();
+
+        OpenMainMenu();
     }
 
     public void ApplyForJob()
