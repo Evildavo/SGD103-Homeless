@@ -9,11 +9,13 @@ public class CoOpShelter : MonoBehaviour {
     float activeFromHour;
     float activeToHour;
     MenuEnum menu;
+    Menu.Option.OnSelectedCallback returnTo;
 
     enum MenuEnum
     {
         MAIN,
         CO_OP,
+        CO_OP_CHANGING_ROOMS,
         FOOD,
         OUTDOOR_EQUIPMENT,
         CLOTHING
@@ -68,7 +70,7 @@ public class CoOpShelter : MonoBehaviour {
         Main.Menu.Show(options);
         inMainMenu = true;
     }
-
+    
     public void OpenCoOpShopMenu()
     {
         menu = MenuEnum.CO_OP;
@@ -87,7 +89,29 @@ public class CoOpShelter : MonoBehaviour {
         {
             options.Add(new Menu.Option(OpenClothingItemMenu, "Buy clothing"));
         }
+        else
+        {
+            returnTo = OpenCoOpShopMenu;
+            options.Add(new Menu.Option(OpenChangingRoomMenu, "Go to changing room"));
+        }
         options.Add(new Menu.Option(OpenMainMenu, "Back"));
+
+        Main.Menu.Show(options);
+        inMainMenu = false;
+    }
+    
+    public void OpenChangingRoomMenu()
+    {
+        menu = MenuEnum.CO_OP_CHANGING_ROOMS;
+        Main.UI.ReturnTo = OpenChangingRoomMenu;
+        Main.MessageBox.ShowNext();
+
+        List<Menu.Option> options = new List<Menu.Option>();
+        options.Add(new Menu.Option(returnTo, "Back"));
+
+        // Allow player to use their inventory.
+        Main.PlayerState.IsInPrivate = true;
+        Main.Inventory.Show();
 
         Main.Menu.Show(options);
         inMainMenu = false;
@@ -138,6 +162,8 @@ public class CoOpShelter : MonoBehaviour {
         menu = MenuEnum.CLOTHING;
         List<Menu.Option> options = new List<Menu.Option>();
         AddMenuOptions(ClothingMenuPrefabItems, options);
+        returnTo = OpenClothingItemMenu;
+        options.Add(new Menu.Option(OpenChangingRoomMenu, "Go to changing room"));
         options.Add(new Menu.Option(OpenCoOpShopMenu, "Back"));
         Main.Menu.Show(options);
     }
@@ -279,6 +305,9 @@ public class CoOpShelter : MonoBehaviour {
                 break;
             case MenuEnum.CO_OP:
                 OpenCoOpShopMenu();
+                break;
+            case MenuEnum.CO_OP_CHANGING_ROOMS:
+                OpenChangingRoomMenu();
                 break;
             case MenuEnum.FOOD:
                 OpenFoodMenu();
