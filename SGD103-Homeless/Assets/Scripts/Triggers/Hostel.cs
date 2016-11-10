@@ -41,35 +41,31 @@ public class Hostel : MonoBehaviour {
 
         // Play ambience audio.
         var audio = GetComponent<AudioSource>();
-        audio.clip = Ambience;
-        audio.time = 0.0f;
-        audio.loop = true;
-        audio.Play();
+        if (audio.clip != Ambience)
+        {
+            audio.clip = Ambience;
+            audio.time = 0.0f;
+            audio.loop = true;
+            audio.Play();
+        }
 
         List<Menu.Option> options = new List<Menu.Option>();
-        if (!PlayerHasRoom)
+        if (!inBusinessHours)
         {
-            if (!inBusinessHours)
-            {
-                options.Add(new Menu.Option(ApplyForHousing, "The hostel office is closed", 0.0f, false));
-            }
-            else if (!hasFinishedApplying)
-            {
-                options.Add(new Menu.Option(ApplyForHousing, "Apply for housing", 0.0f));
-            }
-            else if (hasFinishedApplying)
-            {
-                options.Add(new Menu.Option(CheckHousingApplicationSelected, 
-                    "Check housing application", 0.0f, !hasCheckedToday));
-            }
-            options.Add(new Menu.Option(OnExit, "Exit"));
+            options.Add(new Menu.Option(ApplyForHousing, "The hostel office is closed", 0.0f, false));
+        }
+        else if (!hasFinishedApplying)
+        {
+            options.Add(new Menu.Option(ApplyForHousing, "Apply for housing", 0.0f));
+        }
+        else if (hasFinishedApplying)
+        {
+            options.Add(new Menu.Option(CheckHousingApplicationSelected, 
+                "Check housing application", 0.0f, !hasCheckedToday));
+        }
+        options.Add(new Menu.Option(OnExit, "Exit"));
 
-            Main.Menu.Show(options);
-        }
-        else
-        {
-            OpenRoomMenu();
-        }
+        Main.Menu.Show(options);
     }
 
     public void OpenRoomMenu()
@@ -79,10 +75,13 @@ public class Hostel : MonoBehaviour {
 
         // Play ambience audio.
         var audio = GetComponent<AudioSource>();
-        audio.clip = AmbienceRoom;
-        audio.time = 0.0f;
-        audio.loop = true;
-        audio.Play();
+        if (audio.clip != AmbienceRoom)
+        {
+            audio.clip = AmbienceRoom;
+            audio.time = 0.0f;
+            audio.loop = true;
+            audio.Play();
+        }
 
         Main.UI.ReturnTo = OpenRoomMenu;
         Main.MessageBox.ShowNext();
@@ -193,7 +192,14 @@ public class Hostel : MonoBehaviour {
     }
 	
 	void OnTrigger () {
-        OpenMainMenu();
+        if (PlayerHasRoom)
+        {
+            OpenRoomMenu();
+        }
+        else
+        {
+            OpenMainMenu();
+        }
     }
 
     void OnTriggerUpdate()
