@@ -12,6 +12,7 @@ public class Supermarket : MonoBehaviour
         FOOD,
         OUTDOOR_EQUIPMENT,
         CLOTHING,
+        CHANGING_ROOMS,
         LIQUOR,
         MEDICINE
     }
@@ -37,6 +38,7 @@ public class Supermarket : MonoBehaviour
 
     public void OpenMainMenu()
     {
+        Main.PlayerState.IsInPrivate = false;
         menu = MenuEnum.MAIN;
         List<Menu.Option> options = new List<Menu.Option>();
         if (FoodMenuPrefabItems.Count > 0)
@@ -122,10 +124,28 @@ public class Supermarket : MonoBehaviour
 
     public void OpenClothingItemMenu()
     {
+        Main.PlayerState.IsInPrivate = false;
         menu = MenuEnum.CLOTHING;
         List<Menu.Option> options = new List<Menu.Option>();
         AddMenuOptions(ClothingMenuPrefabItems, options);
+        options.Add(new Menu.Option(OpenChangingRoomMenu, "Go to changing room"));
         options.Add(new Menu.Option(OnBackSelected, "Back"));
+        Main.Menu.Show(options);
+    }
+    
+    public void OpenChangingRoomMenu()
+    {
+        menu = MenuEnum.CHANGING_ROOMS;
+        Main.UI.ReturnTo = OpenChangingRoomMenu;
+        Main.MessageBox.ShowNext();
+
+        List<Menu.Option> options = new List<Menu.Option>();
+        options.Add(new Menu.Option(OpenClothingItemMenu, "Back"));
+
+        // Allow player to use their inventory.
+        Main.PlayerState.IsInPrivate = true;
+        Main.Inventory.Show();
+
         Main.Menu.Show(options);
     }
 

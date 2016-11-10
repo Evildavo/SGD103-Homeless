@@ -35,6 +35,7 @@ public class MotelDiner : MonoBehaviour
     public void OpenMainMenu()
     {
         List<Menu.Option> options = new List<Menu.Option>();
+        Main.PlayerState.IsInPrivate = false;
 
         // Rent room option.
         if (!RoomRented && Main.GameTime.TimeOfDayHours >= LeaveRoomByHour)
@@ -140,6 +141,8 @@ public class MotelDiner : MonoBehaviour
 
     void onExitToilet()
     {
+        Main.PlayerState.IsInPrivate = false;
+
         // Play toilet flush sound.
         var audio = GetComponent<AudioSource>();
         audio.clip = FlushSound;

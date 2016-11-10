@@ -30,6 +30,7 @@ public class Hostel : MonoBehaviour {
 
     public void OpenMainMenu()
     {
+        Main.PlayerState.IsInPrivate = false;
         menuIsOpen = true;
         List<Menu.Option> options = new List<Menu.Option>();
         if (!PlayerHasRoom)

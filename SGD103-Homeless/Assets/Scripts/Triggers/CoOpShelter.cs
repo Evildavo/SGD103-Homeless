@@ -48,6 +48,7 @@ public class CoOpShelter : MonoBehaviour {
 
     public void OpenMainMenu()
     {
+        Main.PlayerState.IsInPrivate = false;
         menu = MenuEnum.MAIN;
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(OpenCoOpShopMenu, "Co-op shop"));
@@ -73,6 +74,7 @@ public class CoOpShelter : MonoBehaviour {
     
     public void OpenCoOpShopMenu()
     {
+        Main.PlayerState.IsInPrivate = false;
         menu = MenuEnum.CO_OP;
         Main.MessageBox.ShowNext();
         List<Menu.Option> options = new List<Menu.Option>();
