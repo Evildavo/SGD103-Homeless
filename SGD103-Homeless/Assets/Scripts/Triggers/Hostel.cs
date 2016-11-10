@@ -213,6 +213,12 @@ public class Hostel : MonoBehaviour {
 
     void OnExit()
     {
+        reset();
+        Main.MessageBox.ShowNext();
+    }
+
+    void reset()
+    {
         // Hide splash screen.
         Main.Splash.Hide();
 
@@ -220,12 +226,6 @@ public class Hostel : MonoBehaviour {
         var audio = GetComponent<AudioSource>();
         audio.Stop();
 
-        reset();
-        Main.MessageBox.ShowNext();
-    }
-
-    void reset()
-    {
         Main.Menu.Hide();
         Main.Inventory.Hide();
         Trigger.Reset();
