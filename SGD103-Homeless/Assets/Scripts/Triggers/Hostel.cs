@@ -14,6 +14,10 @@ public class Hostel : MonoBehaviour {
     public Main Main;
     public Trigger Trigger;
     public WashClothesEvent WashClothesEvent;
+    public AudioClip Ambience;
+    public AudioClip AmbienceRoom;
+    public Sprite Splash;
+    public Sprite SplashRoom;
 
     public float ApplyingTimeHours;
     public float TimeCostForCheckingHousingApplication;
@@ -32,6 +36,16 @@ public class Hostel : MonoBehaviour {
     {
         Main.PlayerState.IsInPrivate = false;
         menuIsOpen = true;
+        // Show splash screen.
+        Main.Splash.Show(Splash);
+
+        // Play ambience audio.
+        var audio = GetComponent<AudioSource>();
+        audio.clip = Ambience;
+        audio.time = 0.0f;
+        audio.loop = true;
+        audio.Play();
+
         List<Menu.Option> options = new List<Menu.Option>();
         if (!PlayerHasRoom)
         {
@@ -60,6 +74,16 @@ public class Hostel : MonoBehaviour {
 
     public void OpenRoomMenu()
     {
+        // Show splash screen.
+        Main.Splash.Show(SplashRoom);
+
+        // Play ambience audio.
+        var audio = GetComponent<AudioSource>();
+        audio.clip = AmbienceRoom;
+        audio.time = 0.0f;
+        audio.loop = true;
+        audio.Play();
+
         Main.UI.ReturnTo = OpenRoomMenu;
         Main.MessageBox.ShowNext();
 
@@ -189,6 +213,13 @@ public class Hostel : MonoBehaviour {
 
     void OnExit()
     {
+        // Hide splash screen.
+        Main.Splash.Hide();
+
+        // Stop the ambience.
+        var audio = GetComponent<AudioSource>();
+        audio.Stop();
+
         reset();
         Main.MessageBox.ShowNext();
     }
