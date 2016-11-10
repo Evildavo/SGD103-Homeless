@@ -59,6 +59,9 @@ public class Hostel : MonoBehaviour {
 
     public void OpenRoomMenu()
     {
+        Main.UI.ReturnTo = OpenRoomMenu;
+        Main.MessageBox.ShowNext();
+
         menuIsOpen = true;
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(SleepInRoom, "Sleep"));

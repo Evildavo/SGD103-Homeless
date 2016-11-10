@@ -7,6 +7,7 @@ public class MotelDiner : MonoBehaviour
     int dayLastRentedRoom;
     float hourAtLastUpdate;
     bool mainMenuOpen;
+    bool wentStraightToRoom;
 
     public Main Main;
     public Trigger Trigger;
@@ -34,20 +35,24 @@ public class MotelDiner : MonoBehaviour
     {
         List<Menu.Option> options = new List<Menu.Option>();
 
-        // Sleep option.
-        if (RoomRented)
-        {
-            options.Add(new Menu.Option(sleepRoom, "Sleep in room"));
-            options.Add(new Menu.Option(WashClothes, "Wash clothes"));
-        }
-        else if (Main.GameTime.TimeOfDayHours >= LeaveRoomByHour)
+        // Rent room option.
+        if (!RoomRented && Main.GameTime.TimeOfDayHours >= LeaveRoomByHour)
         {
             options.Add(new Menu.Option(rentRoom, "Rent room for tonight", RoomCostPerNight, Main.PlayerState.CanAfford(RoomCostPerNight)));
         }
 
-        // Meal options.
+        // Diner options.
         if (EatAtDiner.IsOpen)
         {
+            wentStraightToRoom = false;
+
+            // Go to room option.
+            if (RoomRented)
+            {
+                options.Add(new Menu.Option(OpenRoomMenu, "Go to room"));
+            }
+        
+            // Meal options.
             if (Main.GameTime.TimeOfDayHours < 11)
             {
                 options.Add(new Menu.Option(buyFood, "Buy breakfast",
@@ -63,11 +68,8 @@ public class MotelDiner : MonoBehaviour
                 options.Add(new Menu.Option(buyFood, "Buy lunch",
                             EatAtDiner.MealCost, Main.PlayerState.CanAfford(EatAtDiner.MealCost)));
             }
-        }
 
-        // Job options.
-        if (EatAtDiner.IsOpen)
-        {
+            // Job options.
             if (JobLocation.IsJobAvailableToday)
             {
                 options.Add(new Menu.Option(ApplyForJob, "Apply for job"));
@@ -79,10 +81,41 @@ public class MotelDiner : MonoBehaviour
                 options.Add(new Menu.Option(null, message, 0, false));
             }
         }
+        else if (RoomRented)
+        {
+            wentStraightToRoom = true;
+            OpenRoomMenu();
+            return;
+        }
 
         options.Add(new Menu.Option(Reset, "Exit"));
         Main.Menu.Show(options);
         mainMenuOpen = true;
+    }
+
+    public void OpenRoomMenu()
+    {
+        Main.UI.ReturnTo = OpenRoomMenu;
+        Main.MessageBox.ShowNext();
+
+        List<Menu.Option> options = new List<Menu.Option>();
+        options.Add(new Menu.Option(sleepInRoom, "Sleep"));
+        options.Add(new Menu.Option(WashClothes, "Wash clothes"));
+        if (wentStraightToRoom)
+        {
+            options.Add(new Menu.Option(Reset, "Exit"));
+        }
+        else
+        {
+            options.Add(new Menu.Option(OpenMainMenu, "Back"));
+        }
+
+        // Allow player to use their inventory.
+        Main.PlayerState.IsInPrivate = true;
+        Main.Inventory.Show();
+
+        Main.Menu.Show(options);
+        mainMenuOpen = false;
     }
 
     public void ApplyForJob()
@@ -114,7 +147,7 @@ public class MotelDiner : MonoBehaviour
         OpenMainMenu();
     }
 
-    void sleepRoom()
+    void sleepInRoom()
     {
         Main.SleepManager.Sleep(null, false, SleepQualityFactor);
         mainMenuOpen = false;
@@ -133,6 +166,7 @@ public class MotelDiner : MonoBehaviour
     {
         mainMenuOpen = false;
         Main.Menu.Hide();
+        Main.Inventory.Hide();
         Main.MessageBox.ShowNext();
         if (Trigger)
         {

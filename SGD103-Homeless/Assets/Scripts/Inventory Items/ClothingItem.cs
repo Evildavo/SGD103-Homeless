@@ -128,11 +128,11 @@ public class ClothingItem : InventoryItem
         // Show UI and exit modal mode.
         Main.UI.Show();
         Main.UI.DisableModalMode();
-        Main.PlayerState.CurrentTrigger.ActivateTrigger();
-        if (Main.PlayerState.CurrentTrigger)
+        if (Main.UI.ReturnTo != null)
         {
+            Main.UI.ReturnTo();
         }
-        
+
         // Fade in from black.
         Main.ScreenFader.fadeTime = FadeInFromBlackTime;
         Main.ScreenFader.fadeIn = true;

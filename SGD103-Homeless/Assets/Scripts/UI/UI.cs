@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using System.Collections;
 
 public class UI : MonoBehaviour {
     private bool inModalMode = false;
 
     public Main Main;
+
+    public System.Action ReturnTo;
     
     // Hides the game UI.
     public void Hide()
@@ -16,7 +19,7 @@ public class UI : MonoBehaviour {
         Main.StatPanel.gameObject.SetActive(false);
         Main.MoneyPanel.gameObject.SetActive(false);
         Main.InteractPrompt.gameObject.SetActive(false);
-}
+    }
 
     // Shows the game UI.
     public void Show()
