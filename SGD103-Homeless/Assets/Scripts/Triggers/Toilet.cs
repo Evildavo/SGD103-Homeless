@@ -6,6 +6,10 @@ public class Toilet : MonoBehaviour
     public Main Main;
     public Trigger Trigger;
     public AudioClip FlushSound;
+
+    // Splash screen and ambient sound.
+    public AudioClip ToiletAmbience;
+    public Sprite ToiletSplash;
     
     public void OpenMainMenu()
     {
@@ -23,6 +27,16 @@ public class Toilet : MonoBehaviour
 
     void OnTrigger()
     {
+        // Show splash screen.
+        Main.Splash.Show(ToiletSplash);
+
+        // Play ambience audio.
+        var audio = GetComponent<AudioSource>();
+        audio.clip = ToiletAmbience;
+        audio.time = 0.0f;
+        audio.loop = true;
+        audio.Play();
+
         // Allow player to use their inventory.
         Main.PlayerState.IsInPrivate = true;
         OpenMainMenu();
@@ -39,11 +53,15 @@ public class Toilet : MonoBehaviour
         var audio = GetComponent<AudioSource>();
         audio.clip = FlushSound;
         audio.time = 0.0f;
+        audio.loop = false;
         audio.Play();
     }
     
     void reset()
     {
+        // Hide splash screen.
+        Main.Splash.Hide();
+        
         Main.Inventory.Hide();
         Main.Menu.Hide();
         Trigger.Reset();

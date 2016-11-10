@@ -5,6 +5,7 @@ public class Main : MonoBehaviour {
 
     // Common game references.
     public UI UI;
+    public Splash Splash;
     public HudButtons HudButtons;
     public TriggerInteractPrompt InteractPrompt;
     public MessageBox MessageBox;
