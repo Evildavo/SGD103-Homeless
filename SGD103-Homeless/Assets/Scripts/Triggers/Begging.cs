@@ -119,48 +119,56 @@ public class Begging : MonoBehaviour
             // Decrease morale while begging.
             Main.PlayerState.ChangeMorale(-MoraleLostPerHourBegging * Main.GameTime.GameTimeDelta);
 
-            // Check at regular intervals if we got any money.
-            if (!hasChecked || 
-                GameTime.TimeOfDayHoursDelta(hourAtLastCheck, Main.GameTime.TimeOfDayHours).forward >= CheckIntervalHours)
+            // Ignore the first check.
+            if (!hasChecked)
             {
                 hasChecked = true;
                 hourAtLastCheck = Main.GameTime.TimeOfDayHours;
-
-                // Determine the chance based on peak hours.
-                chanceMoneyGainedAtCheck = determineChance();
-
-                // Check if we got any money.
-                if (Random.Range(0.0f, 1.0f) < chanceMoneyGainedAtCheck)
-                {
-                    float moneyEarned = Random.Range(MinAmountGained, MaxAmountGained);
-
-                    // Round to the nearest 5 cents.
-                    moneyEarned = Mathf.Round(moneyEarned * 20.0f) / 20.0f;
-
-                    totalMoneyEarned += moneyEarned;
-
-                    // Play random coin sound.
-                    var audio = GetComponent<AudioSource>();
-                    audio.clip = CoinClips[Random.Range(0, CoinClips.Length)];
-                    audio.Play();
-
-                    // Display message that money was gained.
-                    if (ReportMoneyGainedDuringActivity)
-                    {
-                        Main.MessageBox.SetMessage("$" + moneyEarned.ToString("f2") + " gained");
-                    }
-                    else
-                    {
-                        Main.MessageBox.SetMessage("Money gained");
-                    }
-                    timeAtMoneyLastGained = Time.time;
-                }
             }
-
-            // After money is gained change back to the regular searching message.
-            if (Time.time - timeAtMoneyLastGained > DisplayMoneyGainedMessageForSeconds)
+            else
             {
-                showBeggingMessage();
+                // Check at regular intervals if we got any money.
+                if (GameTime.TimeOfDayHoursDelta(hourAtLastCheck, Main.GameTime.TimeOfDayHours).forward >= CheckIntervalHours)
+                {
+                    hasChecked = true;
+                    hourAtLastCheck = Main.GameTime.TimeOfDayHours;
+
+                    // Determine the chance based on peak hours.
+                    chanceMoneyGainedAtCheck = determineChance();
+
+                    // Check if we got any money.
+                    if (Random.Range(0.0f, 1.0f) < chanceMoneyGainedAtCheck)
+                    {
+                        float moneyEarned = Random.Range(MinAmountGained, MaxAmountGained);
+
+                        // Round to the nearest 5 cents.
+                        moneyEarned = Mathf.Round(moneyEarned * 20.0f) / 20.0f;
+
+                        totalMoneyEarned += moneyEarned;
+
+                        // Play random coin sound.
+                        var audio = GetComponent<AudioSource>();
+                        audio.clip = CoinClips[Random.Range(0, CoinClips.Length)];
+                        audio.Play();
+
+                        // Display message that money was gained.
+                        if (ReportMoneyGainedDuringActivity)
+                        {
+                            Main.MessageBox.SetMessage("$" + moneyEarned.ToString("f2") + " gained");
+                        }
+                        else
+                        {
+                            Main.MessageBox.SetMessage("Money gained");
+                        }
+                        timeAtMoneyLastGained = Time.time;
+                    }
+                }
+
+                // After money is gained change back to the regular searching message.
+                if (Time.time - timeAtMoneyLastGained > DisplayMoneyGainedMessageForSeconds)
+                {
+                    showBeggingMessage();
+                }
             }
         }
         else
