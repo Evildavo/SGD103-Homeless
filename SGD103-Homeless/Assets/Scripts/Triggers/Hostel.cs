@@ -263,6 +263,7 @@ public class Hostel : MonoBehaviour {
         // Stop the ambience.
         var audio = GetComponent<AudioSource>();
         audio.Stop();
+        audio.clip = null;
 
         Main.MessageBox.ShowNext();
         Main.Menu.Hide();
