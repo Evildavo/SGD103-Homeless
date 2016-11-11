@@ -187,7 +187,10 @@ public class Supermarket : MonoBehaviour
         audio.Play();
 
         // Stop street audio.
-        Main.Ambience.Pause();
+        if (Main.Ambience)
+        {
+            Main.Ambience.Pause();
+        }
 
         JobLocation.CheckForJob(true);
         OpenMainMenu();
@@ -248,7 +251,10 @@ public class Supermarket : MonoBehaviour
         audio.clip = null;
 
         // Resume street audio.
-        Main.Ambience.Resume();
+        if (Main.Ambience)
+        {
+            Main.Ambience.Resume();
+        }
 
         Main.Menu.Hide();
         Main.MessageBox.ShowNext();

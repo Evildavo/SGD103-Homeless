@@ -59,9 +59,12 @@ public class Hostel : MonoBehaviour {
             audio.loop = true;
             audio.Play();
         }
-                
+
         // Stop street audio.
-        Main.Ambience.Pause();
+        if (Main.Ambience)
+        {
+            Main.Ambience.Pause();
+        }
 
         // Applying for room options.
         List<Menu.Option> options = new List<Menu.Option>();
@@ -106,7 +109,10 @@ public class Hostel : MonoBehaviour {
         }
 
         // Stop street audio.
-        Main.Ambience.Pause();
+        if (Main.Ambience)
+        {
+            Main.Ambience.Pause();
+        }
 
         Main.UI.ReturnTo = OpenRoomMenu;
         Main.MessageBox.ShowNext();
@@ -270,7 +276,10 @@ public class Hostel : MonoBehaviour {
         audio.clip = null;
 
         // Resume street audio.
-        Main.Ambience.Resume();
+        if (Main.Ambience)
+        {
+            Main.Ambience.Resume();
+        }
 
         Main.MessageBox.ShowNext();
         Main.Menu.Hide();

@@ -42,9 +42,12 @@ public class Library : MonoBehaviour {
         var audio = GetComponent<AudioSource>();
         audio.Stop();
         audio.clip = null;
-        
+
         // Resume street audio.
-        Main.Ambience.Resume();
+        if (Main.Ambience)
+        {
+            Main.Ambience.Resume();
+        }
         
         Main.Menu.Hide();
         Main.MessageBox.ShowNext();
@@ -70,9 +73,12 @@ public class Library : MonoBehaviour {
             audio.loop = true;
             audio.Play();
         }
-        
+
         // Stop street audio.
-        Main.Ambience.Pause();
+        if (Main.Ambience)
+        {
+            Main.Ambience.Pause();
+        }
 
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(OnJobSearch, "Job search", 0, !jobSearchedToday));

@@ -38,7 +38,10 @@ public class Toilet : MonoBehaviour
         audio.Play();
 
         // Stop street audio.
-        Main.Ambience.Pause();
+        if (Main.Ambience)
+        {
+            Main.Ambience.Pause();
+        }
 
         // Allow player to use their inventory.
         Main.PlayerState.IsInPrivate = true;
@@ -66,7 +69,10 @@ public class Toilet : MonoBehaviour
         audio.Play();
 
         // Resume street audio.
-        Main.Ambience.Resume();
+        if (Main.Ambience)
+        {
+            Main.Ambience.Resume();
+        }
 
         Main.Inventory.Hide();
         Main.Menu.Hide();

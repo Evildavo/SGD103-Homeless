@@ -65,7 +65,10 @@ public class CoOpShelter : MonoBehaviour {
         }
 
         // Stop street audio.
-        Main.Ambience.Pause();
+        if (Main.Ambience)
+        {
+            Main.Ambience.Pause();
+        }
 
         Main.PlayerState.IsInPrivate = false;
         menu = MenuEnum.MAIN;
@@ -357,7 +360,10 @@ public class CoOpShelter : MonoBehaviour {
         audio.clip = null;
 
         // Resume street audio.
-        Main.Ambience.Resume();
+        if (Main.Ambience)
+        {
+            Main.Ambience.Resume();
+        }
 
         Main.Menu.Hide();
         Main.MessageBox.ShowNext();

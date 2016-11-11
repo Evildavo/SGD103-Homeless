@@ -57,7 +57,10 @@ public class MotelDiner : MonoBehaviour
         }
 
         // Stop street audio.
-        Main.Ambience.Pause();
+        if (Main.Ambience)
+        {
+            Main.Ambience.Pause();
+        }
 
         // Rent room option.
         if (!RoomRented && Main.GameTime.TimeOfDayHours >= LeaveRoomByHour)
@@ -134,7 +137,10 @@ public class MotelDiner : MonoBehaviour
         }
 
         // Stop street audio.
-        Main.Ambience.Pause();
+        if (Main.Ambience)
+        {
+            Main.Ambience.Pause();
+        }
 
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(sleepInRoom, "Sleep"));
@@ -175,7 +181,10 @@ public class MotelDiner : MonoBehaviour
         }
 
         // Stop street audio.
-        Main.Ambience.Pause();
+        if (Main.Ambience)
+        {
+            Main.Ambience.Pause();
+        }
 
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(onExitToilet, "Back", 0, true, null, true));
@@ -256,7 +265,10 @@ public class MotelDiner : MonoBehaviour
         audio.clip = null;
 
         // Resume street audio.
-        Main.Ambience.Resume();
+        if (Main.Ambience)
+        {
+            Main.Ambience.Resume();
+        }
 
         mainMenuOpen = false;
         Main.Menu.Hide();

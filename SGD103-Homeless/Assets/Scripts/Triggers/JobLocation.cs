@@ -16,7 +16,7 @@ public class JobLocation : MonoBehaviour
     private List<NoticeReason> playerOnNoticeForReasons = new List<NoticeReason>();
     private int numUpdateTicksDuringShift;
     private float healthDuringShiftSum;
-    private float moraleDuringShiftSum;
+    private bool moralePoorAtWorkStart;
 
     // When the player is on notice for some issue.
     enum NoticeReason
@@ -57,7 +57,7 @@ public class JobLocation : MonoBehaviour
         [Space(-10, order = 1)]
         [Header("it the next day results in dismissal", order = 2)]
         public float MinAverageHealthDuringShiftBeforeNotice = 0.3f;
-        public float MinAverageMoraleDuringShiftBeforeNotice = 0.3f;
+        public float MinMoraleAtShiftStartBeforeNotice = 0.3f;
         public float MinClothingCleanlinessBeforeNotice = 0.3f;
         public float MaxInebriationBeforeNotice = 0.3f;
         [Header("Player is fired immediately for turning up to work drunk")]
@@ -119,7 +119,8 @@ public class JobLocation : MonoBehaviour
     public float FadeToBlackTime = 2.0f;
     public float FadeInFromBlackTime = 2.0f;
     public float WorkTimeScale = 8000.0f;
-    public float MoraleGainedAtShiftEnd;
+    [Header("Only if morale is good. See \"Min Morale At Shift Start Before Notice\"")]
+    public float MoraleGainedAtShiftEnd; 
     public float MoraleRewardForSuccessfulApplication;
     public float MoralePenaltyForRejectedApplication;
     public float MoralePenaltyPerNoticeReceived;
@@ -349,7 +350,7 @@ public class JobLocation : MonoBehaviour
                 timeAtShiftStart = Main.GameTime.TimeOfDayHours;
                 numUpdateTicksDuringShift = 0;
                 healthDuringShiftSum = 0.0f;
-                moraleDuringShiftSum = 0.0f;
+                moralePoorAtWorkStart = (Main.PlayerState.Morale < Job.MinMoraleAtShiftStartBeforeNotice);
                 Main.UI.EnableModalMode();
 
                 // Fade to black.
@@ -485,7 +486,6 @@ public class JobLocation : MonoBehaviour
         {
             // Update the data for calculating average health over the shift. 
             healthDuringShiftSum += Main.PlayerState.HealthTiredness;
-            moraleDuringShiftSum += Main.PlayerState.Morale;
             numUpdateTicksDuringShift++;
 
             // Stop work at the end of shift.
@@ -580,8 +580,7 @@ public class JobLocation : MonoBehaviour
         }
 
         // Handle warning notices for poor morale.
-        float averageMoraleDuringShift = moraleDuringShiftSum / numUpdateTicksDuringShift;
-        if (averageMoraleDuringShift < Job.MinAverageMoraleDuringShiftBeforeNotice)
+        if (moralePoorAtWorkStart)
         {
             // Already on notice for this reason, so dismiss.
             if (playerOnNoticeForReasons.Contains(NoticeReason.POOR_MORALE))
@@ -651,7 +650,11 @@ public class JobLocation : MonoBehaviour
         }
 
         // Give the player a morale boost for completing the shift, but penalise them for notices received.
-        Main.PlayerState.ChangeMorale(MoraleGainedAtShiftEnd - numNoticesReceived * MoralePenaltyPerNoticeReceived);
+        if (!moralePoorAtWorkStart)
+        {
+            Main.PlayerState.ChangeMorale(MoraleGainedAtShiftEnd);
+        }
+        Main.PlayerState.ChangeMorale(-numNoticesReceived * MoralePenaltyPerNoticeReceived);
     }
 
     void stopWork()

@@ -77,7 +77,10 @@ public class Laundromat : MonoBehaviour
         audio.clip = null;
 
         // Resume street audio.
-        Main.Ambience.Resume();
+        if (Main.Ambience)
+        {
+            Main.Ambience.Resume();
+        }
 
         Main.Menu.Hide();
         Trigger.Reset();

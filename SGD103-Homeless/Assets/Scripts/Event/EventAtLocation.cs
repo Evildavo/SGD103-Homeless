@@ -84,7 +84,8 @@ public class EventAtLocation : MonoBehaviour {
                 Input.GetKeyDown("enter") ||
                 Input.GetKeyDown("return") ||
                 Input.GetKeyDown("space") ||
-                Input.GetKeyDown("tab"));
+                Input.GetKeyDown("tab") ||
+                Input.GetKeyDown("escape"));
     }
 
     // Override to do something when the player attends the event.
