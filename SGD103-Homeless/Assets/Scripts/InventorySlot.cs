@@ -155,11 +155,18 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         // On secondary button press.
         if (isOver && Item && Input.GetButtonDown("Secondary"))
         {
-            // Discard the item.
+            // Prompt to discard the item.
             if (Item.CanBeDiscarded)
             {
-                Item.OnDiscard();
-                Main.Inventory.RemoveItem(Item);
+                ConfirmationBox.OnChoiceMade onChoice = (bool yes) =>
+                {
+                    if (yes)
+                    {
+                        Item.OnDiscard();
+                        Main.Inventory.RemoveItem(Item);
+                    }
+                };
+                Main.ConfirmationBox.Open(onChoice, "Are you sure?", "Yes", "No");
             }
         }
     }
