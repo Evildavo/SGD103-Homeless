@@ -169,7 +169,7 @@ public class MotelDiner : MonoBehaviour
         if (audio.clip != AmbienceToilet)
         {
             audio.clip = AmbienceToilet;
-            audio.time = 0.0f;
+            audio.time = 1.5f;
             audio.loop = true;
             audio.Play();
         }

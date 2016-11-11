@@ -33,7 +33,7 @@ public class Toilet : MonoBehaviour
         // Play ambience audio.
         var audio = GetComponent<AudioSource>();
         audio.clip = ToiletAmbience;
-        audio.time = 0.0f;
+        audio.time = 1.5f;
         audio.loop = true;
         audio.Play();
 
