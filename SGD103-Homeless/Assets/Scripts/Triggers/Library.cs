@@ -41,6 +41,7 @@ public class Library : MonoBehaviour {
         // Stop the ambience.
         var audio = GetComponent<AudioSource>();
         audio.Stop();
+        audio.clip = null;
         Main.Menu.Hide();
         Main.MessageBox.ShowNext();
         Main.GameTime.ResetToNormalTime();
