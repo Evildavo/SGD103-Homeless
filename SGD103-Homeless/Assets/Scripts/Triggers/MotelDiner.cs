@@ -16,6 +16,12 @@ public class MotelDiner : MonoBehaviour
     public EatAtDinerEvent EatAtDiner;
     public WashClothesEvent WashClothesEvent;
     public AudioClip FlushSound;
+    public AudioClip Ambience;
+    public AudioClip AmbienceRoom;
+    public AudioClip AmbienceToilet;
+    public Sprite Splash;
+    public Sprite SplashRoom;
+    public Sprite SplashToilet;
 
     public float LeaveRoomByHour = 8.0f;
     public float RoomCostPerNight;
@@ -36,6 +42,22 @@ public class MotelDiner : MonoBehaviour
     {
         List<Menu.Option> options = new List<Menu.Option>();
         Main.PlayerState.IsInPrivate = false;
+
+        // Show splash screen.
+        Main.Splash.Show(Splash);
+
+        // Play ambience audio.
+        var audio = GetComponent<AudioSource>();
+        if (audio.clip != Ambience)
+        {
+            audio.clip = Ambience;
+            audio.time = 0.0f;
+            audio.loop = true;
+            audio.Play();
+        }
+
+        // Stop street audio.
+        Main.Ambience.Pause();
 
         // Rent room option.
         if (!RoomRented && Main.GameTime.TimeOfDayHours >= LeaveRoomByHour)
@@ -97,7 +119,23 @@ public class MotelDiner : MonoBehaviour
     {
         Main.UI.ReturnTo = OpenRoomMenu;
         Main.MessageBox.ShowNext();
-        
+
+        // Show splash screen.
+        Main.Splash.Show(SplashRoom);
+
+        // Play ambience audio.
+        var audio = GetComponent<AudioSource>();
+        if (audio.clip != AmbienceRoom)
+        {
+            audio.clip = AmbienceRoom;
+            audio.time = 0.0f;
+            audio.loop = true;
+            audio.Play();
+        }
+
+        // Stop street audio.
+        Main.Ambience.Pause();
+
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(sleepInRoom, "Sleep"));
         options.Add(new Menu.Option(WashClothes, "Wash clothes"));
@@ -123,6 +161,22 @@ public class MotelDiner : MonoBehaviour
         Main.UI.ReturnTo = OpenToiletMenu;
         Main.MessageBox.ShowNext();
 
+        // Show splash screen.
+        Main.Splash.Show(SplashToilet);
+
+        // Play ambience audio.
+        var audio = GetComponent<AudioSource>();
+        if (audio.clip != AmbienceToilet)
+        {
+            audio.clip = AmbienceToilet;
+            audio.time = 0.0f;
+            audio.loop = true;
+            audio.Play();
+        }
+
+        // Stop street audio.
+        Main.Ambience.Pause();
+
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(onExitToilet, "Back"));
 
@@ -139,10 +193,8 @@ public class MotelDiner : MonoBehaviour
         Main.PlayerState.IsInPrivate = false;
 
         // Play toilet flush sound.
-        var audio = GetComponent<AudioSource>();
-        audio.clip = FlushSound;
-        audio.time = 0.0f;
-        audio.Play();
+        AudioSource[] audioSources = GetComponents<AudioSource>();
+        audioSources[1].Play();
 
         OpenMainMenu();
     }
@@ -193,6 +245,17 @@ public class MotelDiner : MonoBehaviour
 
     void Reset()
     {
+        // Hide splash screen.
+        Main.Splash.Hide();
+
+        // Stop the ambience.
+        var audio = GetComponent<AudioSource>();
+        audio.Stop();
+        audio.clip = null;
+
+        // Resume street audio.
+        Main.Ambience.Resume();
+
         mainMenuOpen = false;
         Main.Menu.Hide();
         Main.Inventory.Hide();
