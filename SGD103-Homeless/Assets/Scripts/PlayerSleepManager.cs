@@ -189,7 +189,10 @@ public class PlayerSleepManager : MonoBehaviour
             (minHealthGain + Main.SleepManager.SleepQuality * (maxHealthGain - minHealthGain)) * 
             hoursSlept);
 
-        onAwake();
+        if (onAwake != null)
+        {
+            onAwake();
+        }
     }
 
     void OnFadeInComplete()
