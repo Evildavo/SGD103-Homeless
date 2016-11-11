@@ -39,7 +39,8 @@ public class Hostel : MonoBehaviour {
                Input.GetKeyDown("enter") ||
                Input.GetKeyDown("return") ||
                Input.GetKeyDown("space") ||
-               Input.GetKeyDown("tab");
+               Input.GetKeyDown("tab") ||
+               Input.GetKeyDown("escape");
     }
 
     public void OpenMainMenu()
