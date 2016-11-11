@@ -20,6 +20,7 @@ public class Main : MonoBehaviour {
     public ObjectiveList ObjectiveList;
     public ScreenFader ScreenFader;
     public GameTime GameTime;
+    public Ambience Ambience;
     public CharacterDialogueManager DialogueManager;
     public PlayerCharacter PlayerCharacter;
     public PlayerState PlayerState;

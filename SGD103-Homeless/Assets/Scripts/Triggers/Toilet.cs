@@ -37,6 +37,9 @@ public class Toilet : MonoBehaviour
         audio.loop = true;
         audio.Play();
 
+        // Stop street audio.
+        Main.Ambience.Pause();
+
         // Allow player to use their inventory.
         Main.PlayerState.IsInPrivate = true;
         OpenMainMenu();
@@ -55,6 +58,9 @@ public class Toilet : MonoBehaviour
         audio.time = 0.0f;
         audio.loop = false;
         audio.Play();
+
+        // Resume street audio.
+        Main.Ambience.Resume();
     }
     
     void reset()

@@ -50,6 +50,9 @@ public class Laundromat : MonoBehaviour
             audio.loop = true;
             audio.Play();
         }
+
+        // Stop street audio.
+        Main.Ambience.Pause();
     }
 
     void OnExit()
@@ -67,6 +70,9 @@ public class Laundromat : MonoBehaviour
         var audio = GetComponent<AudioSource>();
         audio.Stop();
         audio.clip = null;
+
+        // Resume street audio.
+        Main.Ambience.Resume();
 
         Main.Menu.Hide();
         Trigger.Reset();
