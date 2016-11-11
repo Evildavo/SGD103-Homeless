@@ -102,7 +102,7 @@ public class Greg : Character
         Main.Inventory.EnterSellMode(onPlayerSellingItem);
 
         List<Menu.Option> options = new List<Menu.Option>();
-        options.Add(new Menu.Option(onExitSellMenu, "Back"));
+        options.Add(new Menu.Option(onExitSellMenu, "Back", 0, true, null, true));
         Main.Menu.Show(options);
     }
 

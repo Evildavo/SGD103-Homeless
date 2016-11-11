@@ -84,7 +84,7 @@ public class Hostel : MonoBehaviour {
         {
             options.Add(new Menu.Option(OpenRoomMenu, "Go to room"));
         }
-        options.Add(new Menu.Option(OnExit, "Exit"));
+        options.Add(new Menu.Option(OnExit, "Exit", 0, true, null, true));
 
         Main.Menu.Show(options);
     }

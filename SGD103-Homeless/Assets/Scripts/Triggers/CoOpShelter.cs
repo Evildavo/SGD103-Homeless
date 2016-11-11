@@ -86,7 +86,7 @@ public class CoOpShelter : MonoBehaviour {
         {
             options.Add(new Menu.Option(AttendAddictionSupport, "Attend addiction support therapy"));
         }
-        options.Add(new Menu.Option(reset, "Exit"));
+        options.Add(new Menu.Option(reset, "Exit", 0, true, null, true));
 
         Main.Menu.Show(options);
         inMainMenu = true;
@@ -116,7 +116,7 @@ public class CoOpShelter : MonoBehaviour {
             returnTo = OpenCoOpShopMenu;
             options.Add(new Menu.Option(OpenChangingRoomMenu, "Go to changing room"));
         }
-        options.Add(new Menu.Option(OpenMainMenu, "Back"));
+        options.Add(new Menu.Option(OpenMainMenu, "Back", 0, true, null, true));
 
         Main.Menu.Show(options);
         inMainMenu = false;
@@ -166,7 +166,7 @@ public class CoOpShelter : MonoBehaviour {
         menu = MenuEnum.FOOD;
         List<Menu.Option> options = new List<Menu.Option>();
         AddMenuOptions(FoodMenuPrefabItems, options);
-        options.Add(new Menu.Option(OpenCoOpShopMenu, "Back"));
+        options.Add(new Menu.Option(OpenCoOpShopMenu, "Back", 0, true, null, true));
         Main.Menu.Show(options);
     }
 
@@ -175,7 +175,7 @@ public class CoOpShelter : MonoBehaviour {
         menu = MenuEnum.OUTDOOR_EQUIPMENT;
         List<Menu.Option> options = new List<Menu.Option>();
         AddMenuOptions(OutdoorEquipmentMenuPrefabItems, options);
-        options.Add(new Menu.Option(OpenCoOpShopMenu, "Back"));
+        options.Add(new Menu.Option(OpenCoOpShopMenu, "Back", 0, true, null, true));
         Main.Menu.Show(options);
     }
 
@@ -186,7 +186,7 @@ public class CoOpShelter : MonoBehaviour {
         AddMenuOptions(ClothingMenuPrefabItems, options);
         returnTo = OpenClothingItemMenu;
         options.Add(new Menu.Option(OpenChangingRoomMenu, "Go to changing room"));
-        options.Add(new Menu.Option(OpenCoOpShopMenu, "Back"));
+        options.Add(new Menu.Option(OpenCoOpShopMenu, "Back", 0, true, null, true));
         Main.Menu.Show(options);
     }
 

@@ -145,7 +145,7 @@ public class MotelDiner : MonoBehaviour
         }
         else
         {
-            options.Add(new Menu.Option(OpenMainMenu, "Back"));
+            options.Add(new Menu.Option(OpenMainMenu, "Back", 0, true, null, true));
         }
 
         // Allow player to use their inventory.
@@ -178,7 +178,7 @@ public class MotelDiner : MonoBehaviour
         Main.Ambience.Pause();
 
         List<Menu.Option> options = new List<Menu.Option>();
-        options.Add(new Menu.Option(onExitToilet, "Back"));
+        options.Add(new Menu.Option(onExitToilet, "Back", 0, true, null, true));
 
         // Allow player to use their inventory.
         Main.PlayerState.IsInPrivate = true;

@@ -111,7 +111,7 @@ public class Supermarket : MonoBehaviour
         menu = MenuEnum.FOOD;
         List<Menu.Option> options = new List<Menu.Option>();
         AddMenuOptions(FoodMenuPrefabItems, options);
-        options.Add(new Menu.Option(OnBackSelected, "Back"));
+        options.Add(new Menu.Option(OnBackSelected, "Back", 0, true, null, true));
         Main.Menu.Show(options);
     }
 
@@ -120,7 +120,7 @@ public class Supermarket : MonoBehaviour
         menu = MenuEnum.OUTDOOR_EQUIPMENT;
         List<Menu.Option> options = new List<Menu.Option>();
         AddMenuOptions(OutdoorEquipmentMenuPrefabItems, options);
-        options.Add(new Menu.Option(OnBackSelected, "Back"));
+        options.Add(new Menu.Option(OnBackSelected, "Back", 0, true, null, true));
         Main.Menu.Show(options);
     }
 
@@ -131,7 +131,7 @@ public class Supermarket : MonoBehaviour
         List<Menu.Option> options = new List<Menu.Option>();
         AddMenuOptions(ClothingMenuPrefabItems, options);
         options.Add(new Menu.Option(OpenChangingRoomMenu, "Go to changing room"));
-        options.Add(new Menu.Option(OnBackSelected, "Back"));
+        options.Add(new Menu.Option(OnBackSelected, "Back", 0, true, null, true));
         Main.Menu.Show(options);
     }
     
@@ -142,7 +142,7 @@ public class Supermarket : MonoBehaviour
         Main.MessageBox.ShowNext();
 
         List<Menu.Option> options = new List<Menu.Option>();
-        options.Add(new Menu.Option(OpenClothingItemMenu, "Back"));
+        options.Add(new Menu.Option(OpenClothingItemMenu, "Back", 0, true, null, true));
 
         // Allow player to use their inventory.
         Main.PlayerState.IsInPrivate = true;
@@ -156,7 +156,7 @@ public class Supermarket : MonoBehaviour
         menu = MenuEnum.LIQUOR;
         List<Menu.Option> options = new List<Menu.Option>();
         AddMenuOptions(LiquorMenuPrefabItems, options);
-        options.Add(new Menu.Option(OnBackSelected, "Back"));
+        options.Add(new Menu.Option(OnBackSelected, "Back", 0, true, null, true));
         Main.Menu.Show(options);
     }
 
@@ -165,7 +165,7 @@ public class Supermarket : MonoBehaviour
         menu = MenuEnum.MEDICINE;
         List<Menu.Option> options = new List<Menu.Option>();
         AddMenuOptions(MedicineMenuPrefabItems, options);
-        options.Add(new Menu.Option(OnBackSelected, "Back"));
+        options.Add(new Menu.Option(OnBackSelected, "Back", 0, true, null, true));
         Main.Menu.Show(options);
     }
 
