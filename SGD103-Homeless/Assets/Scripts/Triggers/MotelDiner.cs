@@ -43,16 +43,16 @@ public class MotelDiner : MonoBehaviour
             options.Add(new Menu.Option(rentRoom, "Rent room for tonight", RoomCostPerNight, Main.PlayerState.CanAfford(RoomCostPerNight)));
         }
 
+        // Go to room option.
+        if (RoomRented)
+        {
+            options.Add(new Menu.Option(OpenRoomMenu, "Go to room"));
+        }
+
         // Diner options.
         if (EatAtDiner.IsOpen)
         {
             wentStraightToRoom = false;
-
-            // Go to room option.
-            if (RoomRented)
-            {
-                options.Add(new Menu.Option(OpenRoomMenu, "Go to room"));
-            }
 
             // Go to toilet option.
             options.Add(new Menu.Option(OpenToiletMenu, "Go to toilet"));
@@ -79,18 +79,13 @@ public class MotelDiner : MonoBehaviour
             {
                 options.Add(new Menu.Option(ApplyForJob, "Apply for job"));
             }
-            if (JobLocation.PlayerHasJobHere)
-            {
-                // Note that this is a ghost option to inform the player, not to be a useable menu item.
-                string message = "Work (" + JobLocation.GetWorkTimeSummaryShort() + ")";
-                options.Add(new Menu.Option(null, message, 0, false));
-            }
         }
-        else if (RoomRented)
+
+        if (JobLocation.PlayerHasJobHere)
         {
-            wentStraightToRoom = true;
-            OpenRoomMenu();
-            return;
+            // Note that this is a ghost option to inform the player, not to be a useable menu item.
+            string message = "Work (" + JobLocation.GetWorkTimeSummaryShort() + ")";
+            options.Add(new Menu.Option(null, message, 0, false));
         }
 
         options.Add(new Menu.Option(Reset, "Exit"));
