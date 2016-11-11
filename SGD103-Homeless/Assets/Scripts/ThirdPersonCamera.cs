@@ -28,7 +28,6 @@ public class ThirdPersonCamera : MonoBehaviour {
         float halfScreenWidth = (Screen.width / 2.0f);
         float horizontalOffsetFromCentre = 
             Mathf.Asin((Input.mousePosition.x - halfScreenWidth) / halfScreenWidth * (Mathf.PI / 4.0f));
-        Debug.Log(horizontalOffsetFromCentre);
         transform.localRotation =
             initialRotation * Quaternion.Euler(
                 0.0f,
