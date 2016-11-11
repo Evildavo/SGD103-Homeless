@@ -25,8 +25,13 @@ public class Laundromat : MonoBehaviour
     {
         // Pay money.
         Main.PlayerState.Money -= CostToUse;
-
+        
+        WashClothesEvent.SetOnLeaveCallback(reset);
         WashClothesEvent.Attend();
+    }
+    void onFinishedWashingClothes()
+    {
+        reset();
     }
 
     void Start ()

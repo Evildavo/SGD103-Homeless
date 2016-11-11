@@ -157,6 +157,7 @@ public class Hostel : MonoBehaviour {
 
     public void WashClothes()
     {
+        WashClothesEvent.SetOnLeaveCallback(OpenRoomMenu);
         WashClothesEvent.Attend();
         menuIsOpen = false;
     }

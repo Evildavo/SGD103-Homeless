@@ -207,6 +207,7 @@ public class MotelDiner : MonoBehaviour
 
     public void WashClothes()
     {
+        WashClothesEvent.SetOnLeaveCallback(OpenRoomMenu);
         WashClothesEvent.Attend();
         mainMenuOpen = false;
     }
@@ -239,6 +240,7 @@ public class MotelDiner : MonoBehaviour
         // Pay cost.
         Main.PlayerState.Money -= EatAtDiner.MealCost;
 
+        EatAtDiner.SetOnLeaveCallback(OpenRoomMenu);
         EatAtDiner.Attend();
         mainMenuOpen = false;
     }

@@ -3,6 +3,7 @@ using System.Collections;
 
 public class EventAtLocation : MonoBehaviour {
     float hourAtAttendance;
+    System.Action onLeave;
 
     public Main Main;
 
@@ -27,6 +28,13 @@ public class EventAtLocation : MonoBehaviour {
     public bool IsOpen;
     [ReadOnly]
     public float DurationHours;
+
+
+    // This function is called whenever the player leaves the event.
+    public void SetOnLeaveCallback(System.Action onLeaveCallback)
+    {
+        onLeave = onLeaveCallback;
+    }
 
 
     // The screen fades to black to represent the user attending the event.
@@ -62,6 +70,10 @@ public class EventAtLocation : MonoBehaviour {
 
         Invoke("onFadeInComplete", FadeInFromBlackTime);
         OnPlayerLeaves();
+        if (onLeave != null)
+        {
+            onLeave();
+        }
     }
 
     public bool ExitPressed()

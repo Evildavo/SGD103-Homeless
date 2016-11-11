@@ -232,18 +232,21 @@ public class CoOpShelter : MonoBehaviour {
 
     public void AttendSoupKitchen()
     {
+        SoupKitchenEvent.SetOnLeaveCallback(reset);
         SoupKitchenEvent.Attend();
         Main.Menu.Hide();
     }
 
     public void AttendCounselling()
     {
+        CounsellingEvent.SetOnLeaveCallback(reset);
         CounsellingEvent.Attend();
         Main.Menu.Hide();
     }
 
     public void AttendAddictionSupport()
     {
+        AddictionSupportEvent.SetOnLeaveCallback(reset);
         AddictionSupportEvent.Attend();
         Main.Menu.Hide();
     }
