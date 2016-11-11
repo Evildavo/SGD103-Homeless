@@ -51,6 +51,12 @@ public class Toilet : MonoBehaviour
     {
         reset();
         Main.MessageBox.ShowNext();
+    }
+    
+    void reset()
+    {
+        // Hide splash screen.
+        Main.Splash.Hide();
 
         // Play toilet flush sound.
         var audio = GetComponent<AudioSource>();
@@ -61,13 +67,7 @@ public class Toilet : MonoBehaviour
 
         // Resume street audio.
         Main.Ambience.Resume();
-    }
-    
-    void reset()
-    {
-        // Hide splash screen.
-        Main.Splash.Hide();
-        
+
         Main.Inventory.Hide();
         Main.Menu.Hide();
         Trigger.Reset();
