@@ -14,7 +14,7 @@ public class Ambience : MonoBehaviour {
     {
         foreach (AudioSource audio in GetComponents<AudioSource>())
         {
-            audio.Pause();
+            audio.UnPause();
         }
     }
 
