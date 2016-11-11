@@ -27,6 +27,8 @@ public class CoOpShelter : MonoBehaviour {
     public WashClothesEvent WashClothesEvent;
     public EventAtLocation CounsellingEvent;
     public EventAtLocation AddictionSupportEvent;
+    public AudioClip Ambience;
+    public Sprite Splash;
 
     public float TimeCostToReadNotice;
     public List<InventoryItem> CoOpMenuPrefabItems;
@@ -49,6 +51,19 @@ public class CoOpShelter : MonoBehaviour {
 
     public void OpenMainMenu()
     {
+        // Show splash screen.
+        Main.Splash.Show(Splash);
+
+        // Play ambience audio.
+        var audio = GetComponent<AudioSource>();
+        if (audio.clip != Ambience)
+        {
+            audio.clip = Ambience;
+            audio.time = 0.0f;
+            audio.loop = true;
+            audio.Play();
+        }
+
         Main.PlayerState.IsInPrivate = false;
         menu = MenuEnum.MAIN;
         List<Menu.Option> options = new List<Menu.Option>();
@@ -327,6 +342,14 @@ public class CoOpShelter : MonoBehaviour {
 
     void reset()
     {
+        // Hide splash screen.
+        Main.Splash.Hide();
+
+        // Stop the ambience.
+        var audio = GetComponent<AudioSource>();
+        audio.Stop();
+        audio.clip = null;
+
         Main.Menu.Hide();
         Main.MessageBox.ShowNext();
         Trigger.Reset();
