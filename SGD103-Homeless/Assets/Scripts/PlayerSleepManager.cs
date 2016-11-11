@@ -199,7 +199,7 @@ public class PlayerSleepManager : MonoBehaviour
     {
         if (IsAsleep)
         {
-            Main.MessageBox.Show("Zzzz...", gameObject);
+            Main.MessageBox.Show("Sleeping...\nPress Escape to interrupt", gameObject);
             Main.GameTime.AccelerateTime(SleepTimeScale);
         }
     }
