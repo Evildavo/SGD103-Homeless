@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Lucy : Character
+public class Homeless06 : Character
 {
     void Start()
     {
