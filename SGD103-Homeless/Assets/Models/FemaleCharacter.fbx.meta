@@ -1,0 +1,202 @@
+fileFormatVersion: 2
+guid: d8fa60afb77585f42ae8f976c71f38f3
+timeCreated: 1478934315
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Arm_IK_Control_L
+    100002: Arm_IK_Control_R
+    100004: Arm_IK_Pole_Target_Control_L
+    100006: Arm_IK_Pole_Target_Control_L_end
+    100008: Arm_IK_Pole_Target_Control_R
+    100010: Arm_IK_Pole_Target_Control_R_end
+    100012: Arm_L
+    100014: Arm_R
+    100016: ControlArmature
+    100018: //RootNode
+    100020: Foot_IK_Control_L
+    100022: Foot_IK_Control_L_end
+    100024: Foot_IK_Control_R
+    100026: Foot_IK_Control_R_end
+    100028: Foot_L
+    100030: Foot_R
+    100032: ForeArm_L
+    100034: ForeArm_R
+    100036: Hand_L
+    100038: Hand_L_end
+    100040: Hand_R
+    100042: Hand_R_end
+    100044: Head
+    100046: Head_end
+    100048: Head_FK_Control
+    100050: Head_FK_Control_end
+    100052: HipControl
+    100054: HipControl_end
+    100056: Hips
+    100058: HumanFemale
+    100060: Leg_IK_Control_L
+    100062: Leg_IK_Control_R
+    100064: Leg_IK_Pole_Target_L
+    100066: Leg_IK_Pole_Target_L_end
+    100068: Leg_IK_Pole_Target_R
+    100070: Leg_IK_Pole_Target_R_end
+    100072: Leg_L
+    100074: Leg_R
+    100076: Neck
+    100078: PlayerBody
+    100080: PlayerSkeleton
+    100082: Root_Control
+    100084: Shoulder_L
+    100086: Shoulder_R
+    100088: Spine
+    100090: Spine1
+    100092: Spine2
+    100094: Toe1_L
+    100096: Toe1_R
+    100098: Toe2_L
+    100100: Toe2_L_end
+    100102: Toe2_R
+    100104: Toe2_R_end
+    100106: UpLeg_L
+    100108: UpLeg_R
+    100110: Upper_Back_IK_Control
+    100112: Upper_Back_IK_Pole_Target
+    100114: Upper_Back_IK_Pole_Target_end
+    400000: Arm_IK_Control_L
+    400002: Arm_IK_Control_R
+    400004: Arm_IK_Pole_Target_Control_L
+    400006: Arm_IK_Pole_Target_Control_L_end
+    400008: Arm_IK_Pole_Target_Control_R
+    400010: Arm_IK_Pole_Target_Control_R_end
+    400012: Arm_L
+    400014: Arm_R
+    400016: ControlArmature
+    400018: //RootNode
+    400020: Foot_IK_Control_L
+    400022: Foot_IK_Control_L_end
+    400024: Foot_IK_Control_R
+    400026: Foot_IK_Control_R_end
+    400028: Foot_L
+    400030: Foot_R
+    400032: ForeArm_L
+    400034: ForeArm_R
+    400036: Hand_L
+    400038: Hand_L_end
+    400040: Hand_R
+    400042: Hand_R_end
+    400044: Head
+    400046: Head_end
+    400048: Head_FK_Control
+    400050: Head_FK_Control_end
+    400052: HipControl
+    400054: HipControl_end
+    400056: Hips
+    400058: HumanFemale
+    400060: Leg_IK_Control_L
+    400062: Leg_IK_Control_R
+    400064: Leg_IK_Pole_Target_L
+    400066: Leg_IK_Pole_Target_L_end
+    400068: Leg_IK_Pole_Target_R
+    400070: Leg_IK_Pole_Target_R_end
+    400072: Leg_L
+    400074: Leg_R
+    400076: Neck
+    400078: PlayerBody
+    400080: PlayerSkeleton
+    400082: Root_Control
+    400084: Shoulder_L
+    400086: Shoulder_R
+    400088: Spine
+    400090: Spine1
+    400092: Spine2
+    400094: Toe1_L
+    400096: Toe1_R
+    400098: Toe2_L
+    400100: Toe2_L_end
+    400102: Toe2_R
+    400104: Toe2_R_end
+    400106: UpLeg_L
+    400108: UpLeg_R
+    400110: Upper_Back_IK_Control
+    400112: Upper_Back_IK_Pole_Target
+    400114: Upper_Back_IK_Pole_Target_end
+    4300000: HumanFemale
+    4300002: PlayerBody
+    7400000: ControlArmature|TestAnim
+    7400002: ControlArmature|TestAnimation
+    7400004: ControlArmature|WalkingBackwards
+    7400006: ControlArmature|WalkingBackwards.001
+    7400008: PlayerSkeleton|TestAnim
+    7400010: PlayerSkeleton|WalkingBackwards
+    7400012: HumanFemale|TestAnim
+    7400014: HumanFemale|WalkingBackwards.001
+    7400016: PlayerBody|TestAnim
+    7400018: PlayerBody|WalkingBackwards
+    9500000: //RootNode
+    13700000: HumanFemale
+    13700002: PlayerBody
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
