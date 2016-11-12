@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
+using System.Collections.Generic;
 
 namespace UnityStandardAssets.Characters.ThirdPerson
 {
@@ -13,7 +14,26 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         private Vector3 m_Move;
         private bool m_Jump;                      // the world-relative desired move direction, calculated from the camForward and user input.
 
-        
+
+        struct InputState
+        {
+            public float h;
+            public float v;
+            public bool crouch;
+
+            public InputState(float h, float v, bool crouch)
+            {
+                this.h = h;
+                this.v = v;
+                this.crouch = crouch;
+            }
+        }
+
+        float controlDelaySeconds = 0.0f;
+        Queue<InputState> stateQueue = new Queue<InputState>();
+        float stateQueueTimeSum = 0.0f;
+
+
         private void Start()
         {
             // get the transform of the main camera
@@ -42,6 +62,13 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         }
 
 
+        
+        public void SetControlDelay(float seconds)
+        {
+            controlDelaySeconds = seconds;
+        }
+
+
         // Fixed update is called in sync with physics
         private void FixedUpdate()
         {
@@ -50,26 +77,63 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             float v = CrossPlatformInputManager.GetAxis("Vertical");
             bool crouch = Input.GetKey(KeyCode.C);
 
+            // Add a control delay.
+            if (controlDelaySeconds > 0.0f)
+            {
+                // Delay input response.
+                while (stateQueueTimeSum > controlDelaySeconds)
+                {
+                    if (stateQueue.Count > 0)
+                    {
+                        delayedInputUpdate(stateQueue.Dequeue());
+                    }
+                    else
+                    {
+                        delayedInputUpdate(new InputState(h, v, crouch));
+                    }
+                    stateQueueTimeSum -= Time.deltaTime;
+                    stateQueueTimeSum = Mathf.Max(0.0f, stateQueueTimeSum);
+                }
+
+                // Add to the state queue.
+                stateQueue.Enqueue(new InputState(h, v, crouch));
+                stateQueueTimeSum += Time.deltaTime;
+            }
+            else
+            {
+                delayedInputUpdate(new InputState(h, v, crouch));
+            }
+        }
+
+
+        void delayedInputUpdate(InputState inputState)
+        {
+            float h = inputState.h;
+            float v = inputState.v;
+            bool crouch = inputState.crouch;
+
             // calculate move direction to pass to character
             if (m_Cam != null)
             {
                 // calculate camera relative direction to move:
                 m_CamForward = Vector3.Scale(m_Cam.forward, new Vector3(1, 0, 1)).normalized;
-                m_Move = v*m_CamForward + h*m_Cam.right;
+                m_Move = v * m_CamForward + h * m_Cam.right;
             }
             else
             {
                 // we use world-relative directions in the case of no main camera
-                m_Move = v*Vector3.forward + h*Vector3.right;
+                m_Move = v * Vector3.forward + h * Vector3.right;
             }
-#if !MOBILE_INPUT
-			// walk speed multiplier
-	        if (Input.GetKey(KeyCode.LeftShift)) m_Move *= 0.5f;
-#endif
 
             // pass all parameters to the character control script
             m_Character.Move(m_Move, crouch, m_Jump);
             m_Jump = false;
+
+
+            // Delay mouse camera update.
+            ThirdPersonCamera camera = GetComponentInChildren<ThirdPersonCamera>();
         }
+
+
     }
 }
