@@ -45,7 +45,7 @@ public class MessageQueueTestTrigger : MonoBehaviour
         {
             options.Add(new Menu.Option(onSustainedMessageSelected, "Sustained message"));
         }
-        options.Add(new Menu.Option(onExit, "Exit"));
+        options.Add(new Menu.Option(onExit, "Exit", 0, true, null, true));
 
         Main.Menu.Show(options);
     }

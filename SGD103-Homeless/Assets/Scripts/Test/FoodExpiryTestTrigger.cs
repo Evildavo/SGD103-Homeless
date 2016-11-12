@@ -20,7 +20,7 @@ public class FoodExpiryTestTrigger : MonoBehaviour {
         options.Add(new Menu.Option(StaleFoodSelected, "Stale food"));
         options.Add(new Menu.Option(MouldyFoodSelected, "Mouldy food"));
         options.Add(new Menu.Option(RancidFoodSelected, "Rancid food"));
-        options.Add(new Menu.Option(Reset, "Exit"));
+        options.Add(new Menu.Option(Reset, "Exit", 0, true, null, true));
 
         Main.Menu.Show(options);
     }

@@ -24,8 +24,8 @@ public class PlayerSleepManager : MonoBehaviour
     public enum SleepQualityEnum
     {
         GOOD,
-        OK,
-        POOR
+        POOR,
+        TERRIBLE
     }
 
     public Main Main;
@@ -111,10 +111,10 @@ public class PlayerSleepManager : MonoBehaviour
                     sleepQualityAtSleep = SleepQualityHere;
                     switch (SleepQualityHere)
                     {
-                        case SleepQualityEnum.POOR:
+                        case SleepQualityEnum.TERRIBLE:
                             SleepQuality = PoorSleepQualityLevel * sleepQualityFactor;
                             break;
-                        case SleepQualityEnum.OK:
+                        case SleepQualityEnum.POOR:
                             SleepQuality = OkSleepQualityLevel * sleepQualityFactor;
                             break;
                         case SleepQualityEnum.GOOD:
@@ -199,7 +199,7 @@ public class PlayerSleepManager : MonoBehaviour
     {
         if (IsAsleep)
         {
-            Main.MessageBox.Show("Zzzz...", gameObject);
+            Main.MessageBox.Show("Sleeping...\nPress Escape to interrupt", gameObject);
             Main.GameTime.AccelerateTime(SleepTimeScale);
         }
     }
@@ -208,10 +208,10 @@ public class PlayerSleepManager : MonoBehaviour
     {
         switch (sleepQualityAtSleep)
         {
-            case SleepQualityEnum.POOR:
+            case SleepQualityEnum.TERRIBLE:
                 Main.MessageBox.ShowForTime("You awake feeling sore after an unpleasant sleep", null, gameObject);
                 break;
-            case SleepQualityEnum.OK:
+            case SleepQualityEnum.POOR:
                 Main.MessageBox.ShowForTime("You awake feeling sore but refreshed", null, gameObject);
                 break;
             case SleepQualityEnum.GOOD:
@@ -226,7 +226,9 @@ public class PlayerSleepManager : MonoBehaviour
                Input.GetKeyDown("e") ||
                Input.GetKeyDown("enter") ||
                Input.GetKeyDown("return") ||
-               Input.GetKeyDown("space");
+               Input.GetKeyDown("space") ||
+               Input.GetKeyDown("tab") ||
+               Input.GetKeyDown("escape");
     }
 
     void Update ()
@@ -269,7 +271,7 @@ public class PlayerSleepManager : MonoBehaviour
                 }
 
                 // Chance of waking early if sleeping uncomfortably.
-                if (sleepQualityAtSleep == SleepQualityEnum.POOR)
+                if (sleepQualityAtSleep == SleepQualityEnum.TERRIBLE)
                 {
                     var value = Random.Range(0.0f, 1.0f);
                     if (value <= ChanceOfWakingPoorSleepPerHour)
@@ -322,7 +324,7 @@ public class PlayerSleepManager : MonoBehaviour
             }
 
             // Determine the quality of sleep here based on zones the player is in.
-            SleepQualityHere = SleepQualityEnum.POOR;
+            SleepQualityHere = SleepQualityEnum.TERRIBLE;
             if (SleepZoneContainer)
             {
                 SleepZone[] sleepZones = SleepZoneContainer.GetComponentsInChildren<SleepZone>();

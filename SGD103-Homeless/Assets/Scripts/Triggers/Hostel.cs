@@ -10,7 +10,6 @@ public class Hostel : MonoBehaviour {
     bool hasFinishedApplying;
     bool inBusinessHours;
     bool menuIsOpen;
-    bool roomMenuOpen;
 
     public Main Main;
     public Trigger Trigger;
@@ -39,13 +38,13 @@ public class Hostel : MonoBehaviour {
                Input.GetKeyDown("e") ||
                Input.GetKeyDown("enter") ||
                Input.GetKeyDown("return") ||
-               Input.GetKeyDown("space");
+               Input.GetKeyDown("space") ||
+               Input.GetKeyDown("tab") ||
+               Input.GetKeyDown("escape");
     }
 
     public void OpenMainMenu()
     {
-        roomMenuOpen = false;
-
         Main.PlayerState.IsInPrivate = false;
         menuIsOpen = true;
         // Show splash screen.
@@ -59,6 +58,12 @@ public class Hostel : MonoBehaviour {
             audio.time = 0.0f;
             audio.loop = true;
             audio.Play();
+        }
+
+        // Stop street audio.
+        if (Main.Ambience)
+        {
+            Main.Ambience.Pause();
         }
 
         // Applying for room options.
@@ -83,15 +88,13 @@ public class Hostel : MonoBehaviour {
         {
             options.Add(new Menu.Option(OpenRoomMenu, "Go to room"));
         }
-        options.Add(new Menu.Option(OnExit, "Exit"));
+        options.Add(new Menu.Option(OnExit, "Exit", 0, true, null, true));
 
         Main.Menu.Show(options);
     }
 
     public void OpenRoomMenu()
     {
-        roomMenuOpen = true;
-
         // Show splash screen.
         Main.Splash.Show(SplashRoom);
 
@@ -103,6 +106,12 @@ public class Hostel : MonoBehaviour {
             audio.time = 0.0f;
             audio.loop = true;
             audio.Play();
+        }
+
+        // Stop street audio.
+        if (Main.Ambience)
+        {
+            Main.Ambience.Pause();
         }
 
         Main.UI.ReturnTo = OpenRoomMenu;
@@ -156,6 +165,7 @@ public class Hostel : MonoBehaviour {
 
     public void WashClothes()
     {
+        WashClothesEvent.SetOnLeaveCallback(OpenRoomMenu);
         WashClothesEvent.Attend();
         menuIsOpen = false;
     }
@@ -264,6 +274,12 @@ public class Hostel : MonoBehaviour {
         var audio = GetComponent<AudioSource>();
         audio.Stop();
         audio.clip = null;
+
+        // Resume street audio.
+        if (Main.Ambience)
+        {
+            Main.Ambience.Resume();
+        }
 
         Main.MessageBox.ShowNext();
         Main.Menu.Hide();

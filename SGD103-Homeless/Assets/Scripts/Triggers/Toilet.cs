@@ -33,9 +33,15 @@ public class Toilet : MonoBehaviour
         // Play ambience audio.
         var audio = GetComponent<AudioSource>();
         audio.clip = ToiletAmbience;
-        audio.time = 0.0f;
+        audio.time = 1.5f;
         audio.loop = true;
         audio.Play();
+
+        // Stop street audio.
+        if (Main.Ambience)
+        {
+            Main.Ambience.Pause();
+        }
 
         // Allow player to use their inventory.
         Main.PlayerState.IsInPrivate = true;
@@ -48,6 +54,12 @@ public class Toilet : MonoBehaviour
     {
         reset();
         Main.MessageBox.ShowNext();
+    }
+    
+    void reset()
+    {
+        // Hide splash screen.
+        Main.Splash.Hide();
 
         // Play toilet flush sound.
         var audio = GetComponent<AudioSource>();
@@ -55,13 +67,13 @@ public class Toilet : MonoBehaviour
         audio.time = 0.0f;
         audio.loop = false;
         audio.Play();
-    }
-    
-    void reset()
-    {
-        // Hide splash screen.
-        Main.Splash.Hide();
-        
+
+        // Resume street audio.
+        if (Main.Ambience)
+        {
+            Main.Ambience.Resume();
+        }
+
         Main.Inventory.Hide();
         Main.Menu.Hide();
         Trigger.Reset();

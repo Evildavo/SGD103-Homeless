@@ -34,6 +34,15 @@ public class MenuOption : MonoBehaviour {
                 OptionText.color = Menu.EnabledOptionColour;
             }
             ValueText.color = Menu.EnabledValueColour;
+
+            if (OptionInfo.BoldText)
+            {
+                OptionText.fontStyle = FontStyle.Bold;
+            }
+            else
+            {
+                OptionText.fontStyle = FontStyle.Normal;
+            }
         }
         else
         {

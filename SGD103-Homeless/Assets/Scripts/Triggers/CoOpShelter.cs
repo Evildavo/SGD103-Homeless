@@ -64,6 +64,12 @@ public class CoOpShelter : MonoBehaviour {
             audio.Play();
         }
 
+        // Stop street audio.
+        if (Main.Ambience)
+        {
+            Main.Ambience.Pause();
+        }
+
         Main.PlayerState.IsInPrivate = false;
         menu = MenuEnum.MAIN;
         List<Menu.Option> options = new List<Menu.Option>();
@@ -83,7 +89,7 @@ public class CoOpShelter : MonoBehaviour {
         {
             options.Add(new Menu.Option(AttendAddictionSupport, "Attend addiction support therapy"));
         }
-        options.Add(new Menu.Option(reset, "Exit"));
+        options.Add(new Menu.Option(reset, "Exit", 0, true, null, true));
 
         Main.Menu.Show(options);
         inMainMenu = true;
@@ -113,7 +119,7 @@ public class CoOpShelter : MonoBehaviour {
             returnTo = OpenCoOpShopMenu;
             options.Add(new Menu.Option(OpenChangingRoomMenu, "Go to changing room"));
         }
-        options.Add(new Menu.Option(OpenMainMenu, "Back"));
+        options.Add(new Menu.Option(OpenMainMenu, "Back", 0, true, null, true));
 
         Main.Menu.Show(options);
         inMainMenu = false;
@@ -163,7 +169,7 @@ public class CoOpShelter : MonoBehaviour {
         menu = MenuEnum.FOOD;
         List<Menu.Option> options = new List<Menu.Option>();
         AddMenuOptions(FoodMenuPrefabItems, options);
-        options.Add(new Menu.Option(OpenCoOpShopMenu, "Back"));
+        options.Add(new Menu.Option(OpenCoOpShopMenu, "Back", 0, true, null, true));
         Main.Menu.Show(options);
     }
 
@@ -172,7 +178,7 @@ public class CoOpShelter : MonoBehaviour {
         menu = MenuEnum.OUTDOOR_EQUIPMENT;
         List<Menu.Option> options = new List<Menu.Option>();
         AddMenuOptions(OutdoorEquipmentMenuPrefabItems, options);
-        options.Add(new Menu.Option(OpenCoOpShopMenu, "Back"));
+        options.Add(new Menu.Option(OpenCoOpShopMenu, "Back", 0, true, null, true));
         Main.Menu.Show(options);
     }
 
@@ -183,7 +189,7 @@ public class CoOpShelter : MonoBehaviour {
         AddMenuOptions(ClothingMenuPrefabItems, options);
         returnTo = OpenClothingItemMenu;
         options.Add(new Menu.Option(OpenChangingRoomMenu, "Go to changing room"));
-        options.Add(new Menu.Option(OpenCoOpShopMenu, "Back"));
+        options.Add(new Menu.Option(OpenCoOpShopMenu, "Back", 0, true, null, true));
         Main.Menu.Show(options);
     }
 
@@ -229,18 +235,21 @@ public class CoOpShelter : MonoBehaviour {
 
     public void AttendSoupKitchen()
     {
+        SoupKitchenEvent.SetOnLeaveCallback(reset);
         SoupKitchenEvent.Attend();
         Main.Menu.Hide();
     }
 
     public void AttendCounselling()
     {
+        CounsellingEvent.SetOnLeaveCallback(reset);
         CounsellingEvent.Attend();
         Main.Menu.Hide();
     }
 
     public void AttendAddictionSupport()
     {
+        AddictionSupportEvent.SetOnLeaveCallback(reset);
         AddictionSupportEvent.Attend();
         Main.Menu.Hide();
     }
@@ -349,6 +358,12 @@ public class CoOpShelter : MonoBehaviour {
         var audio = GetComponent<AudioSource>();
         audio.Stop();
         audio.clip = null;
+
+        // Resume street audio.
+        if (Main.Ambience)
+        {
+            Main.Ambience.Resume();
+        }
 
         Main.Menu.Hide();
         Main.MessageBox.ShowNext();

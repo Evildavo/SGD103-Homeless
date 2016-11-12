@@ -39,12 +39,12 @@ public class SleepItem : InventoryItem
             {
                 switch (Main.SleepManager.SleepQualityHere)
                 {
-                    case PlayerSleepManager.SleepQualityEnum.POOR:
-                        PrimaryActionDescription += " (bad)";
+                    case PlayerSleepManager.SleepQualityEnum.TERRIBLE:
+                        PrimaryActionDescription += " (terrible)";
                         ItemDescription.ItemAction.color = SleepHudButton.PoorSleepLabelColour;
                         break;
-                    case PlayerSleepManager.SleepQualityEnum.OK:
-                        PrimaryActionDescription += " (ok)";
+                    case PlayerSleepManager.SleepQualityEnum.POOR:
+                        PrimaryActionDescription += " (poor)";
                         ItemDescription.ItemAction.color = SleepHudButton.OkSleepLabelColour;
                         break;
                     case PlayerSleepManager.SleepQualityEnum.GOOD:

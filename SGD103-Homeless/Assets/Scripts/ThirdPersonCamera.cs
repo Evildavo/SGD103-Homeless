@@ -24,9 +24,10 @@ public class ThirdPersonCamera : MonoBehaviour {
 
     void Update()
     {
-        // Turn horizontally and shift the camera sideways based on how far the mouse is from horizontal centre.
+        // Turn horizontally and shift the camera sideways based on how far the mouse is from horizontal centre (smooth curved).
         float halfScreenWidth = (Screen.width / 2.0f);
-        float horizontalOffsetFromCentre = (Input.mousePosition.x - halfScreenWidth) / halfScreenWidth;
+        float horizontalOffsetFromCentre = 
+            Mathf.Asin((Input.mousePosition.x - halfScreenWidth) / halfScreenWidth * (Mathf.PI / 4.0f));
         transform.localRotation =
             initialRotation * Quaternion.Euler(
                 0.0f,
@@ -41,7 +42,7 @@ public class ThirdPersonCamera : MonoBehaviour {
             Vector3.up, horizontalOffsetFromCentre * MaxLookSideAngleDegrees);
 
         // Shift camera forward/backward based on how far the mouse is from the horizontal centre.
-        transform.localPosition += new Vector3(0.0f, horizontalOffsetFromCentre * DollyAtSide, 0.0f);
+        transform.localPosition += new Vector3(Mathf.Abs(horizontalOffsetFromCentre * DollyAtSide), 0.0f, 0.0f);
 
         // Shift the camera forward/backward based on how far the mouse is from vertical centre.
         float halfScreenHeight = (Screen.height / 2.0f);

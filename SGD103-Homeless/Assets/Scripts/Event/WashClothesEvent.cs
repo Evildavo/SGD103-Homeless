@@ -40,6 +40,10 @@ public class WashClothesEvent : EventAtLocation
         WashClothes();
 
         Main.Splash.Hide();
+        if (Main.Ambience)
+        {
+            Main.Ambience.Resume();
+        }
         Main.UI.DisableModalMode();
                 
         // Show message that clothes were cleaned.

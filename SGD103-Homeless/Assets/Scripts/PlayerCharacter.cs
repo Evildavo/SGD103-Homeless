@@ -79,7 +79,7 @@ public class PlayerCharacter : Character
         {
             options.Add(new Menu.Option(selfishSelected, selfishOption, 0, true, SelfishOptionColor));
         }
-        options.Add(new Menu.Option(exitSelected, "Exit"));
+        options.Add(new Menu.Option(exitSelected, "Exit", 0, true, null, true));
         Main.Menu.Show(options);
     }
 

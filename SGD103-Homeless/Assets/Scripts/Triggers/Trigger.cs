@@ -44,7 +44,9 @@ public class Trigger : MonoBehaviour
                Input.GetKeyDown("e") ||
                Input.GetKeyDown("enter") ||
                Input.GetKeyDown("return") ||
-               Input.GetKeyDown("space");
+               Input.GetKeyDown("space") ||
+               Input.GetKeyDown("tab") ||
+               Input.GetKeyDown("escape");
     }
 
     // Activates the trigger (if we're within active hours).

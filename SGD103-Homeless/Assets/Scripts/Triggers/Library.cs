@@ -42,6 +42,13 @@ public class Library : MonoBehaviour {
         var audio = GetComponent<AudioSource>();
         audio.Stop();
         audio.clip = null;
+
+        // Resume street audio.
+        if (Main.Ambience)
+        {
+            Main.Ambience.Resume();
+        }
+        
         Main.Menu.Hide();
         Main.MessageBox.ShowNext();
         Main.GameTime.ResetToNormalTime();
@@ -67,7 +74,13 @@ public class Library : MonoBehaviour {
             audio.Play();
         }
 
-            List<Menu.Option> options = new List<Menu.Option>();
+        // Stop street audio.
+        if (Main.Ambience)
+        {
+            Main.Ambience.Pause();
+        }
+
+        List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(OnJobSearch, "Job search", 0, !jobSearchedToday));
         options.Add(new Menu.Option(OnReadBook, "Read book"));
         options.Add(new Menu.Option(Reset, "Exit"));

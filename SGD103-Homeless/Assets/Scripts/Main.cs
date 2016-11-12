@@ -18,8 +18,10 @@ public class Main : MonoBehaviour {
     public StatPanel StatPanel;
     public MoneyPanel MoneyPanel;
     public ObjectiveList ObjectiveList;
+    public Caption Caption;
     public ScreenFader ScreenFader;
     public GameTime GameTime;
+    public Ambience Ambience;
     public CharacterDialogueManager DialogueManager;
     public PlayerCharacter PlayerCharacter;
     public PlayerState PlayerState;

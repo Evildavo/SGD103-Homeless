@@ -69,12 +69,12 @@ public class SleepHudButton : MonoBehaviour
             {
                 switch (Main.SleepManager.SleepQualityHere)
                 {
-                    case PlayerSleepManager.SleepQualityEnum.POOR:
-                        HudButtonLabel.GetComponentInChildren<Text>().text += " (bad)";
+                    case PlayerSleepManager.SleepQualityEnum.TERRIBLE:
+                        HudButtonLabel.GetComponentInChildren<Text>().text += " (terrible)";
                         HudButtonLabel.GetComponentInChildren<Text>().color = PoorSleepLabelColour;
                         break;
-                    case PlayerSleepManager.SleepQualityEnum.OK:
-                        HudButtonLabel.GetComponentInChildren<Text>().text += " (ok)";
+                    case PlayerSleepManager.SleepQualityEnum.POOR:
+                        HudButtonLabel.GetComponentInChildren<Text>().text += " (poor)";
                         HudButtonLabel.GetComponentInChildren<Text>().color = OkSleepLabelColour;
                         break;
                     case PlayerSleepManager.SleepQualityEnum.GOOD:
