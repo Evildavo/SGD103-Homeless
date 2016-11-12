@@ -93,7 +93,7 @@ public class Greg : Character
         {
             options.Add(new Menu.Option(onBuyWatchSelected, "Buy Watch", WatchBuyBackCost, Main.PlayerState.CanAfford(WatchBuyBackCost)));
         }
-        options.Add(new Menu.Option(Reset, "Exit"));
+        options.Add(new Menu.Option(Reset, "Exit", 0, true, null, true));
         Main.Menu.Show(options);
     }
 
