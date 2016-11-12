@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Aman : Character
+public class Orwell : Character
 {
     public AudioClip HelloAudio;
 
@@ -20,11 +20,11 @@ public class Aman : Character
 
     public void OnTrigger()
     {
-        Speak("Keep out of trouble is my advice. How are you today?", HelloAudio);
+        Speak("Hello", HelloAudio);
         Main.PlayerCharacter.ShowStandardDialogueMenu(
-            "Not good",
-            "I'm ok",
-            "What do you care?",
+            "Submissive",
+            "Prideful",
+            "Selfish",
             onResponseChosen);
     }
 
@@ -32,26 +32,17 @@ public class Aman : Character
     {
         if (response == PlayerCharacter.ResponseType.SUBMISSIVE)
         {
-            Main.PlayerCharacter.Speak(
-                "Not good. I need your help. I've lost custody of my son because I couldn't afford to take care of him.",
-                null, () =>
-                {
-                    float duration = Speak("I'm sorry to hear that.");
-                    AddCaptionChangeCue(duration, "Take care", () =>
-                    {
-                        Reset();
-                    });
-                });
-            Main.Menu.Hide();
+            Speak("Ok");
+            Reset();
         }
         else if (response == PlayerCharacter.ResponseType.PRIDEFUL)
         {
-            Speak("Stay out of trouble.");
+            Speak("Ok");
             Reset();
         }
         else if (response == PlayerCharacter.ResponseType.SELFISH)
         {
-            Speak("Hey! I was just trying to make conversation.");
+            Speak("Ok");
             Reset();
         }
         else
@@ -64,7 +55,7 @@ public class Aman : Character
     {
         if (IsSpeaking)
         {
-            Speak("Hey, where are you going? Stay out of trouble.");
+            Speak("Hey, where are you going?");
         }
     }
 

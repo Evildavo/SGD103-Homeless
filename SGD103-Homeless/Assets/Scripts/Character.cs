@@ -45,7 +45,8 @@ public class Character : MonoBehaviour
     // Text is the written transcript, used for captions.
     // Callback is called when the the text has finished being spoken.
     // An optional delay can be added after the audio finishes.
-    public void Speak(string text,
+    // Returns the calculated duration of the text.
+    public float Speak(string text,
                       AudioClip audio = null,
                       OnFinishedSpeaking callback = null,
                       float delayAfterSeconds = 0.15f,
@@ -75,6 +76,7 @@ public class Character : MonoBehaviour
             audioSource.time = 0.0f;
             audioSource.Play();
         }
+        return dialogueLengthTime;
     }
 
     // Adds the given cue to be changed at the given time in the audio.
