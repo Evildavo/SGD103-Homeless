@@ -28,8 +28,7 @@ public class Pedestrian : Character
 	bool m_Crouching;
 
 
-
-
+    
     public float WalkSpeed;
     public string WayPointGroupName;
     
@@ -55,7 +54,8 @@ public class Pedestrian : Character
         base.Update();
 
         // Walk forward.
-        Move(transform.rotation * Vector3.forward * WalkSpeed * Time.deltaTime, false, false);
+        Move(transform.rotation * Vector3.forward * 
+             WalkSpeed * Main.GameTime.GameTimeDelta, false, false);
     }
 
 
