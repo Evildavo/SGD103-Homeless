@@ -27,12 +27,14 @@ public class Pedestrian : Character
 	CapsuleCollider m_Capsule;
 	bool m_Crouching;
     
-    private Vector3 turnTarget;
+    private Vector3? turnTarget;
 
+    [Header("Pedestrian Settings:")]
     public float TurnSpeed;
     public float WalkSpeed;
     public string WayPointGroupName;
-    
+    public float StopAnimatingAboveTimeScale = 800.0f;
+
 
 
     void Start()
@@ -53,13 +55,36 @@ public class Pedestrian : Character
     new void Update()
     {
         base.Update();
+    }
 
-        // Update turning
-        updateTurning();
+    void FixedUpdate()
+    {
+        // Make walk animation follow gametime. If game-time is too fast for reliable navigation don't animate.
+        if (Main.GameTime.TimeScale < StopAnimatingAboveTimeScale)
+        {
+            // Update turning
+            if (turnTarget.HasValue)
+            {
+                Vector3 delta = turnTarget.Value - transform.position;
+                Quaternion lookRotation = Quaternion.LookRotation(delta);
+                Quaternion rotation =
+                    Quaternion.RotateTowards(transform.rotation, lookRotation, TurnSpeed * Main.GameTime.GameTimeDelta);
+                Vector3 eulerAngles = transform.eulerAngles;
+                eulerAngles.y = rotation.eulerAngles.y;
+                transform.eulerAngles = eulerAngles;
+            }
 
-        // Walk forward.
-        Move(transform.rotation * Vector3.forward * 
-             WalkSpeed * Main.GameTime.GameTimeDelta, false, false);
+            // Walk forward.
+            m_AnimSpeedMultiplier = WalkSpeed * Main.GameTime.GameTimeDelta;
+            m_MoveSpeedMultiplier = 1.0f;
+            Move(transform.rotation * Vector3.forward * WalkSpeed * Main.GameTime.GameTimeDelta, false, false);
+        }
+        else
+        {
+            m_AnimSpeedMultiplier = 0.0f;
+            m_MoveSpeedMultiplier = 0.0f;
+            m_TurnAmount = 0.0f;
+        }
     }
 
 
@@ -73,19 +98,8 @@ public class Pedestrian : Character
             if (waypoint.Next)
             {
                 turnTarget = waypoint.Next.transform.position;
-                updateTurning();
             }
         }
-    }
-
-    void updateTurning()
-    {
-        Quaternion lookRotation = Quaternion.LookRotation(turnTarget - transform.position);
-        Quaternion rotation =
-            Quaternion.RotateTowards(transform.rotation, lookRotation, TurnSpeed);
-        Vector3 eulerAngles = transform.eulerAngles;
-        eulerAngles.y = rotation.eulerAngles.y;
-        transform.eulerAngles = eulerAngles;
     }
 
 
@@ -250,21 +264,21 @@ public class Pedestrian : Character
 		RaycastHit hitInfo;
 #if UNITY_EDITOR
 		// helper to visualise the ground check ray in the scene view
-		Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + (Vector3.down * m_GroundCheckDistance));
+		/*Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + (Vector3.down * m_GroundCheckDistance));*/
 #endif
 		// 0.1f is a small offset to start the ray from inside the character
 		// it is also good to note that the transform position in the sample assets is at the base of the character
-		if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), Vector3.down, out hitInfo, m_GroundCheckDistance))
+		/*if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), Vector3.down, out hitInfo, m_GroundCheckDistance))*/
 		{
-			m_GroundNormal = hitInfo.normal;
+			m_GroundNormal = Vector3.up /*hitInfo.normal*/;
 			m_IsGrounded = true;
 			m_Animator.applyRootMotion = true;
 		}
-		else
+		/*else
 		{
 			m_IsGrounded = false;
 			m_GroundNormal = Vector3.up;
 			m_Animator.applyRootMotion = false;
-		}
+		}*/
 	}
 }
