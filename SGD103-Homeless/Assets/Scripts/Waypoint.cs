@@ -3,11 +3,8 @@ using System.Collections;
 
 public class Waypoint : MonoBehaviour
 {
-    public Character Character;
+    public string GroupName;
     public Waypoint Next;
-
-    [ReadOnly]
-    public bool CharacterIsInside = false;
 
     void Start ()
     {
@@ -16,21 +13,5 @@ public class Waypoint : MonoBehaviour
 
     void Update()
     {
-    }
-
-    public void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject == Character.gameObject)
-        {
-            CharacterIsInside = true;
-        }
-    }
-    
-    public void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject == Character.gameObject)
-        {
-            CharacterIsInside = false;
-        }
     }
 }

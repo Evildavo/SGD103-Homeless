@@ -31,6 +31,7 @@ public class Pedestrian : Character
 
 
     public float WalkSpeed;
+    public string WayPointGroupName;
     
 
 
@@ -54,10 +55,33 @@ public class Pedestrian : Character
         base.Update();
 
         // Walk forward.
-        Move(Vector3.left * WalkSpeed * Time.deltaTime, false, false);
+        Move(transform.rotation * Vector3.forward * WalkSpeed * Time.deltaTime, false, false);
     }
+
+
     
-    
+    public void OnTriggerEnter(Collider other)
+    {
+        Waypoint waypoint = other.GetComponent<Waypoint>();
+        if (waypoint && waypoint.GroupName == WayPointGroupName)
+        {
+            // Turn towards next waypoint.
+            if (waypoint.Next)
+            {
+                Transform source = waypoint.transform;
+                Transform target = waypoint.Next.transform;
+                Quaternion lookRotation = Quaternion.LookRotation(target.position - transform.position);
+                Quaternion rotation = 
+                    Quaternion.RotateTowards(transform.rotation, lookRotation, 360.0f);
+                Vector3 eulerAngles = transform.eulerAngles;
+                eulerAngles.y = rotation.eulerAngles.y;
+                transform.eulerAngles = eulerAngles;
+            }
+        }
+    }
+
+
+
     public void Move(Vector3 move, bool crouch, bool jump)
 	{
         // convert the world relative moveInput vector into a local-relative
