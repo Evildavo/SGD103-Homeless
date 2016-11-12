@@ -126,7 +126,7 @@ public class Character : MonoBehaviour
             {
                 message = text;
             }
-            Main.MessageBox.ShowForTime(message, dialogueLengthTime, gameObject, false, SpeakerTextColour);
+            Main.Caption.ShowForTime(message, dialogueLengthTime, SpeakerTextColour);
         }
     }
 
@@ -232,11 +232,8 @@ public class Character : MonoBehaviour
     {
         IsSpeaking = false;
 
-        // Close the message box.
-        if (Main.MessageBox.IsDisplayed())
-        {
-            Main.MessageBox.ShowNext();
-        }
+        // Hide the captions.
+        Main.Caption.Hide();
 
         // Run the OnFinishedSpeaking callback.
         if (onFinishedCallback != null)
