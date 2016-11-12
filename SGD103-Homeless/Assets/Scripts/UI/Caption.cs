@@ -4,6 +4,8 @@ using System.Collections;
 
 public class Caption : MonoBehaviour
 {
+    // NOTE: Captions are managed by the Character script.
+
     float fromTime;
     private float closeAfterSeconds;
 
