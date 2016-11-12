@@ -5,10 +5,10 @@ public class Waypoint : MonoBehaviour
 {
     public string GroupName;
     public Waypoint Next;
+    public Waypoint Exit;
 
     void Start ()
-    {
-        //GetComponent<Renderer>().enabled = false;
+    { 
 	}
 
     void Update()

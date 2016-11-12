@@ -34,6 +34,13 @@ public class Pedestrian : Character
     public float WalkSpeed;
     public string WayPointGroupName;
     public float StopAnimatingAboveTimeScale = 800.0f;
+    [Header("Note: Also supports wrapping over (e.g. 11pm to 2am)")]
+    [Range(0.0f, 24.0f)]
+    public float ActiveFromHour = 0.0f;
+    [Range(0.0f, 24.0f)]
+    public float ActiveToHour = 24.0f;
+    [ReadOnly]
+    public bool IsInActiveHour = false;
 
 
 
@@ -55,6 +62,20 @@ public class Pedestrian : Character
     new void Update()
     {
         base.Update();
+
+        // Determine if we're in the active hour. If from and to are flipped the period wraps (e.g. 11pm to 2am).
+        if (Main.GameTime)
+        {
+            float time = Main.GameTime.TimeOfDayHours;
+            if (ActiveFromHour < ActiveToHour)
+            {
+                IsInActiveHour = (time >= ActiveFromHour && time <= ActiveToHour);
+            }
+            else
+            {
+                IsInActiveHour = (time >= ActiveFromHour || time <= ActiveToHour);
+            }
+        }
     }
 
     void FixedUpdate()
@@ -94,8 +115,13 @@ public class Pedestrian : Character
         Waypoint waypoint = other.GetComponent<Waypoint>();
         if (waypoint && waypoint.GroupName == WayPointGroupName)
         {
+            if (!IsInActiveHour && waypoint.Exit)
+            {
+                turnTarget = waypoint.Exit.transform.position;
+            }
+
             // Turn towards next waypoint.
-            if (waypoint.Next)
+            else if (waypoint.Next)
             {
                 turnTarget = waypoint.Next.transform.position;
             }
