@@ -30,6 +30,7 @@ public class Pedestrian : Character
     private Vector3? turnTarget;
 
     [Header("Pedestrian Settings:")]
+    public bool IsActive = true;
     public float TurnSpeed;
     public float WalkSpeed;
     public string WayPointGroupName;
@@ -40,7 +41,7 @@ public class Pedestrian : Character
     [Range(0.0f, 24.0f)]
     public float ActiveToHour = 24.0f;
     [ReadOnly]
-    public bool IsInActiveHour = false;
+    public bool IsInActiveHour;
 
 
 
@@ -81,7 +82,7 @@ public class Pedestrian : Character
     void FixedUpdate()
     {
         // Make walk animation follow gametime. If game-time is too fast for reliable navigation don't animate.
-        if (Main.GameTime.TimeScale < StopAnimatingAboveTimeScale)
+        if (IsActive && Main.GameTime.TimeScale < StopAnimatingAboveTimeScale)
         {
             // Update turning
             if (turnTarget.HasValue)
@@ -115,7 +116,15 @@ public class Pedestrian : Character
         Waypoint waypoint = other.GetComponent<Waypoint>();
         if (waypoint && waypoint.GroupName == WayPointGroupName)
         {
-            if (!IsInActiveHour && waypoint.Exit)
+            // Exit at point if inactive.
+            if (waypoint.IsExitPoint && !IsInActiveHour)
+            {
+                IsActive = false;
+                GetComponentInChildren<Renderer>().enabled = false;
+            }
+
+            // Turn towards exit route if inactive.
+            else if (!IsInActiveHour && waypoint.Exit)
             {
                 turnTarget = waypoint.Exit.transform.position;
             }
