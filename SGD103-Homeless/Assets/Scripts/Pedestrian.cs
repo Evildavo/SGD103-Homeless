@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(Animator))]
-public class Pedestrian : MonoBehaviour
+public class Pedestrian : Character
 {
 	[SerializeField] float m_MovingTurnSpeed = 360;
 	[SerializeField] float m_StationaryTurnSpeed = 180;
@@ -49,8 +49,10 @@ public class Pedestrian : MonoBehaviour
 	}
 
 
-    void Update()
+    new void Update()
     {
+        base.Update();
+
         // Walk forward.
         Move(Vector3.left * WalkSpeed * Time.deltaTime, false, false);
     }
@@ -80,8 +82,8 @@ public class Pedestrian : MonoBehaviour
             HandleAirborneMovement();
         }
 
-        ScaleCapsuleForCrouching(crouch);
-        PreventStandingInLowHeadroom();
+        //ScaleCapsuleForCrouching(crouch);
+        //PreventStandingInLowHeadroom();
                 
         // send input and other state parameters to the animator
         UpdateAnimator(move);
