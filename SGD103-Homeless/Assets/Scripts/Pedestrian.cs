@@ -26,9 +26,10 @@ public class Pedestrian : Character
 	Vector3 m_CapsuleCenter;
 	CapsuleCollider m_Capsule;
 	bool m_Crouching;
-
-
     
+    private Vector3 turnTarget;
+
+    public float TurnSpeed;
     public float WalkSpeed;
     public string WayPointGroupName;
     
@@ -53,6 +54,9 @@ public class Pedestrian : Character
     {
         base.Update();
 
+        // Update turning
+        updateTurning();
+
         // Walk forward.
         Move(transform.rotation * Vector3.forward * 
              WalkSpeed * Main.GameTime.GameTimeDelta, false, false);
@@ -68,16 +72,20 @@ public class Pedestrian : Character
             // Turn towards next waypoint.
             if (waypoint.Next)
             {
-                Transform source = waypoint.transform;
-                Transform target = waypoint.Next.transform;
-                Quaternion lookRotation = Quaternion.LookRotation(target.position - transform.position);
-                Quaternion rotation = 
-                    Quaternion.RotateTowards(transform.rotation, lookRotation, 360.0f);
-                Vector3 eulerAngles = transform.eulerAngles;
-                eulerAngles.y = rotation.eulerAngles.y;
-                transform.eulerAngles = eulerAngles;
+                turnTarget = waypoint.Next.transform.position;
+                updateTurning();
             }
         }
+    }
+
+    void updateTurning()
+    {
+        Quaternion lookRotation = Quaternion.LookRotation(turnTarget - transform.position);
+        Quaternion rotation =
+            Quaternion.RotateTowards(transform.rotation, lookRotation, TurnSpeed);
+        Vector3 eulerAngles = transform.eulerAngles;
+        eulerAngles.y = rotation.eulerAngles.y;
+        transform.eulerAngles = eulerAngles;
     }
 
 
