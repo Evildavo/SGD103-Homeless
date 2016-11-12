@@ -7,7 +7,6 @@ public class Homeless01 : Character
     {
         var trigger = GetComponent<Trigger>();
         trigger.RegisterOnTriggerListener(OnTrigger);
-        trigger.RegisterOnPlayerExitListener(OnPlayerExit);
         trigger.RegisterOnCloseRequested(Reset);
     }
 
@@ -18,48 +17,15 @@ public class Homeless01 : Character
 
     public void OnTrigger()
     {
-        Speak("Hello");
-        Main.PlayerCharacter.ShowStandardDialogueMenu(
-            "Submissive",
-            "Prideful",
-            "Selfish",
-            onResponseChosen);
+        Main.PlayerCharacter.Speak("Hi, how are you?", null, () =>
+        {
+            Speak("Good thanks");
+            Reset();
+        });
     }
-
-    void onResponseChosen(PlayerCharacter.ResponseType response)
-    {
-        if (response == PlayerCharacter.ResponseType.SUBMISSIVE)
-        {
-            Speak("Ok");
-            Reset();
-        }
-        else if (response == PlayerCharacter.ResponseType.PRIDEFUL)
-        {
-            Speak("Ok");
-            Reset();
-        }
-        else if (response == PlayerCharacter.ResponseType.SELFISH)
-        {
-            Speak("Ok");
-            Reset();
-        }
-        else
-        {
-            Reset();
-        }
-    }
-
-    public void OnPlayerExit()
-    {
-        if (IsSpeaking)
-        {
-            Speak("Hey, where are you going?");
-        }
-    }
-
+    
     public void Reset()
     {
-        Main.Menu.Hide();
         GetComponent<Trigger>().Reset();
     }
 }
