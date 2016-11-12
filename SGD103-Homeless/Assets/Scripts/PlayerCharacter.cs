@@ -88,6 +88,12 @@ public class PlayerCharacter : Character
         transform.Rotate(new Vector3(0.0f, angleDegrees, 0.0f));
     }
 
+    public void SetControlDelay(float seconds)
+    {
+        GetComponent<ThirdPersonUserControl>().SetControlDelay(seconds);
+        GetComponentInChildren<ThirdPersonCamera>().SetControlDelay(seconds);
+    }
+
     public void SetWonkyWalkAngle(float angle)
     {
         GetComponent<ThirdPersonCharacter>().SetWonkyWalkAngle(angle * Mathf.Deg2Rad);

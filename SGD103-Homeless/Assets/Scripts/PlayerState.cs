@@ -103,6 +103,7 @@ public class PlayerState : MonoBehaviour {
     public float WonkyWalkAngleAtMaxInebriationDegrees;
     public float VomitIntervalAtMaxInebriationSeconds;
     public float WalkSpeedFactorAtMaxInebriation = 1.0f;
+    public float MaxControlDelaySecondsWhenIntoxicated;
 
     [Space(10.0f)]
     public float MaxAddictionMoralePenaltyPerHour;
@@ -339,6 +340,9 @@ public class PlayerState : MonoBehaviour {
                 Main.PlayerCharacter.SetWonkyWalkAngle(WonkyWalkAngleAtMaxInebriationDegrees);
             }
 
+            // Delayed controls.
+            Main.PlayerCharacter.SetControlDelay(MaxControlDelaySecondsWhenIntoxicated * intoxication);
+
             // Vomit at regular intervals if intoxicated.
             if (VomitWhenIntoxicated)
             {
@@ -362,6 +366,7 @@ public class PlayerState : MonoBehaviour {
         else
         {
             Main.PlayerCharacter.SetWonkyWalkAngle(0.0f);
+            Main.PlayerCharacter.SetControlDelay(0.0f);
         }
 
         // Addiction affects morale.

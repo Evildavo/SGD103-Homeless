@@ -32,7 +32,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
         public float CoughWalkSpeedFactor = 0.5f;
         public float VomitWalkSpeedFactor = 0.5f;
-
+        
         float wonkeyWalkAngleRad = 0.0f;
         bool isVomiting = false;
         float walkSpeedFactor = 1.0f;
