@@ -73,6 +73,7 @@ public class Pedestrian : Character
     public float IgnorePlayerAtRepellance;
     public float WalkAwayFromPlayerAtRepellance;
     public float TurnAroundCooloffSeconds;
+    public float ChanceWalkAwayFromRepulsion;
 
     [ReadOnly]
     public bool IsInActiveHour;
@@ -377,7 +378,8 @@ public class Pedestrian : Character
                 transform.forward, 
                 (transform.position - Main.PlayerCharacter.transform.position));
             bool facingEachOther = (dot < TOLERANCE);
-            if (facingEachOther)
+            if (facingEachOther &&
+                Random.Range(0.0f, 1.0f) < ChanceWalkAwayFromRepulsion)
             {
                 if (!ReverseDirection)
                 {
