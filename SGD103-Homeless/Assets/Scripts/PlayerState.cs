@@ -33,16 +33,7 @@ public class PlayerState : MonoBehaviour {
 
     public Main Main;
 
-    [Header("Display settings:")]
-    public Color NormalTextColour = Color.black;
-    public Color WarningTextColour = Color.red;
-    public Color HighlightTextColour = Color.yellow;
-    public bool BoldTextDuringWarning = true;
-    public float NutritionWarningThreshold = 0.2f;
-    public float HealthWarningThreshold = 0.2f;
-    public float MoraleWarningThreshold = 0.2f;
-
-    [Header("Stats:")]
+    [Header("--- Stats ---")]
     public float Money = 0;
     [Range(0.0f, 1.0f)]
     public float Nutrition = 1.0f;
@@ -59,41 +50,42 @@ public class PlayerState : MonoBehaviour {
     [Range(0.0f, 1.0f)]
     public float CurrentClothingCleanliness = 1.0f;
     public bool IsDepressionTreated = true;
-    
-    [Header("Settings:")] 
+
+    [Header("--- Base stat settings ---")]
     public float NutritionLossPerHour = 0.0f;        
     public float HealthLossPerHour = 0.0f;
     public float MoraleLossPerHour = 0.0f;
     
-    [Space(10.0f)]
+    [Header("--- Nutrition effect on health settings ---")]
     public float MaxNutritionHealthPenaltyPerHour = 0.0f;
     [Range(0.0f, 1.0f)]
     public float NutritionOkAtLevel = 0.0f;
     public float MaxNutritionHealthRewardPerHour = 0.0f;
 
     [Header("Nutrition goes down slower when in good condition")]
+    [Header("--- Nutrition effects itself settings ---")]
     public float MaxNutritionRewardPerHour = 0.0f;
-
-    [Space(10.0f)]
+    
+    [Header("--- Health effect on morale settings ---")]
     public float MaxPoorHealthMoralePenaltyPerHour = 0.0f;
     [Range(0.0f, 1.0f)]
     public float HealthGoodAtLevel = 0.0f;
     public float MaxGoodHealthMoraleRewardPerHour = 0.0f;
-
-    [Space(10.0f)]
+    
+    [Header("--- Stat changes while aleep settings ---")]
     public float SleepNutritionGainFactor = 0.0f;
     public float SleepMoraleLossFactor = 0.0f;
     [Header("Not counting bonus from a sleeping bag")]
     public float MinSleepingRoughHealthGainPerHour = 0.0f;
     public float MaxSleepingRoughHealthGainPerHour = 0.0f;
-
-    [Space(10.0f)]
+    
+    [Header("--- Stat changes while at work settings ---")]
     public float WorkNutritionGainFactor = 1.0f;
     public float WorkHealthLossFactor = 1.0f;
     [Header("See Job Locations for morale gain settings.")]
     public float WorkMoraleLossFactor = 1.0f;
-
-    [Space(10.0f)]
+    
+    [Header("--- Alcohol and its effects settings ---")]
     public float InebriationDecreasesPerHour;
     public float AlcoholEffectsStartAtInebriation = 1.0f;
     [Header("Turns slightly while walking")]
@@ -104,36 +96,36 @@ public class PlayerState : MonoBehaviour {
     public float VomitIntervalAtMaxInebriationSeconds;
     public float WalkSpeedFactorAtMaxInebriation = 1.0f;
     public float MaxControlDelaySecondsWhenIntoxicated;
-
-    [Space(10.0f)]
+    
+    [Header("--- Addiction settings ---")]
     public float MaxAddictionMoralePenaltyPerHour;
     public float SpawnObjectivesAboveAddictionLevel;
     public float ObjectiveSpawnIntervalAtMaxAddictionSeconds;
     public float AddictionReducedPerMoraleGainedFactor = 1.0f;
-
-    [Space(10.0f)]
+    
+    [Header("--- Poor health settings ---")]
     public float PoorHealthEffectsBelowLevel;
     public bool WalkSlowerWhenHealthIsPoor;
     public bool CoughWhenHealthIsPoor;
     public float WalkSpeedFactorAtWorstHealth;
     public float CoughIntervalAtWorstHealth;
-
-    [Space(10.0f)]
+    
+    [Header("--- Low morale settings ---")]
     public float PoorMoraleEffectsBelowLevel;
     public bool RefusesToTalkToStrangersWhenDepressed;
     [Header("Walking slower is a symptom of depression in reality")]
     public bool WalkSlowerWhenMoraleIsPoor;
     public float WalkSpeedFactorAtLowestMorale;
 
-    [Space(10.0f)]
+    [Header("--- Stomach growl settings ---")]
     public float StomachGrowlBelowNutrition;
     public float StomachGrowlIntervalWhenHungry;
-
-    [Space(10.0f)]
+    
+    [Header("--- Depression settings ---")]
     public float DepressionMedsWearOffAfterHours = 26.0f;
     public float UntreatedDepressionHealthPenaltyPerHour;
-
-    [Space(10.0f)]
+    
+    [Header("--- Clothing cleanliness settings ---")]
     public float ClothesDirtiedPerHourWorn;
     public float UncleanlinessEffectsBelowLevel;
     public float MaxUncleanlinessMoralePenaltyPerHour;
@@ -141,7 +133,16 @@ public class PlayerState : MonoBehaviour {
     public float ObjectiveSpawnIntervalAtMaxUncleanlinessSeconds;
     public float ChanceOfBeingWokenChangingInPublic = 1.0f;
 
-    [Space(10.0f)]
+    [Header("--- Display settings ---")]
+    public Color NormalTextColour = Color.black;
+    public Color WarningTextColour = Color.red;
+    public Color HighlightTextColour = Color.yellow;
+    public bool BoldTextDuringWarning = true;
+    public float NutritionWarningThreshold = 0.2f;
+    public float HealthWarningThreshold = 0.2f;
+    public float MoraleWarningThreshold = 0.2f;
+    
+    [Header("--- Misc ---")]
     public float StatTransitionSpeedPerHour = 1.0f;
 
     [Space(10.0f)]
