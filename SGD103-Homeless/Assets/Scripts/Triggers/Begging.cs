@@ -14,10 +14,15 @@ public class Begging : MonoBehaviour
     public AudioClip[] CoinClips;
 
     public float MoraleLostPerHourBegging;
+    public float MaxChanceMoneyGainedPerPedestrianVisit;
+    public float HealthAffectsChanceFactor = 1.0f;
+    public float MoraleAffectsChanceFactor = 1.0f;
+    public float CleanlinessAffectsChanceFactor = 1.0f;
+    public float[] PossibleMoniesGained;
+    [Header("There is legacy code here from before we had pedestrians.")]
     public float CheckIntervalHours;
     [UnityEngine.Serialization.FormerlySerializedAs("ChanceMoneyGainedAtCheck")]
     public float BestChanceMoneyGainedAtCheck;
-    public float[] PossibleMoniesGained;
     public float DisplayMoneyGainedMessageForSeconds;
     public float[] PeakHours;
     public float TimeFromPeakHourBeforeChanceIsZero = 1.0f;
@@ -135,28 +140,7 @@ public class Begging : MonoBehaviour
                     // Determine the chance based on peak hours.
                     chanceMoneyGainedAtCheck = determineChance();
 
-                    // Check if we got any money.
-                    if (Random.Range(0.0f, 1.0f) < chanceMoneyGainedAtCheck)
-                    {
-                        float moneyEarned = PossibleMoniesGained[Random.Range(0, PossibleMoniesGained.Length)];
-                        totalMoneyEarned += moneyEarned;
-
-                        // Play random coin sound.
-                        var audio = GetComponent<AudioSource>();
-                        audio.clip = CoinClips[Random.Range(0, CoinClips.Length)];
-                        audio.Play();
-
-                        // Display message that money was gained.
-                        if (ReportMoneyGainedDuringActivity)
-                        {
-                            Main.MessageBox.SetMessage("$" + moneyEarned.ToString("f2") + " gained");
-                        }
-                        else
-                        {
-                            Main.MessageBox.SetMessage("Money gained");
-                        }
-                        timeAtMoneyLastGained = Time.time;
-                    }
+                    checkGotMoney(chanceMoneyGainedAtCheck);
                 }
 
                 // After money is gained change back to the regular searching message.
@@ -173,6 +157,47 @@ public class Begging : MonoBehaviour
             {
                 reset();
             }
+        }
+    }
+
+    // Checks for money from a pedestrian.
+    public void CheckGotMoneyPedestrian()
+    {
+        if (IsBegging)
+        {
+            // Determine chance of getting money based on health/morale/cleanliness.
+            float chance = MaxChanceMoneyGainedPerPedestrianVisit * (
+                Main.PlayerState.HealthTiredness * HealthAffectsChanceFactor +
+                Main.PlayerState.Morale * MoraleAffectsChanceFactor +
+                Main.PlayerState.CurrentClothingCleanliness * CleanlinessAffectsChanceFactor) / 3f;
+
+            checkGotMoney(chance);
+        }
+    }
+
+    void checkGotMoney(float chance)
+    {
+        // Check if we got any money.
+        if (Random.Range(0.0f, 1.0f) < chance)
+        {
+            float moneyEarned = PossibleMoniesGained[Random.Range(0, PossibleMoniesGained.Length)];
+            totalMoneyEarned += moneyEarned;
+
+            // Play random coin sound.
+            var audio = GetComponent<AudioSource>();
+            audio.clip = CoinClips[Random.Range(0, CoinClips.Length)];
+            audio.Play();
+
+            // Display message that money was gained.
+            if (ReportMoneyGainedDuringActivity)
+            {
+                Main.MessageBox.SetMessage("$" + moneyEarned.ToString("f2") + " gained");
+            }
+            else
+            {
+                Main.MessageBox.SetMessage("Money gained");
+            }
+            timeAtMoneyLastGained = Time.time;
         }
     }
 
