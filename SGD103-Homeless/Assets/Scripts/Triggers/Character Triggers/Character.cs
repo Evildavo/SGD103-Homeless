@@ -101,6 +101,12 @@ public class Character : MonoBehaviour
             audioPositionSeconds + calculateDialogueLength(text, audioClip));
     }
 
+    // Sets the function to call when the speach finishes.
+    public void SetFinishCallback(OnFinishedSpeaking callback)
+    {
+        onFinishedCallback = callback;
+    }
+
     float calculateDialogueLength(string text, AudioClip audio)
     {
         var dialogue = Main.DialogueManager; 
@@ -249,6 +255,7 @@ public class Character : MonoBehaviour
         if (onFinishedCallback != null)
         {
             onFinishedCallback();
+            onFinishedCallback = null;
         }
     }
 
