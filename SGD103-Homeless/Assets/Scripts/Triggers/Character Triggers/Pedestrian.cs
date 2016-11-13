@@ -57,7 +57,14 @@ public class Pedestrian : Character
     public float[] PossibleMoniesGained;
     public float MoraleLostForActiveBegging;
     public float WalksAfterSeconds;
-            
+
+    [Header("Factors that control how repellent the player character is")]
+    public float PoorHealthRepellenceFactor = 1.0f;
+    public float LowMoraleRepellenceFactor = 1.0f;
+    public float InebriationRepellenceFactor = 1.0f;
+    public float IgnorePlayerAtRepellance;
+    public float WalkAwayFromPlayerAtRepellance;
+
     [ReadOnly]
     public bool IsInActiveHour;
 
@@ -97,25 +104,50 @@ public class Pedestrian : Character
         }
         else
         {
-            isTalkingToPlayer = true;
+            // Having low health, low morale and/or being intoxicated repels the pedestrian.
+            float playerRepellence = 
+                ((1.0f - Main.PlayerState.HealthTiredness) * PoorHealthRepellenceFactor +
+                 (1.0f - Main.PlayerState.Morale) * LowMoraleRepellenceFactor + 
+                 Main.PlayerState.Inebriation * InebriationRepellenceFactor) / 3f;
+            Debug.Log((1.0f - Main.PlayerState.HealthTiredness) * PoorHealthRepellenceFactor + " from health");
+            Debug.Log((1.0f - Main.PlayerState.Morale) * LowMoraleRepellenceFactor + " from morale");
+            Debug.Log(Main.PlayerState.Inebriation * InebriationRepellenceFactor + " from inebriation");
+            Debug.Log(playerRepellence);
 
-            // Player introduces themselves.
-            Main.PlayerCharacter.Speak("Excuse me", null, () =>
+            if (playerRepellence > IgnorePlayerAtRepellance)
             {
-                Speak("Yes?", null, () =>
+                Reset();
+            }
+            else if (playerRepellence > WalkAwayFromPlayerAtRepellance)
+            {
+                // TODO.
+                Reset();
+            }
+            else
+            {
+                if (playerRepellence < 0.5f)
                 {
-                    timeStartedTalkingToPlayer = Time.time;
+                    isTalkingToPlayer = true;
 
-                    // Open conversation menu.
-                    List<Menu.Option> options = new List<Menu.Option>();
-                    options.Add(new Menu.Option(AskForTime, "What's the time?"));
-                    options.Add(new Menu.Option(AskForDate, "What day is it today?"));
-                    options.Add(new Menu.Option(AskForMoney, "Could you spare some change?"));
-                    //options.Add(new Menu.Option(null, "GIVE ME YOUR MONEY NOW!", 0, false));
-                    options.Add(new Menu.Option(Reset, "Exit", 0, true, null, true));
-                    Main.Menu.Show(options);
-                });
-            });
+                    // Player introduces themselves.
+                    Main.PlayerCharacter.Speak("Excuse me", null, () =>
+                    {
+                        Speak("Yes?", null, () =>
+                        {
+                            timeStartedTalkingToPlayer = Time.time;
+
+                        // Open conversation menu.
+                        List<Menu.Option> options = new List<Menu.Option>();
+                            options.Add(new Menu.Option(AskForTime, "What's the time?"));
+                            options.Add(new Menu.Option(AskForDate, "What day is it today?"));
+                            options.Add(new Menu.Option(AskForMoney, "Could you spare some change?"));
+                        //options.Add(new Menu.Option(null, "GIVE ME YOUR MONEY NOW!", 0, false));
+                        options.Add(new Menu.Option(Reset, "Exit", 0, true, null, true));
+                            Main.Menu.Show(options);
+                        });
+                    });
+                }
+            }
         }
     }
 
