@@ -87,6 +87,21 @@ public class Character : MonoBehaviour
         return dialogueLengthTime;
     }
 
+    // Forces all character conversation to stop.
+    public void ForceStopSpeaking()
+    {
+        IsSpeaking = false;
+        if (captionChangeCues != null)
+        {
+            captionChangeCues.Clear();
+        }
+        nextCue = null;
+        AudioSource audioSource = GetComponent<AudioSource>();
+        audioSource.Stop();
+        Main.Caption.Hide();
+        onFinishedCallback = null;
+    }
+
     // Adds the given cue to be changed at the given time in the audio.
     // Call after Speak().
     // A callback can be given that's called at the moment we change to this caption.
