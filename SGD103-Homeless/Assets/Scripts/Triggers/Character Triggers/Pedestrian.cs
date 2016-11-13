@@ -56,7 +56,10 @@ public class Pedestrian : Character
     public float ActiveFromHour = 0.0f;
     [Range(0.0f, 24.0f)]
     public float ActiveToHour = 24.0f;
-    public float ChanceMoneyGainedWhenBegging;
+    public float MaxChanceMoneyGainedWhenBegging;
+    public float HealthAffectsChanceFactor = 1.0f;
+    public float MoraleAffectsChanceFactor = 1.0f;
+    public float CleanlinessAffectsChanceFactor = 1.0f;
     public float[] PossibleMoniesGained;
     public float MoraleLostForActiveBegging;
     public float WalksAfterSeconds;
@@ -110,8 +113,6 @@ public class Pedestrian : Character
         }
         else
         {
-            Debug.Log(PlayerRepellence);
-
             // Having low health, low morale and/or being intoxicated repels the pedestrian.
             if (PlayerRepellence > IgnorePlayerAtRepellance)
             {
@@ -172,10 +173,22 @@ public class Pedestrian : Character
         // Apply morale penalty for asking.
         Main.PlayerState.ChangeMorale(-MoraleLostForActiveBegging);
 
+        // Determine chance of getting money based on health/morale/cleanliness.
+        float chance = MaxChanceMoneyGainedWhenBegging * (
+            Main.PlayerState.HealthTiredness * HealthAffectsChanceFactor +
+            Main.PlayerState.Morale * MoraleAffectsChanceFactor +
+            Main.PlayerState.CurrentClothingCleanliness * CleanlinessAffectsChanceFactor) / 3f;
+
+        Debug.Log("Max chance: " + MaxChanceMoneyGainedWhenBegging);
+        Debug.Log("From health" + Main.PlayerState.HealthTiredness * HealthAffectsChanceFactor);
+        Debug.Log("From morale" + Main.PlayerState.Morale * MoraleAffectsChanceFactor);
+        Debug.Log("From dirtiness" + Main.PlayerState.CurrentClothingCleanliness * CleanlinessAffectsChanceFactor);
+        Debug.Log(chance);
+
         // Check if we got any money.
         bool hasGivenMoneyToday = (hasGivenMoney && hasPlayerAskedForMoneyToday);
         if (!hasPlayerAskedForMoneyToday && !hasGivenMoneyToday && 
-            Random.Range(0.0f, 1.0f) < ChanceMoneyGainedWhenBegging)
+            Random.Range(0.0f, 1.0f) < chance)
         {
             float moneyEarned = PossibleMoniesGained[Random.Range(0, PossibleMoniesGained.Length)];
             hasGivenMoney = true;
