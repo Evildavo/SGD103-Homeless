@@ -250,6 +250,7 @@ public class Pedestrian : Character
         if (Main.PlayerState.CurrentTrigger && Main.Splash.IsDisplayed())
         {
             Trigger.Reset(false);
+            ForceStopSpeaking();
         }
         else
         {
