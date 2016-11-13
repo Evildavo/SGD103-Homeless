@@ -16,4 +16,9 @@ public class Splash : MonoBehaviour {
         gameObject.SetActive(false);
     }
 
+    public bool IsDisplayed()
+    {
+        return gameObject.activeInHierarchy;
+    }
+
 }

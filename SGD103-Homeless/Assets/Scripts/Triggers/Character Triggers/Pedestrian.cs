@@ -246,6 +246,16 @@ public class Pedestrian : Character
     {
         base.Update();
 
+        // Disable the trigger while the player is doing something.
+        if (Main.PlayerState.CurrentTrigger && Main.Splash.IsDisplayed())
+        {
+            Trigger.Reset(false);
+        }
+        else
+        {
+            Trigger.Reset();
+        }
+
         // Update player repellence, based on health, morale and inebriation.
         {
             PlayerRepellence =
