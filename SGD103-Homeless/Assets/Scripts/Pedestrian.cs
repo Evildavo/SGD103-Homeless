@@ -84,7 +84,6 @@ public class Pedestrian : Character
         if (!IsVisible && IsInActiveHour)
         {
             IsVisible = true;
-            isEntering = true;
             GetComponentInChildren<Renderer>().enabled = true;
         }
     }
@@ -148,6 +147,7 @@ public class Pedestrian : Character
             {
                 // Exit at point if inactive.
                 IsVisible = false;
+                isEntering = true;
                 transform.forward = -transform.forward;
                 turnTarget = waypoint.Previous.transform.position;
                 GetComponentInChildren<Renderer>().enabled = false;
