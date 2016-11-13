@@ -126,9 +126,6 @@ public class PlayerState : MonoBehaviour {
     public float WalkSpeedFactorAtLowestMorale;
 
     [Space(10.0f)]
-    public float MoraleLostForActiveBegging;
-
-    [Space(10.0f)]
     public float StomachGrowlBelowNutrition;
     public float StomachGrowlIntervalWhenHungry;
 

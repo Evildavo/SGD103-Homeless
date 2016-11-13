@@ -48,6 +48,10 @@ public class Pedestrian : Character
     public float ActiveFromHour = 0.0f;
     [Range(0.0f, 24.0f)]
     public float ActiveToHour = 24.0f;
+    public float ChanceMoneyGainedWhenBegging;
+    public float MinAmountGained;
+    public float MaxAmountGained;
+    public float MoraleLostForActiveBegging;
 
     [ReadOnly]
     public bool IsInActiveHour;
@@ -131,14 +135,37 @@ public class Pedestrian : Character
 
     public void AskForMoney()
     {
-        // Apply morale penalty for asking.
-        Main.PlayerState.ChangeMorale(-Main.PlayerState.MoraleLostForActiveBegging);
-
         Main.Menu.Hide();
-        Speak("Sorry, no", null, () =>
+
+        // Apply morale penalty for asking.
+        Main.PlayerState.ChangeMorale(-MoraleLostForActiveBegging);
+
+        // Check if we got any money.
+        if (Random.Range(0.0f, 1.0f) < ChanceMoneyGainedWhenBegging)
         {
-            Reset();
-        });
+            float moneyEarned = Random.Range(MinAmountGained, MaxAmountGained);
+
+            // Round to the nearest 5 cents.
+            moneyEarned = Mathf.Round(moneyEarned * 20.0f) / 20.0f;
+
+            // Add money.
+            Main.PlayerState.Money += moneyEarned;
+
+            // Tell the user that they got money and how much.
+            Speak("Here", null, () =>
+            {
+                Reset();
+            });
+            Main.MessageBox.ShowForTime("$" + moneyEarned.ToString("f2") + " gained");
+        }
+        else
+        {
+            // Report to user didn't get any money.
+            Speak("Sorry, no", null, () =>
+            {
+                Reset();
+            });
+        }
     }
 
     public void OnPlayerExit()
