@@ -27,10 +27,12 @@ public class Pedestrian : Character
 	CapsuleCollider m_Capsule;
 	bool m_Crouching;
     
-    private Vector3? turnTarget;
+    Vector3? turnTarget;
+    bool isEntering;
 
     [Header("Pedestrian Settings:")]
     public bool IsActive = true;
+    public bool ReverseDirection;
     public float TurnSpeed;
     public float WalkSpeed;
     public string WayPointGroupName;
@@ -77,6 +79,15 @@ public class Pedestrian : Character
                 IsInActiveHour = (time >= ActiveFromHour || time <= ActiveToHour);
             }
         }
+
+        // ReActivate if we're in the active hour.
+        if (!IsActive && IsInActiveHour)
+        {
+            IsActive = true;
+            isEntering = true;
+            transform.forward = -transform.forward;
+            GetComponentInChildren<Renderer>().enabled = true;
+        }
     }
 
     void FixedUpdate()
@@ -116,23 +127,33 @@ public class Pedestrian : Character
         Waypoint waypoint = other.GetComponent<Waypoint>();
         if (waypoint && waypoint.GroupName == WayPointGroupName)
         {
-            // Exit at point if inactive.
+            // Return to the loop.
+            if (waypoint.Exit)
+            {
+                isEntering = false;
+            }
+
+            // Handle going to the next route.
             if (waypoint.IsExitPoint && !IsInActiveHour)
             {
+                // Exit at point if inactive.
                 IsActive = false;
                 GetComponentInChildren<Renderer>().enabled = false;
             }
-
-            // Turn towards exit route if inactive.
             else if (!IsInActiveHour && waypoint.Exit)
             {
+                // Turn towards exit route if inactive.
                 turnTarget = waypoint.Exit.transform.position;
             }
-
-            // Turn towards next waypoint.
-            else if (waypoint.Next)
+            else if (waypoint.Next && !(ReverseDirection || isEntering))
             {
+                // Turn towards next waypoint.
                 turnTarget = waypoint.Next.transform.position;
+            }
+            else if (waypoint.Previous && (ReverseDirection || isEntering))
+            {
+                // Turn towards previous waypoint.
+                turnTarget = waypoint.Previous.transform.position;
             }
         }
     }

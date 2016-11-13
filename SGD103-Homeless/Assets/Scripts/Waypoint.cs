@@ -5,6 +5,7 @@ public class Waypoint : MonoBehaviour
 {
     public string GroupName;
     public Waypoint Next;
+    public Waypoint Previous;
     public Waypoint Exit;
     public bool IsExitPoint;
 
