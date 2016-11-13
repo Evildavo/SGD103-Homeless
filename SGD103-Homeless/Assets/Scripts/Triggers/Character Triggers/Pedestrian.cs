@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections.Generic;
+
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
@@ -80,6 +82,50 @@ public class Pedestrian : Character
     public void OnTrigger()
     {
         IsTalkingToPlayer = true;
+
+        // Player introduces themselves.
+        Main.PlayerCharacter.Speak("Excuse me", null, () =>
+        {
+            Speak("Yes?", null, () =>
+            {
+                // Open conversation menu.
+                List<Menu.Option> options = new List<Menu.Option>();
+                options.Add(new Menu.Option(AskForTime, "What's the time?"));
+                options.Add(new Menu.Option(AskForDate, "What day is it today?"));
+                options.Add(new Menu.Option(AskForMoney, "Could you spare some change?"));
+                options.Add(new Menu.Option(null, "GIVE ME YOUR MONEY NOW!", 0, false));
+                options.Add(new Menu.Option(Reset, "Exit", 0, true, null, true));
+                Main.Menu.Show(options);
+            });
+        });
+    }
+
+    public void AskForTime()
+    {
+        Main.Menu.Hide();
+        Speak("It's " + Main.GameTime.GetTimeAsString() + ".", null, () =>
+        {
+            Reset();
+        }, 
+        2.0f);
+    }
+
+    public void AskForDate()
+    {
+        Main.Menu.Hide();
+        Speak("It's " + Main.GameTime.DayOfTheWeekAsString() + ".", null, () =>
+        {
+            Reset();
+        });
+    }
+
+    public void AskForMoney()
+    {
+        Main.Menu.Hide();
+        Speak("Sorry, no", null, () =>
+        {
+            Reset();
+        });
     }
 
     public void OnPlayerExit()

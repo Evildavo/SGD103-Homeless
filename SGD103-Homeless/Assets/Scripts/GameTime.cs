@@ -127,6 +127,12 @@ public class GameTime : MonoBehaviour
         return "";
     }
 
+    // Returns the current day of the week as a short string.
+    public string DayOfTheWeekAsShortString()
+    {
+        return DayOfTheWeekAsShortString(DayOfTheWeek);
+    }
+
     // Returns the given day of the week as a string.
     public static string DayOfTheWeekAsString(DayOfTheWeekEnum dotw)
     {
@@ -148,6 +154,12 @@ public class GameTime : MonoBehaviour
                 return "Sunday";
         }
         return "";
+    }
+
+    // Returns the current day of the week as a string.
+    public string DayOfTheWeekAsString()
+    {
+        return DayOfTheWeekAsString(DayOfTheWeek);
     }
 
     // Returns the given time as a string in the format "11:34 pm".
