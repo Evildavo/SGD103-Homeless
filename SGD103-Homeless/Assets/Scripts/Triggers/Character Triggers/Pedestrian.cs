@@ -34,7 +34,7 @@ public class Pedestrian : Character
 
     [Space(20.0f)]
     public Trigger Trigger;
-    
+
     [Header("Pedestrian Settings:")]
     public bool IsVisible = true;
     public bool ReverseDirection;
@@ -49,10 +49,9 @@ public class Pedestrian : Character
     [Range(0.0f, 24.0f)]
     public float ActiveToHour = 24.0f;
     public float ChanceMoneyGainedWhenBegging;
-    public float MinAmountGained;
-    public float MaxAmountGained;
+    public float[] PossibleMoniesGained;
     public float MoraleLostForActiveBegging;
-
+            
     [ReadOnly]
     public bool IsInActiveHour;
     [ReadOnly]
@@ -143,11 +142,8 @@ public class Pedestrian : Character
         // Check if we got any money.
         if (Random.Range(0.0f, 1.0f) < ChanceMoneyGainedWhenBegging)
         {
-            float moneyEarned = Random.Range(MinAmountGained, MaxAmountGained);
-
-            // Round to the nearest 5 cents.
-            moneyEarned = Mathf.Round(moneyEarned * 20.0f) / 20.0f;
-
+            float moneyEarned = PossibleMoniesGained[Random.Range(0, PossibleMoniesGained.Length)];
+            
             // Add money.
             Main.PlayerState.Money += moneyEarned;
 

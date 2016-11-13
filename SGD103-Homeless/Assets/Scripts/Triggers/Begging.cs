@@ -17,8 +17,7 @@ public class Begging : MonoBehaviour
     public float CheckIntervalHours;
     [UnityEngine.Serialization.FormerlySerializedAs("ChanceMoneyGainedAtCheck")]
     public float BestChanceMoneyGainedAtCheck;
-    public float MinAmountGained;
-    public float MaxAmountGained;
+    public float[] PossibleMoniesGained;
     public float DisplayMoneyGainedMessageForSeconds;
     public float[] PeakHours;
     public float TimeFromPeakHourBeforeChanceIsZero = 1.0f;
@@ -139,11 +138,7 @@ public class Begging : MonoBehaviour
                     // Check if we got any money.
                     if (Random.Range(0.0f, 1.0f) < chanceMoneyGainedAtCheck)
                     {
-                        float moneyEarned = Random.Range(MinAmountGained, MaxAmountGained);
-
-                        // Round to the nearest 5 cents.
-                        moneyEarned = Mathf.Round(moneyEarned * 20.0f) / 20.0f;
-
+                        float moneyEarned = PossibleMoniesGained[Random.Range(0, PossibleMoniesGained.Length)];
                         totalMoneyEarned += moneyEarned;
 
                         // Play random coin sound.
