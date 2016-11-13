@@ -49,6 +49,7 @@ public class Character : MonoBehaviour
     public float Speak(string text,
                       AudioClip audio = null,
                       OnFinishedSpeaking callback = null,
+                      float? dialogueLengthOverrideSeconds = null,
                       float delayAfterSeconds = 0.15f,
                       bool skippable = true)
     {
@@ -63,7 +64,14 @@ public class Character : MonoBehaviour
         nextCue = null;
 
         // Calculate dialogue length.
-        dialogueLengthTime = calculateDialogueLength(text, audio);
+        if (!dialogueLengthOverrideSeconds.HasValue)
+        {
+            dialogueLengthTime = calculateDialogueLength(text, audio);
+        }
+        else
+        {
+            dialogueLengthTime = dialogueLengthOverrideSeconds.Value;
+        }
 
         // Display caption.
         displayCaption(text);
