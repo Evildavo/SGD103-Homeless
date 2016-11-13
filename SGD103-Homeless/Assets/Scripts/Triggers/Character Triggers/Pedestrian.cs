@@ -48,6 +48,7 @@ public class Pedestrian : Character
     public float ActiveFromHour = 0.0f;
     [Range(0.0f, 24.0f)]
     public float ActiveToHour = 24.0f;
+
     [ReadOnly]
     public bool IsInActiveHour;
     [ReadOnly]
@@ -81,23 +82,32 @@ public class Pedestrian : Character
 
     public void OnTrigger()
     {
-        IsTalkingToPlayer = true;
-
-        // Player introduces themselves.
-        Main.PlayerCharacter.Speak("Excuse me", null, () =>
+        // Player refuses to talk if their morale is too low.
+        if (Main.PlayerState.RefusesToTalkToStrangersWhenDepressed &&
+            Main.PlayerState.Morale < Main.PlayerState.PoorMoraleEffectsBelowLevel)
         {
-            Speak("Yes?", null, () =>
+            Main.MessageBox.ShowForTime("You don't feel like talking to anyone right now");
+        }
+        else
+        {
+            IsTalkingToPlayer = true;
+
+            // Player introduces themselves.
+            Main.PlayerCharacter.Speak("Excuse me", null, () =>
             {
-                // Open conversation menu.
-                List<Menu.Option> options = new List<Menu.Option>();
-                options.Add(new Menu.Option(AskForTime, "What's the time?"));
-                options.Add(new Menu.Option(AskForDate, "What day is it today?"));
-                options.Add(new Menu.Option(AskForMoney, "Could you spare some change?"));
-                options.Add(new Menu.Option(null, "GIVE ME YOUR MONEY NOW!", 0, false));
-                options.Add(new Menu.Option(Reset, "Exit", 0, true, null, true));
-                Main.Menu.Show(options);
+                Speak("Yes?", null, () =>
+                {
+                    // Open conversation menu.
+                    List<Menu.Option> options = new List<Menu.Option>();
+                    options.Add(new Menu.Option(AskForTime, "What's the time?"));
+                    options.Add(new Menu.Option(AskForDate, "What day is it today?"));
+                    options.Add(new Menu.Option(AskForMoney, "Could you spare some change?"));
+                    //options.Add(new Menu.Option(null, "GIVE ME YOUR MONEY NOW!", 0, false));
+                    options.Add(new Menu.Option(Reset, "Exit", 0, true, null, true));
+                    Main.Menu.Show(options);
+                });
             });
-        });
+        }
     }
 
     public void AskForTime()
@@ -136,7 +146,7 @@ public class Pedestrian : Character
     public void Reset()
     {
         IsTalkingToPlayer = false;
-        Main.Menu.Hide();
+        Main.Menu.Hide();        
         Trigger.ResetWithCooloff();
     }
 

@@ -120,6 +120,7 @@ public class PlayerState : MonoBehaviour {
 
     [Space(10.0f)]
     public float PoorMoraleEffectsBelowLevel;
+    public bool RefusesToTalkToStrangersWhenDepressed;
     [Header("Walking slower is a symptom of depression in reality")]
     public bool WalkSlowerWhenMoraleIsPoor;
     public float WalkSpeedFactorAtLowestMorale;
