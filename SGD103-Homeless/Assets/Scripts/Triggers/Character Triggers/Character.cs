@@ -91,7 +91,10 @@ public class Character : MonoBehaviour
     public void ForceStopSpeaking()
     {
         IsSpeaking = false;
-        captionChangeCues.Clear();
+        if (captionChangeCues != null)
+        {
+            captionChangeCues.Clear();
+        }
         nextCue = null;
         AudioSource audioSource = GetComponent<AudioSource>();
         audioSource.Stop();
