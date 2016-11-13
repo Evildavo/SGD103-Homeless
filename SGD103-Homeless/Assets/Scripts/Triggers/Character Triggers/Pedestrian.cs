@@ -62,6 +62,7 @@ public class Pedestrian : Character
     public float CleanlinessAffectsChanceFactor = 1.0f;
     public float[] PossibleMoniesGained;
     public float MoraleLostForActiveBegging;
+    public float MoraleLostForAskingTimeOrDay;
     public float WalksAfterSeconds;
 
     [Header("Factors that control how repellent the player character is")]
@@ -150,16 +151,21 @@ public class Pedestrian : Character
 
     public void AskForTime()
     {
+        // Apply morale penalty for asking.
+        Main.PlayerState.ChangeMorale(-MoraleLostForAskingTimeOrDay);
+        
         Main.Menu.Hide();
         Speak("It's " + Main.GameTime.GetTimeAsHumanString() + ".", null, () =>
         {
             Reset();
-        }, 
-        2.0f);
+        });
     }
 
     public void AskForDate()
     {
+        // Apply morale penalty for asking.
+        Main.PlayerState.ChangeMorale(-MoraleLostForAskingTimeOrDay);
+
         Main.Menu.Hide();
         Speak("It's " + Main.GameTime.DayOfTheWeekAsString() + ".", null, () =>
         {
