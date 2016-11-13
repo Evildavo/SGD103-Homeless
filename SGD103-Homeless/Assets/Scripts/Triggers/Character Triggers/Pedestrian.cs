@@ -67,6 +67,7 @@ public class Pedestrian : Character
     [Header("Factors that control how repellent the player character is")]
     public float PoorHealthRepellenceFactor = 1.0f;
     public float LowMoraleRepellenceFactor = 1.0f;
+    public float UncleanlinessRepellenceFactor = 1.0f;
     public float InebriationRepellenceFactor = 1.0f;
     public float IgnorePlayerAtRepellance;
     public float WalkAwayFromPlayerAtRepellance;
@@ -178,13 +179,7 @@ public class Pedestrian : Character
             Main.PlayerState.HealthTiredness * HealthAffectsChanceFactor +
             Main.PlayerState.Morale * MoraleAffectsChanceFactor +
             Main.PlayerState.CurrentClothingCleanliness * CleanlinessAffectsChanceFactor) / 3f;
-
-        Debug.Log("Max chance: " + MaxChanceMoneyGainedWhenBegging);
-        Debug.Log("From health" + Main.PlayerState.HealthTiredness * HealthAffectsChanceFactor);
-        Debug.Log("From morale" + Main.PlayerState.Morale * MoraleAffectsChanceFactor);
-        Debug.Log("From dirtiness" + Main.PlayerState.CurrentClothingCleanliness * CleanlinessAffectsChanceFactor);
-        Debug.Log(chance);
-
+        
         // Check if we got any money.
         bool hasGivenMoneyToday = (hasGivenMoney && hasPlayerAskedForMoneyToday);
         if (!hasPlayerAskedForMoneyToday && !hasGivenMoneyToday && 
@@ -249,6 +244,7 @@ public class Pedestrian : Character
             PlayerRepellence =
                 ((1.0f - Main.PlayerState.HealthTiredness) * PoorHealthRepellenceFactor +
                  (1.0f - Main.PlayerState.Morale) * LowMoraleRepellenceFactor +
+                 (1.0f - Main.PlayerState.CurrentClothingCleanliness) * UncleanlinessRepellenceFactor +
                  Main.PlayerState.Inebriation * InebriationRepellenceFactor) / 3f;
         }
 
