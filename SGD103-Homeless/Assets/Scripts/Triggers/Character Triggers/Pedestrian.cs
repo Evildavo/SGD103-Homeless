@@ -29,13 +29,16 @@ public class Pedestrian : Character
 	CapsuleCollider m_Capsule;
 	bool m_Crouching;
 
-    Vector3? turnTarget;
+    Waypoint turnTarget;
+    Waypoint lastWaypoint;
     bool isEntering;
     bool hasPlayerAskedForMoneyToday;
     bool hasGivenMoney;
     int dayLastAskedMoney;
     bool isTalkingToPlayer;
     float timeStartedTalkingToPlayer;
+    bool hasBeenRepulsed;
+    float timeAtLastRepulsion;
 
     [Space(20.0f)]
     public Trigger Trigger;
@@ -64,9 +67,12 @@ public class Pedestrian : Character
     public float InebriationRepellenceFactor = 1.0f;
     public float IgnorePlayerAtRepellance;
     public float WalkAwayFromPlayerAtRepellance;
+    public float TurnAroundCooloffSeconds;
 
     [ReadOnly]
     public bool IsInActiveHour;
+    [ReadOnly]
+    public float PlayerRepellence;
 
 
     void Start()
@@ -104,28 +110,17 @@ public class Pedestrian : Character
         }
         else
         {
-            // Having low health, low morale and/or being intoxicated repels the pedestrian.
-            float playerRepellence = 
-                ((1.0f - Main.PlayerState.HealthTiredness) * PoorHealthRepellenceFactor +
-                 (1.0f - Main.PlayerState.Morale) * LowMoraleRepellenceFactor + 
-                 Main.PlayerState.Inebriation * InebriationRepellenceFactor) / 3f;
-            Debug.Log((1.0f - Main.PlayerState.HealthTiredness) * PoorHealthRepellenceFactor + " from health");
-            Debug.Log((1.0f - Main.PlayerState.Morale) * LowMoraleRepellenceFactor + " from morale");
-            Debug.Log(Main.PlayerState.Inebriation * InebriationRepellenceFactor + " from inebriation");
-            Debug.Log(playerRepellence);
+            Debug.Log(PlayerRepellence);
 
-            if (playerRepellence > IgnorePlayerAtRepellance)
+            // Having low health, low morale and/or being intoxicated repels the pedestrian.
+            if (PlayerRepellence > IgnorePlayerAtRepellance)
             {
-                Reset();
-            }
-            else if (playerRepellence > WalkAwayFromPlayerAtRepellance)
-            {
-                // TODO.
+                Main.PlayerCharacter.Speak("Excuse me");
                 Reset();
             }
             else
             {
-                if (playerRepellence < 0.5f)
+                if (PlayerRepellence < 0.5f)
                 {
                     isTalkingToPlayer = true;
 
@@ -236,6 +231,14 @@ public class Pedestrian : Character
     {
         base.Update();
 
+        // Update player repellence, based on health, morale and inebriation.
+        {
+            PlayerRepellence =
+                ((1.0f - Main.PlayerState.HealthTiredness) * PoorHealthRepellenceFactor +
+                 (1.0f - Main.PlayerState.Morale) * LowMoraleRepellenceFactor +
+                 Main.PlayerState.Inebriation * InebriationRepellenceFactor) / 3f;
+        }
+
         if (isTalkingToPlayer)
         {
             // If the day changes the player can ask for money again.
@@ -283,9 +286,9 @@ public class Pedestrian : Character
             if (IsVisible && Main.GameTime.TimeScale < StopAnimatingAboveTimeScale)
             {
                 // Update turning
-                if (turnTarget.HasValue)
+                if (turnTarget)
                 {
-                    Vector3 delta = turnTarget.Value - transform.position;
+                    Vector3 delta = turnTarget.transform.position - transform.position;
                     Quaternion lookRotation = Quaternion.LookRotation(delta);
                     Quaternion rotation =
                         Quaternion.RotateTowards(transform.rotation, lookRotation, TurnSpeed * Main.GameTime.GameTimeDelta);
@@ -322,7 +325,7 @@ public class Pedestrian : Character
             Move(Vector3.zero, false, false);
 
             // Turn to face the player.
-            if (turnTarget.HasValue)
+            if (turnTarget)
             {
                 Vector3 delta = Main.PlayerCharacter.transform.position - transform.position;
                 Quaternion lookRotation = Quaternion.LookRotation(delta);
@@ -337,42 +340,74 @@ public class Pedestrian : Character
     }
 
 
-    
+
     public void OnTriggerEnter(Collider other)
     {
+        // Actively avoid the player if they're highly repellent.
+        PlayerRepellenceZone repellenceZone = other.GetComponent<PlayerRepellenceZone>();
+        if (repellenceZone && 
+            (!hasBeenRepulsed || Time.time - timeAtLastRepulsion > TurnAroundCooloffSeconds) && 
+            PlayerRepellence > WalkAwayFromPlayerAtRepellance)
+        {
+            hasBeenRepulsed = true;
+            timeAtLastRepulsion = Time.time;
+
+            // Change direction if they're heading towards the player.
+            const float TOLERANCE = 0.1f;
+            float dot = Vector3.Dot(
+                transform.forward, 
+                (transform.position - Main.PlayerCharacter.transform.position));
+            bool facingEachOther = (dot < TOLERANCE);
+            if (facingEachOther)
+            {
+                if (!ReverseDirection)
+                {
+                    turnTarget = lastWaypoint.Previous;
+                    ReverseDirection = true;
+                }
+                else
+                {
+                    turnTarget = lastWaypoint.Next;
+                    ReverseDirection = false;
+                }
+            }
+        }
+
+        // Handle waypoint.
         Waypoint waypoint = other.GetComponent<Waypoint>();
         if (waypoint && waypoint.GroupName == WayPointGroupName)
         {
+            lastWaypoint = waypoint;
+
             // Return to the loop.
             if (waypoint.Exit)
             {
                 isEntering = false;
             }
 
-            // Handle going to the next route.
+            // Exit at point if inactive.
             if (waypoint.IsExitPoint && !IsInActiveHour && IsVisible)
             {
-                // Exit at point if inactive.
                 IsVisible = false;
                 isEntering = true;
                 transform.forward = -transform.forward;
-                turnTarget = waypoint.Previous.transform.position;
+                turnTarget = waypoint.Previous;
                 GetComponentInChildren<Renderer>().enabled = false;
             }
+            // Turn towards exit route if inactive.
             else if (!IsInActiveHour && waypoint.Exit)
             {
-                // Turn towards exit route if inactive.
-                turnTarget = waypoint.Exit.transform.position;
+                turnTarget = waypoint.Exit;
             }
+            // Turn towards next waypoint.
             else if (waypoint.Next && !(ReverseDirection || isEntering))
             {
-                // Turn towards next waypoint.
-                turnTarget = waypoint.Next.transform.position;
+                turnTarget = waypoint.Next;
             }
+            // Turn towards previous waypoint.
             else if (waypoint.Previous && (ReverseDirection || isEntering))
             {
-                // Turn towards previous waypoint.
-                turnTarget = waypoint.Previous.transform.position;
+                turnTarget = waypoint.Previous;
             }
         }
     }
