@@ -85,7 +85,6 @@ public class Pedestrian : Character
         {
             IsVisible = true;
             isEntering = true;
-            transform.forward = -transform.forward;
             GetComponentInChildren<Renderer>().enabled = true;
         }
     }
@@ -117,6 +116,17 @@ public class Pedestrian : Character
             m_AnimSpeedMultiplier = 0.0f;
             m_MoveSpeedMultiplier = 0.0f;
             m_TurnAmount = 0.0f;
+
+            // Instantly set player state.
+            if (IsInActiveHour)
+            {
+
+            }
+            else
+            {
+                IsVisible = false;
+                GetComponentInChildren<Renderer>().enabled = false;
+            }
         }
     }
 
@@ -134,10 +144,12 @@ public class Pedestrian : Character
             }
 
             // Handle going to the next route.
-            if (waypoint.IsExitPoint && !IsInActiveHour)
+            if (waypoint.IsExitPoint && !IsInActiveHour && IsVisible)
             {
                 // Exit at point if inactive.
                 IsVisible = false;
+                transform.forward = -transform.forward;
+                turnTarget = waypoint.Previous.transform.position;
                 GetComponentInChildren<Renderer>().enabled = false;
             }
             else if (!IsInActiveHour && waypoint.Exit)
