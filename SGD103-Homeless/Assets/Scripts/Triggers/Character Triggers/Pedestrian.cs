@@ -30,10 +30,14 @@ public class Pedestrian : Character
     Vector3? turnTarget;
     bool isEntering;
 
+    [Space(20.0f)]
+    public Trigger Trigger;
+    
     [Header("Pedestrian Settings:")]
     public bool IsVisible = true;
     public bool ReverseDirection;
     public float TurnSpeed;
+    public float TurnToFacePlayerSpeed;
     public float WalkSpeed;
     public string WayPointGroupName;
     public float StopAnimatingAboveTimeScale = 800.0f;
@@ -44,7 +48,8 @@ public class Pedestrian : Character
     public float ActiveToHour = 24.0f;
     [ReadOnly]
     public bool IsInActiveHour;
-
+    [ReadOnly]
+    public bool IsTalkingToPlayer;
 
 
     void Start()
@@ -59,7 +64,35 @@ public class Pedestrian : Character
 		m_OrigGroundCheckDistance = m_GroundCheckDistance;
 
         transform.Rotate(new Vector3(0.0f, -90.0f, 0.0f));
-	}
+
+
+        // Set trigger active hours to match our hours.
+        Trigger.ActiveFromHour = ActiveFromHour;
+        Trigger.ActiveToHour = ActiveToHour;
+
+        // Register listeners.
+        Trigger.RegisterOnTriggerListener(OnTrigger);
+        Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
+        Trigger.RegisterOnCloseRequested(Reset);
+    }
+
+
+    public void OnTrigger()
+    {
+        IsTalkingToPlayer = true;
+    }
+
+    public void OnPlayerExit()
+    {
+        Reset();
+    }
+
+    public void Reset()
+    {
+        IsTalkingToPlayer = false;
+        Main.Menu.Hide();
+        Trigger.ResetWithCooloff();
+    }
 
 
     new void Update()
@@ -79,7 +112,7 @@ public class Pedestrian : Character
                 IsInActiveHour = (time >= ActiveFromHour || time <= ActiveToHour);
             }
         }
-
+        
         // ReActivate if we're in the active hour.
         if (!IsVisible && IsInActiveHour)
         {
@@ -90,41 +123,61 @@ public class Pedestrian : Character
 
     void FixedUpdate()
     {
-        // Make walk animation follow gametime. If game-time is too fast for reliable navigation don't animate.
-        if (IsVisible && Main.GameTime.TimeScale < StopAnimatingAboveTimeScale)
+        if (!IsTalkingToPlayer)
         {
-            // Update turning
-            if (turnTarget.HasValue)
+            // Make walk animation follow gametime. If game-time is too fast for reliable navigation don't animate.
+            if (IsVisible && Main.GameTime.TimeScale < StopAnimatingAboveTimeScale)
             {
-                Vector3 delta = turnTarget.Value - transform.position;
-                Quaternion lookRotation = Quaternion.LookRotation(delta);
-                Quaternion rotation =
-                    Quaternion.RotateTowards(transform.rotation, lookRotation, TurnSpeed * Main.GameTime.GameTimeDelta);
-                Vector3 eulerAngles = transform.eulerAngles;
-                eulerAngles.y = rotation.eulerAngles.y;
-                transform.eulerAngles = eulerAngles;
-            }
+                // Update turning
+                if (turnTarget.HasValue)
+                {
+                    Vector3 delta = turnTarget.Value - transform.position;
+                    Quaternion lookRotation = Quaternion.LookRotation(delta);
+                    Quaternion rotation =
+                        Quaternion.RotateTowards(transform.rotation, lookRotation, TurnSpeed * Main.GameTime.GameTimeDelta);
+                    Vector3 eulerAngles = transform.eulerAngles;
+                    eulerAngles.y = rotation.eulerAngles.y;
+                    transform.eulerAngles = eulerAngles;
+                }
 
-            // Walk forward.
-            m_AnimSpeedMultiplier = WalkSpeed * Main.GameTime.GameTimeDelta;
-            m_MoveSpeedMultiplier = 1.0f;
-            Move(transform.rotation * Vector3.forward * WalkSpeed * Main.GameTime.GameTimeDelta, false, false);
-        }
-        else
-        {
-            m_AnimSpeedMultiplier = 0.0f;
-            m_MoveSpeedMultiplier = 0.0f;
-            m_TurnAmount = 0.0f;
-
-            // Instantly set player state.
-            if (IsInActiveHour)
-            {
-
+                // Walk forward.
+                m_AnimSpeedMultiplier = WalkSpeed * Main.GameTime.GameTimeDelta;
+                m_MoveSpeedMultiplier = 1.0f;
+                Move(transform.rotation * Vector3.forward * WalkSpeed * Main.GameTime.GameTimeDelta, false, false);
             }
             else
             {
-                IsVisible = false;
-                GetComponentInChildren<Renderer>().enabled = false;
+                m_AnimSpeedMultiplier = 0.0f;
+                m_MoveSpeedMultiplier = 0.0f;
+                m_TurnAmount = 0.0f;
+
+                // Instantly set player state.
+                if (!IsInActiveHour)
+                {
+                    IsVisible = false;
+                    GetComponentInChildren<Renderer>().enabled = false;
+                }
+            }
+        }
+        else
+        {
+            // Stop moving when talking to the player.
+            //m_AnimSpeedMultiplier = 0.0f;
+            m_MoveSpeedMultiplier = 0.0f;
+            m_TurnAmount = 0.0f;
+            Move(Vector3.zero, false, false);
+
+            // Turn to face the player.
+            if (turnTarget.HasValue)
+            {
+                Vector3 delta = Main.PlayerCharacter.transform.position - transform.position;
+                Quaternion lookRotation = Quaternion.LookRotation(delta);
+                Quaternion rotation =
+                    Quaternion.RotateTowards(transform.rotation, lookRotation,
+                                             TurnToFacePlayerSpeed * Main.GameTime.GameTimeDelta);
+                Vector3 eulerAngles = transform.eulerAngles;
+                eulerAngles.y = rotation.eulerAngles.y;
+                transform.eulerAngles = eulerAngles;
             }
         }
     }
@@ -329,7 +382,7 @@ public class Pedestrian : Character
 
 	void CheckGroundStatus()
 	{
-		RaycastHit hitInfo;
+		//RaycastHit hitInfo;
 #if UNITY_EDITOR
 		// helper to visualise the ground check ray in the scene view
 		/*Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + (Vector3.down * m_GroundCheckDistance));*/
