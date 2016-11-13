@@ -28,12 +28,14 @@ public class Pedestrian : Character
 	Vector3 m_CapsuleCenter;
 	CapsuleCollider m_Capsule;
 	bool m_Crouching;
-    
+
     Vector3? turnTarget;
     bool isEntering;
     bool hasPlayerAskedForMoneyToday;
     bool hasGivenMoney;
     int dayLastAskedMoney;
+    bool isTalkingToPlayer;
+    float timeStartedTalkingToPlayer;
 
     [Space(20.0f)]
     public Trigger Trigger;
@@ -54,11 +56,10 @@ public class Pedestrian : Character
     public float ChanceMoneyGainedWhenBegging;
     public float[] PossibleMoniesGained;
     public float MoraleLostForActiveBegging;
+    public float WalksAfterSeconds;
             
     [ReadOnly]
     public bool IsInActiveHour;
-    [ReadOnly]
-    public bool IsTalkingToPlayer;
 
 
     void Start()
@@ -96,13 +97,15 @@ public class Pedestrian : Character
         }
         else
         {
-            IsTalkingToPlayer = true;
+            isTalkingToPlayer = true;
 
             // Player introduces themselves.
             Main.PlayerCharacter.Speak("Excuse me", null, () =>
             {
                 Speak("Yes?", null, () =>
                 {
+                    timeStartedTalkingToPlayer = Time.time;
+
                     // Open conversation menu.
                     List<Menu.Option> options = new List<Menu.Option>();
                     options.Add(new Menu.Option(AskForTime, "What's the time?"));
@@ -191,7 +194,7 @@ public class Pedestrian : Character
 
     public void Reset()
     {
-        IsTalkingToPlayer = false;
+        isTalkingToPlayer = false;
         Main.Menu.Hide();        
         Trigger.ResetWithCooloff();
     }
@@ -200,12 +203,22 @@ public class Pedestrian : Character
     new void Update()
     {
         base.Update();
-        
-        // If the day changes the player can ask for money again.
-        if (Main.GameTime.Day != dayLastAskedMoney)
+
+        if (isTalkingToPlayer)
         {
-            hasPlayerAskedForMoneyToday = false;
-            hasGivenMoney = false;
+            // If the day changes the player can ask for money again.
+            if (Main.GameTime.Day != dayLastAskedMoney)
+            {
+                hasPlayerAskedForMoneyToday = false;
+                hasGivenMoney = false;
+            }
+
+            // Walk away if the player doesn't say anything for a while.
+            if (Main.Menu.IsDisplayed() &&
+                Time.time - timeStartedTalkingToPlayer > WalksAfterSeconds)
+            {
+                Reset();
+            }
         }
 
         // Determine if we're in the active hour. If from and to are flipped the period wraps (e.g. 11pm to 2am).
@@ -232,7 +245,7 @@ public class Pedestrian : Character
 
     void FixedUpdate()
     {
-        if (!IsTalkingToPlayer)
+        if (!isTalkingToPlayer)
         {
             // Make walk animation follow gametime. If game-time is too fast for reliable navigation don't animate.
             if (IsVisible && Main.GameTime.TimeScale < StopAnimatingAboveTimeScale)
