@@ -31,7 +31,7 @@ public class Pedestrian : Character
     bool isEntering;
 
     [Header("Pedestrian Settings:")]
-    public bool IsActive = true;
+    public bool IsVisible = true;
     public bool ReverseDirection;
     public float TurnSpeed;
     public float WalkSpeed;
@@ -81,9 +81,9 @@ public class Pedestrian : Character
         }
 
         // ReActivate if we're in the active hour.
-        if (!IsActive && IsInActiveHour)
+        if (!IsVisible && IsInActiveHour)
         {
-            IsActive = true;
+            IsVisible = true;
             isEntering = true;
             transform.forward = -transform.forward;
             GetComponentInChildren<Renderer>().enabled = true;
@@ -93,7 +93,7 @@ public class Pedestrian : Character
     void FixedUpdate()
     {
         // Make walk animation follow gametime. If game-time is too fast for reliable navigation don't animate.
-        if (IsActive && Main.GameTime.TimeScale < StopAnimatingAboveTimeScale)
+        if (IsVisible && Main.GameTime.TimeScale < StopAnimatingAboveTimeScale)
         {
             // Update turning
             if (turnTarget.HasValue)
@@ -137,7 +137,7 @@ public class Pedestrian : Character
             if (waypoint.IsExitPoint && !IsInActiveHour)
             {
                 // Exit at point if inactive.
-                IsActive = false;
+                IsVisible = false;
                 GetComponentInChildren<Renderer>().enabled = false;
             }
             else if (!IsInActiveHour && waypoint.Exit)
