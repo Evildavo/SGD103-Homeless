@@ -342,16 +342,20 @@ public class Pedestrian : Character
             // Turn to face the player.
             if (turnTarget)
             {
-                Vector3 delta = Main.PlayerCharacter.transform.position - transform.position;
-                Quaternion lookRotation = Quaternion.LookRotation(delta);
-                Quaternion rotation =
-                    Quaternion.RotateTowards(transform.rotation, lookRotation,
-                                             TurnToFacePlayerSpeed * Main.GameTime.GameTimeDelta);
-                Vector3 eulerAngles = transform.eulerAngles;
-                eulerAngles.y = rotation.eulerAngles.y;
-                transform.eulerAngles = eulerAngles;
+                turnToFace(TurnToFacePlayerSpeed * Main.GameTime.GameTimeDelta);
             }
         }
+    }
+
+    void turnToFace(float maxAngle)
+    {
+        Vector3 delta = Main.PlayerCharacter.transform.position - transform.position;
+        Quaternion lookRotation = Quaternion.LookRotation(delta);
+        Quaternion rotation =
+            Quaternion.RotateTowards(transform.rotation, lookRotation, maxAngle);
+        Vector3 eulerAngles = transform.eulerAngles;
+        eulerAngles.y = rotation.eulerAngles.y;
+        transform.eulerAngles = eulerAngles;
     }
 
 
@@ -399,9 +403,29 @@ public class Pedestrian : Character
             {
                 isEntering = false;
             }
-
+            
+            // Teleport to the next waypoint.
+            if (waypoint.TeleportToNext || waypoint.TeleportToPrevious)
+            {
+                Vector3 position = transform.position;
+                if (!ReverseDirection && waypoint.TeleportToNext)
+                {
+                    position.x = waypoint.Next.transform.position.x;
+                    position.z = waypoint.Next.transform.position.z;
+                    turnTarget = waypoint.Next.Next;
+                    turnToFace(360.0f);
+                }
+                else if (ReverseDirection && waypoint.TeleportToPrevious)
+                {
+                    position.x = waypoint.Previous.transform.position.x;
+                    position.z = waypoint.Previous.transform.position.z;
+                    turnTarget = waypoint.Previous.Previous;
+                    turnToFace(360.0f);
+                }
+                transform.position = position;
+            }
             // Exit at point if inactive.
-            if (waypoint.IsExitPoint && !IsInActiveHour && IsVisible)
+            else if (waypoint.IsExitPoint && !IsInActiveHour && IsVisible)
             {
                 IsVisible = false;
                 isEntering = true;
