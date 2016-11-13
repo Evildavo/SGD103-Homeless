@@ -79,7 +79,7 @@ public class Orwell : Character
         {
             if (response == PlayerCharacter.ResponseType.SUBMISSIVE)
             {
-                Speak(" Aren't we all, but Let us come and go talking of Michelangelo. ", null);
+                Speak(" Aren't we all, but let us come and go and talk of Michelangelo. ", null);
                 Reset();
             }
             else if (response == PlayerCharacter.ResponseType.PRIDEFUL)
