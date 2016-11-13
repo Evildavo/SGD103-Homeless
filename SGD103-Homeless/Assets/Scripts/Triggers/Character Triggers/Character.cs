@@ -49,8 +49,8 @@ public class Character : MonoBehaviour
     public float Speak(string text,
                       AudioClip audio = null,
                       OnFinishedSpeaking callback = null,
-                      float? dialogueLengthOverrideSeconds = null,
                       float delayAfterSeconds = 0.15f,
+                      float? dialogueLengthOverrideSeconds = null,
                       bool skippable = true)
     {
         audioClip = audio;
