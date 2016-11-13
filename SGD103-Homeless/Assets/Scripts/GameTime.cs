@@ -189,6 +189,89 @@ public class GameTime : MonoBehaviour
         int minutes = (int)((time - Mathf.Floor(time)) * 60.0f);
         return hour.ToString() + ":" + minutes.ToString().PadLeft(2, '0') + " " + amPmLabel.ToUpper();
     }
+    
+    private static int convertTo12HourTime(float time)
+    {
+        int hour = (int)time;
+        if (hour < 1)
+        {
+            hour = 12;
+        }
+        else if (hour < 12) {}
+        else if (hour < 13)
+        {
+            hour = 12;
+        }
+        else
+        {
+            hour -= 12;
+        }
+        return hour;
+    }
+
+    // Returns the given time rounded to quaters and as a string in the format "half past 11".
+    public static string GetTimeAsHumanString(float time)
+    {
+        // Determine hour.
+        int hour = convertTo12HourTime(time);
+        int nextHour = convertTo12HourTime(time + 1);
+
+        // Determine minutes.
+        int minutes = (int)((time - Mathf.Floor(time)) * 60.0f);
+
+        // Determine prefix.
+        string prefix = "";
+        bool relativeToNextHour = false;
+        if (minutes < 7.5f)
+        {}
+        else if (minutes < 22.5f)
+        {
+            prefix = "quarter past ";
+        }
+        else if (minutes < 37.5)
+        {
+            prefix = "half past ";
+        }
+        else if (minutes < 52.5)
+        {
+            prefix = "quarter to ";
+            relativeToNextHour = true;
+        }
+        else
+        {
+            relativeToNextHour = true;
+        }
+
+        // Create the final string.
+        if (relativeToNextHour)
+        {
+            if (prefix != "")
+            {
+                return prefix + " " + nextHour.ToString();
+            }
+            else
+            {
+                return nextHour.ToString() + " o'clock";
+            }
+        }
+        else
+        {
+            if (prefix != "")
+            {
+                return prefix + " " + hour.ToString();
+            }
+            else
+            {
+                return hour.ToString() + " o'clock";
+            }
+        }
+    }
+
+    // Returns the current time rounded to quaters and as a string in the format "half past 11".
+    public string GetTimeAsHumanString()
+    {
+        return GetTimeAsHumanString(TimeOfDayHours);
+    }
 
     // Returns the current time as a string in the format "11:34 pm".
     public string GetTimeAsString()

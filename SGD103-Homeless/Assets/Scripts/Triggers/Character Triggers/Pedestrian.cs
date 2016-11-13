@@ -151,7 +151,7 @@ public class Pedestrian : Character
     public void AskForTime()
     {
         Main.Menu.Hide();
-        Speak("It's " + Main.GameTime.GetTimeAsString() + ".", null, () =>
+        Speak("It's " + Main.GameTime.GetTimeAsHumanString() + ".", null, () =>
         {
             Reset();
         }, 
