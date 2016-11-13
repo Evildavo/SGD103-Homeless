@@ -131,6 +131,9 @@ public class Pedestrian : Character
 
     public void AskForMoney()
     {
+        // Apply morale penalty for asking.
+        Main.PlayerState.ChangeMorale(-Main.PlayerState.MoraleLostForActiveBegging);
+
         Main.Menu.Hide();
         Speak("Sorry, no", null, () =>
         {
