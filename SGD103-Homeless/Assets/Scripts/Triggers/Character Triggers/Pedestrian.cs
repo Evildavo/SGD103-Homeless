@@ -31,6 +31,9 @@ public class Pedestrian : Character
     
     Vector3? turnTarget;
     bool isEntering;
+    bool hasPlayerAskedForMoneyToday;
+    bool hasGivenMoney;
+    int dayLastAskedMoney;
 
     [Space(20.0f)]
     public Trigger Trigger;
@@ -140,10 +143,13 @@ public class Pedestrian : Character
         Main.PlayerState.ChangeMorale(-MoraleLostForActiveBegging);
 
         // Check if we got any money.
-        if (Random.Range(0.0f, 1.0f) < ChanceMoneyGainedWhenBegging)
+        bool hasGivenMoneyToday = (hasGivenMoney && hasPlayerAskedForMoneyToday);
+        if (!hasPlayerAskedForMoneyToday && !hasGivenMoneyToday && 
+            Random.Range(0.0f, 1.0f) < ChanceMoneyGainedWhenBegging)
         {
             float moneyEarned = PossibleMoniesGained[Random.Range(0, PossibleMoniesGained.Length)];
-            
+            hasGivenMoney = true;
+
             // Add money.
             Main.PlayerState.Money += moneyEarned;
 
@@ -154,14 +160,28 @@ public class Pedestrian : Character
             });
             Main.MessageBox.ShowForTime("$" + moneyEarned.ToString("f2") + " gained");
         }
+        else if (hasGivenMoneyToday)
+        {
+            Speak("I already gave you money", null, () =>
+            {
+                Reset();
+            });
+        }
+        else if (hasPlayerAskedForMoneyToday)
+        {
+            // Just ignore the player and walk away.
+            Reset();
+        }
         else
         {
-            // Report to user didn't get any money.
+            hasGivenMoney = false;
             Speak("Sorry, no", null, () =>
             {
                 Reset();
             });
         }
+        hasPlayerAskedForMoneyToday = true;
+        dayLastAskedMoney = Main.GameTime.Day;
     }
 
     public void OnPlayerExit()
@@ -180,6 +200,13 @@ public class Pedestrian : Character
     new void Update()
     {
         base.Update();
+        
+        // If the day changes the player can ask for money again.
+        if (Main.GameTime.Day != dayLastAskedMoney)
+        {
+            hasPlayerAskedForMoneyToday = false;
+            hasGivenMoney = false;
+        }
 
         // Determine if we're in the active hour. If from and to are flipped the period wraps (e.g. 11pm to 2am).
         if (Main.GameTime)

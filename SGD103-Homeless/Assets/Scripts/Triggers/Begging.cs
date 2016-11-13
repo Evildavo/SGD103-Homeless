@@ -7,7 +7,7 @@ public class Begging : MonoBehaviour
     bool hasChecked;
     float hourAtLastCheck;
     float timeAtMoneyLastGained;
-
+    
     public Main Main;
     public Trigger Trigger;
     public WriteYourSign WriteYourSign;
@@ -30,7 +30,7 @@ public class Begging : MonoBehaviour
     public bool IsBegging;
     [ReadOnly]
     public float chanceMoneyGainedAtCheck;
-
+    
     public void StartBegging()
     {
         IsBegging = true;
