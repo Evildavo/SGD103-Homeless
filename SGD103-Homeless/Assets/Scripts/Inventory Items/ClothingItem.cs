@@ -129,7 +129,6 @@ public class ClothingItem : InventoryItem
         // Show UI and exit modal mode.
         Main.UI.Show();
         Main.UI.DisableModalMode();
-        Debug.Log(Main.UI.ReturnTo);
         if (Main.UI.ReturnTo != null)
         {
             Main.UI.ReturnTo();

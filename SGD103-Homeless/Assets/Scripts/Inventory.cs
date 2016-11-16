@@ -149,6 +149,9 @@ public class Inventory : MonoBehaviour
     // Instantiate the item before calling if it's a prefab.
     public void AddItem(InventoryItem item)
     {
+        // Update inventory full status.
+        checkInventoryFull();
+
         if (IsInventoryFull)
         {
             Debug.LogWarning("Inventory is full.");
@@ -175,6 +178,10 @@ public class Inventory : MonoBehaviour
                 if (isHidden)
                 {
                     slot.Hide();
+                }
+                else
+                {
+                    slot.Show();
                 }
                 break;
             }

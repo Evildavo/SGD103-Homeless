@@ -14,7 +14,6 @@ public class Toilet : MonoBehaviour
     public void OpenMainMenu()
     {
         Main.UI.ReturnTo = OpenMainMenu;
-        Debug.Log("Toilet: " + Main.UI.ReturnTo);
 
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(OnExit, "Exit"));
