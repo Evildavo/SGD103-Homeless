@@ -81,16 +81,19 @@ public class ThirdPersonCamera : MonoBehaviour {
 
     void delayedInputUpdate(InputState inputState)
     {
+        // Clamp mouse input to screen.
+        float cursorX = Mathf.Clamp(inputState.x, 0.0f, Screen.width);
+        float cursorY = Mathf.Clamp(inputState.y, 0.0f, Screen.height);
+
         // Turn horizontally and shift the camera sideways based on how far the mouse is from horizontal centre (smooth curved).
         float halfScreenWidth = (Screen.width / 2.0f);
         float horizontalOffsetFromCentre =
-            Mathf.Asin((inputState.x - halfScreenWidth) / halfScreenWidth * (Mathf.PI / 4.0f));
+            Mathf.Asin((cursorX - halfScreenWidth) / halfScreenWidth * (Mathf.PI / 4.0f));
         transform.localRotation =
             initialRotation * Quaternion.Euler(
                 0.0f,
                 horizontalOffsetFromCentre * MaxLookAngleDegrees,
                 0.0f);
-        Mathf.Clamp(horizontalOffsetFromCentre, 0.0f, MaxCameraSidewaysShift);
         transform.localPosition =
             initialPosition + new Vector3(0.0f, horizontalOffsetFromCentre * MaxCameraSidewaysShift, 0.0f);
 
@@ -103,7 +106,7 @@ public class ThirdPersonCamera : MonoBehaviour {
 
         // Shift the camera forward/backward based on how far the mouse is from vertical centre.
         float halfScreenHeight = (Screen.height / 2.0f);
-        float verticalOffsetFromCentre = (inputState.y - halfScreenHeight) / halfScreenHeight;
+        float verticalOffsetFromCentre = (cursorY - halfScreenHeight) / halfScreenHeight;
         Mathf.Clamp(verticalOffsetFromCentre, 0.0f, MaxCameraForwardsShift);
         transform.localPosition += new Vector3(verticalOffsetFromCentre * MaxCameraForwardsShift, 0.0f, 0.0f);
 
@@ -112,10 +115,10 @@ public class ThirdPersonCamera : MonoBehaviour {
         {
             float distanceFromLeftEdge =
                 Mathf.Min(
-                    inputState.x / (halfScreenWidth * (1.0f - TurnDeadzone)), 1.0f);
+                    cursorX / (halfScreenWidth * (1.0f - TurnDeadzone)), 1.0f);
             float distanceFromRightEdge =
                 Mathf.Min(
-                    (Screen.width - inputState.x) / (halfScreenWidth * (1.0f - TurnDeadzone)), 1.0f);
+                    (Screen.width - cursorX)  / (halfScreenWidth * (1.0f - TurnDeadzone)), 1.0f);
             if (distanceFromLeftEdge < distanceFromRightEdge)
             {
                 GetComponentInParent<PlayerCharacter>().Turn(
