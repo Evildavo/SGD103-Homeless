@@ -256,6 +256,8 @@ public class MotelDiner : MonoBehaviour
 
     void Reset()
     {
+        Main.PlayerState.IsInPrivate = false;
+
         // Hide splash screen.
         Main.Splash.Hide();
 

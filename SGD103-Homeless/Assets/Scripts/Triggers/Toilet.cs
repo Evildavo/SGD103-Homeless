@@ -13,6 +13,8 @@ public class Toilet : MonoBehaviour
     
     public void OpenMainMenu()
     {
+        Main.UI.ReturnTo = OpenMainMenu;
+
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(OnExit, "Exit"));
 
@@ -58,6 +60,8 @@ public class Toilet : MonoBehaviour
     
     void reset()
     {
+        Main.PlayerState.IsInPrivate = false;
+
         // Hide splash screen.
         Main.Splash.Hide();
 
@@ -77,7 +81,6 @@ public class Toilet : MonoBehaviour
         Main.Inventory.Hide();
         Main.Menu.Hide();
         Trigger.Reset();
-        Main.PlayerState.IsInPrivate = false;
     }
 
 }

@@ -351,6 +351,8 @@ public class CoOpShelter : MonoBehaviour {
 
     void reset()
     {
+        Main.PlayerState.IsInPrivate = false;
+
         // Hide splash screen.
         Main.Splash.Hide();
 

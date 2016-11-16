@@ -120,6 +120,7 @@ public class Trigger : MonoBehaviour
         IsEnabled = enabled;
         IsActivated = false;
         Main.PlayerState.CurrentTrigger = null;
+        Main.UI.ReturnTo = null;
         if (UseModalModeOnActivate)
         {
             Main.UI.DisableModalMode();
