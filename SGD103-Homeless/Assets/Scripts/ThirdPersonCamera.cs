@@ -82,6 +82,7 @@ public class ThirdPersonCamera : MonoBehaviour {
     void delayedInputUpdate(InputState inputState)
     {
         // Clamp mouse input to screen.
+        bool isCursorXInsideView = (inputState.x >= 0.0f && inputState.x <= Screen.width);
         float cursorX = Mathf.Clamp(inputState.x, 0.0f, Screen.width);
         float cursorY = Mathf.Clamp(inputState.y, 0.0f, Screen.height);
 
@@ -111,7 +112,7 @@ public class ThirdPersonCamera : MonoBehaviour {
         transform.localPosition += new Vector3(verticalOffsetFromCentre * MaxCameraForwardsShift, 0.0f, 0.0f);
 
         // Make player turn as mouse approaches the screen edge.
-        if (!Main.UI.IsInModalMode() && Main.PlayerState.CurrentTrigger == null)
+        if (isCursorXInsideView && !Main.UI.IsInModalMode() && Main.PlayerState.CurrentTrigger == null)
         {
             float distanceFromLeftEdge =
                 Mathf.Min(
