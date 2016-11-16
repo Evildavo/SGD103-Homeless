@@ -124,28 +124,25 @@ public class Pedestrian : Character
             }
             else
             {
-                if (PlayerRepellence < 0.5f)
+                isTalkingToPlayer = true;
+
+                // Player introduces themselves.
+                Main.PlayerCharacter.Speak("Excuse me", null, () =>
                 {
-                    isTalkingToPlayer = true;
-
-                    // Player introduces themselves.
-                    Main.PlayerCharacter.Speak("Excuse me", null, () =>
+                    Speak("Yes?", null, () =>
                     {
-                        Speak("Yes?", null, () =>
-                        {
-                            timeStartedTalkingToPlayer = Time.time;
+                        timeStartedTalkingToPlayer = Time.time;
 
-                        // Open conversation menu.
-                        List<Menu.Option> options = new List<Menu.Option>();
-                            options.Add(new Menu.Option(AskForTime, "What's the time?"));
-                            options.Add(new Menu.Option(AskForDate, "What day is it today?"));
-                            options.Add(new Menu.Option(AskForMoney, "Could you spare some change?"));
-                        //options.Add(new Menu.Option(null, "GIVE ME YOUR MONEY NOW!", 0, false));
-                        options.Add(new Menu.Option(Reset, "Exit", 0, true, null, true));
-                            Main.Menu.Show(options);
-                        });
+                    // Open conversation menu.
+                    List<Menu.Option> options = new List<Menu.Option>();
+                        options.Add(new Menu.Option(AskForTime, "What's the time?"));
+                        options.Add(new Menu.Option(AskForDate, "What day is it today?"));
+                        options.Add(new Menu.Option(AskForMoney, "Could you spare some change?"));
+                    //options.Add(new Menu.Option(null, "GIVE ME YOUR MONEY NOW!", 0, false));
+                    options.Add(new Menu.Option(Reset, "Exit", 0, true, null, true));
+                        Main.Menu.Show(options);
                     });
-                }
+                });
             }
         }
     }
