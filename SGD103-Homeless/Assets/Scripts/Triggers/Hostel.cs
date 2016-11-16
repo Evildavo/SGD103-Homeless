@@ -268,6 +268,7 @@ public class Hostel : MonoBehaviour {
     void reset()
     {
         Main.PlayerState.IsInPrivate = false;
+        Main.UI.ReturnTo = null;
 
         // Hide splash screen.
         Main.Splash.Hide();
