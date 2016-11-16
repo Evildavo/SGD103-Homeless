@@ -315,16 +315,16 @@ public class Pedestrian : Character
                     Vector3 delta = turnTarget.transform.position - transform.position;
                     Quaternion lookRotation = Quaternion.LookRotation(delta);
                     Quaternion rotation =
-                        Quaternion.RotateTowards(transform.rotation, lookRotation, TurnSpeed * Main.GameTime.GameTimeDelta);
+                        Quaternion.RotateTowards(transform.rotation, lookRotation, TurnSpeed * Time.deltaTime);
                     Vector3 eulerAngles = transform.eulerAngles;
                     eulerAngles.y = rotation.eulerAngles.y;
                     transform.eulerAngles = eulerAngles;
                 }
 
                 // Walk forward.
-                m_AnimSpeedMultiplier = WalkSpeed * Main.GameTime.GameTimeDelta;
+                m_AnimSpeedMultiplier = WalkSpeed * Time.deltaTime;
                 m_MoveSpeedMultiplier = 1.0f;
-                Move(transform.rotation * Vector3.forward * WalkSpeed * Main.GameTime.GameTimeDelta, false, false);
+                Move(transform.rotation * Vector3.forward * WalkSpeed * Time.deltaTime, false, false);
             }
             else
             {
@@ -351,7 +351,7 @@ public class Pedestrian : Character
             // Turn to face the player.
             if (turnTarget)
             {
-                turnToFace(TurnToFacePlayerSpeed * Main.GameTime.GameTimeDelta);
+                turnToFace(TurnToFacePlayerSpeed * Time.deltaTime);
             }
         }
     }
