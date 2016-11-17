@@ -10,7 +10,7 @@ public class UI : MonoBehaviour {
 
     public System.Action ReturnTo;
     public Trigger CurrentTrigger;
-    
+
     // Hides the game UI.
     public void Hide()
     {

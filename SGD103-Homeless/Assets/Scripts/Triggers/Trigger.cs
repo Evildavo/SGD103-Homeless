@@ -212,7 +212,8 @@ public class Trigger : MonoBehaviour
         }
 
         // Show prompt allowing the player to activate the trigger.
-        if (!IsActivated && IsEnabled && IsPlayerInsideTriggerZone)
+        if (!IsActivated && IsEnabled && IsPlayerInsideTriggerZone && 
+            (!Main.UI.CurrentTrigger || Main.UI.CurrentTrigger == this))
         {
             ShowInteractionText();
             if (IsInActiveHour && 
