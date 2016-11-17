@@ -108,6 +108,13 @@ public class Pedestrian : Character
 
     public void OnTrigger()
     {
+        // Stop talking to the player if already talking to them.
+        if (isTalkingToPlayer)
+        {
+            Reset();
+            return;
+        }
+
         // Player refuses to talk if their morale is too low.
         if (Main.PlayerState.RefusesToTalkToStrangersWhenDepressed &&
             Main.PlayerState.Morale < Main.PlayerState.PoorMoraleEffectsBelowLevel)
