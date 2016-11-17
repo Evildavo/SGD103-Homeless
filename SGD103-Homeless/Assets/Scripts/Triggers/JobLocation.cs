@@ -280,6 +280,7 @@ public class JobLocation : MonoBehaviour
                 
                 Main.MessageBox.Show(message, gameObject);
                 PlayerHasJobHere = true;
+                Main.PlayerState.JobLocations.Add(this);
                 workWeekStarted = false;
                 jobStartsAfter = Main.GameTime.DayOfTheWeek;
                 Main.PlayerState.ChangeMorale(MoraleRewardForSuccessfulApplication);
@@ -299,6 +300,7 @@ public class JobLocation : MonoBehaviour
     {
         PlayerWasDismissedHere = true;
         PlayerHasJobHere = false;
+        Main.PlayerState.JobLocations.Remove(this);
         playerOnNoticeForReasons.Clear();
 
         // If we're at work, stop working.

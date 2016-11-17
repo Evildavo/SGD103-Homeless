@@ -4,10 +4,13 @@ using System.Collections.Generic;
 public class Library : MonoBehaviour {
     private bool isReading;
     private bool isJobSearching;
+    private bool isHouseSearching;
     private float hourAtLastCheck;
     private bool hasWarnedAboutClosing = false;
     private bool jobSearchedToday = false;
+    private bool houseFound = false;
     private int dayOfLastJobSearch;
+    private bool paidForHouse;
 
     public Main Main;
     public Trigger Trigger;
@@ -15,10 +18,14 @@ public class Library : MonoBehaviour {
     public List<JobLocation> JobLocations;
     public AudioClip Ambience;
     public Sprite Splash;
+    public SonPhotoItem SonPhotoItem;
 
     public float MoraleGainedPerHourReading = 0.05f;
     public float JobSearchTimeHours = 1.0f;
+    public float HouseSearchTimeHours = 1.0f;
     public float MoraleGainedForFindingJob;
+    public float MoraleGainedForFindingHouse;
+    public float HouseBondCost;
 
     public List<string> Books;
 
@@ -83,6 +90,14 @@ public class Library : MonoBehaviour {
         List<Menu.Option> options = new List<Menu.Option>();
         options.Add(new Menu.Option(OnJobSearch, "Job search", 0, !jobSearchedToday));
         options.Add(new Menu.Option(OnReadBook, "Read book"));
+        if (!houseFound)
+        {
+            options.Add(new Menu.Option(OnHouseSearch, "Apartment search"));
+        }
+        else if (!paidForHouse)
+        {
+            options.Add(new Menu.Option(OnHouseApply, "Apply for apartment", HouseBondCost, Main.PlayerState.CanAfford(HouseBondCost)));
+        }
         options.Add(new Menu.Option(Reset, "Exit"));
         return options;
     }
@@ -116,6 +131,32 @@ public class Library : MonoBehaviour {
         }
     }
     
+    public void OnHouseSearch()
+    {
+        Main.MessageBox.Show("Searching for an apartment...", gameObject);
+        Main.Menu.Hide();
+        Main.GameTime.AccelerateTime();
+        isHouseSearching = true;
+        dayOfLastJobSearch = Main.GameTime.Day;
+        hourAtLastCheck = Main.GameTime.TimeOfDayHours;
+    }
+
+    public void OnHouseApply()
+    {
+        if (!Main.PlayerState.HasJob())
+        {
+            Main.MessageBox.Show("You need to be working to apply for the apartment", gameObject);
+        }
+        else
+        {
+            SonPhotoItem.ShowPhoto();
+            Main.MessageBox.Show("Congratulations! You're one step closer to getting your son back", gameObject);
+            Main.PlayerState.Money -= HouseBondCost;
+            paidForHouse = true;
+        }
+        Main.Menu.Show(getMainMenu());
+    }
+
     void jobSearch()
     {
         Main.MessageBox.Show("Searching for jobs...", gameObject);
@@ -148,6 +189,7 @@ public class Library : MonoBehaviour {
     public void OnTrigger()
     {
         isJobSearching = false;
+        isHouseSearching = false;
         isReading = false;
         Main.Menu.Show(getMainMenu());
     }
@@ -177,6 +219,17 @@ public class Library : MonoBehaviour {
         if (isReading)
         {
             Main.PlayerState.ChangeMorale(MoraleGainedPerHourReading * Main.GameTime.GameTimeDelta);
+        }
+
+        // Search for house after a minimum amount of time.
+        if (isHouseSearching && Main.GameTime.TimeOfDayHours - hourAtLastCheck > HouseSearchTimeHours)
+        {
+            Main.MessageBox.Show("A modest apartment is available for a bond of $" + HouseBondCost.ToString("f2"), gameObject);
+            Main.PlayerState.ChangeMorale(MoraleGainedForFindingHouse);
+            houseFound = true;
+            Main.Menu.Show(getMainMenu());
+            Main.GameTime.ResetToNormalTime();
+            isHouseSearching = false;
         }
         
         // Search for jobs after a minimum amount of time.

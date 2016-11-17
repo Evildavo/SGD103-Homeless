@@ -146,6 +146,7 @@ public class PlayerState : MonoBehaviour {
     public float StatTransitionSpeedPerHour = 1.0f;
 
     [Space(10.0f)]
+    public List<JobLocation> JobLocations;
     public bool IsAtWork = false;
     public bool IsInPrivate = false;
 
@@ -153,6 +154,12 @@ public class PlayerState : MonoBehaviour {
     public Trigger CurrentTrigger;
     public Begging CurrentBeggingSpot;
     public ClothingItem CurrentClothing;
+
+    // Returns true if the player currently has a job somewhere.
+    public bool HasJob()
+    {
+        return (JobLocations.Count > 0);
+    }
     
     // Returns true if the player can currently afford the given price.
     public bool CanAfford(float price)
