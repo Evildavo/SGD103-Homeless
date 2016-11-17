@@ -94,12 +94,7 @@ public class Pedestrian : Character
 		m_OrigGroundCheckDistance = m_GroundCheckDistance;
 
         transform.Rotate(new Vector3(0.0f, -90.0f, 0.0f));
-
-
-        // Set trigger active hours to match our hours.
-        Trigger.ActiveFromHour = ActiveFromHour;
-        Trigger.ActiveToHour = ActiveToHour;
-
+        
         // Register listeners.
         Trigger.RegisterOnTriggerListener(OnTrigger);
         Trigger.RegisterOnPlayerExitListener(OnPlayerExit);
