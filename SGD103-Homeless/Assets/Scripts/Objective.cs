@@ -68,10 +68,17 @@ public class Objective : MonoBehaviour {
 
     void updateTargetPosition()
     {
-        var position = BasePosition.position;
-        position.y -= YOffsetBetweenObjectives * SlotNum;
+        if (BasePosition)
+        {
+            var position = BasePosition.position;
+            position.y -= YOffsetBetweenObjectives * SlotNum;
 
-        targetPosition = position;
+            targetPosition = position;
+        }
+        else
+        {
+            targetPosition = transform.position;
+        }
     }
 
     void Update () {
@@ -194,7 +201,10 @@ public class Objective : MonoBehaviour {
             // Destroy when finished fading.
             if (fadeProgress >= 1.0f)
             {
-                ObjectiveList.RemoveObjective(this);
+                if (ObjectiveList)
+                {
+                    ObjectiveList.RemoveObjective(this);
+                }
             }
         }
 
