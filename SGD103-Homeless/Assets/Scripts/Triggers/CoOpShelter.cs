@@ -79,10 +79,12 @@ public class CoOpShelter : MonoBehaviour {
         if (SoupKitchenEvent && SoupKitchenEvent.IsOpen)
         {
             options.Add(new Menu.Option(AttendSoupKitchen, "Attend soup kitchen"));
+            WashClothesEvent.SetOnLeaveCallback(OpenMainMenu);
             options.Add(new Menu.Option(WashClothesEvent.Attend, "Wash clothes for free"));
         }
         if (CounsellingEvent && CounsellingEvent.IsOpen)
         {
+            CounsellingEvent.SetOnLeaveCallback(OpenMainMenu);
             options.Add(new Menu.Option(AttendCounselling, "Attend counselling"));
         }
         if (AddictionSupportEvent && AddictionSupportEvent.IsOpen)
