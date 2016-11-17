@@ -17,6 +17,7 @@ public class Trigger : MonoBehaviour
     public Main Main;
 
     public bool IsEnabled = true;
+    public int Priority;
     public string TriggerName;
     public string InteractHintMessage;
     public bool UseModalModeOnActivate = false;
@@ -233,10 +234,18 @@ public class Trigger : MonoBehaviour
     {
         if (other.gameObject == Main.PlayerCharacter.gameObject)
         {
-            IsPlayerInsideTriggerZone = true;
-            if (onPlayerEnter != null)
+            if (!Main.UI.CurrentTrigger || Priority > Main.UI.CurrentTrigger.Priority)
             {
-                onPlayerEnter();
+                if (Main.UI.CurrentTrigger && Priority > Main.UI.CurrentTrigger.Priority)
+                {
+                    Main.UI.CurrentTrigger.OnTriggerExit(other);
+                }
+                Main.UI.CurrentTrigger = this;
+                IsPlayerInsideTriggerZone = true;
+                if (onPlayerEnter != null)
+                {
+                    onPlayerEnter();
+                }
             }
         }
     }
@@ -245,17 +254,21 @@ public class Trigger : MonoBehaviour
     {
         if (other.gameObject == Main.PlayerCharacter.gameObject)
         {
-            IsPlayerInsideTriggerZone = false;
-            HideInteractionText();
-            if (IsActivated)
+            if (!Main.UI.CurrentTrigger || Main.UI.CurrentTrigger == this)
             {
-                if (onPlayerExit != null)
+                Main.UI.CurrentTrigger = null;
+                IsPlayerInsideTriggerZone = false;
+                HideInteractionText();
+                if (IsActivated)
                 {
-                    onPlayerExit();
-                }
-                if (CloseOnLeaveTrigger)
-                {
-                    Close();
+                    if (onPlayerExit != null)
+                    {
+                        onPlayerExit();
+                    }
+                    if (CloseOnLeaveTrigger)
+                    {
+                        Close();
+                    }
                 }
             }
         }
