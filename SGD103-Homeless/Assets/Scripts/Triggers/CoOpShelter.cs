@@ -224,7 +224,6 @@ public class CoOpShelter : MonoBehaviour {
                 GameTime.GetTimeAsString(AddictionSupportEvent.ToHour);
         }
         Main.MessageBox.Show(message, gameObject);
-        OpenMainMenu();
     }
 
     public void RequestEmergencyAccomodation()
