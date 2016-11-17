@@ -10,7 +10,6 @@ public class Homeless06 : Character
     {
         var trigger = GetComponent<Trigger>();
         trigger.RegisterOnTriggerListener(OnTrigger);
-        trigger.RegisterOnPlayerExitListener(OnPlayerExit);
         trigger.RegisterOnCloseRequested(Reset);
     }
 
@@ -21,54 +20,21 @@ public class Homeless06 : Character
 
     public void OnTrigger()
     {
-        Speak("Hello");
-        Main.PlayerCharacter.ShowStandardDialogueMenu(
-            "Submissive",
-            "Prideful",
-            "Selfish",
-            onResponseChosen);
-    }
-
-    void onResponseChosen(PlayerCharacter.ResponseType response)
-    {
         // Spend time having the conversation.
         Main.GameTime.SpendTime(TimeCostPerConversation);
 
         // Morale reward for conversation.
         Main.PlayerState.ChangeMorale(MoraleRewardPerConversation);
 
-        if (response == PlayerCharacter.ResponseType.SUBMISSIVE)
+        Main.PlayerCharacter.Speak("Hi, how are you?", null, () =>
         {
-            Speak("Ok");
+            Speak("Good thanks");
             Reset();
-        }
-        else if (response == PlayerCharacter.ResponseType.PRIDEFUL)
-        {
-            Speak("Ok");
-            Reset();
-        }
-        else if (response == PlayerCharacter.ResponseType.SELFISH)
-        {
-            Speak("Ok");
-            Reset();
-        }
-        else
-        {
-            Reset();
-        }
-    }
-
-    public void OnPlayerExit()
-    {
-        if (IsSpeaking)
-        {
-            Speak("Hey, where are you going?");
-        }
+        });
     }
 
     public void Reset()
     {
-        Main.Menu.Hide();
         GetComponent<Trigger>().Reset();
     }
 }
