@@ -36,6 +36,7 @@ public class Pedestrian : Character
     bool hasGivenMoney;
     int dayLastAskedMoney;
     bool isTalkingToPlayer;
+    bool hasStoppedToTalkToPlayer;
     float timeStartedTalkingToPlayer;
     bool hasBeenRepulsed;
     float timeAtLastRepulsion;
@@ -109,7 +110,7 @@ public class Pedestrian : Character
     public void OnTrigger()
     {
         // Stop talking to the player if already talking to them.
-        if (isTalkingToPlayer)
+        if (isTalkingToPlayer || hasStoppedToTalkToPlayer)
         {
             Reset();
             return;
@@ -132,7 +133,7 @@ public class Pedestrian : Character
             }
             else
             {
-                isTalkingToPlayer = true;
+                hasStoppedToTalkToPlayer = true;
 
                 // Player introduces themselves.
                 Main.PlayerCharacter.Speak("Excuse me", null, () =>
@@ -140,6 +141,7 @@ public class Pedestrian : Character
                     Speak("Yes?", null, () =>
                     {
                         timeStartedTalkingToPlayer = Time.time;
+                        isTalkingToPlayer = true;
 
                         // Open conversation menu.
                         if (Main.UI.CurrentTrigger == Trigger)
@@ -245,6 +247,7 @@ public class Pedestrian : Character
     public void Reset()
     {
         isTalkingToPlayer = false;
+        hasStoppedToTalkToPlayer = false;
         Main.Menu.Hide();        
         Trigger.ResetWithCooloff();
     }
@@ -259,10 +262,6 @@ public class Pedestrian : Character
         {
             Trigger.Reset(false);
             ForceStopSpeaking();
-        }
-        else
-        {
-            Trigger.Reset();
         }
 
         // Update player repellence, based on health, morale and inebriation.
@@ -321,7 +320,7 @@ public class Pedestrian : Character
 
     void FixedUpdate()
     {
-        if (!isTalkingToPlayer)
+        if (!hasStoppedToTalkToPlayer)
         {
             // Make walk animation follow gametime. If game-time is too fast for reliable navigation don't animate.
             if (IsVisible && Main.GameTime.TimeScale < StopAnimatingAboveTimeScale)
