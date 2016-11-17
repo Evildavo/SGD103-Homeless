@@ -31,7 +31,6 @@ public class Pedestrian : Character
 
     Waypoint turnTarget;
     Waypoint lastWaypoint;
-    bool isEntering;
     bool hasPlayerAskedForMoneyToday;
     bool hasGivenMoney;
     int dayLastAskedMoney;
@@ -420,18 +419,11 @@ public class Pedestrian : Character
         if (waypoint && waypoint.GroupName == WayPointGroupName)
         {
             lastWaypoint = waypoint;
-
-            // Return to the loop.
-            if (waypoint.Exit)
-            {
-                isEntering = false;
-            }
-
+            
             // Exit at point if inactive.
             if (waypoint.IsExitPoint && !IsInActiveHour && IsVisible)
             {
                 IsVisible = false;
-                isEntering = true;
 
                 // Switch direction if not teleporting.
                 if (!waypoint.TeleportToNext && !waypoint.TeleportToPrevious)
