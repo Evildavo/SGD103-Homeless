@@ -6,7 +6,8 @@ public class SonPhotoItem : InventoryItem
 {
     private bool isShowingPhoto = false;
     private float timeAtPhotoShown;
-    
+    private bool openedFromInventory;
+
     public Image SonPhotoImage;
 
     public float ShowPhotoForSeconds = 3.0f;
@@ -36,6 +37,7 @@ public class SonPhotoItem : InventoryItem
         if (!isShowingPhoto)
         {
             ShowPhoto();
+            openedFromInventory = true;
         }
         else
         {
@@ -49,6 +51,12 @@ public class SonPhotoItem : InventoryItem
         {
             // Close the photo after time or after a button press.
             if (Time.time - timeAtPhotoShown > ShowPhotoForSeconds)
+            {
+                HidePhoto();
+            }
+
+            // Close on the user key press.
+            if (Input.anyKeyDown && !openedFromInventory)
             {
                 HidePhoto();
             }
