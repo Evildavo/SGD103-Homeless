@@ -13,6 +13,10 @@ public class Lucy : Character
 
     Reputation reputation = Reputation.STANDARD;
 
+    public float TimeCostPerConversation;
+    [Header("Not given when the character says they're busy")]
+    public float MoraleRewardPerConversation;
+
     void Start()
     {
         var trigger = GetComponent<Trigger>();
@@ -65,6 +69,12 @@ public class Lucy : Character
 
     void onResponseChosen(PlayerCharacter.ResponseType response)
     {
+        // Spend time having the conversation.
+        Main.GameTime.SpendTime(TimeCostPerConversation);
+
+        // Morale reward for conversation.
+        Main.PlayerState.ChangeMorale(MoraleRewardPerConversation);
+
         if (reputation == Reputation.STANDARD)
         {
             if (response == PlayerCharacter.ResponseType.SUBMISSIVE)

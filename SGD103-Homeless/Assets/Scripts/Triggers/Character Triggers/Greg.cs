@@ -18,6 +18,10 @@ public class Greg : Character
     public float TimeCostForBuyingItem;
     public float TimeCostForSellingItem;
 
+    public float TimeCostPerConversation;
+    [Header("Not given when the character says they're busy")]
+    public float MoraleRewardPerConversation;
+
     void Start()
     {
         Trigger.RegisterOnTriggerListener(OnTrigger);
@@ -45,6 +49,12 @@ public class Greg : Character
 
     void onResponseChosen(PlayerCharacter.ResponseType response)
     {
+        // Spend time having the conversation.
+        Main.GameTime.SpendTime(TimeCostPerConversation);
+
+        // Morale reward for conversation.
+        Main.PlayerState.ChangeMorale(MoraleRewardPerConversation);
+
         if (response == PlayerCharacter.ResponseType.SUBMISSIVE)
         {
             Speak("Sure can. What are you after?");

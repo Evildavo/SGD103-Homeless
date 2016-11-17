@@ -5,6 +5,10 @@ public class Aman : Character
 {
     public AudioClip HelloAudio;
 
+    public float TimeCostPerConversation;
+    [Header("Not given when the character says they're busy")]
+    public float MoraleRewardPerConversation;
+
     void Start()
     {
         var trigger = GetComponent<Trigger>();
@@ -30,6 +34,12 @@ public class Aman : Character
 
     void onResponseChosen(PlayerCharacter.ResponseType response)
     {
+        // Spend time having the conversation.
+        Main.GameTime.SpendTime(TimeCostPerConversation);
+
+        // Morale reward for conversation.
+        Main.PlayerState.ChangeMorale(MoraleRewardPerConversation);
+
         if (response == PlayerCharacter.ResponseType.SUBMISSIVE)
         {
             Main.PlayerCharacter.Speak(

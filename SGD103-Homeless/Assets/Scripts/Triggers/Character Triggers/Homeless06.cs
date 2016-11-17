@@ -3,6 +3,9 @@ using System.Collections;
 
 public class Homeless06 : Character
 {
+    public float TimeCostPerConversation;
+    public float MoraleRewardPerConversation;
+
     void Start()
     {
         var trigger = GetComponent<Trigger>();
@@ -28,6 +31,12 @@ public class Homeless06 : Character
 
     void onResponseChosen(PlayerCharacter.ResponseType response)
     {
+        // Spend time having the conversation.
+        Main.GameTime.SpendTime(TimeCostPerConversation);
+
+        // Morale reward for conversation.
+        Main.PlayerState.ChangeMorale(MoraleRewardPerConversation);
+
         if (response == PlayerCharacter.ResponseType.SUBMISSIVE)
         {
             Speak("Ok");
