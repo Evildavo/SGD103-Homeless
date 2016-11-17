@@ -310,6 +310,7 @@ public class Pedestrian : Character
         {
             IsVisible = true;
             GetComponentInChildren<Renderer>().enabled = true;
+            Trigger.IsEnabled = true;
         }
     }
 
@@ -348,6 +349,7 @@ public class Pedestrian : Character
                 {
                     IsVisible = false;
                     GetComponentInChildren<Renderer>().enabled = false;
+                    Trigger.IsEnabled = false;
                 }
             }
         }
@@ -438,6 +440,7 @@ public class Pedestrian : Character
                     turnTarget = waypoint.Previous;
                 }
                 GetComponentInChildren<Renderer>().enabled = false;
+                Trigger.IsEnabled = false;
             }
 
             // Teleport to the next waypoint.
