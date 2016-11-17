@@ -249,7 +249,7 @@ public class MotelDiner : MonoBehaviour
         // Pay cost.
         Main.PlayerState.Money -= EatAtDiner.MealCost;
 
-        EatAtDiner.SetOnLeaveCallback(OpenRoomMenu);
+        EatAtDiner.SetOnLeaveCallback(OpenMainMenu);
         EatAtDiner.Attend();
         mainMenuOpen = false;
     }
