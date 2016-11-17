@@ -238,8 +238,9 @@ public class MotelDiner : MonoBehaviour
 
     void sleepInRoom()
     {
-        Main.SleepManager.Sleep(null, false, SleepQualityFactor);
+        Main.SleepManager.Sleep(null, false, SleepQualityFactor, () => { OpenRoomMenu(); });
         mainMenuOpen = false;
+        Main.Menu.Hide();
     }
 
     void buyFood()

@@ -95,6 +95,8 @@ public class Hostel : MonoBehaviour {
 
     public void OpenRoomMenu()
     {
+        Main.UI.ReturnTo = OpenRoomMenu;
+
         // Show splash screen.
         Main.Splash.Show(SplashRoom);
 
@@ -113,8 +115,6 @@ public class Hostel : MonoBehaviour {
         {
             Main.Ambience.Pause();
         }
-
-        Main.UI.ReturnTo = OpenRoomMenu;
 
         menuIsOpen = true;
         List<Menu.Option> options = new List<Menu.Option>();
@@ -157,7 +157,7 @@ public class Hostel : MonoBehaviour {
 
     public void SleepInRoom()
     {
-        Main.SleepManager.Sleep(null, false, SleepQualityFactor, onAwake);
+        Main.SleepManager.Sleep(null, false, SleepQualityFactor, () => { OpenRoomMenu(); });
         menuIsOpen = false;
         Main.Menu.Hide();
     }
@@ -182,11 +182,6 @@ public class Hostel : MonoBehaviour {
             Main.GameTime.AccelerateTime();
             Main.MessageBox.Show("Applying for housing...", gameObject);
         }
-    }
-
-    void onAwake()
-    {
-        OpenRoomMenu();
     }
 
     void Start ()
