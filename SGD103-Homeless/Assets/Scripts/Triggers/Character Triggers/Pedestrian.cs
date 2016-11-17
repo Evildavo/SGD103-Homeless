@@ -126,6 +126,7 @@ public class Pedestrian : Character
             // Having low health, low morale and/or being intoxicated repels the pedestrian.
             if (PlayerRepellence > IgnorePlayerAtRepellance)
             {
+                // Ignore player.
                 Main.PlayerCharacter.Speak("Excuse me");
                 Reset();
             }
@@ -140,14 +141,17 @@ public class Pedestrian : Character
                     {
                         timeStartedTalkingToPlayer = Time.time;
 
-                    // Open conversation menu.
-                    List<Menu.Option> options = new List<Menu.Option>();
-                        options.Add(new Menu.Option(AskForTime, "What's the time?"));
-                        options.Add(new Menu.Option(AskForDate, "What day is it today?"));
-                        options.Add(new Menu.Option(AskForMoney, "Could you spare some change?"));
-                    //options.Add(new Menu.Option(null, "GIVE ME YOUR MONEY NOW!", 0, false));
-                    options.Add(new Menu.Option(Reset, "Exit", 0, true, null, true));
-                        Main.Menu.Show(options);
+                        // Open conversation menu.
+                        if (Main.UI.CurrentTrigger == Trigger)
+                        {
+                            List<Menu.Option> options = new List<Menu.Option>();
+                            options.Add(new Menu.Option(AskForTime, "What's the time?"));
+                            options.Add(new Menu.Option(AskForDate, "What day is it today?"));
+                            options.Add(new Menu.Option(AskForMoney, "Could you spare some change?"));
+                            //options.Add(new Menu.Option(null, "GIVE ME YOUR MONEY NOW!", 0, false));
+                            options.Add(new Menu.Option(Reset, "Exit", 0, true, null, true));
+                            Main.Menu.Show(options);
+                        }
                     });
                 });
             }
@@ -282,6 +286,12 @@ public class Pedestrian : Character
             // Walk away if the player doesn't say anything for a while.
             if (Main.Menu.IsDisplayed() &&
                 Time.time - timeStartedTalkingToPlayer > WalksAfterSeconds)
+            {
+                Reset();
+            }
+
+            // Walk away if the player has triggered something else.
+            if (Main.UI.CurrentTrigger != Trigger)
             {
                 Reset();
             }
