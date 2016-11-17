@@ -10,6 +10,7 @@ public class CoOpShelter : MonoBehaviour {
     float activeToHour;
     MenuEnum menu;
     Menu.Option.OnSelectedCallback returnTo;
+    bool readingNoticeBoard;
 
     enum MenuEnum
     {
@@ -51,6 +52,8 @@ public class CoOpShelter : MonoBehaviour {
 
     public void OpenMainMenu()
     {
+        readingNoticeBoard = false;
+
         // Show splash screen.
         Main.Splash.Show(Splash);
 
@@ -78,13 +81,12 @@ public class CoOpShelter : MonoBehaviour {
         /*options.Add(new Menu.Option(RequestEmergencyAccomodation, "Request emergency accommodation"));*/
         if (SoupKitchenEvent && SoupKitchenEvent.IsOpen)
         {
-            options.Add(new Menu.Option(AttendSoupKitchen, "Attend soup kitchen"));
             WashClothesEvent.SetOnLeaveCallback(OpenMainMenu);
+            options.Add(new Menu.Option(AttendSoupKitchen, "Attend soup kitchen"));
             options.Add(new Menu.Option(WashClothesEvent.Attend, "Wash clothes for free"));
         }
         if (CounsellingEvent && CounsellingEvent.IsOpen)
         {
-            CounsellingEvent.SetOnLeaveCallback(OpenMainMenu);
             options.Add(new Menu.Option(AttendCounselling, "Attend counselling"));
         }
         if (AddictionSupportEvent && AddictionSupportEvent.IsOpen)
@@ -99,6 +101,7 @@ public class CoOpShelter : MonoBehaviour {
     
     public void OpenCoOpShopMenu()
     {
+        readingNoticeBoard = false;
         Main.PlayerState.IsInPrivate = false;
         menu = MenuEnum.CO_OP;
         Main.MessageBox.ShowNext();
@@ -129,6 +132,7 @@ public class CoOpShelter : MonoBehaviour {
     
     public void OpenChangingRoomMenu()
     {
+        readingNoticeBoard = false;
         menu = MenuEnum.CO_OP_CHANGING_ROOMS;
         Main.UI.ReturnTo = OpenChangingRoomMenu;
         Main.MessageBox.ShowNext();
@@ -168,6 +172,7 @@ public class CoOpShelter : MonoBehaviour {
     
     public void OpenFoodMenu()
     {
+        readingNoticeBoard = false;
         menu = MenuEnum.FOOD;
         List<Menu.Option> options = new List<Menu.Option>();
         AddMenuOptions(FoodMenuPrefabItems, options);
@@ -177,6 +182,7 @@ public class CoOpShelter : MonoBehaviour {
 
     public void OpenOutdoorItemMenu()
     {
+        readingNoticeBoard = false;
         menu = MenuEnum.OUTDOOR_EQUIPMENT;
         List<Menu.Option> options = new List<Menu.Option>();
         AddMenuOptions(OutdoorEquipmentMenuPrefabItems, options);
@@ -186,6 +192,7 @@ public class CoOpShelter : MonoBehaviour {
 
     public void OpenClothingItemMenu()
     {
+        readingNoticeBoard = false;
         menu = MenuEnum.CLOTHING;
         List<Menu.Option> options = new List<Menu.Option>();
         AddMenuOptions(ClothingMenuPrefabItems, options);
@@ -198,6 +205,7 @@ public class CoOpShelter : MonoBehaviour {
     public void ReadNoticeBoard()
     {
         var GameTime = Main.GameTime;
+        readingNoticeBoard = true;
 
         // Apply time cost.
         GameTime.SpendTime(TimeCostToReadNotice);
@@ -230,12 +238,14 @@ public class CoOpShelter : MonoBehaviour {
 
     public void RequestEmergencyAccomodation()
     {
+        readingNoticeBoard = false;
         Debug.Log("Emergency accomodation requested");
         OpenMainMenu();
     }
 
     public void AttendSoupKitchen()
     {
+        readingNoticeBoard = false;
         SoupKitchenEvent.SetOnLeaveCallback(reset);
         SoupKitchenEvent.Attend();
         Main.Menu.Hide();
@@ -243,6 +253,7 @@ public class CoOpShelter : MonoBehaviour {
 
     public void AttendCounselling()
     {
+        readingNoticeBoard = false;
         CounsellingEvent.SetOnLeaveCallback(reset);
         CounsellingEvent.Attend();
         Main.Menu.Hide();
@@ -250,6 +261,7 @@ public class CoOpShelter : MonoBehaviour {
 
     public void AttendAddictionSupport()
     {
+        readingNoticeBoard = false;
         AddictionSupportEvent.SetOnLeaveCallback(reset);
         AddictionSupportEvent.Attend();
         Main.Menu.Hide();
@@ -370,7 +382,10 @@ public class CoOpShelter : MonoBehaviour {
         }
 
         Main.Menu.Hide();
-        Main.MessageBox.ShowNext();
+        if (readingNoticeBoard)
+        {
+            Main.MessageBox.ShowNext();
+        }
         Trigger.Reset();
     }
 
