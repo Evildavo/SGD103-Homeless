@@ -17,6 +17,7 @@ public class Trigger : MonoBehaviour
     public Main Main;
 
     public bool IsEnabled = true;
+    public int Priority;
     public string TriggerName;
     public string InteractHintMessage;
     public bool UseModalModeOnActivate = false;
@@ -211,7 +212,8 @@ public class Trigger : MonoBehaviour
         }
 
         // Show prompt allowing the player to activate the trigger.
-        if (!IsActivated && IsEnabled && IsPlayerInsideTriggerZone)
+        if (!IsActivated && IsEnabled && IsPlayerInsideTriggerZone && 
+            (!Main.UI.CurrentTrigger || Main.UI.CurrentTrigger == this))
         {
             ShowInteractionText();
             if (IsInActiveHour && 
@@ -234,6 +236,10 @@ public class Trigger : MonoBehaviour
         if (other.gameObject == Main.PlayerCharacter.gameObject)
         {
             IsPlayerInsideTriggerZone = true;
+            if (!Main.UI.CurrentTrigger || Main.UI.CurrentTrigger.Priority <= Priority)
+            {
+                Main.UI.CurrentTrigger = this;
+            }
             if (onPlayerEnter != null)
             {
                 onPlayerEnter();
@@ -246,7 +252,11 @@ public class Trigger : MonoBehaviour
         if (other.gameObject == Main.PlayerCharacter.gameObject)
         {
             IsPlayerInsideTriggerZone = false;
-            HideInteractionText();
+            if (Main.UI.CurrentTrigger == this)
+            {
+                Main.UI.CurrentTrigger = null;
+                HideInteractionText();
+            }
             if (IsActivated)
             {
                 if (onPlayerExit != null)
