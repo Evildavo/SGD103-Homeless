@@ -413,7 +413,22 @@ public class Pedestrian : Character
             {
                 isEntering = false;
             }
-            
+
+            // Exit at point if inactive.
+            if (waypoint.IsExitPoint && !IsInActiveHour && IsVisible)
+            {
+                IsVisible = false;
+                isEntering = true;
+
+                // Switch direction if not teleporting.
+                if (!waypoint.TeleportToNext && !waypoint.TeleportToPrevious)
+                {
+                    transform.forward = -transform.forward;
+                    turnTarget = waypoint.Previous;
+                }
+                GetComponentInChildren<Renderer>().enabled = false;
+            }
+
             // Teleport to the next waypoint.
             if (waypoint.TeleportToNext || waypoint.TeleportToPrevious)
             {
@@ -434,27 +449,18 @@ public class Pedestrian : Character
                 }
                 transform.position = position;
             }
-            // Exit at point if inactive.
-            else if (waypoint.IsExitPoint && !IsInActiveHour && IsVisible)
-            {
-                IsVisible = false;
-                isEntering = true;
-                transform.forward = -transform.forward;
-                turnTarget = waypoint.Previous;
-                GetComponentInChildren<Renderer>().enabled = false;
-            }
             // Turn towards exit route if inactive.
             else if (!IsInActiveHour && waypoint.Exit)
             {
                 turnTarget = waypoint.Exit;
             }
             // Turn towards next waypoint.
-            else if (waypoint.Next && !(ReverseDirection || isEntering))
+            else if (waypoint.Next && !ReverseDirection)
             {
                 turnTarget = waypoint.Next;
             }
             // Turn towards previous waypoint.
-            else if (waypoint.Previous && (ReverseDirection || isEntering))
+            else if (waypoint.Previous && ReverseDirection)
             {
                 turnTarget = waypoint.Previous;
             }
