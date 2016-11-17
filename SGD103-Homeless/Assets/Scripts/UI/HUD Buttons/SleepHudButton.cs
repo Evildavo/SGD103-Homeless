@@ -35,7 +35,7 @@ public class SleepHudButton : MonoBehaviour
 
     public void OnClick()
     {
-        if (!Main.PlayerState.CurrentTrigger)
+        if (!Main.PlayerState.CurrentTrigger && !Main.Splash.gameObject.activeInHierarchy)
         {
             Main.SleepManager.Sleep();
         }
@@ -48,8 +48,8 @@ public class SleepHudButton : MonoBehaviour
             gameObject.SetActive(false);
         }
 
-        // Grey out the option when the player is in a trigger.
-        if (Main.PlayerState.CurrentTrigger)
+        // Grey out the option when the player is in a trigger or a splash screen.
+        if (Main.PlayerState.CurrentTrigger || Main.Splash.gameObject.activeInHierarchy)
         {
             GetComponent<Image>().color = DisabledIconColour;
         }
