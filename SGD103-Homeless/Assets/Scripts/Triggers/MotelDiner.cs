@@ -71,7 +71,7 @@ public class MotelDiner : MonoBehaviour
         // Go to room option.
         if (RoomRented)
         {
-            options.Add(new Menu.Option(OpenRoomMenu, "Go to room"));
+            options.Add(new Menu.Option(() => { Main.MessageBox.ShowNext(); OpenRoomMenu(); }, "Go to room"));
         }
 
         // Diner options.
@@ -80,7 +80,7 @@ public class MotelDiner : MonoBehaviour
             wentStraightToRoom = false;
 
             // Go to toilet option.
-            options.Add(new Menu.Option(OpenToiletMenu, "Go to toilet"));
+            options.Add(new Menu.Option(() => { Main.MessageBox.ShowNext(); OpenToiletMenu(); }, "Go to toilet"));
         
             // Meal options.
             if (Main.GameTime.TimeOfDayHours < 11)
@@ -121,7 +121,6 @@ public class MotelDiner : MonoBehaviour
     public void OpenRoomMenu()
     {
         Main.UI.ReturnTo = OpenRoomMenu;
-        Main.MessageBox.ShowNext();
 
         // Show splash screen.
         Main.Splash.Show(SplashRoom);
@@ -165,7 +164,6 @@ public class MotelDiner : MonoBehaviour
     public void OpenToiletMenu()
     {
         Main.UI.ReturnTo = OpenToiletMenu;
-        Main.MessageBox.ShowNext();
 
         // Show splash screen.
         Main.Splash.Show(SplashToilet);
