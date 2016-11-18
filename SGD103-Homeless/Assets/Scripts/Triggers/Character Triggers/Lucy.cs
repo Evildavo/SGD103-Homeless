@@ -13,6 +13,7 @@ public class Lucy : Character
 
     Reputation reputation = Reputation.STANDARD;
 
+    public float LucyMoneyGift;
     public float TimeCostPerConversation;
     [Header("Not given when the character says they're busy")]
     public float MoraleRewardPerConversation;
@@ -150,6 +151,9 @@ public class Lucy : Character
             else if (response == PlayerCharacter.ResponseType.SELFISH)
             {
                 Speak("It must be, here its not much but take this.");
+
+                Main.PlayerState.Money += LucyMoneyGift;
+
                 reputation = Reputation.END;
                 Reset();
             }
