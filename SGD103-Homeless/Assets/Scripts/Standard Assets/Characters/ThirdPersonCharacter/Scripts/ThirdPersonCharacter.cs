@@ -41,6 +41,11 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         public bool MovementEnabled = true;
 
 
+        [Header("--- Cheat ---")]
+        public bool RunCheatEnabled = false;
+        public float RunCheatSpeedFactor = 1.0f;
+
+
         void Start()
 		{
 			m_Animator = GetComponent<Animator>();
@@ -269,8 +274,14 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 			{
 				Vector3 v = (m_Animator.deltaPosition * m_MoveSpeedMultiplier) / Time.deltaTime;
 
-				// we preserve the existing y part of the current velocity.
-				v.y = m_Rigidbody.velocity.y;
+                // Handle run cheat.
+                if (RunCheatEnabled && Input.GetKey(KeyCode.LeftShift))
+                {
+                    v *= RunCheatSpeedFactor;
+                }
+
+                // we preserve the existing y part of the current velocity.
+                v.y = m_Rigidbody.velocity.y;
 				m_Rigidbody.velocity = v;
 			}
 		}
