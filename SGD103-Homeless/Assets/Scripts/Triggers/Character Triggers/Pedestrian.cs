@@ -370,7 +370,7 @@ public class Pedestrian : Character
 
     void turnToFace(float maxAngle)
     {
-        Vector3 delta = Main.PlayerCharacter.transform.position - transform.position;
+        Vector3 delta = turnTarget.transform.position - transform.position;
         Quaternion lookRotation = Quaternion.LookRotation(delta);
         Quaternion rotation =
             Quaternion.RotateTowards(transform.rotation, lookRotation, maxAngle);
