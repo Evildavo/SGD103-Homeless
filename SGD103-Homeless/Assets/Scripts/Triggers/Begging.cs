@@ -132,7 +132,7 @@ public class Begging : MonoBehaviour
             else
             {
                 // Check at regular intervals if we got any money.
-                if (GameTime.TimeOfDayHoursDelta(hourAtLastCheck, Main.GameTime.TimeOfDayHours).forward >= CheckIntervalHours)
+                /*if (GameTime.TimeOfDayHoursDelta(hourAtLastCheck, Main.GameTime.TimeOfDayHours).forward >= CheckIntervalHours)
                 {
                     hasChecked = true;
                     hourAtLastCheck = Main.GameTime.TimeOfDayHours;
@@ -141,7 +141,7 @@ public class Begging : MonoBehaviour
                     chanceMoneyGainedAtCheck = determineChance();
 
                     checkGotMoney(chanceMoneyGainedAtCheck);
-                }
+                }*/
 
                 // After money is gained change back to the regular searching message.
                 if (Time.time - timeAtMoneyLastGained > DisplayMoneyGainedMessageForSeconds)
