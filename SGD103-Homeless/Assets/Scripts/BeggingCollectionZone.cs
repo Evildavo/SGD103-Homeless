@@ -13,7 +13,7 @@ public class BeggingCollectionZone : MonoBehaviour {
     public void OnTriggerEnter(Collider other)
     {
         Pedestrian pedestrian = other.GetComponent<Pedestrian>();
-        if (pedestrian)
+        if (pedestrian && pedestrian.IsInActiveHour)
         {
             Begging.CheckGotMoneyPedestrian();
         }
