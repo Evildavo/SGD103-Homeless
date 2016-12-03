@@ -12,6 +12,7 @@ public class WriteYourSign : MonoBehaviour
     private Begging begging;
 
     public Main Main;
+    public Transform PenCursorSprite;
 
     public int CanvasWidthPixels = 256;
     public int CanvasHeightPixels = 128;
@@ -22,14 +23,28 @@ public class WriteYourSign : MonoBehaviour
     [ReadOnly]
     public Texture2D CanvasTexture;
 
+    public void ShowPenCursor()
+    {
+        PenCursorSprite.gameObject.SetActive(true);
+        Cursor.visible = false;
+    }
+
+    public void HidePenCursor()
+    {
+        PenCursorSprite.gameObject.SetActive(false);
+        Cursor.visible = true;
+    }
+
     public void Show()
     {
         gameObject.SetActive(true);
+        ShowPenCursor();
     }
 
     public void Hide()
     {
         gameObject.SetActive(false);
+        HidePenCursor();
     }
 
     public bool IsShown()
@@ -115,6 +130,9 @@ public class WriteYourSign : MonoBehaviour
 
     void Update ()
     {
+        // Move the pen cursor sprite to the mouse.
+        PenCursorSprite.transform.position = Input.mousePosition;
+
         // Draw on the canvas if the mouse is down.
         if (Input.GetButton("Primary"))
         {
