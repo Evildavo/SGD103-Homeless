@@ -29,7 +29,6 @@ public class Pedestrian : Character
 	CapsuleCollider m_Capsule;
 	bool m_Crouching;
 
-    Waypoint turnTarget;
     Waypoint lastWaypoint;
     bool hasPlayerAskedForMoneyToday;
     bool hasGivenMoney;
@@ -42,6 +41,7 @@ public class Pedestrian : Character
 
     [Space(20.0f)]
     public Trigger Trigger;
+    public Waypoint TargetWaypoint;
 
     [Header("Pedestrian Settings:")]
     public bool IsVisible = true;
@@ -321,15 +321,9 @@ public class Pedestrian : Character
             if (IsVisible && Main.GameTime.TimeScale < StopAnimatingAboveTimeScale)
             {
                 // Update turning
-                if (turnTarget)
+                if (TargetWaypoint)
                 {
-                    Vector3 delta = turnTarget.transform.position - transform.position;
-                    Quaternion lookRotation = Quaternion.LookRotation(delta);
-                    Quaternion rotation =
-                        Quaternion.RotateTowards(transform.rotation, lookRotation, TurnSpeed * Time.deltaTime);
-                    Vector3 eulerAngles = transform.eulerAngles;
-                    eulerAngles.y = rotation.eulerAngles.y;
-                    transform.eulerAngles = eulerAngles;
+                    turnToFace(TargetWaypoint.transform.position, TurnSpeed * Time.deltaTime);
                 }
 
                 // Walk forward.
@@ -351,6 +345,65 @@ public class Pedestrian : Character
                     Trigger.IsEnabled = false;
                 }
             }
+
+            // Handle reaching target waypoint.
+            if (TargetWaypoint && 
+                (TargetWaypoint.transform.position - transform.position).magnitude <= 
+                WalkSpeed * Time.deltaTime)
+            {
+                lastWaypoint = TargetWaypoint;
+
+                // Exit at point if inactive.
+                if (TargetWaypoint.IsExitPoint && !IsInActiveHour && IsVisible)
+                {
+                    IsVisible = false;
+
+                    // Switch direction if not teleporting.
+                    if (!TargetWaypoint.TeleportToNext && !TargetWaypoint.TeleportToPrevious)
+                    {
+                        transform.forward = -transform.forward;
+                        TargetWaypoint = TargetWaypoint.Previous;
+                    }
+                    GetComponentInChildren<Renderer>().enabled = false;
+                    Trigger.IsEnabled = false;
+                }
+
+                // Teleport to the next waypoint.
+                if (TargetWaypoint.TeleportToNext || TargetWaypoint.TeleportToPrevious)
+                {
+                    Vector3 position = transform.position;
+                    if (!ReverseDirection && TargetWaypoint.TeleportToNext)
+                    {
+                        position.x = TargetWaypoint.Next.transform.position.x;
+                        position.z = TargetWaypoint.Next.transform.position.z;
+                        TargetWaypoint = TargetWaypoint.Next.Next;
+                        turnToFace(TargetWaypoint.transform.position, 360.0f);
+                    }
+                    else if (ReverseDirection && TargetWaypoint.TeleportToPrevious)
+                    {
+                        position.x = TargetWaypoint.Previous.transform.position.x;
+                        position.z = TargetWaypoint.Previous.transform.position.z;
+                        TargetWaypoint = TargetWaypoint.Previous.Previous;
+                        turnToFace(TargetWaypoint.transform.position, 360.0f);
+                    }
+                    transform.position = position;
+                }
+                // Turn towards exit route if inactive.
+                else if (!IsInActiveHour && TargetWaypoint.Exit)
+                {
+                    TargetWaypoint = TargetWaypoint.Exit;
+                }
+                // Turn towards next waypoint.
+                else if (TargetWaypoint.Next && !ReverseDirection)
+                {
+                    TargetWaypoint = TargetWaypoint.Next;
+                }
+                // Turn towards previous waypoint.
+                else if (TargetWaypoint.Previous && ReverseDirection)
+                {
+                    TargetWaypoint = TargetWaypoint.Previous;
+                }
+            }
         }
         else
         {
@@ -361,16 +414,16 @@ public class Pedestrian : Character
             Move(Vector3.zero, false, false);
 
             // Turn to face the player.
-            if (turnTarget)
+            if (TargetWaypoint)
             {
-                turnToFace(TurnToFacePlayerSpeed * Time.deltaTime);
+                turnToFace(Main.PlayerCharacter.transform.position, TurnToFacePlayerSpeed * Time.deltaTime);
             }
         }
     }
 
-    void turnToFace(float maxAngle)
+    void turnToFace(Vector3 targetPosition, float maxAngle)
     {
-        Vector3 delta = turnTarget.transform.position - transform.position;
+        Vector3 delta = TargetWaypoint.transform.position - transform.position;
         Quaternion lookRotation = Quaternion.LookRotation(delta);
         Quaternion rotation =
             Quaternion.RotateTowards(transform.rotation, lookRotation, maxAngle);
@@ -403,72 +456,14 @@ public class Pedestrian : Character
             {
                 if (!ReverseDirection)
                 {
-                    turnTarget = lastWaypoint.Previous;
+                    TargetWaypoint = lastWaypoint.Previous;
                     ReverseDirection = true;
                 }
                 else
                 {
-                    turnTarget = lastWaypoint.Next;
+                    TargetWaypoint = lastWaypoint.Next;
                     ReverseDirection = false;
                 }
-            }
-        }
-
-        // Handle waypoint.
-        Waypoint waypoint = other.GetComponent<Waypoint>();
-        if (waypoint && waypoint.GroupName == WayPointGroupName)
-        {
-            lastWaypoint = waypoint;
-            
-            // Exit at point if inactive.
-            if (waypoint.IsExitPoint && !IsInActiveHour && IsVisible)
-            {
-                IsVisible = false;
-
-                // Switch direction if not teleporting.
-                if (!waypoint.TeleportToNext && !waypoint.TeleportToPrevious)
-                {
-                    transform.forward = -transform.forward;
-                    turnTarget = waypoint.Previous;
-                }
-                GetComponentInChildren<Renderer>().enabled = false;
-                Trigger.IsEnabled = false;
-            }
-
-            // Teleport to the next waypoint.
-            if (waypoint.TeleportToNext || waypoint.TeleportToPrevious)
-            {
-                Vector3 position = transform.position;
-                if (!ReverseDirection && waypoint.TeleportToNext)
-                {
-                    position.x = waypoint.Next.transform.position.x;
-                    position.z = waypoint.Next.transform.position.z;
-                    turnTarget = waypoint.Next.Next;
-                    turnToFace(360.0f);
-                }
-                else if (ReverseDirection && waypoint.TeleportToPrevious)
-                {
-                    position.x = waypoint.Previous.transform.position.x;
-                    position.z = waypoint.Previous.transform.position.z;
-                    turnTarget = waypoint.Previous.Previous;
-                    turnToFace(360.0f);
-                }
-                transform.position = position;
-            }
-            // Turn towards exit route if inactive.
-            else if (!IsInActiveHour && waypoint.Exit)
-            {
-                turnTarget = waypoint.Exit;
-            }
-            // Turn towards next waypoint.
-            else if (waypoint.Next && !ReverseDirection)
-            {
-                turnTarget = waypoint.Next;
-            }
-            // Turn towards previous waypoint.
-            else if (waypoint.Previous && ReverseDirection)
-            {
-                turnTarget = waypoint.Previous;
             }
         }
     }
