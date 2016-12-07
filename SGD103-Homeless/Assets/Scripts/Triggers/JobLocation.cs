@@ -294,7 +294,7 @@ public class JobLocation : MonoBehaviour
             // Report final decision.
             if (success)
             {
-                string message = "Congratulations! AFter today you work " +
+                string message = "Congratulations! After today you work " +
                                  GameTime.DayOfTheWeekAsShortString(Job.WorkFromDay) + " to " +
                                  GameTime.DayOfTheWeekAsShortString(Job.WorkToDay) + " from " +
                                  GameTime.GetTimeAsString(Job.ShiftFromHour) + " to " +
