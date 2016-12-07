@@ -97,7 +97,7 @@ public class SleepHudButton : MonoBehaviour
                         HudButtonLabel.GetComponentInChildren<Text>().color = OkSleepLabelColour;
                         break;
                     case PlayerSleepManager.SleepQualityEnum.GOOD:
-                        HudButtonLabel.GetComponentInChildren<Text>().text += " (good)";
+                        HudButtonLabel.GetComponentInChildren<Text>().text += " (ok)";
                         HudButtonLabel.GetComponentInChildren<Text>().color = GoodSleepLabelColour;
                         break;
                 }
