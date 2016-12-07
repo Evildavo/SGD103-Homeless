@@ -80,15 +80,7 @@ public class Supermarket : MonoBehaviour
 
     public void ApplyForJob()
     {
-        // Show confirmation box if the player doesn't have a resume.
-        ConfirmationBox.OnChoiceMade onChoice = (bool yes) =>
-        {
-            if (yes)
-            {
-                JobLocation.ApplyForJob();
-            }
-        };
-        Main.ConfirmationBox.Open(onChoice, "You don't have a resume. Apply anyway?", "Yes", "No");
+        JobLocation.ApplyForJob();
         OpenMainMenu();
     }
     
