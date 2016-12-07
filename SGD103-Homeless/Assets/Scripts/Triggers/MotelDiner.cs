@@ -208,7 +208,15 @@ public class MotelDiner : MonoBehaviour
 
     public void ApplyForJob()
     {
-        JobLocation.ApplyForJob();
+        // Show confirmation box if the player doesn't have a resume.
+        ConfirmationBox.OnChoiceMade onChoice = (bool yes) =>
+        {
+            if (yes)
+            {
+                JobLocation.ApplyForJob();
+            }
+        };
+        Main.ConfirmationBox.Open(onChoice, "You don't have a resume. Apply anyway?", "Yes", "No");
         OpenMainMenu();
     }
 
