@@ -13,7 +13,10 @@ public class SleepHudButton : MonoBehaviour
     public Color OkSleepLabelColour = Color.white;
     public Color GoodSleepLabelColour = Color.white;
     public Color DisabledIconColour = Color.grey;
-    
+    public Color PoorSleepIconColour = Color.white;
+    public Color OkSleepIconColour = Color.white;
+    public Color GoodSleepIconColour = Color.white;
+
     public void OnPointerEnter()
     {
         var HudButtonLabel = Main.HudButtons.HudButtonLabel;
@@ -53,9 +56,25 @@ public class SleepHudButton : MonoBehaviour
         {
             GetComponent<Image>().color = DisabledIconColour;
         }
+
+        // Otherwise, set the colour based on expected sleep quality here.
         else
         {
-            GetComponent<Image>().color = Color.white;
+            switch (Main.SleepManager.SleepQualityHere)
+            {
+                case PlayerSleepManager.SleepQualityEnum.TERRIBLE:
+                    GetComponent<Image>().color = PoorSleepIconColour;
+                    break;
+                case PlayerSleepManager.SleepQualityEnum.POOR:
+                    GetComponent<Image>().color = OkSleepIconColour;
+                    break;
+                case PlayerSleepManager.SleepQualityEnum.GOOD:
+                    GetComponent<Image>().color = GoodSleepIconColour;
+                    break;
+                default:
+                    GetComponent<Image>().color = Color.white;
+                    break;
+            }
         }
         
         // Update the button label based on expected quality of sleep here.
